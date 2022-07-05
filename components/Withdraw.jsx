@@ -5,9 +5,8 @@ import { formatUnits, parseUnits } from "@ethersproject/units";
 import contractAddresses from "../contractAddresses.json";
 import { useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
-import marketContract from "../../lenft/artifacts/contracts/protocol/Market.sol/Market.json";
-import reserveContract from "../../lenft/artifacts/contracts/protocol/Reserve.sol/Reserve.json";
-import erc20 from "../contracts/erc20.json";
+import marketContract from "../contracts/Market.json";
+import reserveContract from "../contracts/Reserve.json";
 
 export default function Withdraw() {
   const { isWeb3Enabled, chainId, account } = useMoralis();

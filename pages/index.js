@@ -81,7 +81,12 @@ export default function Home() {
                 <div className="p-2">
                   {loan.token_uri ? (
                     <div className="flex flex-col items-end gap-2">
-                      <Image src={loan.token_uri} height="200" width="200" />
+                      <Image
+                        loader={() => loan.token_uri}
+                        src={loan.token_uri}
+                        height="200"
+                        width="200"
+                      />
                     </div>
                   ) : (
                     <div className="flex flex-col items-center gap-1">
@@ -124,6 +129,7 @@ export default function Home() {
                   {supportedAsset.token_uri ? (
                     <div className="flex flex-col items-end gap-2">
                       <Image
+                        loader={() => supportedAsset.token_uri}
                         src={supportedAsset.token_uri}
                         height="200"
                         width="200"

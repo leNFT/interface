@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { Card, Tooltip, Illustration, useNotification, Modal } from "web3uikit";
 import Borrow from "../components/Borrow";
 import RepayLoan from "../components/RepayLoan";
+import Image from "next/image";
 
 export default function Home() {
   const [loans, setLoans] = useState([]);

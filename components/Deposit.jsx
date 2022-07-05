@@ -9,7 +9,7 @@ import marketContract from "../contracts/Market.json";
 import erc20 from "../contracts/erc20.json";
 
 export default function Deposit() {
-  const { isWeb3Enabled, web3, chainId, account } = useMoralis();
+  const { isWeb3Enabled, chainId, account } = useMoralis();
   const [amount, setAmount] = useState("0");
   const [balance, setBalance] = useState("0");
   const [approved, setApproved] = useState(false);

@@ -1,0 +1,32 @@
+{
+  "0x1": {
+    "Name": "eth",
+    "WETH": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+    "Market": "",
+    "LoanCenter": "",
+    "DebtToken": "",
+    "SupportedAssets": [""]
+  },
+  "0x539": {
+    "Name": "hardhat",
+    "Market": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    "LoanCenter": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+    "DebtToken": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+    "SupportedAssets": ["0x5FC8d32690cc91D4c39d9d3abcBD16989F875707"]
+  },
+  "0x5": {
+    "Name": "goerli",
+    "WETH": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
+    "BorrowLogicLib": "0xf0405624c657f3B83a24f4E3727E92082D6D1a41",
+    "ValidationLogicLib": "0x4fE8a868433620b55C3330A7E93CE265288CDDED",
+    "LiquidationLogicLib": "0x2adA87422C1f3B9F854502F5088315a439d40d97",
+    "SupplyLogicLib": "0x3b3c402DD27FEa719273FE934192f77D23da11b5",
+    "AddressesProvider": "0x504A6951E5f5f6019C7700C93AAf057Ed743d61b",
+    "InterestRate": "0xFB2d80bD1A6f29BDb336004149C4Aa449fd3172e",
+    "Market": "0x430eBa3BDD92492263C49a3d47A4C4Aa0A25F4EC",
+    "LoanCenter": "0x0844CeDBFba1a1Be2127b7Cf22Af91c4acd8e5BF",
+    "DebtToken": "0xcb4761810bdff7af9e33e3a6401d7085ddc87e5b",
+    "NFTOracle": "0x6649Eb3498F3A47B30A0C9722fC695dF6793Edf2",
+    "SupportedAssets": ["0x2e308d2bb2964390edb01ed364d424f0e6757b43"]
+  }
+}

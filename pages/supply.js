@@ -39,8 +39,6 @@ export default function Supply() {
         >
           Deposit
         </button>
-      </div>
-      <div className="flex flex-col items-center">
         <button
           className="m-4 bor bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           onClick={async function () {

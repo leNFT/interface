@@ -2,7 +2,7 @@ import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { useMoralisWeb3Api, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
-import { Card, Tooltip, Illustration, useNotification, Modal } from "web3uikit";
+import { Card, Tooltip, Illustration, Modal } from "web3uikit";
 import Borrow from "../components/Borrow";
 import RepayLoan from "../components/RepayLoan";
 import Image from "next/image";
@@ -40,7 +40,10 @@ export default function Home() {
       ) {
         updatedSupportedAssets.push(userNFTs[i]);
       } else {
-        updatedUnsupportedAssets.push(userNFTs[i]);
+        // Get max 5 unsupported assets
+        if (updatedUnsupportedAssets.length < 5) {
+          updatedUnsupportedAssets.push(userNFTs[i]);
+        }
       }
     }
 
@@ -64,122 +67,132 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      {loans.length > 0 && <div>Loans:</div>}
-      <ul className="flex">
-        {loans.map((loan) => (
-          <li key={loan.token_id} className="m-4">
-            <Card
-              title="Loan"
-              description={loan.token_id}
-              onClick={function () {
-                console.log("CLICK");
-                setSelectedLoan(loan);
-                setVisibleLoanModal(true);
-              }}
-            >
-              <Tooltip content="Loan" position="top">
-                <div className="p-2">
-                  {loan.token_uri ? (
-                    <div className="flex flex-col items-end gap-2">
-                      <Image
-                        loader={() => loan.token_uri}
-                        src={loan.token_uri}
-                        height="200"
-                        width="200"
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center gap-1">
-                      <Illustration height="180px" logo="chest" width="100%" />
-                      Loading...
-                    </div>
-                  )}
-                </div>
-              </Tooltip>
-            </Card>
-          </li>
-        ))}
-        {selectedLoan && (
-          <Modal
-            hasFooter={false}
-            isVisible={visibleLoanModal}
-            onCloseButtonPressed={function () {
-              setVisibleLoanModal(false);
-            }}
-          >
-            <RepayLoan loan_id={selectedLoan.token_id} />
-          </Modal>
-        )}
-      </ul>
-      Assets:
-      <ul className="flex">
-        {supportedAssets.map((supportedAsset) => (
-          <li key={supportedAsset.token_hash} className="m-4">
-            <Card
-              title={supportedAsset.name}
-              description={supportedAsset.token_id}
-              onClick={function () {
-                console.log("CLICK");
-                setSelectedAsset(supportedAsset);
-                setVisibleAssetModal(true);
-              }}
-            >
-              <Tooltip content="Supported Asset" position="top">
-                <div className="p-2">
-                  {supportedAsset.token_uri ? (
-                    <div className="flex flex-col items-end gap-2">
-                      <Image
-                        loader={() => supportedAsset.token_uri}
-                        src={supportedAsset.token_uri}
-                        height="200"
-                        width="200"
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center gap-1">
-                      <Illustration height="180px" logo="token" width="100%" />
-                      Loading...
-                    </div>
-                  )}
-                </div>
-              </Tooltip>
-            </Card>
-          </li>
-        ))}
-        {selectedAsset && (
-          <Modal
-            hasFooter={false}
-            isVisible={visibleAssetModal}
-            onCloseButtonPressed={function () {
-              setVisibleAssetModal(false);
-            }}
-          >
-            <Borrow
-              token_address={selectedAsset.token_address}
-              token_id={selectedAsset.token_id}
-            />
-          </Modal>
-        )}
-      </ul>
-      <div id="unsupportedAssetsContainer" className="container">
-        {unsupportedAssets.map((unsupportedAsset) => (
-          <div key={unsupportedAsset.token_hash} className="m-4">
-            <Card
-              title={unsupportedAsset.name}
-              description={unsupportedAsset.token_id}
-              isDisabled={true}
-            >
-              <Tooltip content="Coming Soon!" position="top">
-                <div className="p-2">
-                  <div className="flex flex-col items-center gap-1">
-                    <Illustration height="180px" logo="lazyNft" />
-                    Unsupported Asset
+      <div className={styles.main}>
+        {loans.length > 0 && <div>Loans:</div>}
+        <ul className="flex">
+          {loans.map((loan) => (
+            <li key={loan.token_id} className="m-4">
+              <Card
+                title="Loan"
+                description={loan.token_id}
+                onClick={function () {
+                  console.log("CLICK");
+                  setSelectedLoan(loan);
+                  setVisibleLoanModal(true);
+                }}
+              >
+                <Tooltip content="Loan" position="top">
+                  <div className="p-2">
+                    {loan.token_uri ? (
+                      <div className="flex flex-col items-end gap-2">
+                        <Image
+                          loader={() => loan.token_uri}
+                          src={loan.token_uri}
+                          height="200"
+                          width="200"
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-1">
+                        <Illustration
+                          height="180px"
+                          logo="chest"
+                          width="100%"
+                        />
+                        Loading...
+                      </div>
+                    )}
                   </div>
-                </div>
-              </Tooltip>
-            </Card>
-          </div>
-        ))}
+                </Tooltip>
+              </Card>
+            </li>
+          ))}
+          {selectedLoan && (
+            <Modal
+              hasFooter={false}
+              isVisible={visibleLoanModal}
+              onCloseButtonPressed={function () {
+                setVisibleLoanModal(false);
+              }}
+            >
+              <RepayLoan loan_id={selectedLoan.token_id} />
+            </Modal>
+          )}
+        </ul>
+        Assets:
+        <ul className="flex">
+          {supportedAssets.map((supportedAsset) => (
+            <li key={supportedAsset.token_hash} className="m-4">
+              <Card
+                title={supportedAsset.name}
+                description={supportedAsset.token_id}
+                onClick={function () {
+                  console.log("CLICK");
+                  setSelectedAsset(supportedAsset);
+                  setVisibleAssetModal(true);
+                }}
+              >
+                <Tooltip content="Supported Asset" position="top">
+                  <div className="p-2">
+                    {supportedAsset.token_uri ? (
+                      <div className="flex flex-col items-end gap-2">
+                        <Image
+                          loader={() => supportedAsset.token_uri}
+                          src={supportedAsset.token_uri}
+                          height="200"
+                          width="200"
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-1">
+                        <Illustration
+                          height="180px"
+                          logo="token"
+                          width="100%"
+                        />
+                        Loading...
+                      </div>
+                    )}
+                  </div>
+                </Tooltip>
+              </Card>
+            </li>
+          ))}
+          {selectedAsset && (
+            <Modal
+              hasFooter={false}
+              isVisible={visibleAssetModal}
+              onCloseButtonPressed={function () {
+                setVisibleAssetModal(false);
+              }}
+            >
+              <Borrow
+                token_address={selectedAsset.token_address}
+                token_id={selectedAsset.token_id}
+              />
+            </Modal>
+          )}
+        </ul>
+        <div id="unsupportedAssetsContainer" className="container">
+          {unsupportedAssets.map((unsupportedAsset) => (
+            <div key={unsupportedAsset.token_hash} className="m-4">
+              <Card
+                title={unsupportedAsset.name}
+                description={unsupportedAsset.token_id}
+                isDisabled={true}
+              >
+                <Tooltip content="Coming Soon!" position="top">
+                  <div className="p-2">
+                    <div className="flex flex-col items-center gap-1">
+                      <Illustration height="180px" logo="lazyNft" />
+                      Unsupported Asset
+                    </div>
+                  </div>
+                </Tooltip>
+              </Card>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

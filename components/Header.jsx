@@ -62,7 +62,7 @@ export default function Header() {
   }, [reserveAddress]);
 
   return (
-    <nav className="p-5 border-b-2 flex flex-row justify-between items-center">
+    <div className="p-5 border-b-2 flex flex-row justify-between items-center">
       <div className="flex flex-col items-center justify-content">
         <Link href="/">
           <a>
@@ -95,6 +95,6 @@ export default function Header() {
           <ConnectButton moralisAuth={false} />
         </div>
       </div>
-    </nav>
+    </div>
   );
 }

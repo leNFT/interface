@@ -1,11 +1,10 @@
-import AutoConnectButton from "./AutoConnectButton";
 import { useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
 import contractAddresses from "../contractAddresses.json";
 import marketContract from "../contracts/Market.json";
 import reserveContract from "../contracts/Reserve.json";
 import Link from "next/link";
-import { Button } from "web3uikit";
+import { ConnectButton, Button } from "web3uikit";
 
 export default function Header() {
   const [borrowRate, setBorrowRate] = useState(0);
@@ -93,7 +92,7 @@ export default function Header() {
           </Link>
         </div>
         <div className="flex m-2">
-          <AutoConnectButton />
+          <ConnectButton moralisAuth={false} />
         </div>
       </div>
     </nav>

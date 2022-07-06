@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import contractAddresses from "../contractAddresses.json";
 import loanCenterContract from "../contracts/LoanCenter.json";
 import Link from "next/link";
+import { Button } from "web3uikit";
 
 export default function Header() {
   const [loansCount, setLoansCount] = useState(0);
@@ -48,14 +49,34 @@ export default function Header() {
         </h1>
       </div>
       <div className="flex flex-row items-center">
-        <Link href="/">
-          {/* Home is going to be the recent listings page */}
-          <a className="mr-4 p-6">Home</a>
-        </Link>
-        <Link href="/supply">
-          <a className="mr-4 p-6">Supply</a>
-        </Link>
-        <AutoConnectButton />
+        <div className="flex m-2">
+          <Link href="/">
+            <Button
+              id="test-button-outline"
+              onClick={function noRefCheck() {}}
+              text="Home"
+              size="large"
+              theme="outline"
+              type="button"
+            />
+          </Link>
+        </div>
+        <div className="flex m-2">
+          <Link href="/supply">
+            <Button
+              color="green"
+              id="test-button-colored-green"
+              onClick={function noRefCheck() {}}
+              text="Supply"
+              size="large"
+              theme="colored"
+              type="button"
+            />
+          </Link>
+        </div>
+        <div className="flex m-2">
+          <AutoConnectButton />
+        </div>
       </div>
     </nav>
   );

@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import contractAddresses from "../contractAddresses.json";
 import marketContract from "../contracts/Market.json";
 import reserveContract from "../contracts/Reserve.json";
-import Link from "next/link";
 import { Button } from "web3uikit";
 
 export default function Header() {
@@ -65,11 +64,7 @@ export default function Header() {
   return (
     <nav className="p-5 border-b-2 flex flex-row justify-between items-center">
       <div className="flex flex-col items-center justify-content">
-        <Link href="/">
-          <a>
-            <h1 className="py-4 px-4 font-bold text-3xl">leNFT</h1>
-          </a>
-        </Link>
+        <h1 className="py-4 px-4 font-bold text-3xl">leNFT</h1>
         <h1 className="font-bold text-xs">
           <div className="flex flex-row items-center">
             Borrow Rate @ {borrowRate / 100}%
@@ -78,29 +73,25 @@ export default function Header() {
       </div>
       <div className="flex flex-row items-center">
         <div className="flex m-2">
-          <Link href="/">
-            <Button
-              id="test-button-outline"
-              onClick={function noRefCheck() {}}
-              text="Home"
-              size="large"
-              theme="outline"
-              type="button"
-            />
-          </Link>
+          <Button
+            id="test-button-outline"
+            onClick={function noRefCheck() {}}
+            text="Home"
+            size="large"
+            theme="outline"
+            type="button"
+          />
         </div>
         <div className="flex m-2">
-          <Link href="/supply">
-            <Button
-              color="green"
-              id="test-button-colored-green"
-              text="Supply"
-              size="large"
-              theme="colored"
-              type="button"
-              onClick={function noRefCheck() {}}
-            />
-          </Link>
+          <Button
+            color="green"
+            id="test-button-colored-green"
+            text="Supply"
+            size="large"
+            theme="colored"
+            type="button"
+            onClick={function noRefCheck() {}}
+          />
         </div>
         <div className="flex m-2">
           <AutoConnectButton />

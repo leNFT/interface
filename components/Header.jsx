@@ -86,7 +86,7 @@ export default function Header() {
           <Button
             color="green"
             id="test-button-colored-green"
-            text="Supply"
+            text="Suppl"
             size="large"
             theme="colored"
             type="button"

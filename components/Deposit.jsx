@@ -1,6 +1,6 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits, parseUnits } from "@ethersproject/units";
-import { useNotification } from "web3uikit";
+import { useNotification, Button } from "web3uikit";
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { useWeb3Contract, useMoralis } from "react-moralis";
@@ -13,6 +13,8 @@ export default function Deposit() {
   const [amount, setAmount] = useState("0");
   const [balance, setBalance] = useState("0");
   const [approved, setApproved] = useState(false);
+  const [approvalLoading, setApprovalLoading] = useState(false);
+  const [depositLoading, setDepositLoading] = useState(false);
   const [reserveAddress, setReserveAddress] = useState("");
 
   const addresses =
@@ -143,9 +145,9 @@ export default function Deposit() {
 
   return (
     <div className={styles.container}>
-      <ul className="flex">
+      <div className="flex">
         Maximum deposit amount is {formatUnits(balance, 18)} WETH
-      </ul>
+      </div>
       <input
         className="flex"
         type="number"
@@ -153,51 +155,67 @@ export default function Deposit() {
         onChange={handleInputChange}
       />
       {approved ? (
-        <button
-          className="m-4 bor bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          onClick={async function () {
-            if (BigNumber.from(amount).lte(BigNumber.from(balance))) {
-              await deposit({
-                onSuccess: handleDepositSuccess,
-                onError: (error) => console.log(error),
-              });
-            } else {
-              dispatch({
-                type: "info",
-                message: "Amount is bigger than balance",
-                title: "Notification",
-                position: "topR",
-                icon: "bell",
-              });
-            }
-          }}
-        >
-          Deposit
-        </button>
+        <div className="m-8">
+          <Button
+            text="Deposit"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+            }}
+            loadingText="Confirming Deposit"
+            isLoading={depositLoading}
+            onClick={async function () {
+              if (BigNumber.from(amount).lte(BigNumber.from(balance))) {
+                setDepositLoading(true);
+                await deposit({
+                  onComplete: () => setDepositLoading(false),
+                  onSuccess: handleDepositSuccess,
+                  onError: (error) => console.log(error),
+                });
+              } else {
+                dispatch({
+                  type: "info",
+                  message: "Amount is bigger than balance",
+                  title: "Notification",
+                  position: "topR",
+                  icon: "bell",
+                });
+              }
+            }}
+          ></Button>
+        </div>
       ) : (
-        <button
-          className="m-4 bor bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          onClick={async function () {
-            const approveOptions = {
-              abi: erc20,
-              contractAddress: addresses.WETH,
-              functionName: "approve",
-              params: {
-                _spender: reserveAddress,
-                _value:
-                  "115792089237316195423570985008687907853269984665640564039457584007913129639935",
-              },
-            };
+        <div className="m-8">
+          <Button
+            text="Approve"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+            }}
+            loadingText="Confirming Approval"
+            isLoading={approvalLoading}
+            onClick={async function () {
+              setApprovalLoading(true);
+              const approveOptions = {
+                abi: erc20,
+                contractAddress: addresses.WETH,
+                functionName: "approve",
+                params: {
+                  _spender: reserveAddress,
+                  _value:
+                    "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+                },
+              };
 
-            await approve({
-              onSuccess: handleApprovalSuccess,
-              onError: (error) => console.log(error),
-              params: approveOptions,
-            });
-          }}
-        >
-          Approve
-        </button>
+              await approve({
+                onComplete: () => setApprovalLoading(false),
+                onSuccess: handleApprovalSuccess,
+                onError: (error) => setconsole.log(error),
+                params: approveOptions,
+              });
+            }}
+          ></Button>
+        </div>
       )}
     </div>
   );

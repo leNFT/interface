@@ -3,6 +3,7 @@ import { useNotification } from "web3uikit";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useWeb3Contract, useMoralis } from "react-moralis";
+import { Button } from "web3uikit";
 import styles from "../styles/Home.module.css";
 import { useState, useEffect } from "react";
 import marketContract from "../contracts/Market.json";
@@ -13,6 +14,7 @@ export default function RepayLoan(props) {
   const [debt, setDebt] = useState("0");
   const [balance, setBalance] = useState("0");
   const { isWeb3Enabled, chainId, account } = useMoralis();
+  const [repayLoading, setRepayLoading] = useState(false);
   const addresses =
     chainId in contractAddresses
       ? contractAddresses[chainId]
@@ -83,32 +85,39 @@ export default function RepayLoan(props) {
 
   return (
     <div className={styles.container}>
-      <ul className="flex">Loan ID is {props.loan_id}</ul>
-      <ul className="flex">Debt is {formatUnits(debt, 18)} WETH</ul>
-      <ul className="flex">
+      <div className="flex">Loan ID is {props.loan_id}</div>
+      <div className="flex">Debt is {formatUnits(debt, 18)} WETH</div>
+      <div className="flex">
         Your WETH balance is {formatUnits(balance, 18)} WETH
-      </ul>
-      <button
-        className="m-4 bor bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        onClick={async function () {
-          if (BigNumber.from(debt).lte(BigNumber.from(balance))) {
-            await repayLoan({
-              onSuccess: handleRepaySuccess,
-              onError: (error) => console.log(error),
-            });
-          } else {
-            dispatch({
-              type: "info",
-              message: "Amount is bigger than balance",
-              title: "Notification",
-              position: "topR",
-              icon: "bell",
-            });
-          }
-        }}
-      >
-        Repay Loan
-      </button>
+      </div>
+      <div className="flex m-8">
+        <Button
+          text="Repay Loan"
+          isFullWidth
+          loadingProps={{
+            spinnerColor: "#000000",
+          }}
+          loadingText="Confirming Loan Repayment"
+          isLoading={repayLoading}
+          onClick={async function () {
+            if (BigNumber.from(debt).lte(BigNumber.from(balance))) {
+              await repayLoan({
+                onComplete: () => setRepayLoading(false),
+                onSuccess: handleRepaySuccess,
+                onError: (error) => console.log(error),
+              });
+            } else {
+              dispatch({
+                type: "info",
+                message: "Amount is bigger than balance",
+                title: "Notification",
+                position: "topR",
+                icon: "bell",
+              });
+            }
+          }}
+        />
+      </div>
     </div>
   );
 }

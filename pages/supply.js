@@ -46,7 +46,7 @@ export default function Supply() {
           </div>
           <div className="m-4">
             <Button
-              text="Withdrawal"
+              text="Withdraw"
               theme="colored"
               type="button"
               size="large"

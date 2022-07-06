@@ -6,11 +6,12 @@ import { useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
 import marketContract from "../contracts/Market.json";
 import reserveContract from "../contracts/Reserve.json";
+import { Typography } from "web3uikit";
+import LinearProgressWithLabel from "./LinearProgressWithLabel";
 
 export default function ReserveInfo() {
   const [debt, setDebt] = useState("0");
   const [underlyingBalance, setUnderlyingBalance] = useState("0");
-  const [borrowRate, setBorrowRate] = useState(0);
   const [supplyRate, setSupplyRate] = useState(0);
   const [utilizationRate, setUtilizationRate] = useState(0);
   const [reserveAddress, setReserveAddress] = useState("");
@@ -51,13 +52,6 @@ export default function ReserveInfo() {
     params: {},
   });
 
-  const { runContractFunction: getBorrowRate } = useWeb3Contract({
-    abi: reserveContract.abi,
-    contractAddress: reserveAddress,
-    functionName: "getBorrowRate",
-    params: {},
-  });
-
   const { runContractFunction: getSupplyRate } = useWeb3Contract({
     abi: reserveContract.abi,
     contractAddress: reserveAddress,
@@ -94,12 +88,6 @@ export default function ReserveInfo() {
     console.log("Updated Utilization Rate:", updatedUtilizationRate);
     setUtilizationRate(updatedUtilizationRate.toNumber());
 
-    const updatedBorrowRate = await getBorrowRate({
-      onError: (error) => console.log(error),
-    });
-    console.log("Updated Borrow Rate:", updatedBorrowRate);
-    setBorrowRate(updatedBorrowRate.toNumber());
-
     const updatedSupplyRate = await getSupplyRate({
       onError: (error) => console.log(error),
     });
@@ -123,13 +111,26 @@ export default function ReserveInfo() {
 
   return (
     <div className={styles.container}>
-      <ul className="flex">
-        Underlying {formatUnits(underlyingBalance, 18)} WETH
-      </ul>
-      <ul className="flex">Debt is {formatUnits(debt, 18)} WETH</ul>
-      <ul className="flex">Utilization Rate {utilizationRate / 100}%</ul>
-      <ul className="flex">Borrow Rate is {borrowRate / 100}%</ul>
-      <ul className="flex">Supply Rate is {supplyRate / 100}%</ul>
+      <div className="mb-8">
+        <Typography variant="h1" color="blueCloudDark">
+          Supply Rate is {supplyRate / 100}%
+        </Typography>
+      </div>
+      <div>
+        <Typography variant="h4">Reserve Utilization:</Typography>
+        <LinearProgressWithLabel value={utilizationRate / 100} />
+      </div>
+
+      <div>
+        <Typography variant="caption14">
+          Underlying is {formatUnits(underlyingBalance, 18)} WETH
+        </Typography>
+      </div>
+      <div>
+        <Typography variant="caption14">
+          Debt is {formatUnits(debt, 18)} WETH
+        </Typography>
+      </div>
     </div>
   );
 }

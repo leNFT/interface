@@ -4,7 +4,7 @@ import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
 import styles from "../styles/Home.module.css";
-import { useNotification } from "web3uikit";
+import { useNotification, Button } from "web3uikit";
 import marketContract from "../contracts/Market.json";
 import nftOracleContract from "../contracts/NFTOracle.json";
 import "bignumber.js";
@@ -14,6 +14,8 @@ export default function Borrow(props) {
   const [amount, setAmount] = useState("0");
   const [maxAmount, setMaxAmount] = useState("0");
   const [approved, setApproved] = useState(false);
+  const [approvalLoading, setApprovalLoading] = useState(false);
+  const [borrowLoading, setBorrowLoading] = useState(false);
   const { isWeb3Enabled, chainId } = useMoralis();
   const addresses =
     chainId in contractAddresses
@@ -121,56 +123,66 @@ export default function Borrow(props) {
         onChange={handleInputChange}
       />
       {approved ? (
-        <button
-          className="m-4 bor bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          onClick={async function () {
-            if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
-              console.log({
-                asset: addresses.WETH,
-                amount: amount,
-                nftAddress: props.token_address,
-                nftTokenID: props.token_id,
-              });
-              await borrow({
-                onSuccess: handleBorrowSuccess,
-                onError: (error) => console.log(error),
-              });
-            } else {
-              dispatch({
-                type: "info",
-                message: "Amount too big!",
-                title: "Notification",
-                position: "topR",
-                icon: "bell",
-              });
-            }
-          }}
-        >
-          Borrow
-        </button>
+        <div className="flex m-8">
+          <Button
+            text="Borrow Asset"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+            }}
+            loadingText="Borrowing Asset"
+            isLoading={borrowLoading}
+            onClick={async function () {
+              if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
+                setBorrowLoading(true);
+                await borrow({
+                  onComplete: setBorrowLoading(false),
+                  onSuccess: handleBorrowSuccess,
+                  onError: (error) => console.log(error),
+                });
+              } else {
+                dispatch({
+                  type: "info",
+                  message: "Amount too big!",
+                  title: "Notification",
+                  position: "topR",
+                  icon: "bell",
+                });
+              }
+            }}
+          />
+        </div>
       ) : (
-        <button
-          className="m-4 bor bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          onClick={async function () {
-            const approveOptions = {
-              abi: erc721,
-              contractAddress: props.token_address,
-              functionName: "approve",
-              params: {
-                to: addresses.Market,
-                tokenId: props.token_id,
-              },
-            };
+        <div className="flex m-8">
+          <Button
+            text="Approve Asset"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+            }}
+            loadingText="Approving Asset"
+            isLoading={approvalLoading}
+            onClick={async function () {
+              setApprovalLoading(true);
+              const approveOptions = {
+                abi: erc721,
+                contractAddress: props.token_address,
+                functionName: "approve",
+                params: {
+                  to: addresses.Market,
+                  tokenId: props.token_id,
+                },
+              };
 
-            await approve({
-              onSuccess: handleApprovalSuccess,
-              onError: (error) => console.log(error),
-              params: approveOptions,
-            });
-          }}
-        >
-          Approve Asset
-        </button>
+              await approve({
+                onComplete: setApprovalLoading(false),
+                onSuccess: handleApprovalSuccess,
+                onError: (error) => console.log(error),
+                params: approveOptions,
+              });
+            }}
+          />
+        </div>
       )}
     </div>
   );

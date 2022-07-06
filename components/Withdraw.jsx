@@ -1,6 +1,7 @@
 import { useNotification } from "web3uikit";
 import { BigNumber } from "@ethersproject/bignumber";
 import styles from "../styles/Home.module.css";
+import { Button } from "web3uikit";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import contractAddresses from "../contractAddresses.json";
 import { useWeb3Contract, useMoralis } from "react-moralis";
@@ -10,6 +11,7 @@ import reserveContract from "../contracts/Reserve.json";
 
 export default function Withdraw() {
   const { isWeb3Enabled, chainId, account } = useMoralis();
+  const [withdrawalLoading, setWithdrawalLoading] = useState(false);
   const [amount, setAmount] = useState("0");
   const [maxAmount, setMaxAmount] = useState("0");
   const addresses =
@@ -89,36 +91,43 @@ export default function Withdraw() {
 
   return (
     <div className={styles.container}>
-      <ul className="flex">
+      <div className="flex">
         Maximum withdrawal amount is {formatUnits(maxAmount, 18)} WETH
-      </ul>
+      </div>
       <input
         className="flex"
         type="number"
         defaultValue="0"
         onChange={handleInputChange}
       />
-      <button
-        className="m-4 bor bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        onClick={async function () {
-          if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
-            await withdraw({
-              onSuccess: handleWithdrawalSuccess,
-              onError: (error) => console.log(error),
-            });
-          } else {
-            dispatch({
-              type: "info",
-              message: "Amount is bigger than max permited withdrawal",
-              title: "Notification",
-              position: "topR",
-              icon: "bell",
-            });
-          }
-        }}
-      >
-        Withdraw
-      </button>
+      <div className="m-8">
+        <Button
+          text="Withdraw"
+          isFullWidth
+          loadingProps={{
+            spinnerColor: "#000000",
+          }}
+          loadingText="Confirming Withdrawal"
+          isLoading={withdrawalLoading}
+          onClick={async function () {
+            if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
+              await withdraw({
+                onComplete: () => setWithdrawalLoading(false),
+                onSuccess: handleWithdrawalSuccess,
+                onError: (error) => console.log(error),
+              });
+            } else {
+              dispatch({
+                type: "info",
+                message: "Amount is bigger than max permited withdrawal",
+                title: "Notification",
+                position: "topR",
+                icon: "bell",
+              });
+            }
+          }}
+        />
+      </div>
     </div>
   );
 }

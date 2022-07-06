@@ -24,12 +24,6 @@
   align-items: center;
 }
 
-#unsupportedAssetsContainer {
-  display: grid;
-  grid-gap: 40px;
-  grid-template-columns: repeat(2, 1fr);
-}
-
 .footer a {
   display: flex;
   justify-content: center;

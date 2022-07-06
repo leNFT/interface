@@ -66,11 +66,11 @@ export default function Header() {
             <Button
               color="green"
               id="test-button-colored-green"
-              onClick={function noRefCheck() {}}
               text="Supply"
               size="large"
               theme="colored"
               type="button"
+              onClick={function noRefCheck() {}}
             />
           </Link>
         </div>

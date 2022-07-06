@@ -2,7 +2,7 @@ import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { useMoralisWeb3Api, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
-import { Card, Tooltip, Illustration, Modal } from "web3uikit";
+import { Card, Tooltip, Illustration, Modal, Typography } from "web3uikit";
 import Borrow from "../components/Borrow";
 import RepayLoan from "../components/RepayLoan";
 import Image from "next/image";
@@ -70,7 +70,9 @@ export default function Home() {
       <div className={styles.main}>
         {isWeb3Enabled ? (
           <div>
-            {loans.length > 0 && <div>Loans:</div>}
+            {loans.length > 0 && (
+              <Typography variant="subtitle1">Loans</Typography>
+            )}
             <ul className="flex">
               {loans.map((loan) => (
                 <li key={loan.token_id} className="m-4">
@@ -121,7 +123,7 @@ export default function Home() {
                 </Modal>
               )}
             </ul>
-            Assets:
+            <Typography variant="subtitle1">Assets</Typography>
             <ul className="flex">
               {supportedAssets.map((supportedAsset) => (
                 <li key={supportedAsset.token_hash} className="m-4">
@@ -197,7 +199,9 @@ export default function Home() {
             </div>
           </div>
         ) : (
-          <div>Please connect a Web 3 wallet.</div>
+          <Typography variant="body18">
+            Please connect a Web 3 wallet.
+          </Typography>
         )}
       </div>
     </div>

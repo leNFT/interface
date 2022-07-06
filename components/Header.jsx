@@ -79,26 +79,16 @@ export default function Header() {
       <div className="flex flex-row items-center">
         <div className="flex m-2">
           <Link href="/">
-            <Button
-              id="test-button-outline"
-              onClick={function noRefCheck() {}}
-              text="Home"
-              size="large"
-              theme="outline"
-              type="button"
-            ></Button>
+            <Button text="Home" size="large" theme="outline"></Button>
           </Link>
         </div>
         <div className="flex m-2">
           <Link href="/supply">
             <Button
               color="green"
-              id="test-button-colored-green"
               text="Supply"
               size="large"
               theme="colored"
-              type="button"
-              onClick={function noRefCheck() {}}
             ></Button>
           </Link>
         </div>

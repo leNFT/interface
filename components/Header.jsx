@@ -65,7 +65,7 @@ export default function Header() {
     <div className="p-5 border-b-2 flex flex-row justify-between items-center">
       <div className="flex flex-col items-center justify-content">
         <Link href="/">
-          <a>
+          <a target="_blank" rel="noopener noreferrer">
             <h1 className="py-4 px-4 font-bold text-3xl">leNFT</h1>
           </a>
         </Link>
@@ -77,7 +77,7 @@ export default function Header() {
       </div>
       <div className="flex flex-row items-center">
         <div className="flex m-2">
-          <Link href="/">
+          <Link href="/app">
             <Button text="Home" size="large" theme="outline"></Button>
           </Link>
         </div>

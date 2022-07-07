@@ -70,9 +70,11 @@ export default function Header() {
           </a>
         </Link>
         <h1 className="font-bold text-xs">
-          <div className="flex flex-row items-center">
-            Borrow Rate @ {borrowRate / 100}%
-          </div>
+          {isWeb3Enabled && (
+            <div className="flex flex-row items-center">
+              Borrow Rate @ {borrowRate / 100}%
+            </div>
+          )}
         </h1>
       </div>
       <div className="flex flex-row items-center">

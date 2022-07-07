@@ -5,11 +5,52 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <div className={styles.main}>
-        <Link href="/app">
-          <a>
-            <h1 className="py-4 px-4 font-bold text-3xl">go to app.</h1>
-          </a>
-        </Link>
+        <div className="flex flex-row">
+          <div className="flex m-4">
+            <a
+              href="http://discord.gg/hWyBHrUDAk"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              [discord
+            </a>
+          </div>
+          <div className="flex m-4">
+            <a
+              href="https://twitter.com/lenftapp"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              twitter
+            </a>
+          </div>
+          <div className="flex m-4">
+            <a
+              href="https://github.com/leNFT"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              github
+            </a>
+          </div>
+          <div className="flex m-4">
+            <a target="_blank" rel="noopener noreferrer">
+              docs (soon™)]
+            </a>
+          </div>
+        </div>
+        <div className="flex flex-row mt-32">
+          <Link href="/app">
+            <a>
+              <h1 className="font-bold text-3xl">go to app.</h1>
+            </a>
+          </Link>
+        </div>
+        <div className="flex flex-row mb-16">(goerli testnet)</div>
+        <div className="flex flex-row m-16">
+          leNFT is a peer-to-pool NFT lending market. it allows you to get
+          instant liquidity using your NFTs as collateral
+        </div>
       </div>
     </div>
   );

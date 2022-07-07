@@ -2,15 +2,15 @@ import "../styles/globals.css";
 import { MoralisProvider } from "react-moralis";
 import { NotificationProvider } from "web3uikit";
 import Layout from "../components/layout";
+import SplashLayout from "../components/splashLayout";
 import { useRouter } from "next/router";
 import React from "react";
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
-  const isLayoutNeeded = router.pathname !== "/";
+  const isIndex = router.pathname == "/";
   console.log("path", router.pathname);
-
-  const LayoutComponent = isLayoutNeeded ? Layout : React.Fragment;
+  const LayoutComponent = isIndex ? SplashLayout : Layout;
   return (
     <MoralisProvider
       serverUrl="https://mrmnjfhprkn8.usemoralis.com:2053/server"

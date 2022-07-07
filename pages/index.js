@@ -1,6 +1,8 @@
 import styles from "../styles/Home.module.css";
+import { formatUnits, parseUnits } from "@ethersproject/units";
+import loanCenterContract from "../contracts/LoanCenter.json";
 import contractAddresses from "../contractAddresses.json";
-import { useMoralisWeb3Api, useMoralis } from "react-moralis";
+import { useMoralisWeb3Api, useMoralis, useWeb3Contract } from "react-moralis";
 import { useState, useEffect } from "react";
 import { Card, Tooltip, Illustration, Modal, Typography } from "web3uikit";
 import Borrow from "../components/Borrow";
@@ -9,15 +11,21 @@ import Image from "next/image";
 
 export default function Home() {
   const [loans, setLoans] = useState([]);
+  const [loansDebt, setLoansDebt] = useState([]);
   const [supportedAssets, setSupportedAssets] = useState([]);
   const [unsupportedAssets, setUnsupportedAssets] = useState([]);
   const [visibleAssetModal, setVisibleAssetModal] = useState(false);
   const [visibleLoanModal, setVisibleLoanModal] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState();
   const [selectedLoan, setSelectedLoan] = useState();
-
   const { isWeb3Enabled, chainId, account } = useMoralis();
+  const addresses =
+    chainId in contractAddresses
+      ? contractAddresses[chainId]
+      : contractAddresses["0x1"];
   const Web3Api = useMoralisWeb3Api();
+
+  const { runContractFunction: getLoanDebt } = useWeb3Contract();
 
   async function setupUI() {
     // Get user NFT assets
@@ -27,12 +35,28 @@ export default function Home() {
     console.log("userNFTs:", userNFTs);
     console.log("supportedAssets:", contractAddresses[chainId].SupportedAssets);
     var updatedLoans = [];
+    var updatedLoansDebt = [];
     var updatedSupportedAssets = [];
     var updatedUnsupportedAssets = [];
 
     for (let i = 0; i < userNFTs.length; i++) {
       if (userNFTs[i].token_address == contractAddresses[chainId].DebtToken) {
         updatedLoans.push(userNFTs[i]);
+
+        // Get the debt for each loan
+        const getLoanDebtOptions = {
+          abi: loanCenterContract.abi,
+          contractAddress: addresses.LoanCenter,
+          functionName: "getLoanDebt",
+          params: {
+            loanId: userNFTs[i].token_id,
+          },
+        };
+        const debt = await getLoanDebt({
+          onError: (error) => console.log(error),
+          params: getLoanDebtOptions,
+        });
+        updatedLoansDebt.push(debt.toString());
       } else if (
         contractAddresses[chainId].SupportedAssets.includes(
           userNFTs[i].token_address
@@ -52,6 +76,7 @@ export default function Home() {
     console.log("updatedUnsupportedAssets:", updatedUnsupportedAssets);
 
     setLoans(updatedLoans);
+    setLoansDebt(updatedLoansDebt);
     setSupportedAssets(updatedSupportedAssets);
     setUnsupportedAssets(updatedUnsupportedAssets);
   }
@@ -59,7 +84,7 @@ export default function Home() {
   // Runs once
   useEffect(() => {
     if (isWeb3Enabled) {
-      console.log("WEB3 Enabled, ChainId:", chainId);
+      console.log("Web3 Enabled, ChainId:", chainId);
       setupUI();
     }
     console.log("useEffect called");
@@ -71,10 +96,10 @@ export default function Home() {
         {isWeb3Enabled ? (
           <div>
             {loans.length > 0 && (
-              <Typography variant="subtitle1">Loans</Typography>
+              <Typography variant="subtitle1">Loans:</Typography>
             )}
             <ul className="flex">
-              {loans.map((loan) => (
+              {loans.map((loan, index) => (
                 <li key={loan.token_id} className="m-4">
                   <Card
                     title="Loan"
@@ -103,7 +128,7 @@ export default function Home() {
                               logo="chest"
                               width="100%"
                             />
-                            Loading...
+                            Debt: {formatUnits(loansDebt[index], 18)} WETH
                           </div>
                         )}
                       </div>
@@ -123,7 +148,11 @@ export default function Home() {
                 </Modal>
               )}
             </ul>
-            <Typography variant="subtitle1">Assets</Typography>
+            {supportedAssets.length == 0 && unsupportedAssets.length == 0 ? (
+              <Typography variant="body18">No NFT assets found :/</Typography>
+            ) : (
+              <Typography variant="subtitle1">Assets:</Typography>
+            )}
             <ul className="flex">
               {supportedAssets.map((supportedAsset) => (
                 <li key={supportedAsset.token_hash} className="m-4">

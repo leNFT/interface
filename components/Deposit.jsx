@@ -149,7 +149,7 @@ export default function Deposit() {
         Maximum deposit amount is {formatUnits(balance, 18)} WETH
       </div>
       <input
-        className="flex"
+        className="flex border-indigo-200 border-2 rounded"
         type="number"
         defaultValue="0"
         onChange={handleInputChange}

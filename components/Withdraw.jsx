@@ -95,7 +95,7 @@ export default function Withdraw() {
         Maximum withdrawal amount is {formatUnits(maxAmount, 18)} WETH
       </div>
       <input
-        className="flex"
+        className="flex border-indigo-200 border-2 rounded"
         type="number"
         defaultValue="0"
         onChange={handleInputChange}

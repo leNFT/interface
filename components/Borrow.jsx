@@ -117,7 +117,7 @@ export default function Borrow(props) {
         Maximum borrowable amount is {formatUnits(maxAmount, 18)} ETH
       </ul>
       <input
-        className="flex"
+        className="flex border-indigo-200 border-2 rounded"
         type="number"
         defaultValue="0"
         onChange={handleInputChange}

@@ -117,7 +117,7 @@ export default function ReserveInfo() {
         </Typography>
       </div>
       <div>
-        <Typography variant="h4">Reserve Utilization:</Typography>
+        <Typography variant="body18">WETH Reserve</Typography>
         <LinearProgressWithLabel value={utilizationRate / 100} />
       </div>
 

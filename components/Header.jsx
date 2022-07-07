@@ -20,16 +20,11 @@ export default function Header() {
     contractAddress: addresses.Market,
     functionName: "getReserveAddress",
     params: {
-      asset: addresses.WETH,
+      asset: addresses.wETH,
     },
   });
 
-  const { runContractFunction: getBorrowRate } = useWeb3Contract({
-    abi: reserveContract.abi,
-    contractAddress: reserveAddress,
-    functionName: "getBorrowRate",
-    params: {},
-  });
+  const { runContractFunction: getBorrowRate } = useWeb3Contract();
 
   async function getReserve() {
     const updatedReserveAddress = (
@@ -42,7 +37,20 @@ export default function Header() {
   }
 
   async function updateUI() {
-    const updatedBorrowRate = (await getBorrowRate()).toNumber();
+    const getBorrowRateOptions = {
+      abi: reserveContract.abi,
+      contractAddress: reserveAddress,
+      functionName: "getBorrowRate",
+      params: {},
+    };
+
+    const updatedBorrowRate = (
+      await getBorrowRate({
+        onError: (error) => console.log(error),
+        params: getBorrowRateOptions,
+      })
+    ).toNumber();
+
     console.log("New updated borrowRate:", borrowRate);
     setBorrowRate(updatedBorrowRate);
   }

@@ -1,7 +1,7 @@
 {
   "0x1": {
     "Name": "eth",
-    "WETH": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+    "wETH": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
     "Market": "",
     "LoanCenter": "",
     "DebtToken": "",
@@ -16,7 +16,7 @@
   },
   "0x5": {
     "Name": "goerli",
-    "WETH": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
+    "wETH": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
     "ValidationLogicLib": "0x97793B73c87178A3f5A60bf9B3a23a1F196c4ddA",
     "SupplyLogicLib": "0xe5592689DDe14230Dd01cf577F586F3AFa34F124",
     "BorrowLogicLib": "0xB2F83740C9Ae8205E392aFb664d223f5f2Fe5eeC",

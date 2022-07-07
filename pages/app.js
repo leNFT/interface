@@ -126,7 +126,7 @@ export default function App() {
                             logo="chest"
                             width="100%"
                           />
-                          Debt: {formatUnits(loansDebt[index], 18)} WETH
+                          Debt: {formatUnits(loansDebt[index], 18)} wETH
                         </div>
                       )}
                     </div>

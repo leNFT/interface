@@ -33,7 +33,7 @@ export default function RepayLoan(props) {
 
   const { runContractFunction: getBalance } = useWeb3Contract({
     abi: erc20,
-    contractAddress: addresses.WETH,
+    contractAddress: addresses.wETH,
     functionName: "balanceOf",
     params: {
       _owner: account,
@@ -86,9 +86,9 @@ export default function RepayLoan(props) {
   return (
     <div className={styles.container}>
       <div className="flex">Loan ID is {props.loan_id}</div>
-      <div className="flex">Debt is {formatUnits(debt, 18)} WETH</div>
+      <div className="flex">Debt is {formatUnits(debt, 18)} wETH</div>
       <div className="flex">
-        Your WETH balance is {formatUnits(balance, 18)} WETH
+        Your wETH balance is {formatUnits(balance, 18)} wETH
       </div>
       <div className="flex m-8">
         <Button

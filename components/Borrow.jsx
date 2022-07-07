@@ -32,7 +32,7 @@ export default function Borrow(props) {
     contractAddress: addresses.Market,
     functionName: "borrow",
     params: {
-      asset: addresses.WETH,
+      asset: addresses.wETH,
       amount: amount,
       nftAddress: props.token_address,
       nftTokenID: props.token_id,

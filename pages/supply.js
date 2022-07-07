@@ -25,7 +25,7 @@ export default function Supply() {
     contractAddress: addresses.Market,
     functionName: "getReserveAddress",
     params: {
-      asset: addresses.WETH,
+      asset: addresses.wETH,
     },
   });
 
@@ -71,7 +71,7 @@ export default function Supply() {
     <div className={styles.container}>
       <Modal
         hasFooter={false}
-        title="Deposit WETH"
+        title="Deposit wETH"
         isVisible={visibleDepositModal}
         onCloseButtonPressed={function () {
           setVisibleDepositModal(false);
@@ -81,7 +81,7 @@ export default function Supply() {
       </Modal>
       <Modal
         hasFooter={false}
-        title="Withdraw WETH"
+        title="Withdraw wETH"
         isVisible={visibleWithdrawalModal}
         onCloseButtonPressed={function () {
           setVisibleWithdrawalModal(false);
@@ -120,7 +120,7 @@ export default function Supply() {
             </div>
           </div>
           <div className="flex flex-row">
-            Reserve Balance: {formatUnits(maxAmount, 18)} WETH
+            Reserve Balance: {formatUnits(maxAmount, 18)} wETH
           </div>
         </div>
         <div className="flex flex-col items-center m-16">

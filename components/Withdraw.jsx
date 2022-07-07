@@ -26,7 +26,7 @@ export default function Withdraw() {
     contractAddress: addresses.Market,
     functionName: "withdraw",
     params: {
-      asset: addresses.WETH,
+      asset: addresses.wETH,
       amount: amount,
     },
   });
@@ -36,7 +36,7 @@ export default function Withdraw() {
     contractAddress: addresses.Market,
     functionName: "getReserveAddress",
     params: {
-      asset: addresses.WETH,
+      asset: addresses.wETH,
     },
   });
 
@@ -92,7 +92,7 @@ export default function Withdraw() {
   return (
     <div className={styles.container}>
       <div className="flex">
-        Maximum withdrawal amount is {formatUnits(maxAmount, 18)} WETH
+        Maximum withdrawal amount is {formatUnits(maxAmount, 18)} wETH
       </div>
       <input
         className="flex border-indigo-200 border-2 rounded"

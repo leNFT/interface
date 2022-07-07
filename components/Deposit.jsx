@@ -29,7 +29,7 @@ export default function Deposit() {
     contractAddress: addresses.Market,
     functionName: "getReserveAddress",
     params: {
-      asset: addresses.WETH,
+      asset: addresses.wETH,
     },
   });
 
@@ -38,14 +38,14 @@ export default function Deposit() {
     contractAddress: addresses.Market,
     functionName: "deposit",
     params: {
-      asset: addresses.WETH,
+      asset: addresses.wETH,
       amount: amount,
     },
   });
 
   const { runContractFunction: getBalance } = useWeb3Contract({
     abi: erc20,
-    contractAddress: addresses.WETH,
+    contractAddress: addresses.wETH,
     functionName: "balanceOf",
     params: {
       _owner: account,
@@ -67,7 +67,7 @@ export default function Deposit() {
   async function getTokenAllowance() {
     const getAllowanceOptions = {
       abi: erc20,
-      contractAddress: addresses.WETH,
+      contractAddress: addresses.wETH,
       functionName: "allowance",
       params: {
         _owner: account,
@@ -146,7 +146,7 @@ export default function Deposit() {
   return (
     <div className={styles.container}>
       <div className="flex">
-        Maximum deposit amount is {formatUnits(balance, 18)} WETH
+        Maximum deposit amount is {formatUnits(balance, 18)} wETH
       </div>
       <input
         className="flex border-indigo-200 border-2 rounded"
@@ -198,7 +198,7 @@ export default function Deposit() {
               setApprovalLoading(true);
               const approveOptions = {
                 abi: erc20,
-                contractAddress: addresses.WETH,
+                contractAddress: addresses.wETH,
                 functionName: "approve",
                 params: {
                   _spender: reserveAddress,
@@ -210,7 +210,7 @@ export default function Deposit() {
               await approve({
                 onComplete: () => setApprovalLoading(false),
                 onSuccess: handleApprovalSuccess,
-                onError: (error) => setconsole.log(error),
+                onError: (error) => console.log(error),
                 params: approveOptions,
               });
             }}

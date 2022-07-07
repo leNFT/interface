@@ -27,7 +27,7 @@ export default function ReserveInfo() {
     contractAddress: addresses.Market,
     functionName: "getReserveAddress",
     params: {
-      asset: addresses.WETH,
+      asset: addresses.wETH,
     },
   });
 
@@ -117,18 +117,18 @@ export default function ReserveInfo() {
         </Typography>
       </div>
       <div>
-        <Typography variant="body18">WETH Reserve</Typography>
+        <Typography variant="body18">wETH Reserve</Typography>
         <LinearProgressWithLabel value={utilizationRate / 100} />
       </div>
 
       <div>
         <Typography variant="caption14">
-          Underlying is {formatUnits(underlyingBalance, 18)} WETH
+          Underlying is {formatUnits(underlyingBalance, 18)} wETH
         </Typography>
       </div>
       <div>
         <Typography variant="caption14">
-          Debt is {formatUnits(debt, 18)} WETH
+          Debt is {formatUnits(debt, 18)} wETH
         </Typography>
       </div>
     </div>

@@ -102,37 +102,34 @@ export default function Home() {
               {loans.map((loan, index) => (
                 <li key={loan.token_id} className="m-4">
                   <Card
-                    title="Loan"
-                    description={loan.token_id}
+                    title={"Loan #" + loan.token_id}
                     onClick={function () {
                       console.log("CLICK");
                       setSelectedLoan(loan);
                       setVisibleLoanModal(true);
                     }}
                   >
-                    <Tooltip content="Loan" position="top">
-                      <div className="p-2">
-                        {loan.token_uri ? (
-                          <div className="flex flex-col items-end gap-2">
-                            <Image
-                              loader={() => loan.token_uri}
-                              src={loan.token_uri}
-                              height="200"
-                              width="200"
-                            />
-                          </div>
-                        ) : (
-                          <div className="flex flex-col items-center gap-1">
-                            <Illustration
-                              height="180px"
-                              logo="chest"
-                              width="100%"
-                            />
-                            Debt: {formatUnits(loansDebt[index], 18)} WETH
-                          </div>
-                        )}
-                      </div>
-                    </Tooltip>
+                    <div className="p-2">
+                      {loan.token_uri ? (
+                        <div className="flex flex-col items-end gap-2">
+                          <Image
+                            loader={() => loan.token_uri}
+                            src={loan.token_uri}
+                            height="200"
+                            width="200"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center gap-1">
+                          <Illustration
+                            height="180px"
+                            logo="chest"
+                            width="100%"
+                          />
+                          Debt: {formatUnits(loansDebt[index], 18)} WETH
+                        </div>
+                      )}
+                    </div>
                   </Card>
                 </li>
               ))}

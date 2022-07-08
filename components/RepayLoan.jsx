@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import marketContract from "../contracts/Market.json";
 import loanCenterContract from "../contracts/LoanCenter.json";
 import erc20 from "../contracts/erc20.json";
+import Image from "next/image";
 
 export default function RepayLoan(props) {
   const [debt, setDebt] = useState("0");
@@ -85,9 +86,13 @@ export default function RepayLoan(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex">Loan ID is {props.loan_id}</div>
-      <div className="flex">Debt is {formatUnits(debt, 18)} wETH</div>
-      <div className="flex">
+      <div className="flex flex-row items-center justify-center m-2">
+        Loan ID is {props.loan_id}
+      </div>
+      <div className="flex flex-row items-center justify-center m-2">
+        Debt is {formatUnits(debt, 18)} wETH
+      </div>
+      <div className="flex flex-row items-center justify-center m-2">
         Your wETH balance is {formatUnits(balance, 18)} wETH
       </div>
       <div className="flex m-8">

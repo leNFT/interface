@@ -146,12 +146,12 @@ export default function Deposit() {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-row">
+      <div className="flex flex-row items-center justify-center">
         <div className="flex flex-col">
           Your balance is {formatUnits(balance, 18)} wETH
         </div>
         {BigNumber.from(0).eq(parseUnits(balance)) && (
-          <div className="flex flex-col ml-8">
+          <div className="flex flex-col ml-4">
             <Link
               href={
                 "https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=" +
@@ -170,7 +170,7 @@ export default function Deposit() {
           </div>
         )}
       </div>
-      <div className="flex flex-row">
+      <div className="flex flex-row items-center justify-center m-2">
         <input
           className="flex border-indigo-200 border-2 rounded"
           type="number"

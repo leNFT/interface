@@ -111,17 +111,23 @@ export default function Borrow(props) {
 
   return (
     <div className={styles.container}>
-      <ul className="flex">Asset address is {props.token_address}</ul>
-      <ul className="flex">Asset ID is {props.token_id}</ul>
-      <ul className="flex">
+      <div className="flex flex-row items-center justify-center m-2">
+        Asset address is {props.token_address}
+      </div>
+      <div className="flex flex-row items-center justify-center m-2">
+        Asset ID is {props.token_id}
+      </div>
+      <div className="flex flex-row items-center justify-center m-2">
         Maximum borrowable amount is {formatUnits(maxAmount, 18)} ETH
-      </ul>
-      <input
-        className="flex border-indigo-200 border-2 rounded"
-        type="number"
-        defaultValue="0"
-        onChange={handleInputChange}
-      />
+      </div>
+      <div className="flex flex-row items-center justify-center m-2">
+        <input
+          className="flex border-indigo-200 border-2 rounded"
+          type="number"
+          defaultValue="0"
+          onChange={handleInputChange}
+        />
+      </div>
       {approved ? (
         <div className="flex m-8">
           <Button

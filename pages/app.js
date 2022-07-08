@@ -136,6 +136,7 @@ export default function App() {
               {selectedLoan && (
                 <Modal
                   hasFooter={false}
+                  width="50%"
                   isVisible={visibleLoanModal}
                   onCloseButtonPressed={function () {
                     setVisibleLoanModal(false);
@@ -191,6 +192,7 @@ export default function App() {
               {selectedAsset && (
                 <Modal
                   hasFooter={false}
+                  width="50%"
                   isVisible={visibleAssetModal}
                   onCloseButtonPressed={function () {
                     setVisibleAssetModal(false);

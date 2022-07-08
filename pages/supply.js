@@ -73,6 +73,7 @@ export default function Supply() {
         hasFooter={false}
         title="Deposit wETH"
         isVisible={visibleDepositModal}
+        width="50%"
         onCloseButtonPressed={function () {
           setVisibleDepositModal(false);
         }}
@@ -82,6 +83,7 @@ export default function Supply() {
       <Modal
         hasFooter={false}
         title="Withdraw wETH"
+        width="50%"
         isVisible={visibleWithdrawalModal}
         onCloseButtonPressed={function () {
           setVisibleWithdrawalModal(false);

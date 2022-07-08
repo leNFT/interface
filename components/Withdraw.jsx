@@ -91,15 +91,18 @@ export default function Withdraw() {
 
   return (
     <div className={styles.container}>
-      <div className="flex">
+      <div className="flex flex-row items-center justify-center">
         Maximum withdrawal amount is {formatUnits(maxAmount, 18)} wETH
       </div>
-      <input
-        className="flex border-indigo-200 border-2 rounded"
-        type="number"
-        defaultValue="0"
-        onChange={handleInputChange}
-      />
+      <div className="flex flex-row items-center justify-center m-2">
+        <input
+          className="flex border-indigo-200 border-2 rounded"
+          type="number"
+          defaultValue="0"
+          onChange={handleInputChange}
+        />
+      </div>
+
       <div className="m-8">
         <Button
           text="Withdraw"

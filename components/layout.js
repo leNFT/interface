@@ -6,7 +6,7 @@ export default function Layout({ children }) {
   return (
     <>
       <Head>
-        <title>leNFT</title>
+        <title>leNFT App</title>
         <meta name="description" content="Lend NFT" />
         <link rel="icon" href="/favicon.ico" />
       </Head>

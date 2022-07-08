@@ -117,7 +117,7 @@ export default function ReserveInfo() {
         </Typography>
       </div>
       <div>
-        <Typography variant="body18">wETH Reserve</Typography>
+        <Typography variant="body18">wETH Reserve:</Typography>
         <LinearProgressWithLabel value={utilizationRate / 100} />
       </div>
 

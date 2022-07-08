@@ -9,7 +9,7 @@ import Link from "next/link";
 import marketContract from "../contracts/Market.json";
 import erc20 from "../contracts/erc20.json";
 
-export default function Deposit() {
+export default function Deposit(props) {
   const { isWeb3Enabled, chainId, account } = useMoralis();
   const [amount, setAmount] = useState("0");
   const [balance, setBalance] = useState("0");
@@ -115,6 +115,7 @@ export default function Deposit() {
 
   const handleDepositSuccess = async function () {
     console.log("Deposited", amount);
+    props.setVisibility(false);
     updateTokenBalance();
     dispatch({
       type: "info",

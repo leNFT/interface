@@ -78,7 +78,7 @@ export default function Supply() {
           setVisibleDepositModal(false);
         }}
       >
-        <Deposit />
+        <Deposit setVisibility={setVisibleDepositModal} />
       </Modal>
       <Modal
         hasFooter={false}
@@ -89,7 +89,7 @@ export default function Supply() {
           setVisibleWithdrawalModal(false);
         }}
       >
-        <Withdraw />
+        <Withdraw setVisibility={setVisibleWithdrawalModal} />
       </Modal>
       <div className="flex items-center justify-center">
         <div className="flex flex-col items-center m-16">

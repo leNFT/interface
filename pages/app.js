@@ -142,7 +142,10 @@ export default function App() {
                     setVisibleLoanModal(false);
                   }}
                 >
-                  <RepayLoan loan_id={selectedLoan.token_id} />
+                  <RepayLoan
+                    setVisibility={setVisibleLoanModal}
+                    loan_id={selectedLoan.token_id}
+                  />
                 </Modal>
               )}
             </ul>
@@ -199,6 +202,7 @@ export default function App() {
                   }}
                 >
                   <Borrow
+                    setVisibility={setVisibleAssetModal}
                     token_address={selectedAsset.token_address}
                     token_id={selectedAsset.token_id}
                   />

@@ -75,6 +75,7 @@ export default function RepayLoan(props) {
   }, [isWeb3Enabled]);
 
   const handleRepaySuccess = async function () {
+    props.setVisibility(false);
     dispatch({
       type: "info",
       message: "Repay Successful!",

@@ -72,6 +72,7 @@ export default function Withdraw() {
   }, [isWeb3Enabled]);
 
   const handleWithdrawalSuccess = async function () {
+    props.setVisibility(false);
     dispatch({
       type: "info",
       message: "Withdrawal Successful!",

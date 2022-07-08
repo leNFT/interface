@@ -81,6 +81,7 @@ export default function Borrow(props) {
   }, [isWeb3Enabled, props.token_id]);
 
   const handleBorrowSuccess = async function () {
+    props.setVisibility(false);
     dispatch({
       type: "info",
       message: "Borrow Successful!",

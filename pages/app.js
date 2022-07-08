@@ -65,7 +65,7 @@ export default function App() {
         updatedSupportedAssets.push(userNFTs[i]);
       } else {
         // Get max 5 unsupported assets
-        if (updatedUnsupportedAssets.length < 5) {
+        if (updatedUnsupportedAssets.length < 9) {
           updatedUnsupportedAssets.push(userNFTs[i]);
         }
       }
@@ -215,10 +215,25 @@ export default function App() {
                   >
                     <Tooltip content="Coming Soon!" position="top">
                       <div className="p-2">
-                        <div className="flex flex-col items-center gap-1">
-                          <Illustration height="180px" logo="lazyNft" />
-                          Unsupported Asset
-                        </div>
+                        {unsupportedAsset.token_uri ? (
+                          <div className="flex flex-col items-end gap-2">
+                            <Image
+                              loader={() => unsupportedAsset.token_uri}
+                              src={unsupportedAsset.token_uri}
+                              height="140"
+                              width="140"
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center gap-1">
+                            <Illustration
+                              height="140px"
+                              logo="lazyNft"
+                              width="100%"
+                            />
+                            Loading...
+                          </div>
+                        )}
                       </div>
                     </Tooltip>
                   </Card>

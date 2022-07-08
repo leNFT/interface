@@ -55,7 +55,7 @@ export default function ReserveInfo() {
   const { runContractFunction: getSupplyRate } = useWeb3Contract({
     abi: reserveContract.abi,
     contractAddress: reserveAddress,
-    functionName: "getCumulativeBorrowRate",
+    functionName: "getSupplyRate",
     params: {},
   });
 

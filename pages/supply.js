@@ -120,7 +120,7 @@ export default function Supply() {
             </div>
           </div>
           <div className="flex flex-row">
-            Reserve Balance: {formatUnits(maxAmount, 18)} wETH
+            My Reserve Balance: {formatUnits(maxAmount, 18)} wETH
           </div>
         </div>
         <div className="flex flex-col items-center m-16">

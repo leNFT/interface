@@ -5,6 +5,7 @@ import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import marketContract from "../contracts/Market.json";
 import erc20 from "../contracts/erc20.json";
 
@@ -145,15 +146,38 @@ export default function Deposit() {
 
   return (
     <div className={styles.container}>
-      <div className="flex">
-        Maximum deposit amount is {formatUnits(balance, 18)} wETH
+      <div className="flex flex-row">
+        <div className="flex flex-col">
+          Your balance is {formatUnits(balance, 18)} wETH
+        </div>
+        {BigNumber.from(0).eq(parseUnits(balance)) && (
+          <div className="flex flex-col ml-8">
+            <Link
+              href={
+                "https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=" +
+                addresses.wETH
+              }
+            >
+              <a target="_blank" rel="noopener noreferrer">
+                <Button
+                  text="Wrap ETH"
+                  theme="ghost"
+                  type="button"
+                  size="small"
+                />
+              </a>
+            </Link>
+          </div>
+        )}
       </div>
-      <input
-        className="flex border-indigo-200 border-2 rounded"
-        type="number"
-        defaultValue="0"
-        onChange={handleInputChange}
-      />
+      <div className="flex flex-row">
+        <input
+          className="flex border-indigo-200 border-2 rounded"
+          type="number"
+          defaultValue="0"
+          onChange={handleInputChange}
+        />
+      </div>
       {approved ? (
         <div className="m-8">
           <Button

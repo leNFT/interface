@@ -110,6 +110,7 @@ export default function Withdraw() {
           isLoading={withdrawalLoading}
           onClick={async function () {
             if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
+              setWithdrawalLoading(true);
               await withdraw({
                 onComplete: () => setWithdrawalLoading(false),
                 onSuccess: handleWithdrawalSuccess,

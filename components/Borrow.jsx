@@ -159,7 +159,7 @@ export default function Borrow(props) {
               if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
                 setBorrowLoading(true);
                 await borrow({
-                  onComplete: setBorrowLoading(false),
+                  onComplete: () => setBorrowLoading(false),
                   onSuccess: handleBorrowSuccess,
                   onError: (error) => console.log(error),
                 });

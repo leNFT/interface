@@ -108,6 +108,7 @@ export default function RepayLoan(props) {
           isLoading={repayLoading}
           onClick={async function () {
             if (BigNumber.from(debt).lte(BigNumber.from(balance))) {
+              setRepayLoading(true);
               await repayLoan({
                 onComplete: () => setRepayLoading(false),
                 onSuccess: handleRepaySuccess,

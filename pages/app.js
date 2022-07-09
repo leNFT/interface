@@ -93,67 +93,62 @@ export default function App() {
   return (
     <div className={styles.container}>
       <div className={styles.main}>
-        {isWeb3Enabled ? (
-          <div>
-            {loans.length > 0 && (
-              <Typography variant="subtitle1">Loans:</Typography>
-            )}
-            <ul className="flex">
-              {loans.map((loan, index) => (
-                <li key={loan.token_id} className="m-4">
-                  <Card
-                    title={"Loan #" + loan.token_id}
-                    onClick={function () {
-                      console.log("CLICK");
-                      setSelectedLoan(loan);
-                      setVisibleLoanModal(true);
-                    }}
-                  >
-                    <div className="p-2">
-                      {loan.token_uri ? (
-                        <div className="flex flex-col items-end gap-2">
-                          <Image
-                            loader={() => loan.token_uri}
-                            src={loan.token_uri}
-                            height="200"
-                            width="200"
-                          />
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center gap-1">
-                          <Illustration
-                            height="180px"
-                            logo="chest"
-                            width="100%"
-                          />
-                          Debt: {formatUnits(loansDebt[index], 18)} wETH
-                        </div>
-                      )}
+        {loans.length > 0 && (
+          <Typography variant="subtitle1">Loans:</Typography>
+        )}
+        <ul className="flex">
+          {loans.map((loan, index) => (
+            <li key={loan.token_id} className="m-4">
+              <Card
+                title={"Loan #" + loan.token_id}
+                onClick={function () {
+                  console.log("CLICK");
+                  setSelectedLoan(loan);
+                  setVisibleLoanModal(true);
+                }}
+              >
+                <div className="p-2">
+                  {loan.token_uri ? (
+                    <div className="flex flex-col items-end gap-2">
+                      <Image
+                        loader={() => loan.token_uri}
+                        src={loan.token_uri}
+                        height="200"
+                        width="200"
+                      />
                     </div>
-                  </Card>
-                </li>
-              ))}
-              {selectedLoan && (
-                <Modal
-                  hasFooter={false}
-                  width="50%"
-                  isVisible={visibleLoanModal}
-                  onCloseButtonPressed={function () {
-                    setVisibleLoanModal(false);
-                  }}
-                >
-                  <RepayLoan
-                    setVisibility={setVisibleLoanModal}
-                    loan_id={selectedLoan.token_id}
-                  />
-                </Modal>
-              )}
-            </ul>
-            {supportedAssets.length == 0 && unsupportedAssets.length == 0 ? (
-              <Typography variant="body18">No NFT assets found :/</Typography>
-            ) : (
-              <Typography variant="subtitle1">Assets:</Typography>
-            )}
+                  ) : (
+                    <div className="flex flex-col items-center gap-1">
+                      <Illustration height="180px" logo="chest" width="100%" />
+                      Debt: {formatUnits(loansDebt[index], 18)} wETH
+                    </div>
+                  )}
+                </div>
+              </Card>
+            </li>
+          ))}
+          {selectedLoan && (
+            <Modal
+              hasFooter={false}
+              width="50%"
+              isVisible={visibleLoanModal}
+              onCloseButtonPressed={function () {
+                setVisibleLoanModal(false);
+              }}
+            >
+              <RepayLoan
+                setVisibility={setVisibleLoanModal}
+                loan_id={selectedLoan.token_id}
+              />
+            </Modal>
+          )}
+        </ul>
+        {supportedAssets.length == 0 && unsupportedAssets.length == 0 ? (
+          <Typography variant="body18">No NFT assets found :/</Typography>
+        ) : (
+          <div>
+            <Typography variant="subtitle1">Assets:</Typography>
+
             <div className="flex border-8 rounded-3xl m-2 p-2">
               {supportedAssets.map((supportedAsset) => (
                 <div key={supportedAsset.token_hash} className="m-4">
@@ -249,10 +244,6 @@ export default function App() {
               ))}
             </div>
           </div>
-        ) : (
-          <Typography variant="body18">
-            Please connect a Web 3 wallet.
-          </Typography>
         )}
       </div>
     </div>

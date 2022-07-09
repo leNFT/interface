@@ -11,6 +11,7 @@ function MyApp({ Component, pageProps }) {
   const isIndex = router.pathname == "/";
   console.log("path", router.pathname);
   const LayoutComponent = isIndex ? SplashLayout : Layout;
+
   return (
     <MoralisProvider
       serverUrl="https://mrmnjfhprkn8.usemoralis.com:2053/server"

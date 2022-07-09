@@ -93,9 +93,7 @@ export default function App() {
   return (
     <div className={styles.container}>
       <div className={styles.main}>
-        {loans.length > 0 && (
-          <Typography variant="subtitle1">Loans:</Typography>
-        )}
+        {loans.length > 0 && <Typography variant="h1">Loans:</Typography>}
         <ul className="flex">
           {loans.map((loan, index) => (
             <li key={loan.token_id} className="m-4">
@@ -146,103 +144,106 @@ export default function App() {
         {supportedAssets.length == 0 && unsupportedAssets.length == 0 ? (
           <Typography variant="body18">No NFT assets found :/</Typography>
         ) : (
-          <div>
-            <Typography variant="subtitle1">Assets:</Typography>
-
-            <div className="flex border-8 rounded-3xl m-2 p-2">
-              {supportedAssets.map((supportedAsset) => (
-                <div key={supportedAsset.token_hash} className="m-4">
-                  <Card
-                    title={supportedAsset.name}
-                    description={supportedAsset.token_id}
-                    onClick={function () {
-                      console.log("CLICK");
-                      setSelectedAsset(supportedAsset);
-                      setVisibleAssetModal(true);
-                    }}
-                  >
-                    <Tooltip content="Supported Asset" position="top">
-                      <div className="p-2">
-                        {supportedAsset.token_uri ? (
-                          <div className="flex flex-col items-end gap-2">
-                            <Image
-                              loader={() => supportedAsset.token_uri}
-                              src={supportedAsset.token_uri}
-                              height="200"
-                              width="200"
-                            />
-                          </div>
-                        ) : (
-                          <div className="flex flex-col items-center gap-1">
-                            <Illustration
-                              height="180px"
-                              logo="token"
-                              width="100%"
-                            />
-                            Loading...
-                          </div>
-                        )}
-                      </div>
-                    </Tooltip>
-                  </Card>
-                </div>
-              ))}
-              {selectedAsset && (
-                <Modal
-                  hasFooter={false}
-                  width="50%"
-                  isVisible={visibleAssetModal}
-                  onCloseButtonPressed={function () {
-                    setVisibleAssetModal(false);
+          <div className="flex mt-8">
+            <Typography variant="h1">Assets:</Typography>
+          </div>
+        )}
+        {supportedAssets.length != 0 && (
+          <div className="flex border-8 rounded-3xl m-2 p-2">
+            {supportedAssets.map((supportedAsset) => (
+              <div key={supportedAsset.token_hash} className="m-4">
+                <Card
+                  title={supportedAsset.name}
+                  description={supportedAsset.token_id}
+                  onClick={function () {
+                    console.log("CLICK");
+                    setSelectedAsset(supportedAsset);
+                    setVisibleAssetModal(true);
                   }}
                 >
-                  <Borrow
-                    setVisibility={setVisibleAssetModal}
-                    token_address={selectedAsset.token_address}
-                    token_id={selectedAsset.token_id}
-                    token_uri={selectedAsset.token_uri}
-                  />
-                </Modal>
-              )}
-            </div>
-            <div
-              id="unsupportedAssetsContainer"
-              className="flex border-2 rounded-3xl m-2 p-2"
-            >
-              {unsupportedAssets.map((unsupportedAsset) => (
-                <div key={unsupportedAsset.token_hash} className="m-4">
-                  <Card
-                    title={unsupportedAsset.name}
-                    description={unsupportedAsset.token_id}
-                    isDisabled={true}
-                  >
-                    <Tooltip content="Coming Soon!" position="top">
-                      <div className="p-2">
-                        {unsupportedAsset.token_uri ? (
-                          <div className="flex flex-col items-end gap-2">
-                            <Image
-                              loader={() => unsupportedAsset.token_uri}
-                              src={unsupportedAsset.token_uri}
-                              height="140"
-                              width="140"
-                            />
-                          </div>
-                        ) : (
-                          <div className="flex flex-col items-center gap-1">
-                            <Illustration
-                              height="140px"
-                              logo="lazyNft"
-                              width="100%"
-                            />
-                            Loading...
-                          </div>
-                        )}
-                      </div>
-                    </Tooltip>
-                  </Card>
-                </div>
-              ))}
-            </div>
+                  <Tooltip content="Supported Asset" position="top">
+                    <div className="p-2">
+                      {supportedAsset.token_uri ? (
+                        <div className="flex flex-col items-end gap-2">
+                          <Image
+                            loader={() => supportedAsset.token_uri}
+                            src={supportedAsset.token_uri}
+                            height="200"
+                            width="200"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center gap-1">
+                          <Illustration
+                            height="180px"
+                            logo="token"
+                            width="100%"
+                          />
+                          Loading...
+                        </div>
+                      )}
+                    </div>
+                  </Tooltip>
+                </Card>
+              </div>
+            ))}
+            {selectedAsset && (
+              <Modal
+                hasFooter={false}
+                width="50%"
+                isVisible={visibleAssetModal}
+                onCloseButtonPressed={function () {
+                  setVisibleAssetModal(false);
+                }}
+              >
+                <Borrow
+                  setVisibility={setVisibleAssetModal}
+                  token_address={selectedAsset.token_address}
+                  token_id={selectedAsset.token_id}
+                  token_uri={selectedAsset.token_uri}
+                />
+              </Modal>
+            )}
+          </div>
+        )}
+        {unsupportedAssets.length != 0 && (
+          <div
+            id="unsupportedAssetsContainer"
+            className="flex border-2 rounded-3xl m-2 p-2"
+          >
+            {unsupportedAssets.map((unsupportedAsset) => (
+              <div key={unsupportedAsset.token_hash} className="m-4">
+                <Card
+                  title={unsupportedAsset.name}
+                  description={unsupportedAsset.token_id}
+                  isDisabled={true}
+                >
+                  <Tooltip content="Coming Soon!" position="top">
+                    <div className="p-2">
+                      {unsupportedAsset.token_uri ? (
+                        <div className="flex flex-col items-end gap-2">
+                          <Image
+                            loader={() => unsupportedAsset.token_uri}
+                            src={unsupportedAsset.token_uri}
+                            height="140"
+                            width="140"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center gap-1">
+                          <Illustration
+                            height="140px"
+                            logo="lazyNft"
+                            width="100%"
+                          />
+                          Loading...
+                        </div>
+                      )}
+                    </div>
+                  </Tooltip>
+                </Card>
+              </div>
+            ))}
           </div>
         )}
       </div>

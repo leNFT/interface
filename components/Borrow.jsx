@@ -85,7 +85,7 @@ export default function Borrow(props) {
     props.setVisibility(false);
     dispatch({
       type: "info",
-      message: "Borrow Successful!",
+      message: "Loan Created!",
       title: "Notification",
       position: "topR",
       icon: "bell",

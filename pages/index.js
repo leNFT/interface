@@ -3,6 +3,7 @@ import reserveContract from "../contracts/Reserve.json";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useMoralisWeb3Api, useMoralisWeb3ApiCall } from "react-moralis";
+import { HashRouter } from "react-router-dom";
 
 export default function Home() {
   const [borrowRate, setBorrowRate] = useState(0);
@@ -69,11 +70,13 @@ export default function Home() {
           </div>
         </div>
         <div className="flex flex-row mt-32">
-          <Link href="/app">
-            <a>
-              <h1 className="font-bold text-3xl">go to app.</h1>
-            </a>
-          </Link>
+          <HashRouter>
+            <Link href="/app">
+              <a>
+                <h1 className="font-bold text-3xl">go to app.</h1>
+              </a>
+            </Link>
+          </HashRouter>
         </div>
         <div className="flex flex-row mb-16">(goerli testnet)</div>
         <div className="flex flex-row m-16 max-w-lg">

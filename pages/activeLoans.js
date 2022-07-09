@@ -4,6 +4,7 @@ import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useMoralisWeb3Api, useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
 import { Card, Tooltip, Illustration, Modal, Typography } from "web3uikit";
+import Image from "next/image";
 
 export default function ActiveLoans() {
   const [activeLoans, setActiveLoans] = useState([]);

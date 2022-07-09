@@ -71,6 +71,7 @@ export default function RepayLoan(props) {
     if (isWeb3Enabled) {
       updateTokenBalance();
       getLoanDebt();
+      //getCollateralDetails();
     }
   }, [isWeb3Enabled]);
 

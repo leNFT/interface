@@ -76,7 +76,7 @@ export default function Home() {
           </Link>
         </div>
         <div className="flex flex-row mb-16">(goerli testnet)</div>
-        <div className="flex flex-row m-16">
+        <div className="flex flex-row m-16 max-w-lg">
           leNFT is a peer-to-pool NFT lending market. it allows you to get
           instant liquidity using your NFTs as collateral
         </div>

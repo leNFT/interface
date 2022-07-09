@@ -154,9 +154,9 @@ export default function App() {
             ) : (
               <Typography variant="subtitle1">Assets:</Typography>
             )}
-            <ul className="flex">
+            <div className="flex border-8 rounded-3xl m-2 p-2">
               {supportedAssets.map((supportedAsset) => (
-                <li key={supportedAsset.token_hash} className="m-4">
+                <div key={supportedAsset.token_hash} className="m-4">
                   <Card
                     title={supportedAsset.name}
                     description={supportedAsset.token_id}
@@ -190,7 +190,7 @@ export default function App() {
                       </div>
                     </Tooltip>
                   </Card>
-                </li>
+                </div>
               ))}
               {selectedAsset && (
                 <Modal
@@ -205,11 +205,15 @@ export default function App() {
                     setVisibility={setVisibleAssetModal}
                     token_address={selectedAsset.token_address}
                     token_id={selectedAsset.token_id}
+                    token_uri={selectedAsset.token_uri}
                   />
                 </Modal>
               )}
-            </ul>
-            <div id="unsupportedAssetsContainer" className="container">
+            </div>
+            <div
+              id="unsupportedAssetsContainer"
+              className="flex border-2 rounded-3xl m-2 p-2"
+            >
               {unsupportedAssets.map((unsupportedAsset) => (
                 <div key={unsupportedAsset.token_hash} className="m-4">
                   <Card

@@ -9,6 +9,7 @@ import marketContract from "../contracts/Market.json";
 import nftOracleContract from "../contracts/NFTOracle.json";
 import "bignumber.js";
 import erc721 from "../contracts/erc721.json";
+import Image from "next/image";
 
 export default function Borrow(props) {
   const [amount, setAmount] = useState("0");
@@ -112,8 +113,23 @@ export default function Borrow(props) {
 
   return (
     <div className={styles.container}>
+      {props.token_uri ? (
+        <div className="flex flex-col items-center">
+          <Image
+            loader={() => props.token_uri}
+            src={props.token_uri}
+            height="200"
+            width="200"
+          />
+        </div>
+      ) : (
+        <div className="flex flex-col items-center gap-1">
+          <Illustration height="180px" logo="token" width="100%" />
+          Loading...
+        </div>
+      )}
       <div className="flex flex-row items-center justify-center m-2">
-        Asset address is {props.token_address}
+        Address is {props.token_address}
       </div>
       <div className="flex flex-row items-center justify-center m-2">
         Asset ID is {props.token_id}

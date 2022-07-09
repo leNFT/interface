@@ -1,5 +1,5 @@
 import styles from "../styles/Home.module.css";
-import { Button, Modal } from "web3uikit";
+import { Button, Modal, Typography } from "web3uikit";
 import ReserveDetails from "../components/ReserveDetails";
 import contractAddresses from "../contractAddresses.json";
 import { useState, useEffect } from "react";
@@ -86,6 +86,14 @@ export default function Supply() {
       </Modal>
       <div className="flex items-center justify-center">
         <div className="flex flex-col items-center m-16">
+          <div className="flex flex-col m-4 border-4 rounded-2xl">
+            <div className="flex flex-row m-2">
+              <Typography variant="subtitle1">My Reserve Balance:</Typography>
+            </div>
+            <div className="flex flex-row ml-2">
+              {formatUnits(maxAmount, 18)} wETH
+            </div>
+          </div>
           <div className="flex flex-row">
             <div className="m-4">
               <Button
@@ -113,9 +121,6 @@ export default function Supply() {
                 }}
               />
             </div>
-          </div>
-          <div className="flex flex-row">
-            My Reserve Balance: {formatUnits(maxAmount, 18)} wETH
           </div>
         </div>
         <div className="flex flex-col items-center m-16">

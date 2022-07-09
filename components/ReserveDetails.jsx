@@ -113,11 +113,11 @@ export default function ReserveInfo() {
     <div className={styles.container}>
       <div className="mb-8">
         <Typography variant="h1" color="blueCloudDark">
-          Supply Rate is {supplyRate / 100}%
+          Supply Rate @ {supplyRate / 100}%
         </Typography>
       </div>
       <div>
-        <Typography variant="body18">wETH Reserve:</Typography>
+        <Typography variant="body16">Utilization Rate:</Typography>
         <LinearProgressWithLabel value={utilizationRate / 100} />
       </div>
 

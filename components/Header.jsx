@@ -5,7 +5,6 @@ import marketContract from "../contracts/Market.json";
 import reserveContract from "../contracts/Reserve.json";
 import Link from "next/link";
 import { ConnectButton, Button } from "web3uikit";
-import { HashRouter } from "react-router-dom";
 
 export default function Header() {
   const [borrowRate, setBorrowRate] = useState(0);
@@ -72,42 +71,40 @@ export default function Header() {
 
   return (
     <div className="p-5 border-b-2 flex flex-row justify-between items-center">
-      <HashRouter>
-        <div className="flex flex-col items-center justify-content">
-          <Link href="/">
-            <a target="_blank" rel="noopener noreferrer">
-              <h1 className="py-4 px-4 font-bold text-3xl">leNFT</h1>
-            </a>
+      <div className="flex flex-col items-center justify-content">
+        <Link href="/">
+          <a target="_blank" rel="noopener noreferrer">
+            <h1 className="py-4 px-4 font-bold text-3xl">leNFT</h1>
+          </a>
+        </Link>
+        <h1 className="font-bold text-xs">
+          {isWeb3Enabled && (
+            <div className="flex flex-row items-center">
+              Borrow Rate @ {borrowRate / 100}%
+            </div>
+          )}
+        </h1>
+      </div>
+      <div className="flex flex-row items-center">
+        <div className="flex m-2">
+          <Link href="/app">
+            <Button text="Home" size="large" theme="outline"></Button>
           </Link>
-          <h1 className="font-bold text-xs">
-            {isWeb3Enabled && (
-              <div className="flex flex-row items-center">
-                Borrow Rate @ {borrowRate / 100}%
-              </div>
-            )}
-          </h1>
         </div>
-        <div className="flex flex-row items-center">
-          <div className="flex m-2">
-            <Link href="/app">
-              <Button text="Home" size="large" theme="outline"></Button>
-            </Link>
-          </div>
-          <div className="flex m-2">
-            <Link href="/supply">
-              <Button
-                color="green"
-                text="Supply"
-                size="large"
-                theme="colored"
-              ></Button>
-            </Link>
-          </div>
-          <div className="flex m-2">
-            <ConnectButton moralisAuth={false} />
-          </div>
+        <div className="flex m-2">
+          <Link href="/supply">
+            <Button
+              color="green"
+              text="Supply"
+              size="large"
+              theme="colored"
+            ></Button>
+          </Link>
         </div>
-      </HashRouter>
+        <div className="flex m-2">
+          <ConnectButton moralisAuth={false} />
+        </div>
+      </div>
     </div>
   );
 }

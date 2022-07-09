@@ -4,7 +4,7 @@ import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
 import styles from "../styles/Home.module.css";
-import { useNotification, Button, Input } from "web3uikit";
+import { useNotification, Button, Input, Illustration } from "web3uikit";
 import marketContract from "../contracts/Market.json";
 import nftOracleContract from "../contracts/NFTOracle.json";
 import "bignumber.js";

@@ -1,6 +1,6 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits, parseUnits } from "@ethersproject/units";
-import { useNotification, Button } from "web3uikit";
+import { useNotification, Button, Input } from "web3uikit";
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { useWeb3Contract, useMoralis } from "react-moralis";
@@ -171,11 +171,11 @@ export default function Deposit(props) {
           </div>
         )}
       </div>
-      <div className="flex flex-row items-center justify-center m-2">
-        <input
-          className="flex border-indigo-200 border-2 rounded"
+      <div className="flex flex-row items-center justify-center m-8">
+        <Input
+          label="Amount"
           type="number"
-          defaultValue="0"
+          disabled={!approved}
           onChange={handleInputChange}
         />
       </div>

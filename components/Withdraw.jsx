@@ -1,7 +1,7 @@
 import { useNotification } from "web3uikit";
 import { BigNumber } from "@ethersproject/bignumber";
 import styles from "../styles/Home.module.css";
-import { Button } from "web3uikit";
+import { Button, Input } from "web3uikit";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import contractAddresses from "../contractAddresses.json";
 import { useWeb3Contract, useMoralis } from "react-moralis";
@@ -95,13 +95,8 @@ export default function Withdraw() {
       <div className="flex flex-row items-center justify-center">
         Maximum withdrawal amount is {formatUnits(maxAmount, 18)} wETH
       </div>
-      <div className="flex flex-row items-center justify-center m-2">
-        <input
-          className="flex border-indigo-200 border-2 rounded"
-          type="number"
-          defaultValue="0"
-          onChange={handleInputChange}
-        />
+      <div className="flex flex-row items-center justify-center m-8">
+        <Input label="Amount" type="number" onChange={handleInputChange} />
       </div>
 
       <div className="m-8">

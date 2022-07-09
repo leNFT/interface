@@ -60,13 +60,6 @@ export default function Supply() {
     }
   }, [isWeb3Enabled]);
 
-  //Run once
-  useEffect(() => {
-    if (isWeb3Enabled) {
-      updateMaxAmount();
-    }
-  }, [isWeb3Enabled]);
-
   return (
     <div className={styles.container}>
       <Modal

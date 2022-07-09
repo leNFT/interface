@@ -4,7 +4,7 @@ import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
 import styles from "../styles/Home.module.css";
-import { useNotification, Button } from "web3uikit";
+import { useNotification, Button, Input } from "web3uikit";
 import marketContract from "../contracts/Market.json";
 import nftOracleContract from "../contracts/NFTOracle.json";
 import "bignumber.js";
@@ -121,11 +121,11 @@ export default function Borrow(props) {
       <div className="flex flex-row items-center justify-center m-2">
         Maximum borrowable amount is {formatUnits(maxAmount, 18)} ETH
       </div>
-      <div className="flex flex-row items-center justify-center m-2">
-        <input
-          className="flex border-indigo-200 border-2 rounded"
+      <div className="flex flex-row items-center justify-center m-8">
+        <Input
+          label="Amount"
           type="number"
-          defaultValue="0"
+          disabled={!approved}
           onChange={handleInputChange}
         />
       </div>

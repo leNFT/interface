@@ -153,8 +153,7 @@ export default function App() {
             {supportedAssets.map((supportedAsset) => (
               <div key={supportedAsset.token_hash} className="m-4">
                 <Card
-                  title={supportedAsset.name}
-                  description={supportedAsset.token_id}
+                  title={supportedAsset.name + " #" + supportedAsset.token_id}
                   onClick={function () {
                     console.log("CLICK");
                     setSelectedAsset(supportedAsset);
@@ -214,8 +213,9 @@ export default function App() {
             {unsupportedAssets.map((unsupportedAsset) => (
               <div key={unsupportedAsset.token_hash} className="m-4">
                 <Card
-                  title={unsupportedAsset.name}
-                  description={unsupportedAsset.token_id}
+                  title={
+                    unsupportedAsset.name + " #" + unsupportedAsset.token_id
+                  }
                   isDisabled={true}
                 >
                   <Tooltip content="Coming Soon!" position="top">

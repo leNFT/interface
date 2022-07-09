@@ -90,7 +90,7 @@ export default function Supply() {
             <div className="flex flex-row m-2">
               <Typography variant="subtitle1">My Reserve Balance:</Typography>
             </div>
-            <div className="flex flex-row ml-2">
+            <div className="flex flex-row mx-2 mb-2">
               {formatUnits(maxAmount, 18)} wETH
             </div>
           </div>

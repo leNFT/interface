@@ -9,7 +9,7 @@ import { useState, useEffect } from "react";
 import marketContract from "../contracts/Market.json";
 import reserveContract from "../contracts/Reserve.json";
 
-export default function Withdraw() {
+export default function Withdraw(props) {
   const { isWeb3Enabled, chainId, account } = useMoralis();
   const [withdrawalLoading, setWithdrawalLoading] = useState(false);
   const [amount, setAmount] = useState("0");

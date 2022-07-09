@@ -135,7 +135,7 @@ export default function Borrow(props) {
         Asset ID is {props.token_id}
       </div>
       <div className="flex flex-row items-center justify-center m-2">
-        Maximum borrowable amount is {formatUnits(maxAmount, 18)} ETH
+        Maximum borrowable amount is {formatUnits(maxAmount, 18)} WETH
       </div>
       <div className="flex flex-row items-center justify-center m-8">
         <Input
@@ -148,12 +148,12 @@ export default function Borrow(props) {
       {approved ? (
         <div className="flex m-8">
           <Button
-            text="Borrow Asset"
+            text="Create Loan"
             isFullWidth
             loadingProps={{
               spinnerColor: "#000000",
             }}
-            loadingText="Borrowing Asset"
+            loadingText="Creating Loan"
             isLoading={borrowLoading}
             onClick={async function () {
               if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {

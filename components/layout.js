@@ -17,25 +17,27 @@ export default function Layout({ children }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      {isWeb3Enabled ? (
-        supportedChains.includes(chainId) ? (
-          <main>{children}</main>
+      <main>
+        {isWeb3Enabled ? (
+          supportedChains.includes(chainId) ? (
+            <div>{children}</div>
+          ) : (
+            <div className={styles.container}>
+              <div className={styles.main}>
+                <Typography variant="body18">Chain ID not supported</Typography>
+              </div>
+            </div>
+          )
         ) : (
           <div className={styles.container}>
             <div className={styles.main}>
-              <Typography variant="body18">Chain ID not supported</Typography>
+              <Typography variant="body18">
+                Please connect a Web 3 wallet.
+              </Typography>
             </div>
           </div>
-        )
-      ) : (
-        <div className={styles.container}>
-          <div className={styles.main}>
-            <Typography variant="body18">
-              Please connect a Web 3 wallet.
-            </Typography>
-          </div>
-        </div>
-      )}
+        )}
+      </main>
       <Footer />
     </>
   );

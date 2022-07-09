@@ -17,13 +17,11 @@ export default function Deposit(props) {
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [depositLoading, setDepositLoading] = useState(false);
   const [reserveAddress, setReserveAddress] = useState("");
-
+  const dispatch = useNotification();
   const addresses =
     chainId in contractAddresses
       ? contractAddresses[chainId]
       : contractAddresses["0x1"];
-
-  const dispatch = useNotification();
 
   const { runContractFunction: getReserveAddress } = useWeb3Contract({
     abi: marketContract.abi,

@@ -7,6 +7,7 @@ import styles from "../styles/Home.module.css";
 import { useNotification, Button, Input, Illustration } from "web3uikit";
 import marketContract from "../contracts/Market.json";
 import nftOracleContract from "../contracts/NFTOracle.json";
+import reserveContract from "../contracts/Reserve.json";
 import "bignumber.js";
 import erc721 from "../contracts/erc721.json";
 import Image from "next/image";
@@ -16,6 +17,7 @@ export default function Borrow(props) {
   const [maxAmount, setMaxAmount] = useState("0");
   const [approved, setApproved] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
+  const [reserveAddress, setReserveAddress] = useState("");
   const [borrowLoading, setBorrowLoading] = useState(false);
   const { isWeb3Enabled, chainId } = useMoralis();
   const addresses =
@@ -49,6 +51,32 @@ export default function Borrow(props) {
     },
   });
 
+  const { runContractFunction: getReserveAddress } = useWeb3Contract({
+    abi: marketContract.abi,
+    contractAddress: addresses.Market,
+    functionName: "getReserveAddress",
+    params: {
+      asset: addresses.wETH,
+    },
+  });
+
+  const { runContractFunction: getUnderlyingBalance } = useWeb3Contract({
+    abi: reserveContract.abi,
+    contractAddress: reserveAddress,
+    functionName: "getUnderlyingBalance",
+    params: {},
+  });
+
+  async function getReserve() {
+    const updatedReserveAddress = (
+      await getReserveAddress({
+        onError: (error) => console.log(error),
+      })
+    ).toString();
+    setReserveAddress(updatedReserveAddress);
+    console.log("updatedReserveAddress", updatedReserveAddress);
+  }
+
   async function getTokenApproval() {
     const getApprovalOptions = {
       abi: erc721,
@@ -68,18 +96,29 @@ export default function Borrow(props) {
   }
 
   async function updateMaxAmount() {
-    const updatedMaxAmount = await getMaxCollateralization();
+    const maxCollaterization = (await getMaxCollateralization()).toString();
+    const reserveUnderlying = (await getUnderlyingBalance()).toString();
+    const updatedMaxAmount = BigNumber.from(maxCollaterization).gt(
+      BigNumber.from(reserveUnderlying)
+    )
+      ? reserveUnderlying
+      : maxCollaterization;
     console.log("Updated Max Borrow Amount:", updatedMaxAmount);
-    setMaxAmount(updatedMaxAmount.toString());
+    setMaxAmount(updatedMaxAmount);
   }
 
-  //Run once
   useEffect(() => {
-    if (isWeb3Enabled) {
+    if (reserveAddress) {
       getTokenApproval();
       updateMaxAmount();
     }
-  }, [isWeb3Enabled, props.token_id]);
+  }, [reserveAddress, props.token_id]);
+
+  useEffect(() => {
+    if (isWeb3Enabled) {
+      getReserve();
+    }
+  }, [isWeb3Enabled]);
 
   const handleBorrowSuccess = async function () {
     props.setVisibility(false);

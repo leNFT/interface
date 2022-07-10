@@ -1,6 +1,7 @@
 import styles from "../styles/Home.module.css";
 import { Icon } from "web3uikit";
 import Link from "next/link";
+import { Button } from "web3uikit";
 
 export default function Footer() {
   return (
@@ -27,7 +28,9 @@ export default function Footer() {
         >
           <Icon fill="#000000" size={32} svg="github" />
         </a>
-        <Link href="/testing">Testing Dashboard</Link>
+        <Link href="/testing">
+          <Button color="red" text="Testing Dashboard" theme="colored"></Button>
+        </Link>
       </footer>
     </div>
   );

@@ -87,6 +87,8 @@ export default function ActiveLoans() {
         params: getLoanTokenURIOptions,
       });
 
+      console.log("loanTokenURI", loanTokenURI);
+
       // Add new loan to update array
       updatedActiveLoans.push({
         loanId: activeLoans[i].token_id,
@@ -116,29 +118,27 @@ export default function ActiveLoans() {
             {activeLoans.map((activeLoan) => (
               <div key={activeLoan.loanId} className="m-4">
                 <Card title={"#" + activeLoan.loanId}>
-                  <Tooltip content="Coming Soon!" position="top">
-                    <div className="p-2">
-                      {activeLoan.token_uri ? (
-                        <div className="flex flex-col items-end gap-2">
-                          <Image
-                            loader={() => activeLoan.token_uri}
-                            src={activeLoan.token_uri}
-                            height="140"
-                            width="140"
-                          />
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center gap-1">
-                          <Illustration
-                            height="140px"
-                            logo="chest"
-                            width="100%"
-                          />
-                          Loading...
-                        </div>
-                      )}
-                    </div>
-                  </Tooltip>
+                  <div className="p-2">
+                    {activeLoan.tokenURI ? (
+                      <div className="flex flex-col items-end gap-2">
+                        <Image
+                          loader={() => activeLoan.tokenURI}
+                          src={activeLoan.tokenURI}
+                          height="140"
+                          width="140"
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-1">
+                        <Illustration
+                          height="140px"
+                          logo="chest"
+                          width="100%"
+                        />
+                        Loading...
+                      </div>
+                    )}
+                  </div>
                 </Card>
               </div>
             ))}

@@ -16,7 +16,7 @@ export default function Testing() {
 
   const { runContractFunction: deposit } = useWeb3Contract({
     abi: testNFTContract.abi,
-    contractAddress: addresses.SupportedAssets[0],
+    contractAddress: addresses.SupportedAssets[0].address,
     functionName: "mint",
     params: {
       owner: account,

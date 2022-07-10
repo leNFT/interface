@@ -94,9 +94,9 @@ export default function App() {
     <div className={styles.container}>
       <div className={styles.main}>
         {loans.length > 0 && <Typography variant="h1">Loans:</Typography>}
-        <ul className="flex">
+        <div className="flex">
           {loans.map((loan, index) => (
-            <li key={loan.token_id} className="m-4">
+            <div className="m-4">
               <Card
                 title={"Loan #" + loan.token_id}
                 onClick={function () {
@@ -123,7 +123,7 @@ export default function App() {
                   )}
                 </div>
               </Card>
-            </li>
+            </div>
           ))}
           {selectedLoan && (
             <Modal
@@ -140,7 +140,7 @@ export default function App() {
               />
             </Modal>
           )}
-        </ul>
+        </div>
         {supportedAssets.length == 0 && unsupportedAssets.length == 0 ? (
           <Typography variant="body18">No NFT assets found :/</Typography>
         ) : (

@@ -91,13 +91,13 @@ export default function Supply() {
               <div className="flex flex-col">
                 <Typography variant="subtitle1">My Reserve Balance</Typography>
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col ml-1">
                 <Tooltip
                   content="Deposits + interest accrued by the protocol"
                   position="top"
-                  minWidth={160}
+                  minWidth={200}
                 >
-                  <Icon fill="#68738D" size={21} svg="helpCircle" />
+                  <Icon fill="#68738D" size={18} svg="helpCircle" />
                 </Tooltip>
               </div>
             </div>

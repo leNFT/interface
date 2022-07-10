@@ -58,8 +58,8 @@ export default function App() {
         });
         updatedLoansDebt.push(debt.toString());
       } else if (
-        contractAddresses[chainId].SupportedAssets.includes(
-          userNFTs[i].token_address
+        contractAddresses[chainId].SupportedAssets.find(
+          (collection) => collection.address == userNFTs[i].token_address
         )
       ) {
         updatedSupportedAssets.push(userNFTs[i]);

@@ -5,14 +5,18 @@
     "Market": "",
     "LoanCenter": "",
     "DebtToken": "",
-    "SupportedAssets": [""]
+    "SupportedAssets": [
+      ""
+    ]
   },
   "0x539": {
     "Name": "hardhat",
     "Market": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
     "LoanCenter": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
     "DebtToken": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-    "SupportedAssets": ["0x5FC8d32690cc91D4c39d9d3abcBD16989F875707"]
+    "SupportedAssets": [
+      "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707"
+    ]
   },
   "0x5": {
     "Name": "goerli",
@@ -27,6 +31,11 @@
     "NFTOracle": "0xD25eb5b3F1edc25C20d1EEb24c8EC2652b634Ad4",
     "AddressesProvider": "0x194c118906538e030751262fb675079aB09884e7",
     "DebtToken": "0x4a87b71e17fd03758cb391d89725a51d1d060d4a",
-    "SupportedAssets": ["0x974dc0856d822f234b2a2a0e401a2d44a3d22bb3"]
+    "SupportedAssets": [
+      {
+        "name": "leNFT Testing NFT",
+        "address": "0x974dc0856d822f234b2a2a0e401a2d44a3d22bb3"
+      }
+    ]
   }
 }

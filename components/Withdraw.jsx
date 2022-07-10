@@ -92,14 +92,22 @@ export default function Withdraw(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-row items-center justify-center">
+      <div className="flex flex-row items-center text-center justify-center">
         Maximum withdrawal amount is {formatUnits(maxAmount, 18)} wETH
       </div>
       <div className="flex flex-row items-center justify-center m-8">
-        <Input label="Amount" type="number" onChange={handleInputChange} />
+        <Input
+          label="Amount"
+          validation={{
+            numberMax: Number(formatUnits(maxAmount, 18)),
+            numberMin: 0,
+          }}
+          type="number"
+          onChange={handleInputChange}
+        />
       </div>
 
-      <div className="m-8">
+      <div className="mt-16 mb-8">
         <Button
           text="Withdraw"
           isFullWidth

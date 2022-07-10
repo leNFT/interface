@@ -1,16 +1,19 @@
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { formatUnits, parseUnits } from "@ethersproject/units";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
 import loanCenterContract from "../contracts/LoanCenter.json";
 import erc721 from "../contracts/erc721.json";
 import { useMoralisWeb3Api, useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
-import { Card, Tooltip, Illustration, Loading, Typography } from "web3uikit";
+import { Card, Input, Illustration, Loading, Typography } from "web3uikit";
 import Image from "next/image";
 
 export default function ActiveLoans() {
-  const [activeLoans, setActiveLoans] = useState([]);
-  const [loadingActiveLoans, setLoadingActiveLoans] = useState(true);
+  const [collections, setCollections] = useState([]);
+  const [collectionLoans, setCollectionLoans] = useState([]);
+  const [loadingCollectionLoans, setLoadingCollectionLoans] = useState(true);
   const { isWeb3Enabled, chainId, account } = useMoralis();
   const addresses =
     chainId in contractAddresses
@@ -19,26 +22,49 @@ export default function ActiveLoans() {
   const Web3Api = useMoralisWeb3Api();
 
   const { runContractFunction: getLoanDebt } = useWeb3Contract();
-  const { runContractFunction: getLoanTokenId } = useWeb3Contract();
-  const { runContractFunction: getLoanTokenAddress } = useWeb3Contract();
-  const { runContractFunction: getLoanTokenURI } = useWeb3Contract();
+  const { runContractFunction: getNFTLoanId } = useWeb3Contract();
 
-  async function setupUI() {
-    // Get user active loans
-    const options = { chain: chainId, address: addresses.DebtToken };
-    const activeLoansResponse = await Web3Api.token.getAllTokenIds(options);
-    const activeLoans = activeLoansResponse.result;
-    console.log("Active Loans:", activeLoans);
-    var updatedActiveLoans = [];
+  // Get active loans for the selected collection
+  async function getCollectionLoans(selectedCollection) {
+    var collectionNFTs;
+    var updatedCollectionLoans = [];
 
-    for (let i = 0; i < activeLoans.length; i++) {
-      // Get the debt for each loan
+    // The user hasnt selected a collection so we just get some (limit) token Ids
+    const options = {
+      chain: chainId,
+      address: addresses.LoanCenter,
+      token_address: selectedCollection,
+      limit: 10,
+    };
+    const collectionNFTsResponse = await Web3Api.account.getNFTsForContract(
+      options
+    );
+    collectionNFTs = collectionNFTsResponse.result;
+
+    console.log("collectionNFTs:", collectionNFTs);
+
+    for (let i = 0; i < collectionNFTs.length; i++) {
+      // Get the loan ID of each NFT
+      const getLoanIdOptions = {
+        abi: loanCenterContract.abi,
+        contractAddress: addresses.LoanCenter,
+        functionName: "getNFTLoanId",
+        params: {
+          nftAddress: collectionNFTs[i].token_address,
+          nftTokenID: collectionNFTs[i].token_id,
+        },
+      };
+      const loanId = await getNFTLoanId({
+        onError: (error) => console.log(error),
+        params: getLoanIdOptions,
+      });
+
       const getLoanDebtOptions = {
         abi: loanCenterContract.abi,
         contractAddress: addresses.LoanCenter,
         functionName: "getLoanDebt",
         params: {
-          loanId: activeLoans[i].token_id,
+          loanId: loanId,
         },
       };
       const debt = await getLoanDebt({
@@ -46,91 +72,93 @@ export default function ActiveLoans() {
         params: getLoanDebtOptions,
       });
 
-      // Get the collaterals token id for each loan
-      const getLoanTokenIdOptions = {
-        abi: loanCenterContract.abi,
-        contractAddress: addresses.LoanCenter,
-        functionName: "getLoanTokenId",
-        params: {
-          loanId: activeLoans[i].token_id,
-        },
-      };
-      const loanTokenId = await getLoanTokenId({
-        onError: (error) => console.log(error),
-        params: getLoanTokenIdOptions,
-      });
-
-      // Get the collaterals token address for each loan
-      const getLoanTokenAddressOptions = {
-        abi: loanCenterContract.abi,
-        contractAddress: addresses.LoanCenter,
-        functionName: "getLoanTokenAddress",
-        params: {
-          loanId: activeLoans[i].token_id,
-        },
-      };
-      const loanTokenAddress = await getLoanTokenAddress({
-        onError: (error) => console.log(error),
-        params: getLoanTokenAddressOptions,
-      });
-
-      // Get the collaterals token uri for each loan
-      const getLoanTokenURIOptions = {
-        abi: erc721,
-        contractAddress: loanTokenAddress,
-        functionName: "tokenURI",
-        params: {
-          tokenId: activeLoans[i].token_id,
-        },
-      };
-      const loanTokenURI = await getLoanTokenURI({
-        onError: (error) => console.log(error),
-        params: getLoanTokenURIOptions,
-      });
-
-      console.log("loanTokenURI", loanTokenURI);
-
       // Add new loan to update array
-      updatedActiveLoans.push({
-        loanId: activeLoans[i].token_id,
+      updatedCollectionLoans.push({
+        loanId: loanId,
         debt: debt.toString(),
-        tokenAddress: loanTokenAddress,
-        tokenId: loanTokenId.toString(),
-        tokenURI: loanTokenURI,
+        tokenAddress: collectionNFTs[i].token_address,
+        tokenId: collectionNFTs[i].token_id,
+        tokenURI: collectionNFTs[i].token_uri,
       });
     }
     // Update active loans state array
-    setActiveLoans(updatedActiveLoans);
-    setLoadingActiveLoans(false);
+    setCollectionLoans(updatedCollectionLoans);
+    setLoadingCollectionLoans(false);
   }
 
   // Runs once
   useEffect(() => {
     if (isWeb3Enabled) {
-      setupUI();
+      //Fill the collections with the supported assets
+      var updatedCollections = [];
+      console.log("SupportedAssets", addresses.SupportedAssets);
+      for (var asset in addresses.SupportedAssets) {
+        updatedCollections.push({
+          label: addresses.SupportedAssets[asset].name,
+          address: addresses.SupportedAssets[asset].address,
+        });
+        console.log("asset", asset);
+      }
+      //setCollections(updatedCollections);
+      console.log("updatedCollections", updatedCollections);
+      setCollections(updatedCollections);
+
+      // GEt the default collection loans
+      getCollectionLoans(updatedCollections[0].address);
     }
-    console.log("useEffect called");
   }, [isWeb3Enabled]);
+
+  function handleCollectionChange(event, value) {
+    console.log("value", value);
+    console.log("collections", collections);
+    if (value) {
+      getCollectionLoans(
+        collections.find((collection) => collection.label == value).address
+      );
+    }
+  }
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-row items-center justify-center">
-        {loadingActiveLoans ? (
+      <div className="flex m-8 items-center justify-center">
+        <Autocomplete
+          disablePortal
+          options={collections}
+          sx={{ width: 500 }}
+          onInputChange={handleCollectionChange}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              sx={{
+                "& label": { paddingLeft: (theme) => theme.spacing(2) },
+                "& input": { paddingLeft: (theme) => theme.spacing(3.5) },
+                "& fieldset": {
+                  paddingLeft: (theme) => theme.spacing(2.5),
+                  borderRadius: "25px",
+                },
+              }}
+              label="Search Collection"
+            />
+          )}
+        />
+      </div>
+      <div className="flex items-center justify-center">
+        {loadingCollectionLoans ? (
           <div className="flex m-16">
             <Loading size={16} spinnerColor="#2E7DAF" spinnerType="wave" />
           </div>
         ) : (
-          activeLoans.length != 0 && (
-            <div id="activeLoansContainer" className="flex m-2 p-2">
-              {activeLoans.map((activeLoan) => (
-                <div key={activeLoan.loanId} className="m-4">
-                  <Card title={"#" + activeLoan.loanId}>
+          collectionLoans.length != 0 && (
+            <div id="collectionLoansContainer" className="flex m-2 p-2">
+              {collectionLoans.map((collectionLoan) => (
+                <div key={collectionLoan.loanId} className="m-4">
+                  <Card title={"Loan #" + collectionLoan.loanId}>
                     <div className="p-2">
-                      {activeLoan.tokenURI ? (
+                      {collectionLoan.tokenURI ? (
                         <div className="flex flex-col items-end gap-2">
                           <Image
-                            loader={() => activeLoan.tokenURI}
-                            src={activeLoan.tokenURI}
+                            loader={() => collectionLoan.tokenURI}
+                            src={collectionLoan.tokenURI}
                             height="140"
                             width="140"
                           />

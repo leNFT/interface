@@ -167,25 +167,29 @@ export default function Borrow(props) {
           Loading...
         </div>
       )}
-      <div className="flex flex-row items-center justify-center m-2">
+      <div className="flex flex-row items-center  text-center justify-center m-2">
         Address is {props.token_address}
       </div>
       <div className="flex flex-row items-center justify-center m-2">
         Asset ID is {props.token_id}
       </div>
-      <div className="flex flex-row items-center justify-center m-2">
+      <div className="flex flex-row text-center items-center justify-center m-2">
         Maximum borrowable amount is {formatUnits(maxAmount, 18)} WETH
       </div>
       <div className="flex flex-row items-center justify-center m-8">
         <Input
           label="Amount"
           type="number"
+          validation={{
+            numberMax: Number(formatUnits(maxAmount, 18)),
+            numberMin: 1,
+          }}
           disabled={!approved}
           onChange={handleInputChange}
         />
       </div>
       {approved ? (
-        <div className="flex m-8">
+        <div className="mt-16 mb-8">
           <Button
             text="Create Loan"
             isFullWidth

@@ -88,13 +88,13 @@ export default function RepayLoan(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-row items-center justify-center m-2">
+      <div className="flex flex-row items-center justify-center text-center m-2">
         Loan ID is {props.loan_id}
       </div>
-      <div className="flex flex-row items-center justify-center m-2">
+      <div className="flex flex-row items-center justify-center text-center m-2">
         Debt is {formatUnits(debt, 18)} wETH
       </div>
-      <div className="flex flex-row items-center justify-center m-2">
+      <div className="flex flex-row items-center justify-center text-center m-2">
         Your wETH balance is {formatUnits(balance, 18)} wETH
       </div>
       <div className="flex m-8">

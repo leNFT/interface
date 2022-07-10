@@ -146,7 +146,7 @@ export default function Deposit(props) {
   return (
     <div className={styles.container}>
       <div className="flex flex-row items-center justify-center">
-        <div className="flex flex-col">
+        <div className="flex flex-col text-center">
           Your balance is {formatUnits(balance, 18)} wETH
         </div>
         {BigNumber.from(0).eq(parseUnits(balance)) && (
@@ -173,12 +173,16 @@ export default function Deposit(props) {
         <Input
           label="Amount"
           type="number"
+          validation={{
+            numberMax: Number(formatUnits(balance, 18)),
+            numberMin: 0,
+          }}
           disabled={!approved}
           onChange={handleInputChange}
         />
       </div>
       {approved ? (
-        <div className="m-8">
+        <div className="mt-16 mb-8">
           <Button
             text="Deposit"
             isFullWidth

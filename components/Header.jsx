@@ -78,7 +78,7 @@ export default function Header() {
               <div className="flex flex-col items-center justify-content">
                 <h1 className="font-bold text-2xl">leNFT</h1>
               </div>
-              <div className="flex flex-col ml-1 items-center justify-content">
+              <div className="flex flex-col ml-1 mb-4 items-center justify-content">
                 <h1 className="text-2xl">.finance</h1>
               </div>
             </div>

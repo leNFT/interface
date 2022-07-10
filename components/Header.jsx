@@ -74,7 +74,14 @@ export default function Header() {
       <div className="flex flex-col items-center justify-content">
         <Link href="/">
           <a target="_blank" rel="noopener noreferrer">
-            <h1 className="py-4 px-4 font-bold text-3xl">leNFT</h1>
+            <div className="p-5 flex flex-row justify-between items-center">
+              <div className="flex flex-col items-center justify-content">
+                <h1 className="font-bold text-2xl">leNFT</h1>
+              </div>
+              <div className="flex flex-col items-center justify-content">
+                <h1 className="text-2xl">.finance</h1>
+              </div>
+            </div>
           </a>
         </Link>
         <h1 className="font-bold text-xs">

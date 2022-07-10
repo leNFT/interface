@@ -1,5 +1,5 @@
 import styles from "../styles/Home.module.css";
-import { Button, Modal, Typography } from "web3uikit";
+import { Button, Modal, Typography, Tooltip, Icon } from "web3uikit";
 import ReserveDetails from "../components/ReserveDetails";
 import contractAddresses from "../contractAddresses.json";
 import { useState, useEffect } from "react";
@@ -88,7 +88,18 @@ export default function Supply() {
         <div className="flex flex-col items-center m-16">
           <div className="flex flex-col m-4 border-4 rounded-2xl">
             <div className="flex flex-row m-2">
-              <Typography variant="subtitle1">My Reserve Balance:</Typography>
+              <div className="flex flex-col">
+                <Typography variant="subtitle1">My Reserve Balance</Typography>
+              </div>
+              <div className="flex flex-col">
+                <Tooltip
+                  content="Deposits + interest accrued by the protocol"
+                  position="top"
+                  minWidth={160}
+                >
+                  <Icon fill="#68738D" size={21} svg="helpCircle" />
+                </Tooltip>
+              </div>
             </div>
             <div className="flex flex-row mx-2 mb-2">
               {formatUnits(maxAmount, 18)} wETH

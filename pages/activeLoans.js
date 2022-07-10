@@ -1,6 +1,8 @@
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { formatUnits, parseUnits } from "@ethersproject/units";
+import loanCenterContract from "../contracts/LoanCenter.json";
+import erc721 from "../contracts/erc721.json";
 import { useMoralisWeb3Api, useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
 import { Card, Tooltip, Illustration, Modal, Typography } from "web3uikit";
@@ -16,6 +18,9 @@ export default function ActiveLoans() {
   const Web3Api = useMoralisWeb3Api();
 
   const { runContractFunction: getLoanDebt } = useWeb3Contract();
+  const { runContractFunction: getLoanTokenId } = useWeb3Contract();
+  const { runContractFunction: getLoanTokenAddress } = useWeb3Contract();
+  const { runContractFunction: getLoanTokenURI } = useWeb3Contract();
 
   async function setupUI() {
     // Get user active loans
@@ -23,7 +28,7 @@ export default function ActiveLoans() {
     const activeLoansResponse = await Web3Api.token.getAllTokenIds(options);
     const activeLoans = activeLoansResponse.result;
     console.log("Active Loans:", activeLoans);
-    var updatedLoans = [];
+    var updatedActiveLoans = [];
 
     for (let i = 0; i < activeLoans.length; i++) {
       // Get the debt for each loan
@@ -32,16 +37,67 @@ export default function ActiveLoans() {
         contractAddress: addresses.LoanCenter,
         functionName: "getLoanDebt",
         params: {
-          loanId: activeLoans[i],
+          loanId: activeLoans[i].token_id,
         },
       };
       const debt = await getLoanDebt({
         onError: (error) => console.log(error),
         params: getLoanDebtOptions,
       });
-      updatedLoans.push(debt.toString());
+
+      // Get the collaterals token id for each loan
+      const getLoanTokenIdOptions = {
+        abi: loanCenterContract.abi,
+        contractAddress: addresses.LoanCenter,
+        functionName: "getLoanTokenId",
+        params: {
+          loanId: activeLoans[i].token_id,
+        },
+      };
+      const loanTokenId = await getLoanTokenId({
+        onError: (error) => console.log(error),
+        params: getLoanTokenIdOptions,
+      });
+
+      // Get the collaterals token address for each loan
+      const getLoanTokenAddressOptions = {
+        abi: loanCenterContract.abi,
+        contractAddress: addresses.LoanCenter,
+        functionName: "getLoanTokenAddress",
+        params: {
+          loanId: activeLoans[i].token_id,
+        },
+      };
+      const loanTokenAddress = await getLoanTokenAddress({
+        onError: (error) => console.log(error),
+        params: getLoanTokenAddressOptions,
+      });
+
+      // Get the collaterals token uri for each loan
+      const getLoanTokenURIOptions = {
+        abi: erc721,
+        contractAddress: loanTokenAddress,
+        functionName: "tokenURI",
+        params: {
+          tokenId: activeLoans[i].token_id,
+        },
+      };
+      const loanTokenURI = await getLoanTokenURI({
+        onError: (error) => console.log(error),
+        params: getLoanTokenURIOptions,
+      });
+
+      // Add new loan to update array
+      updatedActiveLoans.push({
+        loanId: activeLoans[i].token_id,
+        debt: debt.toString(),
+        tokenAddress: loanTokenAddress,
+        tokenId: loanTokenId.toString(),
+        tokenURI: loanTokenURI,
+      });
     }
-    setActiveLoans(updatedLoans);
+    // Update active loans state array
+    setActiveLoans(updatedActiveLoans);
   }
 
   // Runs once
@@ -56,16 +112,10 @@ export default function ActiveLoans() {
     <div className={styles.container}>
       <div className="flex flex-row items-center justify-center">
         {activeLoans.length != 0 && (
-          <div
-            id="activeLoansContainer"
-            className="flex border-2 rounded-3xl m-2 p-2"
-          >
+          <div id="activeLoansContainer" className="flex m-2 p-2">
             {activeLoans.map((activeLoan) => (
-              <div key={activeLoan.token_hash} className="m-4">
-                <Card
-                  title={activeLoan.name + " #" + activeLoan.token_id}
-                  isDisabled={true}
-                >
+              <div key={activeLoan.loanId} className="m-4">
+                <Card title={"#" + activeLoan.loanId}>
                   <Tooltip content="Coming Soon!" position="top">
                     <div className="p-2">
                       {activeLoan.token_uri ? (
@@ -81,7 +131,7 @@ export default function ActiveLoans() {
                         <div className="flex flex-col items-center gap-1">
                           <Illustration
                             height="140px"
-                            logo="lazyNft"
+                            logo="chest"
                             width="100%"
                           />
                           Loading...

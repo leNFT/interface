@@ -17,16 +17,16 @@
   "0x5": {
     "Name": "goerli",
     "wETH": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
-    "ValidationLogicLib": "0x128C5a879C8747fAfb2818914794852D563E7547",
-    "SupplyLogicLib": "0x5ff777d1526C5c02AD6639402053417816587dF7",
-    "BorrowLogicLib": "0xce2fa3A1e1aDEb2dFa8C0B4e1a3557993cF9dF71",
-    "LiquidationLogicLib": "0x851f15BcbD84531c7f71F7d17B353362E3aF4caD",
-    "Market": "0x7581631cBF89Dd5d1304dE7651c19E77B836fFab",
-    "LoanCenter": "0x7DEa8b0351fcc5ac994E8aad71ab659ccC5ecF54",
-    "InterestRate": "0xAa523Dd0b245165BE90e82f3C01B0fBfa756a06D",
-    "NFTOracle": "0xff218C68b265B150CD6Fb5697e7733fB0387d0B6",
-    "AddressesProvider": "0x687854D8F75A1652D86A62e60C12857a70e7d59B",
-    "DebtToken": "0xc6f5db94f5b2adf3126058ff4666a5791419bc4c",
-    "SupportedAssets": ["0xffdfbbbf23d2f91e08e47ca5e40a16380f9b65e8"]
+    "ValidationLogicLib": "0x3850DbdF1b5Efe32d888757e94B3a8885A1f2F0a",
+    "SupplyLogicLib": "0x809904E4Bc649aF4884549A03680DED1e4191199",
+    "BorrowLogicLib": "0x724221cA829B1ECeFb06fb88a943CA390B80E6a3",
+    "LiquidationLogicLib": "0x184C2A132D5bc908478dF4C7FFeb7e81B9904262",
+    "Market": "0x4DFe34eD73FBa38Ba22D8fc99011B0F019AEbc22",
+    "LoanCenter": "0x0796F2a83e37516D80500bF3e22860aB3E5Ce4d6",
+    "InterestRate": "0x682667D2Ec27817034363Ad61bA9876C3c9c9008",
+    "NFTOracle": "0xD25eb5b3F1edc25C20d1EEb24c8EC2652b634Ad4",
+    "AddressesProvider": "0x194c118906538e030751262fb675079aB09884e7",
+    "DebtToken": "0x4a87b71e17fd03758cb391d89725a51d1d060d4a",
+    "SupportedAssets": ["0x974dc0856d822f234b2a2a0e401a2d44a3d22bb3"]
   }
 }

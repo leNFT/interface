@@ -182,7 +182,7 @@ export default function Borrow(props) {
           type="number"
           validation={{
             numberMax: Number(formatUnits(maxAmount, 18)),
-            numberMin: 1,
+            numberMin: 0,
           }}
           disabled={!approved}
           onChange={handleInputChange}

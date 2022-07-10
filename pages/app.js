@@ -144,7 +144,7 @@ export default function App() {
         {supportedAssets.length == 0 && unsupportedAssets.length == 0 ? (
           <Typography variant="body18">No NFT assets found :/</Typography>
         ) : (
-          <div className="flex mt-8">
+          <div className="flex mt-4">
             <Typography variant="h1">Assets:</Typography>
           </div>
         )}

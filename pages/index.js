@@ -63,7 +63,11 @@ export default function Home() {
             </a>
           </div>
           <div className="flex m-4">
-            <a target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://lenft.gitbook.io/lenft-docs/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               docs (soon™)]
             </a>
           </div>

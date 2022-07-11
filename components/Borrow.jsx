@@ -95,8 +95,10 @@ export default function Borrow(props) {
     setApproved(approval == addresses.Market);
   }
 
-  async function updateMaxAmount() {
-    const maxCollaterization = (await getMaxCollateralization()).toString();
+  async function updateMaxBorrowAmount() {
+    const maxCollaterization = (await getMaxCollateralization())
+      .div(2)
+      .toString();
     const reserveUnderlying = (await getUnderlyingBalance()).toString();
     const updatedMaxAmount = BigNumber.from(maxCollaterization).gt(
       BigNumber.from(reserveUnderlying)
@@ -110,7 +112,7 @@ export default function Borrow(props) {
   useEffect(() => {
     if (reserveAddress) {
       getTokenApproval();
-      updateMaxAmount();
+      updateMaxBorrowAmount();
     }
   }, [reserveAddress, props.token_id]);
 

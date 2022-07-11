@@ -1,9 +1,11 @@
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { formatUnits, parseUnits } from "@ethersproject/units";
+import { BigNumber } from "@ethersproject/bignumber";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import loanCenterContract from "../contracts/LoanCenter.json";
+import nftOracleContract from "../contracts/NFTOracle.json";
 import erc721 from "../contracts/erc721.json";
 import { useMoralisWeb3Api, useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
@@ -29,6 +31,7 @@ export default function ActiveLoans() {
 
   const { runContractFunction: getLoanDebt } = useWeb3Contract();
   const { runContractFunction: getNFTLoanId } = useWeb3Contract();
+  const { runContractFunction: getMaxCollateralization } = useWeb3Contract();
 
   // Get active loans for the selected collection
   async function getCollectionLoans(selectedCollection) {
@@ -79,10 +82,26 @@ export default function ActiveLoans() {
         params: getLoanDebtOptions,
       });
 
+      const getMaxCollateralizationOptions = {
+        abi: nftOracleContract.abi,
+        contractAddress: addresses.NFTOracle,
+        functionName: "getCollectionMaxCollateralization",
+        params: {
+          collection: collectionNFTs[i].token_address,
+        },
+      };
+      const maxCollateralization = await getMaxCollateralization({
+        onError: (error) => console.log(error),
+        params: getMaxCollateralizationOptions,
+      });
+
       // Add new loan to update array
+      console.log(debt.toString());
+      console.log(maxCollateralization.toString());
       updatedCollectionLoans.push({
         loanId: loanId,
         debt: debt.toString(),
+        maxCollateralization: maxCollateralization.toString(),
         tokenAddress: collectionNFTs[i].token_address,
         tokenId: collectionNFTs[i].token_id,
         tokenURI: collectionNFTs[i].token_uri,
@@ -124,6 +143,21 @@ export default function ActiveLoans() {
     if (collectionAddress) {
       getCollectionLoans(collectionAddress.address);
     }
+  }
+
+  function calculateHealthLevel(debtString, maxCollateralizationString) {
+    const maxCollateralization = BigNumber.from(maxCollateralizationString);
+    const debt = BigNumber.from(debtString);
+
+    console.log(
+      "calculateHealthLevel",
+      (maxCollateralization - debt) / maxCollateralization
+    );
+    return maxCollateralization
+      .sub(debt)
+      .mul(BigNumber.from(100))
+      .div(maxCollateralization)
+      .toString();
   }
 
   return (
@@ -186,26 +220,27 @@ export default function ActiveLoans() {
                         </div>
                       )}
                     </div>
-                    <div className="flex flex-row m-2">
-                      <Typography variant="caption16">Debt:</Typography>
-                    </div>
                     <div className="flex flex-row mt-6">
                       <Typography variant="caption12">Health Level</Typography>
                     </div>
-                    <div>
+                    <div className="justify-center">
                       <LinearProgressWithLabel
                         color="success"
-                        value={8000 / 100}
+                        value={calculateHealthLevel(
+                          collectionLoan.debt,
+                          collectionLoan.maxCollateralization
+                        )}
                       />
                     </div>
-                    <div className="flex flex-row m-4 items-center justify-center">
+                    <div className="flex flex-row m-6 items-center justify-center">
                       <Button
-                        disabled
+                        disabled={BigNumber.from(collectionLoan.debt).lt(
+                          BigNumber.from(collectionLoan.maxCollateralization)
+                        )}
                         text="Liquidate"
                         theme="colored"
                         type="button"
                         size="small"
-                        fullWidth
                         color="red"
                         radius="5"
                         onClick={async function () {}}

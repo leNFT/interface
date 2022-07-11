@@ -111,10 +111,11 @@ export default function ActiveLoans() {
   function handleCollectionChange(event, value) {
     console.log("value", value);
     console.log("collections", collections);
-    if (value) {
-      getCollectionLoans(
-        collections.find((collection) => collection.label == value).address
-      );
+    const collectionAddress = collections.find(
+      (collection) => collection.label == value
+    );
+    if (collectionAddress) {
+      getCollectionLoans(collectionAddress.address);
     }
   }
 
@@ -124,11 +125,14 @@ export default function ActiveLoans() {
         <Autocomplete
           disablePortal
           options={collections}
+          defaultValue={collections[0]}
+          getOptionLabel={(option) => option.label}
           sx={{ width: 500 }}
           onInputChange={handleCollectionChange}
           renderInput={(params) => (
             <TextField
               {...params}
+              label="Collection"
               sx={{
                 "& label": { paddingLeft: (theme) => theme.spacing(2) },
                 "& input": { paddingLeft: (theme) => theme.spacing(3.5) },
@@ -137,7 +141,6 @@ export default function ActiveLoans() {
                   borderRadius: "25px",
                 },
               }}
-              label="Search Collection"
             />
           )}
         />

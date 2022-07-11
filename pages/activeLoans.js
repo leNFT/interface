@@ -11,7 +11,6 @@ import { Card, Input, Illustration, Loading, Typography } from "web3uikit";
 import Image from "next/image";
 
 export default function ActiveLoans() {
-  const [collections, setCollections] = useState([]);
   const [collectionLoans, setCollectionLoans] = useState([]);
   const [loadingCollectionLoans, setLoadingCollectionLoans] = useState(true);
   const { isWeb3Enabled, chainId, account } = useMoralis();
@@ -19,6 +18,12 @@ export default function ActiveLoans() {
     chainId in contractAddresses
       ? contractAddresses[chainId]
       : contractAddresses["0x1"];
+  const [collections, setCollections] = useState([
+    {
+      label: addresses.SupportedAssets[0].name,
+      address: addresses.SupportedAssets[0].address,
+    },
+  ]);
   const Web3Api = useMoralisWeb3Api();
 
   const { runContractFunction: getLoanDebt } = useWeb3Contract();
@@ -126,7 +131,6 @@ export default function ActiveLoans() {
           disablePortal
           options={collections}
           defaultValue={collections[0]}
-          getOptionLabel={(option) => option.label}
           sx={{ width: 500 }}
           onInputChange={handleCollectionChange}
           renderInput={(params) => (

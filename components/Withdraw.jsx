@@ -98,11 +98,12 @@ export default function Withdraw(props) {
       <div className="flex flex-row items-center justify-center m-8">
         <Input
           label="Amount"
+          type="number"
+          step="any"
           validation={{
             numberMax: Number(formatUnits(maxAmount, 18)),
             numberMin: 0,
           }}
-          type="number"
           onChange={handleInputChange}
         />
       </div>

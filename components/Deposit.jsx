@@ -173,6 +173,7 @@ export default function Deposit(props) {
         <Input
           label="Amount"
           type="number"
+          step="any"
           validation={{
             numberMax: Number(formatUnits(balance, 18)),
             numberMin: 0,

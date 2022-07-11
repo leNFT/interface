@@ -180,6 +180,7 @@ export default function Borrow(props) {
         <Input
           label="Amount"
           type="number"
+          step="any"
           validation={{
             numberMax: Number(formatUnits(maxAmount, 18)),
             numberMin: 0,

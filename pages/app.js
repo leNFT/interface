@@ -96,7 +96,7 @@ export default function App() {
         {loans.length > 0 && <Typography variant="h1">Loans:</Typography>}
         <div className="flex">
           {loans.map((loan, index) => (
-            <div className="m-4">
+            <div key={loan.token_id} className="m-4">
               <Card
                 title={"Loan #" + loan.token_id}
                 onClick={function () {

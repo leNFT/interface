@@ -7,8 +7,9 @@ import loanCenterContract from "../contracts/LoanCenter.json";
 import erc721 from "../contracts/erc721.json";
 import { useMoralisWeb3Api, useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
-import { Card, Input, Illustration, Loading, Typography } from "web3uikit";
+import { Card, Illustration, Loading, Typography, Button } from "web3uikit";
 import Image from "next/image";
+import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 
 export default function ActiveLoans() {
   const [collectionLoans, setCollectionLoans] = useState([]);
@@ -31,6 +32,7 @@ export default function ActiveLoans() {
 
   // Get active loans for the selected collection
   async function getCollectionLoans(selectedCollection) {
+    console.log("Getting collection loans...");
     var collectionNFTs;
     var updatedCollectionLoans = [];
 
@@ -108,7 +110,7 @@ export default function ActiveLoans() {
       console.log("updatedCollections", updatedCollections);
       setCollections(updatedCollections);
 
-      // GEt the default collection loans
+      // Get the default collection loans
       getCollectionLoans(updatedCollections[0].address);
     }
   }, [isWeb3Enabled]);
@@ -132,11 +134,14 @@ export default function ActiveLoans() {
           options={collections}
           defaultValue={collections[0]}
           sx={{ width: 500 }}
+          isOptionEqualToValue={(option, value) =>
+            option.address === value.address
+          }
           onInputChange={handleCollectionChange}
           renderInput={(params) => (
             <TextField
               {...params}
-              label="Collection"
+              label="Supported Collections"
               sx={{
                 "& label": { paddingLeft: (theme) => theme.spacing(2) },
                 "& input": { paddingLeft: (theme) => theme.spacing(3.5) },
@@ -160,7 +165,7 @@ export default function ActiveLoans() {
               {collectionLoans.map((collectionLoan) => (
                 <div key={collectionLoan.loanId} className="m-4">
                   <Card title={"Loan #" + collectionLoan.loanId}>
-                    <div className="p-2">
+                    <div className="flex flex-row p-2">
                       {collectionLoan.tokenURI ? (
                         <div className="flex flex-col items-end gap-2">
                           <Image
@@ -180,6 +185,31 @@ export default function ActiveLoans() {
                           Loading...
                         </div>
                       )}
+                    </div>
+                    <div className="flex flex-row m-2">
+                      <Typography variant="caption16">Debt:</Typography>
+                    </div>
+                    <div className="flex flex-row mt-6">
+                      <Typography variant="caption12">Health Level</Typography>
+                    </div>
+                    <div>
+                      <LinearProgressWithLabel
+                        color="success"
+                        value={8000 / 100}
+                      />
+                    </div>
+                    <div className="flex flex-row m-4 items-center justify-center">
+                      <Button
+                        disabled
+                        text="Liquidate"
+                        theme="colored"
+                        type="button"
+                        size="small"
+                        fullWidth
+                        color="red"
+                        radius="5"
+                        onClick={async function () {}}
+                      />
                     </div>
                   </Card>
                 </div>

@@ -28,6 +28,7 @@ export default function App() {
   const { runContractFunction: getLoanDebt } = useWeb3Contract();
 
   async function setupUI() {
+    console.log("Setting up UI");
     // Get user NFT assets
     const options = { chain: chainId, address: account };
     const userNFTsResponse = await Web3Api.account.getNFTs(options);

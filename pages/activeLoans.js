@@ -133,7 +133,6 @@ export default function ActiveLoans() {
       updatedCollectionLoans.push({
         loanId: loanId,
         debt: debt.toString(),
-        maxCollateralization: maxCollateralization.toString(),
         tokenAddress: collectionNFTs[i].token_address,
         tokenId: collectionNFTs[i].token_id,
         tokenURI: collectionNFTs[i].token_uri,
@@ -178,17 +177,15 @@ export default function ActiveLoans() {
   }
 
   function calculateHealthLevel(debtString, maxCollateralizationString) {
-    const maxCollateralization = BigNumber.from(maxCollateralizationString);
-    const debt = BigNumber.from(debtString);
-
-    console.log(
-      "calculateHealthLevel",
-      (maxCollateralization - debt) / maxCollateralization
+    const maxCollateralizationNumber = BigNumber.from(
+      maxCollateralizationString
     );
-    return maxCollateralization
-      .sub(debt)
+    const debtNumber = BigNumber.from(debtString);
+
+    return maxCollateralizationNumber
+      .sub(debtNumber)
       .mul(BigNumber.from(100))
-      .div(maxCollateralization)
+      .div(maxCollateralizationNumber)
       .toString();
   }
 
@@ -221,18 +218,21 @@ export default function ActiveLoans() {
             )}
           />
         </div>
-        <div className="flex flex-col border-4 rounded-lg m-8 items-center justify-center">
-          <div className="flex flex-row m-2 items-center justify-center">
+        <div className="flex flex-col border-4 rounded-lg m-8 ">
+          <div className="flex flex-row m-1">
             floor price: {formatUnits(floorPrice, 18)} wETH
           </div>
-          <div className="flex flex-row m-2 items-center justify-center">
-            LTV:{" "}
+          <div className="flex flex-row m-1">
+            Max LTV:{" "}
             {floorPrice != "0" &&
               BigNumber.from(maxCollateralization)
                 .mul(BigNumber.from(100))
                 .div(BigNumber.from(floorPrice))
                 .toString()}
             %
+          </div>
+          <div className="flex flex-row m-1">
+            Max Collateralization: {formatUnits(maxCollateralization, 18)} wETH
           </div>
         </div>
       </div>
@@ -267,6 +267,14 @@ export default function ActiveLoans() {
                       </div>
                     )}
                   </div>
+                  <div className="flex flex-row">
+                    <Typography variant="caption12">Debt:</Typography>
+                  </div>
+                  <div className="flex flex-row">
+                    <Typography variant="caption14">
+                      {formatUnits(collectionLoan.debt, 18)} wETH
+                    </Typography>
+                  </div>
                   <div className="flex flex-row mt-6">
                     <Typography variant="caption12">Health Level</Typography>
                   </div>
@@ -275,14 +283,14 @@ export default function ActiveLoans() {
                       color="success"
                       value={calculateHealthLevel(
                         collectionLoan.debt,
-                        collectionLoan.maxCollateralization
+                        maxCollateralization
                       )}
                     />
                   </div>
                   <div className="flex flex-row m-6 items-center justify-center">
                     <Button
                       disabled={BigNumber.from(collectionLoan.debt).lt(
-                        BigNumber.from(collectionLoan.maxCollateralization)
+                        BigNumber.from(maxCollateralization)
                       )}
                       text="Liquidate"
                       theme="colored"

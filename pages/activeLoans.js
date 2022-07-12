@@ -56,6 +56,7 @@ export default function ActiveLoans() {
       params: getMaxCollateralizationOptions,
     });
     setMaxCollateralization(maxCollateralization.toString());
+    console.log("maxCollateralization", maxCollateralization.toString());
 
     //Get the max collaterization for the collection
     const getFloorPriceOptions = {
@@ -70,7 +71,18 @@ export default function ActiveLoans() {
       onError: (error) => console.log(error),
       params: getFloorPriceOptions,
     });
+    console.log("floorPrice", floorPrice.toString());
     setFloorPrice(floorPrice.toString());
+
+    console.log(
+      "ltv",
+      formatUnits(
+        BigNumber.from(maxCollateralization)
+          .mul(BigNumber.from(100))
+          .div(BigNumber.from(floorPrice))
+      ),
+      18
+    );
 
     // Get the token ids for the selected collection
     const options = {
@@ -214,13 +226,12 @@ export default function ActiveLoans() {
             floor price: {formatUnits(floorPrice, 18)} wETH
           </div>
           <div className="flex flex-row m-2 items-center justify-center">
+            LTV:{" "}
             {floorPrice != "0" &&
-              formatUnits(
-                BigNumber.from(maxCollateralization).div(
-                  BigNumber.from(floorPrice)
-                ),
-                18
-              )}
+              BigNumber.from(maxCollateralization)
+                .mul(BigNumber.from(100))
+                .div(BigNumber.from(floorPrice))
+                .toString()}
             %
           </div>
         </div>

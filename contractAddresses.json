@@ -21,20 +21,20 @@
   "0x5": {
     "Name": "goerli",
     "wETH": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
-    "ValidationLogicLib": "0x06F49E2B4F06351A5B0391B5fFa899c2ace5F1F0",
-    "SupplyLogicLib": "0x7105a146257D00B77e3634E5279b6fc3a8E34002",
-    "BorrowLogicLib": "0xDd25f4C02a9171315Fcad17C9590d7B1BbDFa092",
-    "LiquidationLogicLib": "0x73B5ffB5B7EEacDd2Bda48aA64d39de12Db64dD8",
-    "Market": "0x7e6d3706a49D35DA820814eF2471A2df6bB66c1c",
-    "LoanCenter": "0xDFa4d5fe72964913a6f7b948CaeFef5630a80Aeb",
-    "InterestRate": "0xDadC5f28A606BD7a3a6b35543C80021Cd115B6cd",
-    "NFTOracle": "0xd1287D67ADc9a41862d5F301BcED88762DBb7AC6",
-    "AddressesProvider": "0x95F5a6555B24DE34E2600F08799238F1967eDa60",
-    "DebtToken": "0xb766b8fc49acaba70b0d0366f209d1e97d30faa8",
+    "ValidationLogicLib": "0xfeFfCb0C939453Ad148BA0Ef3b544AFFC95EF72E",
+    "SupplyLogicLib": "0x60a07A6E567c4a1D23233F5aB310981A1595B805",
+    "BorrowLogicLib": "0xe81210e4c62cCbacdBff8B2Aa8F640E188D76A25",
+    "LiquidationLogicLib": "0x08bfCeD28e7de8428B528cCf640166fd5826E48a",
+    "Market": "0x17D29098e3dE50d40c9FBCC5f0ff7F90E7A2c277",
+    "LoanCenter": "0xAD3052b79b08af3970531f3306d90f3DAd515a52",
+    "InterestRate": "0xf76ED438b95132E992b87150684D64A993D7B8E6",
+    "NFTOracle": "0x7C4e30E7Fd6094F9B117BD77DCDE85b26F066859",
+    "AddressesProvider": "0x15BBe441401bda65f9EdDb0D01E13511e2f6Cb46",
+    "DebtToken": "0xc613548e8a7133da414f2d5e13e5f853838a3cae",
     "SupportedAssets": [
       {
         "name": "leNFT Testing NFT",
-        "address": "0x76ea06c6ff932aec0a2c4487c9cb4bc8e102dd12"
+        "address": "0x87a9418230726cf3a64ce2e58935d91f828f3635"
       }
     ]
   }

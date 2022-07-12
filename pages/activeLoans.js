@@ -15,8 +15,8 @@ import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 
 export default function ActiveLoans() {
   const [collectionLoans, setCollectionLoans] = useState([]);
-  const [floorPrice, setFloorPrice] = useState("");
-  const [maxCollateralization, setMaxCollateralization] = useState("");
+  const [floorPrice, setFloorPrice] = useState("0");
+  const [maxCollateralization, setMaxCollateralization] = useState("0");
   const [loadingCollectionLoans, setLoadingCollectionLoans] = useState(true);
   const { isWeb3Enabled, chainId } = useMoralis();
   const addresses =
@@ -34,6 +34,7 @@ export default function ActiveLoans() {
   const { runContractFunction: getLoanDebt } = useWeb3Contract();
   const { runContractFunction: getNFTLoanId } = useWeb3Contract();
   const { runContractFunction: getMaxCollateralization } = useWeb3Contract();
+  const { runContractFunction: getFloorPrice } = useWeb3Contract();
 
   // Get active loans for the selected collection
   async function getCollectionLoans(selectedCollection) {
@@ -41,7 +42,37 @@ export default function ActiveLoans() {
     var collectionNFTs;
     var updatedCollectionLoans = [];
 
-    // The user hasnt selected a collection so we just get some (limit) token Ids
+    //Get the max collaterization for the collection
+    const getMaxCollateralizationOptions = {
+      abi: nftOracleContract.abi,
+      contractAddress: addresses.NFTOracle,
+      functionName: "getCollectionMaxCollateralization",
+      params: {
+        collection: selectedCollection,
+      },
+    };
+    const maxCollateralization = await getMaxCollateralization({
+      onError: (error) => console.log(error),
+      params: getMaxCollateralizationOptions,
+    });
+    setMaxCollateralization(maxCollateralization.toString());
+
+    //Get the max collaterization for the collection
+    const getFloorPriceOptions = {
+      abi: nftOracleContract.abi,
+      contractAddress: addresses.NFTOracle,
+      functionName: "getCollectionFloorPrice",
+      params: {
+        collection: selectedCollection,
+      },
+    };
+    const floorPrice = await getFloorPrice({
+      onError: (error) => console.log(error),
+      params: getFloorPriceOptions,
+    });
+    setFloorPrice(floorPrice.toString());
+
+    // Get the token ids for the selected collection
     const options = {
       chain: chainId,
       address: addresses.LoanCenter,
@@ -82,19 +113,6 @@ export default function ActiveLoans() {
       const debt = await getLoanDebt({
         onError: (error) => console.log(error),
         params: getLoanDebtOptions,
-      });
-
-      const getMaxCollateralizationOptions = {
-        abi: nftOracleContract.abi,
-        contractAddress: addresses.NFTOracle,
-        functionName: "getCollectionMaxCollateralization",
-        params: {
-          collection: collectionNFTs[i].token_address,
-        },
-      };
-      const maxCollateralization = await getMaxCollateralization({
-        onError: (error) => console.log(error),
-        params: getMaxCollateralizationOptions,
       });
 
       // Add new loan to update array
@@ -193,10 +211,17 @@ export default function ActiveLoans() {
         </div>
         <div className="flex flex-col border-4 rounded-lg m-8 items-center justify-center">
           <div className="flex flex-row m-2 items-center justify-center">
-            floor price: {floorPrice}
+            floor price: {formatUnits(floorPrice, 18)} wETH
           </div>
           <div className="flex flex-row m-2 items-center justify-center">
-            LTV: {maxCollateralization / floorPrice}
+            {floorPrice != "0" &&
+              formatUnits(
+                BigNumber.from(maxCollateralization).div(
+                  BigNumber.from(floorPrice)
+                ),
+                18
+              )}
+            %
           </div>
         </div>
       </div>
@@ -206,7 +231,7 @@ export default function ActiveLoans() {
             <Loading size={16} spinnerColor="#2E7DAF" spinnerType="wave" />
           </div>
         ) : collectionLoans.length != 0 ? (
-          <div id="collectionLoansContainer" className="flex m-2 p-2">
+          <div id="collectionLoansContainer" className="flex p-2">
             {collectionLoans.map((collectionLoan) => (
               <div key={collectionLoan.loanId} className="m-4">
                 <Card title={"Loan #" + collectionLoan.loanId}>

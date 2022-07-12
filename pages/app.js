@@ -4,12 +4,20 @@ import loanCenterContract from "../contracts/LoanCenter.json";
 import contractAddresses from "../contractAddresses.json";
 import { useMoralisWeb3Api, useMoralis, useWeb3Contract } from "react-moralis";
 import { useState, useEffect } from "react";
-import { Card, Tooltip, Illustration, Modal, Typography } from "web3uikit";
+import {
+  Card,
+  Tooltip,
+  Illustration,
+  Modal,
+  Typography,
+  Loading,
+} from "web3uikit";
 import Borrow from "../components/Borrow";
 import RepayLoan from "../components/RepayLoan";
 import Image from "next/image";
 
 export default function App() {
+  const [loadingUI, setLoadingUI] = useState(true);
   const [loans, setLoans] = useState([]);
   const [loansDebt, setLoansDebt] = useState([]);
   const [supportedAssets, setSupportedAssets] = useState([]);
@@ -29,6 +37,7 @@ export default function App() {
 
   async function setupUI() {
     console.log("Setting up UI");
+
     // Get user NFT assets
     const options = { chain: chainId, address: account };
     const userNFTsResponse = await Web3Api.account.getNFTs(options);
@@ -80,6 +89,8 @@ export default function App() {
     setLoansDebt(updatedLoansDebt);
     setSupportedAssets(updatedSupportedAssets);
     setUnsupportedAssets(updatedUnsupportedAssets);
+
+    setLoadingUI(false);
   }
 
   // Runs once
@@ -142,8 +153,13 @@ export default function App() {
             </Modal>
           )}
         </div>
+
         {supportedAssets.length == 0 && unsupportedAssets.length == 0 ? (
-          <Typography variant="body18">No NFT assets found :/</Typography>
+          loadingUI ? (
+            <Loading size={16} spinnerColor="#2E7DAF" spinnerType="wave" />
+          ) : (
+            <Typography variant="body18">No NFT assets found :/</Typography>
+          )
         ) : (
           <div className="flex mt-8">
             <Typography variant="h1">Assets:</Typography>

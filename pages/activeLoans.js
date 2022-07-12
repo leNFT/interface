@@ -15,6 +15,8 @@ import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 
 export default function ActiveLoans() {
   const [collectionLoans, setCollectionLoans] = useState([]);
+  const [floorPrice, setFloorPrice] = useState("");
+  const [maxCollateralization, setMaxCollateralization] = useState("");
   const [loadingCollectionLoans, setLoadingCollectionLoans] = useState(true);
   const { isWeb3Enabled, chainId, account } = useMoralis();
   const addresses =
@@ -162,95 +164,109 @@ export default function ActiveLoans() {
 
   return (
     <div className={styles.container}>
-      <div className="flex m-8 items-center justify-center">
-        <Autocomplete
-          disablePortal
-          options={collections}
-          defaultValue={collections[0]}
-          sx={{ width: 500 }}
-          isOptionEqualToValue={(option, value) =>
-            option.address === value.address
-          }
-          onInputChange={handleCollectionChange}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Supported Collections"
-              sx={{
-                "& label": { paddingLeft: (theme) => theme.spacing(2) },
-                "& input": { paddingLeft: (theme) => theme.spacing(3.5) },
-                "& fieldset": {
-                  paddingLeft: (theme) => theme.spacing(2.5),
-                  borderRadius: "25px",
-                },
-              }}
-            />
-          )}
-        />
+      <div className="flex flex-row m-8 items-center justify-center">
+        <div className="flex flex-col items-center justify-center">
+          <Autocomplete
+            disablePortal
+            options={collections}
+            defaultValue={collections[0]}
+            sx={{ width: 500 }}
+            isOptionEqualToValue={(option, value) =>
+              option.address === value.address
+            }
+            onInputChange={handleCollectionChange}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Supported Collections"
+                sx={{
+                  "& label": { paddingLeft: (theme) => theme.spacing(2) },
+                  "& input": { paddingLeft: (theme) => theme.spacing(3.5) },
+                  "& fieldset": {
+                    paddingLeft: (theme) => theme.spacing(2.5),
+                    borderRadius: "25px",
+                  },
+                }}
+              />
+            )}
+          />
+        </div>
+        <div className="flex flex-col border-4 rounded-lg m-8 items-center justify-center">
+          <div className="flex flex-row m-2 items-center justify-center">
+            floor price: {floorPrice}
+          </div>
+          <div className="flex flex-row m-2 items-center justify-center">
+            LTV: {maxCollateralization / floorPrice}
+          </div>
+        </div>
       </div>
       <div className="flex items-center justify-center">
         {loadingCollectionLoans ? (
           <div className="flex m-16">
             <Loading size={16} spinnerColor="#2E7DAF" spinnerType="wave" />
           </div>
-        ) : (
-          collectionLoans.length != 0 && (
-            <div id="collectionLoansContainer" className="flex m-2 p-2">
-              {collectionLoans.map((collectionLoan) => (
-                <div key={collectionLoan.loanId} className="m-4">
-                  <Card title={"Loan #" + collectionLoan.loanId}>
-                    <div className="flex flex-row p-2">
-                      {collectionLoan.tokenURI ? (
-                        <div className="flex flex-col items-end gap-2">
-                          <Image
-                            loader={() => collectionLoan.tokenURI}
-                            src={collectionLoan.tokenURI}
-                            height="140"
-                            width="140"
-                          />
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center gap-1">
-                          <Illustration
-                            height="140px"
-                            logo="chest"
-                            width="100%"
-                          />
-                          Loading...
-                        </div>
+        ) : collectionLoans.length != 0 ? (
+          <div id="collectionLoansContainer" className="flex m-2 p-2">
+            {collectionLoans.map((collectionLoan) => (
+              <div key={collectionLoan.loanId} className="m-4">
+                <Card title={"Loan #" + collectionLoan.loanId}>
+                  <div className="flex flex-row p-2">
+                    {collectionLoan.tokenURI ? (
+                      <div className="flex flex-col items-end gap-2">
+                        <Image
+                          loader={() => collectionLoan.tokenURI}
+                          src={collectionLoan.tokenURI}
+                          height="140"
+                          width="140"
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-1">
+                        <Illustration
+                          height="140px"
+                          logo="chest"
+                          width="100%"
+                        />
+                        Loading...
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-row mt-6">
+                    <Typography variant="caption12">Health Level</Typography>
+                  </div>
+                  <div className="justify-center">
+                    <LinearProgressWithLabel
+                      color="success"
+                      value={calculateHealthLevel(
+                        collectionLoan.debt,
+                        collectionLoan.maxCollateralization
                       )}
-                    </div>
-                    <div className="flex flex-row mt-6">
-                      <Typography variant="caption12">Health Level</Typography>
-                    </div>
-                    <div className="justify-center">
-                      <LinearProgressWithLabel
-                        color="success"
-                        value={calculateHealthLevel(
-                          collectionLoan.debt,
-                          collectionLoan.maxCollateralization
-                        )}
-                      />
-                    </div>
-                    <div className="flex flex-row m-6 items-center justify-center">
-                      <Button
-                        disabled={BigNumber.from(collectionLoan.debt).lt(
-                          BigNumber.from(collectionLoan.maxCollateralization)
-                        )}
-                        text="Liquidate"
-                        theme="colored"
-                        type="button"
-                        size="small"
-                        color="red"
-                        radius="5"
-                        onClick={async function () {}}
-                      />
-                    </div>
-                  </Card>
-                </div>
-              ))}
-            </div>
-          )
+                    />
+                  </div>
+                  <div className="flex flex-row m-6 items-center justify-center">
+                    <Button
+                      disabled={BigNumber.from(collectionLoan.debt).lt(
+                        BigNumber.from(collectionLoan.maxCollateralization)
+                      )}
+                      text="Liquidate"
+                      theme="colored"
+                      type="button"
+                      size="small"
+                      color="red"
+                      radius="5"
+                      onClick={async function () {}}
+                    />
+                  </div>
+                </Card>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex items-center justify-center">
+            <Typography variant="body18">
+              No active loans in this collection.
+            </Typography>
+          </div>
         )}
       </div>
     </div>

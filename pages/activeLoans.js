@@ -18,7 +18,7 @@ export default function ActiveLoans() {
   const [floorPrice, setFloorPrice] = useState("");
   const [maxCollateralization, setMaxCollateralization] = useState("");
   const [loadingCollectionLoans, setLoadingCollectionLoans] = useState(true);
-  const { isWeb3Enabled, chainId, account } = useMoralis();
+  const { isWeb3Enabled, chainId } = useMoralis();
   const addresses =
     chainId in contractAddresses
       ? contractAddresses[chainId]
@@ -262,7 +262,7 @@ export default function ActiveLoans() {
             ))}
           </div>
         ) : (
-          <div className="flex items-center justify-center">
+          <div className="flex mb-16 items-center justify-center">
             <Typography variant="body18">
               No active loans in this collection.
             </Typography>

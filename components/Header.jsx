@@ -92,30 +92,32 @@ export default function Header() {
           )}
         </h1>
       </div>
-      <div className="flex flex-row items-center">
-        <div className="flex m-2">
-          <Link href="/app">
-            <Button text="Home" size="large" theme="outline"></Button>
-          </Link>
+      <div className="flex flex-col ml-12">
+        <div className="flex flex-row">
+          <div className="flex m-2">
+            <Link href="/app">
+              <Button text="Home" size="large" theme="outline"></Button>
+            </Link>
+          </div>
+          <div className="flex m-2">
+            <Link href="/activeLoans">
+              <Button text="Active Loans" size="large" theme="outline"></Button>
+            </Link>
+          </div>
+          <div className="flex m-2">
+            <Link href="/deposit">
+              <Button text="Deposit" size="large" theme="outline"></Button>
+            </Link>
+          </div>
+          <div className="flex m-2">
+            <Link href="/lock">
+              <Button text="Lock" size="large" theme="outline"></Button>
+            </Link>
+          </div>
         </div>
-        <div className="flex m-2">
-          <Link href="/activeLoans">
-            <Button text="Active Loans" size="large" theme="outline"></Button>
-          </Link>
-        </div>
-        <div className="flex m-2">
-          <Link href="/supply">
-            <Button
-              color="green"
-              text="Supply"
-              size="large"
-              theme="colored"
-            ></Button>
-          </Link>
-        </div>
-        <div className="flex m-2">
-          <ConnectButton moralisAuth={false} />
-        </div>
+      </div>
+      <div className="flex flex-col">
+        <ConnectButton moralisAuth={false} />
       </div>
     </div>
   );

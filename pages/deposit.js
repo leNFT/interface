@@ -10,7 +10,7 @@ import reserveContract from "../contracts/Reserve.json";
 import { useWeb3Contract, useMoralis } from "react-moralis";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 
-export default function Supply() {
+export default function Deposit() {
   const [visibleDepositModal, setVisibleDepositModal] = useState(false);
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
   const { isWeb3Enabled, chainId, account } = useMoralis();

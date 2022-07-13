@@ -71,7 +71,6 @@ export default function RepayLoan(props) {
     if (isWeb3Enabled) {
       updateTokenBalance();
       getLoanDebt();
-      //getCollateralDetails();
     }
   }, [isWeb3Enabled]);
 
@@ -79,7 +78,8 @@ export default function RepayLoan(props) {
     props.setVisibility(false);
     dispatch({
       type: "info",
-      message: "Repay Successful!",
+      message:
+        "Repay Successful!  Please wait for the transaction confirmation.",
       title: "Notification",
       position: "topR",
       icon: "bell",

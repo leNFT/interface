@@ -75,7 +75,8 @@ export default function Withdraw(props) {
     props.setVisibility(false);
     dispatch({
       type: "info",
-      message: "Withdrawal Successful!",
+      message:
+        "Withdrawal Successful!  Please wait for the transaction confirmation.",
       title: "Notification",
       position: "topR",
       icon: "bell",

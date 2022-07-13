@@ -132,7 +132,7 @@ export default function Borrow(props) {
     props.setVisibility(false);
     dispatch({
       type: "info",
-      message: "Loan Created!",
+      message: "Loan Created! Please wait for the transaction confirmation.",
       title: "Notification",
       position: "topR",
       icon: "bell",
@@ -143,7 +143,8 @@ export default function Borrow(props) {
     setApproved(true);
     dispatch({
       type: "info",
-      message: "Approval Successful!",
+      message:
+        "Approval Successful! Please wait for the transaction confirmation.",
       title: "Notification",
       position: "topR",
       icon: "bell",

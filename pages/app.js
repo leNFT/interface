@@ -177,7 +177,7 @@ export default function App() {
                     setVisibleAssetModal(true);
                   }}
                 >
-                  <Tooltip content="Supported Asset" position="top">
+                  <Tooltip content="Use as collateral!" position="top">
                     <div className="p-2">
                       {supportedAsset.token_uri ? (
                         <div className="flex flex-col items-end gap-2">

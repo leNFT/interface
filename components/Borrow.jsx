@@ -4,7 +4,13 @@ import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
 import styles from "../styles/Home.module.css";
-import { useNotification, Button, Input, Illustration } from "web3uikit";
+import {
+  useNotification,
+  Button,
+  Input,
+  Illustration,
+  Typography,
+} from "web3uikit";
 import marketContract from "../contracts/Market.json";
 import nftOracleContract from "../contracts/NFTOracle.json";
 import reserveContract from "../contracts/Reserve.json";
@@ -169,14 +175,25 @@ export default function Borrow(props) {
           Loading...
         </div>
       )}
-      <div className="flex flex-row items-center  text-center justify-center m-2">
-        Address is {props.token_address}
+      <div className="flex flex-row m-2">
+        <div className="flex flex-col">
+          <Typography variant="h4">Address</Typography>
+          <Typography variant="caption14">{props.token_address}</Typography>
+        </div>
       </div>
-      <div className="flex flex-row items-center justify-center m-2">
-        Asset ID is {props.token_id}
+      <div className="flex flex-row m-2">
+        <div className="flex flex-col">
+          <Typography variant="h4">Asset ID</Typography>
+          <Typography variant="body16">{props.token_id}</Typography>
+        </div>
       </div>
-      <div className="flex flex-row text-center items-center justify-center m-2">
-        Maximum borrowable amount is {formatUnits(maxAmount, 18)} WETH
+      <div className="flex flex-row m-2">
+        <div className="flex flex-col">
+          <Typography variant="h4">Maximum borrowable amount</Typography>
+          <Typography variant="body16">
+            {formatUnits(maxAmount, 18)} WETH
+          </Typography>
+        </div>
       </div>
       <div className="flex flex-row items-center justify-center m-8">
         <Input

@@ -266,20 +266,46 @@ export default function ActiveLoans() {
           />
         </div>
         <div className="flex flex-col border-4 rounded-lg m-8 ">
-          <div className="flex flex-row m-1">
-            Floor Price: {formatUnits(floorPrice, 18)} wETH
-          </div>
-          <div className="flex flex-row m-1">
-            Max LTV:{" "}
-            {floorPrice != "0" &&
-              BigNumber.from(maxCollateralization)
-                .mul(BigNumber.from(100))
-                .div(BigNumber.from(floorPrice))
-                .toString()}
-            %
-          </div>
-          <div className="flex flex-row m-1">
-            Max Collateralization: {formatUnits(maxCollateralization, 18)} wETH
+          <div className="flex flex-row">
+            <div className="flex flex-col m-2">
+              <div className="flex flex-col">
+                <div className="flex flex-row">
+                  <Typography variant="subtitle2">Floor Price</Typography>
+                </div>
+                <div className="flex flex-row">
+                  <Typography variant="caption14">
+                    {formatUnits(floorPrice, 18)} wETH
+                  </Typography>
+                </div>
+              </div>
+              <div className="flex flex-col mt-2">
+                <div className="flex flex-row">
+                  <Typography variant="subtitle2">Max LTV</Typography>
+                </div>
+                <div className="flex flex-row">
+                  <Typography variant="caption14">
+                    {floorPrice != "0" &&
+                      BigNumber.from(maxCollateralization)
+                        .mul(BigNumber.from(100))
+                        .div(BigNumber.from(floorPrice))
+                        .toString()}
+                    %
+                  </Typography>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col m-2">
+              <div className="flex flex-row">
+                <Typography variant="subtitle2">
+                  Max Collateralization
+                </Typography>
+              </div>
+              <div className="flex flex-row">
+                <Typography variant="caption14">
+                  {formatUnits(maxCollateralization, 18)} wETH
+                </Typography>
+              </div>
+            </div>
           </div>
         </div>
       </div>

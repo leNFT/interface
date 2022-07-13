@@ -1,6 +1,6 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits, parseUnits } from "@ethersproject/units";
-import { useNotification, Button, Input } from "web3uikit";
+import { useNotification, Button, Input, Typography } from "web3uikit";
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { useWeb3Contract, useMoralis } from "react-moralis";
@@ -146,8 +146,11 @@ export default function Deposit(props) {
   return (
     <div className={styles.container}>
       <div className="flex flex-row items-center justify-center">
-        <div className="flex flex-col text-center">
-          Your balance is {formatUnits(balance, 18)} wETH
+        <div className="flex flex-col">
+          <Typography variant="h4">My Balance</Typography>
+          <Typography variant="body16">
+            {formatUnits(balance, 18)} wETH
+          </Typography>
         </div>
         {BigNumber.from(0).eq(parseUnits(balance)) && (
           <div className="flex flex-col ml-4">

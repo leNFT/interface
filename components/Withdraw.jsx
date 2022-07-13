@@ -1,7 +1,7 @@
 import { useNotification } from "web3uikit";
 import { BigNumber } from "@ethersproject/bignumber";
 import styles from "../styles/Home.module.css";
-import { Button, Input } from "web3uikit";
+import { Button, Input, Typography } from "web3uikit";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import contractAddresses from "../contractAddresses.json";
 import { useWeb3Contract, useMoralis } from "react-moralis";
@@ -92,8 +92,13 @@ export default function Withdraw(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-row items-center text-center justify-center">
-        Maximum withdrawal amount is {formatUnits(maxAmount, 18)} wETH
+      <div className="flex flex-row items-center justify-center">
+        <div className="flex flex-col">
+          <Typography variant="h4">Maximum withdrawal amount</Typography>
+          <Typography variant="body16">
+            {formatUnits(maxAmount, 18)} wETH
+          </Typography>
+        </div>
       </div>
       <div className="flex flex-row items-center justify-center m-8">
         <Input

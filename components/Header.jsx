@@ -105,7 +105,7 @@ export default function Header() {
             </Link>
           </div>
           <div className="flex m-2">
-            <Link href="/deposit">
+            <Link href="/reserve">
               <Button text="Deposit" size="large" theme="outline"></Button>
             </Link>
           </div>

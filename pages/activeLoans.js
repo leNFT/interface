@@ -435,7 +435,7 @@ export default function ActiveLoans() {
             ))}
           </div>
         ) : (
-          <div className="flex mb-16 items-center justify-center">
+          <div className="flex mb-32 mt-16 items-center justify-center">
             <Typography variant="body18">
               No active loans in this collection.
             </Typography>

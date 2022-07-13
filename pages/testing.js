@@ -14,9 +14,18 @@ export default function Testing() {
       ? contractAddresses[chainId]
       : contractAddresses["0x1"];
 
-  const { runContractFunction: deposit } = useWeb3Contract({
+  const { runContractFunction: mintNFT } = useWeb3Contract({
     abi: testNFTContract.abi,
     contractAddress: addresses.SupportedAssets[0].address,
+    functionName: "mint",
+    params: {
+      owner: account,
+    },
+  });
+
+  const { runContractFunction: mintNFT2 } = useWeb3Contract({
+    abi: testNFTContract.abi,
+    contractAddress: addresses.SupportedAssets[1].address,
     functionName: "mint",
     params: {
       owner: account,
@@ -33,7 +42,22 @@ export default function Testing() {
         }}
         onClick={async function () {
           setMintingLoading(true);
-          await deposit({
+          await mintNFT({
+            onComplete: () => setMintingLoading(false),
+            onError: (error) => console.log(error),
+          });
+        }}
+      ></Button>
+      <Button
+        text="Mint Test NFT2"
+        isFullWidth
+        isLoading={mintingLoading}
+        loadingProps={{
+          spinnerColor: "#000000",
+        }}
+        onClick={async function () {
+          setMintingLoading(true);
+          await mintNFT2({
             onComplete: () => setMintingLoading(false),
             onError: (error) => console.log(error),
           });

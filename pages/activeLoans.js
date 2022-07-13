@@ -5,20 +5,30 @@ import { BigNumber } from "@ethersproject/bignumber";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import loanCenterContract from "../contracts/LoanCenter.json";
+import marketContract from "../contracts/Market.json";
 import nftOracleContract from "../contracts/NFTOracle.json";
-import erc721 from "../contracts/erc721.json";
 import { useMoralisWeb3Api, useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
-import { Card, Illustration, Loading, Typography, Button } from "web3uikit";
+import {
+  useNotification,
+  Card,
+  Illustration,
+  Loading,
+  Typography,
+  Button,
+} from "web3uikit";
 import Image from "next/image";
+import erc20 from "../contracts/erc20.json";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 
 export default function ActiveLoans() {
   const [collectionLoans, setCollectionLoans] = useState([]);
+  const [allowance, setAllowance] = useState("0");
   const [floorPrice, setFloorPrice] = useState("0");
   const [maxCollateralization, setMaxCollateralization] = useState("0");
   const [loadingCollectionLoans, setLoadingCollectionLoans] = useState(true);
-  const { isWeb3Enabled, chainId } = useMoralis();
+  const { isWeb3Enabled, chainId, account } = useMoralis();
+  const dispatch = useNotification();
   const addresses =
     chainId in contractAddresses
       ? contractAddresses[chainId]
@@ -35,6 +45,9 @@ export default function ActiveLoans() {
   const { runContractFunction: getNFTLoanId } = useWeb3Contract();
   const { runContractFunction: getMaxCollateralization } = useWeb3Contract();
   const { runContractFunction: getFloorPrice } = useWeb3Contract();
+  const { runContractFunction: liquidate } = useWeb3Contract();
+  const { runContractFunction: getAllowance } = useWeb3Contract();
+  const { runContractFunction: approve } = useWeb3Contract();
 
   // Get active loans for the selected collection
   async function getCollectionLoans(selectedCollection) {
@@ -71,18 +84,7 @@ export default function ActiveLoans() {
       onError: (error) => console.log(error),
       params: getFloorPriceOptions,
     });
-    console.log("floorPrice", floorPrice.toString());
     setFloorPrice(floorPrice.toString());
-
-    console.log(
-      "ltv",
-      formatUnits(
-        BigNumber.from(maxCollateralization)
-          .mul(BigNumber.from(100))
-          .div(BigNumber.from(floorPrice))
-      ),
-      18
-    );
 
     // Get the token ids for the selected collection
     const options = {
@@ -143,9 +145,31 @@ export default function ActiveLoans() {
     setLoadingCollectionLoans(false);
   }
 
+  async function getWETHAllowance() {
+    const getAllowanceOptions = {
+      abi: erc20,
+      contractAddress: addresses.wETH,
+      functionName: "allowance",
+      params: {
+        _owner: account,
+        _spender: addresses.Market,
+      },
+    };
+
+    const allowance = await getAllowance({
+      onError: (error) => console.log(error),
+      params: getAllowanceOptions,
+    });
+
+    console.log("Got allowance:", allowance);
+
+    setAllowance(allowance.toString());
+  }
+
   // Runs once
   useEffect(() => {
     if (isWeb3Enabled) {
+      getWETHAllowance();
       //Fill the collections with the supported assets
       var updatedCollections = [];
       console.log("SupportedAssets", addresses.SupportedAssets);
@@ -172,6 +196,7 @@ export default function ActiveLoans() {
       (collection) => collection.label == value
     );
     if (collectionAddress) {
+      setLoadingCollectionLoans(true);
       getCollectionLoans(collectionAddress.address);
     }
   }
@@ -186,12 +211,34 @@ export default function ActiveLoans() {
       .sub(debtNumber)
       .mul(BigNumber.from(100))
       .div(maxCollateralizationNumber)
-      .toString();
+      .toNumber();
   }
+
+  const handleLiquidateSuccess = async function () {
+    dispatch({
+      type: "info",
+      message: "Liquidation Successful",
+      title: "Notification",
+      position: "topR",
+      icon: "bell",
+    });
+  };
+
+  handleApprovalSuccess;
+
+  const handleApprovalSuccess = async function () {
+    dispatch({
+      type: "info",
+      message: "Approval Successful",
+      title: "Notification",
+      position: "topR",
+      icon: "bell",
+    });
+  };
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-row m-8 items-center justify-center">
+      <div className="flex flex-row m-2 items-center justify-center">
         <div className="flex flex-col items-center justify-center">
           <Autocomplete
             disablePortal
@@ -220,7 +267,7 @@ export default function ActiveLoans() {
         </div>
         <div className="flex flex-col border-4 rounded-lg m-8 ">
           <div className="flex flex-row m-1">
-            floor price: {formatUnits(floorPrice, 18)} wETH
+            Floor Price: {formatUnits(floorPrice, 18)} wETH
           </div>
           <div className="flex flex-row m-1">
             Max LTV:{" "}
@@ -238,7 +285,7 @@ export default function ActiveLoans() {
       </div>
       <div className="flex items-center justify-center">
         {loadingCollectionLoans ? (
-          <div className="flex m-16">
+          <div className="flex m-8">
             <Loading size={16} spinnerColor="#2E7DAF" spinnerType="wave" />
           </div>
         ) : collectionLoans.length != 0 ? (
@@ -268,9 +315,9 @@ export default function ActiveLoans() {
                     )}
                   </div>
                   <div className="flex flex-row">
-                    <Typography variant="caption12">Debt:</Typography>
+                    <Typography variant="caption12">Debt</Typography>
                   </div>
-                  <div className="flex flex-row">
+                  <div className="flex flex-row  items-center justify-cente">
                     <Typography variant="caption14">
                       {formatUnits(collectionLoan.debt, 18)} wETH
                     </Typography>
@@ -278,7 +325,7 @@ export default function ActiveLoans() {
                   <div className="flex flex-row mt-6">
                     <Typography variant="caption12">Health Level</Typography>
                   </div>
-                  <div className="justify-center">
+                  <div>
                     <LinearProgressWithLabel
                       color="success"
                       value={calculateHealthLevel(
@@ -287,19 +334,75 @@ export default function ActiveLoans() {
                       )}
                     />
                   </div>
-                  <div className="flex flex-row m-6 items-center justify-center">
-                    <Button
-                      disabled={BigNumber.from(collectionLoan.debt).lt(
-                        BigNumber.from(maxCollateralization)
-                      )}
-                      text="Liquidate"
-                      theme="colored"
-                      type="button"
-                      size="small"
-                      color="red"
-                      radius="5"
-                      onClick={async function () {}}
-                    />
+                  <div className="flex flex-row m-4 items-center justify-center">
+                    {BigNumber.from(floorPrice)
+                      .mul(BigNumber.from(82))
+                      .div(BigNumber.from(100))
+                      .lt(BigNumber.from(allowance)) ? (
+                      <Button
+                        disabled={BigNumber.from(collectionLoan.debt).lt(
+                          BigNumber.from(maxCollateralization)
+                        )}
+                        text="Liquidate"
+                        theme="colored"
+                        type="button"
+                        size="small"
+                        color="red"
+                        radius="5"
+                        onClick={async function () {
+                          const getLiquidateOptions = {
+                            abi: marketContract.abi,
+                            contractAddress: addresses.Market,
+                            functionName: "liquidate",
+                            params: {
+                              loanId: collectionLoan.loanId,
+                            },
+                          };
+                          console.log(
+                            "Liquidation loan",
+                            collectionLoan.loanId
+                          );
+                          await liquidate({
+                            onError: (error) => console.log(error),
+                            onSuccess: handleLiquidateSuccess,
+                            params: getLiquidateOptions,
+                          });
+                        }}
+                      />
+                    ) : (
+                      <Button
+                        text="Approve Liquidation"
+                        theme="colored"
+                        type="button"
+                        size="small"
+                        color="red"
+                        radius="5"
+                        disabled={BigNumber.from(collectionLoan.debt).lt(
+                          BigNumber.from(maxCollateralization)
+                        )}
+                        loadingProps={{
+                          spinnerColor: "#000000",
+                        }}
+                        loadingText="Confirming Approval"
+                        onClick={async function () {
+                          const approveOptions = {
+                            abi: erc20,
+                            contractAddress: addresses.wETH,
+                            functionName: "approve",
+                            params: {
+                              _spender: addresses.Market,
+                              _value: floorPrice,
+                            },
+                          };
+
+                          await approve({
+                            onSuccess: handleApprovalSuccess,
+                            onError: (error) => console.log(error),
+                            params: approveOptions,
+                          });
+                        }}
+                      ></Button>
+                    )}
                   </div>
                 </Card>
               </div>

@@ -5,36 +5,36 @@
     "Market": "",
     "LoanCenter": "",
     "DebtToken": "",
-    "SupportedAssets": [
-      ""
-    ]
+    "SupportedAssets": [""]
   },
   "0x539": {
     "Name": "hardhat",
     "Market": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
     "LoanCenter": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
     "DebtToken": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-    "SupportedAssets": [
-      "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707"
-    ]
+    "SupportedAssets": ["0x5FC8d32690cc91D4c39d9d3abcBD16989F875707"]
   },
   "0x5": {
     "Name": "goerli",
     "wETH": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
-    "ValidationLogicLib": "0xfeFfCb0C939453Ad148BA0Ef3b544AFFC95EF72E",
-    "SupplyLogicLib": "0x60a07A6E567c4a1D23233F5aB310981A1595B805",
-    "BorrowLogicLib": "0xe81210e4c62cCbacdBff8B2Aa8F640E188D76A25",
-    "LiquidationLogicLib": "0x08bfCeD28e7de8428B528cCf640166fd5826E48a",
-    "Market": "0x17D29098e3dE50d40c9FBCC5f0ff7F90E7A2c277",
-    "LoanCenter": "0xAD3052b79b08af3970531f3306d90f3DAd515a52",
-    "InterestRate": "0xf76ED438b95132E992b87150684D64A993D7B8E6",
-    "NFTOracle": "0x7C4e30E7Fd6094F9B117BD77DCDE85b26F066859",
-    "AddressesProvider": "0x15BBe441401bda65f9EdDb0D01E13511e2f6Cb46",
-    "DebtToken": "0xc613548e8a7133da414f2d5e13e5f853838a3cae",
+    "ValidationLogicLib": "0xaC329858875Dc1b3381E1B2592B824F7F2B5BAec",
+    "SupplyLogicLib": "0x96F6B72E248b34540ea6813382b7069199c3CD28",
+    "BorrowLogicLib": "0x5914d218677775A74290E725dEF41f30b74ac877",
+    "LiquidationLogicLib": "0xAdeD819230A8d218cD26963a7c1Ddf94c0e03EBe",
+    "Market": "0x5D56a37f2ff333970410f53528df7845B7E8b295",
+    "LoanCenter": "0x29bc767E0a154F0adde7fB9B04bBf49503061775",
+    "InterestRate": "0x1c69e3E7874D68cbC1f4954EbaA7C49cA06Ecf95",
+    "NFTOracle": "0x88B87DAcaCBD341D24935FD0AD480b8F8eEF3df1",
+    "AddressesProvider": "0x14190776A847E73ba6d05Dc5628dF0323C96EADd",
+    "DebtToken": "0xe2719a133a674dfc403c2ac48e52ea63f304ecae",
     "SupportedAssets": [
       {
         "name": "leNFT Testing NFT",
-        "address": "0x87a9418230726cf3a64ce2e58935d91f828f3635"
+        "address": "0xc3f24341c4b5012ef684bf67a810db12127e0fc5"
+      },
+      {
+        "name": "leNFT Testing NFT2",
+        "address": "0x599032e811e2eca9015c22244c415f11264bb524"
       }
     ]
   }

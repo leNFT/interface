@@ -161,7 +161,7 @@ export default function App() {
             <Typography variant="body18">No NFT assets found :/</Typography>
           )
         ) : (
-          <div className="flex mt-8">
+          <div className="flex mt-2">
             <Typography variant="h1">Assets:</Typography>
           </div>
         )}

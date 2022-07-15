@@ -2,11 +2,13 @@ import { Button } from "web3uikit";
 import testNFTContract from "../contracts/test/TestNFT.json";
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
+import nativeTokenContract from "../contracts/NativeToken.json";
 import { useState } from "react";
 import { useWeb3Contract, useMoralis } from "react-moralis";
 
 export default function Testing() {
   const [mintingLoading, setMintingLoading] = useState(false);
+  const [nativeTokenLoading, setNativeTokenLoading] = useState(false);
   const { chainId, account } = useMoralis();
 
   const addresses =
@@ -31,6 +33,16 @@ export default function Testing() {
       owner: account,
     },
   });
+
+  const { runContractFunction: mint10NativeToken } = useWeb3Contract({
+    abi: nativeTokenContract.abi,
+    contractAddress: addresses.NativeToken,
+    functionName: "mint",
+    params: {
+      account: account,
+      amount: "10000000000000000000",
+    },
+  });
   return (
     <div className={styles.container}>
       <Button
@@ -47,7 +59,7 @@ export default function Testing() {
             onError: (error) => console.log(error),
           });
         }}
-      ></Button>
+      />
       <Button
         text="Mint Test NFT2"
         isFullWidth
@@ -62,7 +74,22 @@ export default function Testing() {
             onError: (error) => console.log(error),
           });
         }}
-      ></Button>
+      />
+      <Button
+        text="Mint 10 LE"
+        isFullWidth
+        isLoading={nativeTokenLoading}
+        loadingProps={{
+          spinnerColor: "#000000",
+        }}
+        onClick={async function () {
+          setNativeTokenLoading(true);
+          await mint10NativeToken({
+            onComplete: () => setNativeTokenLoading(false),
+            onError: (error) => console.log(error),
+          });
+        }}
+      />
     </div>
   );
 }

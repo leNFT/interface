@@ -16,6 +16,10 @@ import {
 import { useState, useEffect } from "react";
 import { useMoralis, useWeb3Contract } from "react-moralis";
 import erc20 from "../contracts/erc20.json";
+import RemoveVote from "../components/RemoveVote.json";
+import Vote from "../components/Vote.json";
+import DepositNativeToken from "../components/DepositNativeToken.json";
+import WithdrawNativeToken from "../components/WithdrawNativeToken.json";
 
 export default function Vote() {
   const { isWeb3Enabled, chainId, account } = useMoralis();
@@ -23,12 +27,11 @@ export default function Vote() {
   const [voteTokenBalance, setVoteTokenBalance] = useState("0");
   const [freeVotes, setFreeVotes] = useState("0");
   const [collectionVotes, setCollectionVotes] = useState("0");
-  const [depositLoading, setDepositLoading] = useState(false);
-  const [withdrawalLoading, setWithdrawalLoading] = useState(false);
-  const [voteLoading, setVoteLoading] = useState(false);
-  const [removeVoteLoading, setRemoveVoteLoading] = useState(false);
+  const [visibleDepositModal, setVisibleDepositModal] = useState(false);
+  const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
+  const [visibleVoteModal, setVisibleVoteModal] = useState(false);
+  const [visibleRemoveVoteModal, setVisibleRemoveVoteModal] = useState(false);
 
-  const dispatch = useNotification();
   const addresses =
     chainId in contractAddresses
       ? contractAddresses[chainId]
@@ -144,6 +147,50 @@ export default function Vote() {
 
   return (
     <div className={styles.container}>
+      <Modal
+        hasFooter={false}
+        title="Deposit LE"
+        isVisible={visibleDepositModal}
+        width="50%"
+        onCloseButtonPressed={function () {
+          setVisibleDepositModal(false);
+        }}
+      >
+        <DepositNativeToken setVisibility={visibleDepositModal} />
+      </Modal>
+      <Modal
+        hasFooter={false}
+        title="Withdraw LE"
+        width="50%"
+        isVisible={visibleWithdrawalModal}
+        onCloseButtonPressed={function () {
+          setVisibleWithdrawalModal(false);
+        }}
+      >
+        <WithdrawNativeToken setVisibility={visibleWithdrawalModal} />
+      </Modal>
+      <Modal
+        hasFooter={false}
+        title="Vote"
+        width="50%"
+        isVisible={visibleVoteModal}
+        onCloseButtonPressed={function () {
+          setVisibleVoteModal(false);
+        }}
+      >
+        <Vote setVisibility={setVisibleVoteModal} />
+      </Modal>
+      <Modal
+        hasFooter={false}
+        title="Remove Vote"
+        width="50%"
+        isVisible={visibleRemoveVoteModal}
+        onCloseButtonPressed={function () {
+          setVisibleRemoveVoteModal(false);
+        }}
+      >
+        <RemoveVote setVisibility={setVisibleRemoveVoteModal} />
+      </Modal>
       <div className="flex flex-row items-center justify-center border-4 m-8">
         <div className="flex flex-col items-center m-8">
           <div className="flex flex-row m-2">
@@ -156,22 +203,7 @@ export default function Vote() {
               loadingText="Confirming Deposit"
               isLoading={depositLoading}
               onClick={async function () {
-                if (BigNumber.from(amount).lte(BigNumber.from(balance))) {
-                  setDepositLoading(true);
-                  await deposit({
-                    onComplete: () => setDepositLoading(false),
-                    onSuccess: handleDepositSuccess,
-                    onError: (error) => console.log(error),
-                  });
-                } else {
-                  dispatch({
-                    type: "info",
-                    message: "Amount is bigger than balance",
-                    title: "Notification",
-                    position: "topR",
-                    icon: "bell",
-                  });
-                }
+                setVisibleDepositModal(true);
               }}
             ></Button>
           </div>
@@ -185,22 +217,7 @@ export default function Vote() {
               loadingText="Confirming Withdrawal"
               isLoading={withdrawalLoading}
               onClick={async function () {
-                if (BigNumber.from(amount).lte(BigNumber.from(balance))) {
-                  setWithdrawalLoading(true);
-                  await deposit({
-                    onComplete: () => setWithdrawalLoading(false),
-                    onSuccess: handleWithdrawalSuccess,
-                    onError: (error) => console.log(error),
-                  });
-                } else {
-                  dispatch({
-                    type: "info",
-                    message: "Amount is bigger than balance",
-                    title: "Notification",
-                    position: "topR",
-                    icon: "bell",
-                  });
-                }
+                setVisibleWithdrawalModal(true);
               }}
             ></Button>
           </div>
@@ -295,22 +312,7 @@ export default function Vote() {
                   loadingText="Confirming Vote"
                   isLoading={voteLoading}
                   onClick={async function () {
-                    if (BigNumber.from(amount).lte(BigNumber.from(balance))) {
-                      setVoteLoading(true);
-                      await vote({
-                        onComplete: () => setVoteLoading(false),
-                        onSuccess: handleVoteSuccess,
-                        onError: (error) => console.log(error),
-                      });
-                    } else {
-                      dispatch({
-                        type: "info",
-                        message: "Amount is bigger than balance",
-                        title: "Notification",
-                        position: "topR",
-                        icon: "bell",
-                      });
-                    }
+                    setVisibleVoteModal(true);
                   }}
                 ></Button>
               </div>
@@ -323,22 +325,7 @@ export default function Vote() {
                   loadingText="Confirming Vote Removal"
                   isLoading={removeVoteLoading}
                   onClick={async function () {
-                    if (BigNumber.from(amount).lte(BigNumber.from(balance))) {
-                      setRemoveVoteLoading(true);
-                      await removeVote({
-                        onComplete: () => setRemoveVoteLoading(false),
-                        onSuccess: handleRemoteVoteSuccess,
-                        onError: (error) => console.log(error),
-                      });
-                    } else {
-                      dispatch({
-                        type: "info",
-                        message: "Amount is bigger than balance",
-                        title: "Notification",
-                        position: "topR",
-                        icon: "bell",
-                      });
-                    }
+                    setVisibleRemoveVoteModal(true);
                   }}
                 ></Button>
               </div>

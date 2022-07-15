@@ -59,8 +59,9 @@ export default function ActiveLoans() {
     const getMaxCollateralOptions = {
       abi: nftOracleContract.abi,
       contractAddress: addresses.NFTOracle,
-      functionName: "getCollectionMaxCollateral",
+      functionName: "getMaxCollateral",
       params: {
+        user: account,
         collection: selectedCollection,
       },
     };

@@ -25,7 +25,7 @@ export default function Borrow(props) {
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [reserveAddress, setReserveAddress] = useState("");
   const [borrowLoading, setBorrowLoading] = useState(false);
-  const { isWeb3Enabled, chainId } = useMoralis();
+  const { isWeb3Enabled, chainId, account } = useMoralis();
   const addresses =
     chainId in contractAddresses
       ? contractAddresses[chainId]
@@ -51,8 +51,9 @@ export default function Borrow(props) {
   const { runContractFunction: getMaxCollateral } = useWeb3Contract({
     abi: nftOracleContract.abi,
     contractAddress: addresses.NFTOracle,
-    functionName: "getCollectionMaxCollateral",
+    functionName: "getMaxCollateral",
     params: {
+      user: account,
       collection: props.token_address,
     },
   });

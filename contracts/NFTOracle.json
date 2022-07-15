@@ -150,7 +150,7 @@
           "type": "address"
         }
       ],
-      "name": "getCollectionMaxCollateralization",
+      "name": "getCollectionMaxCollateral",
       "outputs": [
         {
           "internalType": "uint256",

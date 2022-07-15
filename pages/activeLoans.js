@@ -25,7 +25,7 @@ export default function ActiveLoans() {
   const [collectionLoans, setCollectionLoans] = useState([]);
   const [allowance, setAllowance] = useState("0");
   const [floorPrice, setFloorPrice] = useState("0");
-  const [maxCollateralization, setMaxCollateralization] = useState("0");
+  const [maxCollateral, setMaxCollateralization] = useState("0");
   const [loadingCollectionLoans, setLoadingCollectionLoans] = useState(true);
   const { isWeb3Enabled, chainId, account } = useMoralis();
   const dispatch = useNotification();
@@ -43,7 +43,7 @@ export default function ActiveLoans() {
 
   const { runContractFunction: getLoanDebt } = useWeb3Contract();
   const { runContractFunction: getNFTLoanId } = useWeb3Contract();
-  const { runContractFunction: getMaxCollateralization } = useWeb3Contract();
+  const { runContractFunction: getMaxCollateral } = useWeb3Contract();
   const { runContractFunction: getFloorPrice } = useWeb3Contract();
   const { runContractFunction: liquidate } = useWeb3Contract();
   const { runContractFunction: getAllowance } = useWeb3Contract();
@@ -56,20 +56,20 @@ export default function ActiveLoans() {
     var updatedCollectionLoans = [];
 
     //Get the max collaterization for the collection
-    const getMaxCollateralizationOptions = {
+    const getMaxCollateralOptions = {
       abi: nftOracleContract.abi,
       contractAddress: addresses.NFTOracle,
-      functionName: "getCollectionMaxCollateralization",
+      functionName: "getCollectionMaxCollateral",
       params: {
         collection: selectedCollection,
       },
     };
-    const maxCollateralization = await getMaxCollateralization({
+    const maxCollateral = await getMaxCollateral({
       onError: (error) => console.log(error),
-      params: getMaxCollateralizationOptions,
+      params: getMaxCollateralOptions,
     });
-    setMaxCollateralization(maxCollateralization.toString());
-    console.log("maxCollateralization", maxCollateralization.toString());
+    setMaxCollateralization(maxCollateral.toString());
+    console.log("maxCollateral", maxCollateral.toString());
 
     //Get the max collaterization for the collection
     const getFloorPriceOptions = {
@@ -131,7 +131,7 @@ export default function ActiveLoans() {
 
       // Add new loan to update array
       console.log(debt.toString());
-      console.log(maxCollateralization.toString());
+      console.log(maxCollateral.toString());
       updatedCollectionLoans.push({
         loanId: loanId,
         debt: debt.toString(),
@@ -201,16 +201,14 @@ export default function ActiveLoans() {
     }
   }
 
-  function calculateHealthLevel(debtString, maxCollateralizationString) {
-    const maxCollateralizationNumber = BigNumber.from(
-      maxCollateralizationString
-    );
+  function calculateHealthLevel(debtString, maxCollateralString) {
+    const maxCollateralNumber = BigNumber.from(maxCollateralString);
     const debtNumber = BigNumber.from(debtString);
 
-    return maxCollateralizationNumber
+    return maxCollateralNumber
       .sub(debtNumber)
       .mul(BigNumber.from(100))
-      .div(maxCollateralizationNumber)
+      .div(maxCollateralNumber)
       .toNumber();
   }
 
@@ -223,8 +221,6 @@ export default function ActiveLoans() {
       icon: "bell",
     });
   };
-
-  handleApprovalSuccess;
 
   const handleApprovalSuccess = async function () {
     dispatch({
@@ -285,7 +281,7 @@ export default function ActiveLoans() {
                 <div className="flex flex-row">
                   <Typography variant="caption14">
                     {floorPrice != "0" &&
-                      BigNumber.from(maxCollateralization)
+                      BigNumber.from(maxCollateral)
                         .mul(BigNumber.from(100))
                         .div(BigNumber.from(floorPrice))
                         .toString()}
@@ -302,7 +298,7 @@ export default function ActiveLoans() {
               </div>
               <div className="flex flex-row">
                 <Typography variant="caption14">
-                  {formatUnits(maxCollateralization, 18)} wETH
+                  {formatUnits(maxCollateral, 18)} wETH
                 </Typography>
               </div>
             </div>
@@ -319,9 +315,9 @@ export default function ActiveLoans() {
             {collectionLoans.map((collectionLoan) => (
               <div key={collectionLoan.loanId} className="m-4">
                 <Card title={"Loan #" + collectionLoan.loanId}>
-                  <div className="flex flex-row p-2">
+                  <div className="flex flex-row justify-center p-2">
                     {collectionLoan.tokenURI ? (
-                      <div className="flex flex-col items-end gap-2">
+                      <div className="flex flex-col items-center justify-center gap-2">
                         <Image
                           loader={() => collectionLoan.tokenURI}
                           src={collectionLoan.tokenURI}
@@ -343,7 +339,7 @@ export default function ActiveLoans() {
                   <div className="flex flex-row">
                     <Typography variant="caption12">Debt</Typography>
                   </div>
-                  <div className="flex flex-row  items-center justify-cente">
+                  <div className="flex flex-row  items-center">
                     <Typography variant="caption14">
                       {formatUnits(collectionLoan.debt, 18)} wETH
                     </Typography>
@@ -356,7 +352,7 @@ export default function ActiveLoans() {
                       color="success"
                       value={calculateHealthLevel(
                         collectionLoan.debt,
-                        maxCollateralization
+                        maxCollateral
                       )}
                     />
                   </div>
@@ -367,7 +363,7 @@ export default function ActiveLoans() {
                       .lt(BigNumber.from(allowance)) ? (
                       <Button
                         disabled={BigNumber.from(collectionLoan.debt).lt(
-                          BigNumber.from(maxCollateralization)
+                          BigNumber.from(maxCollateral)
                         )}
                         text="Liquidate"
                         theme="colored"
@@ -404,7 +400,7 @@ export default function ActiveLoans() {
                         color="red"
                         radius="5"
                         disabled={BigNumber.from(collectionLoan.debt).lt(
-                          BigNumber.from(maxCollateralization)
+                          BigNumber.from(maxCollateral)
                         )}
                         loadingProps={{
                           spinnerColor: "#000000",

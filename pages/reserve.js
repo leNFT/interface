@@ -102,7 +102,9 @@ export default function Reserve() {
               </div>
             </div>
             <div className="flex flex-row mx-2 mb-2">
-              {formatUnits(maxAmount, 18)} wETH
+              <Typography variant="body16">
+                {formatUnits(maxAmount, 18)} wETH
+              </Typography>
             </div>
           </div>
           <div className="flex flex-row">

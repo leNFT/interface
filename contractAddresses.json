@@ -17,24 +17,27 @@
   "0x5": {
     "Name": "goerli",
     "wETH": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
-    "ValidationLogicLib": "0xaC329858875Dc1b3381E1B2592B824F7F2B5BAec",
-    "SupplyLogicLib": "0x96F6B72E248b34540ea6813382b7069199c3CD28",
-    "BorrowLogicLib": "0x5914d218677775A74290E725dEF41f30b74ac877",
-    "LiquidationLogicLib": "0xAdeD819230A8d218cD26963a7c1Ddf94c0e03EBe",
-    "Market": "0x5D56a37f2ff333970410f53528df7845B7E8b295",
-    "LoanCenter": "0x29bc767E0a154F0adde7fB9B04bBf49503061775",
-    "InterestRate": "0x1c69e3E7874D68cbC1f4954EbaA7C49cA06Ecf95",
-    "NFTOracle": "0x88B87DAcaCBD341D24935FD0AD480b8F8eEF3df1",
-    "AddressesProvider": "0x14190776A847E73ba6d05Dc5628dF0323C96EADd",
-    "DebtToken": "0xe2719a133a674dfc403c2ac48e52ea63f304ecae",
+    "ValidationLogicLib": "0xC4A1E0e5C95CACCFde913eaC10eFc6Ca613f3E79",
+    "SupplyLogicLib": "0x9fE6f4f5824458647B439633D4d02edd18c8328B",
+    "BorrowLogicLib": "0x2bD7b7C573C9b0082779E9911fd4AA8b545aD797",
+    "LiquidationLogicLib": "0xeF5f1FCCF9F431F70EE09F87E5A0Db518dc0B99D",
+    "AddressesProvider": "0xc40A67e7cB67Adc3f60E5AA2994673f650538275",
+    "Market": "0xdC68699603F7f244A4ED03D303a482B63411bCF9",
+    "LoanCenter": "0x6a960943dfBf058a080874A919A0d61060Ac690e",
+    "InterestRate": "0xdCf47cF81464CA7B6B66b04B404606f66bCaA43C",
+    "NFTOracle": "0x33ad7067F72C09acfC97bBc363Bb03033493Fd6A",
+    "TokenOracle": "0x29a4E2833A71d1F00Fd7d4bc4F4c7932307cb79a",
+    "NativeTokenVault": "0x82842d40d9281883e5ba17eb516d2039f9231e5c",
+    "NativeToken": "0xdadd2a6e3190b1916eb4357d65340b15e4fdef6d",
+    "DebtToken": "0x9f61e4cbe29da8317f1b8e4f601e48ff84a32c2e",
     "SupportedAssets": [
       {
         "name": "leNFT Testing NFT",
-        "address": "0xc3f24341c4b5012ef684bf67a810db12127e0fc5"
+        "address": "0x03e3cf5952c8692413320980d18ef3c612435027"
       },
       {
         "name": "leNFT Testing NFT2",
-        "address": "0x599032e811e2eca9015c22244c415f11264bb524"
+        "address": "0x8e6c1bb72fb4c97eac5aef280333465ef8f10a8c"
       }
     ]
   }

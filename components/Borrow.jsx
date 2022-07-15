@@ -48,10 +48,10 @@ export default function Borrow(props) {
     },
   });
 
-  const { runContractFunction: getMaxCollateralization } = useWeb3Contract({
+  const { runContractFunction: getMaxCollateral } = useWeb3Contract({
     abi: nftOracleContract.abi,
     contractAddress: addresses.NFTOracle,
-    functionName: "getCollectionMaxCollateralization",
+    functionName: "getCollectionMaxCollateral",
     params: {
       collection: props.token_address,
     },
@@ -102,9 +102,7 @@ export default function Borrow(props) {
   }
 
   async function updateMaxBorrowAmount() {
-    const maxCollaterization = (await getMaxCollateralization())
-      .div(2)
-      .toString();
+    const maxCollaterization = (await getMaxCollateral()).div(2).toString();
     const reserveUnderlying = (await getUnderlyingBalance()).toString();
     const updatedMaxAmount = BigNumber.from(maxCollaterization).gt(
       BigNumber.from(reserveUnderlying)

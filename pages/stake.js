@@ -16,12 +16,12 @@ import {
 import { useState, useEffect } from "react";
 import { useMoralis, useWeb3Contract } from "react-moralis";
 import erc20 from "../contracts/erc20.json";
-import RemoveVote from "../components/RemoveVote.json";
-import Vote from "../components/Vote.json";
-import DepositNativeToken from "../components/DepositNativeToken.json";
-import WithdrawNativeToken from "../components/WithdrawNativeToken.json";
+import RemoveVote from "../components/RemoveVote";
+import Vote from "../components/Vote";
+import DepositNativeToken from "../components/DepositNativeToken";
+import WithdrawNativeToken from "../components/WithdrawNativeToken";
 
-export default function Vote() {
+export default function Stake() {
   const { isWeb3Enabled, chainId, account } = useMoralis();
   const [nativeTokenBalance, setNativeTokenBalance] = useState("0");
   const [voteTokenBalance, setVoteTokenBalance] = useState("0");
@@ -31,11 +31,16 @@ export default function Vote() {
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
   const [visibleVoteModal, setVisibleVoteModal] = useState(false);
   const [visibleRemoveVoteModal, setVisibleRemoveVoteModal] = useState(false);
+  const [maxAmount, setMaxAmount] = useState("0");
 
   const addresses =
     chainId in contractAddresses
       ? contractAddresses[chainId]
       : contractAddresses["0x1"];
+  const [selectedCollection, setSelectedCollection] = useState({
+    label: addresses.SupportedAssets[0].name,
+    address: addresses.SupportedAssets[0].address,
+  });
   const [collections, setCollections] = useState([
     {
       label: addresses.SupportedAssets[0].name,
@@ -47,6 +52,7 @@ export default function Vote() {
   const { runContractFunction: getVoteTokenBalance } = useWeb3Contract();
   const { runContractFunction: getFreeVotes } = useWeb3Contract();
   const { runContractFunction: getCollectionVotes } = useWeb3Contract();
+  const { runContractFunction: getMaximumWithdrawalAmount } = useWeb3Contract();
 
   async function updateUI() {
     // Get the native token balance
@@ -93,6 +99,24 @@ export default function Vote() {
       params: getFreeVotesOptions,
     });
     setFreeVotes(freeVotes.toString());
+
+    const maxWithdrawalOptions = {
+      abi: nativeTokenVaultContract.abi,
+      contractAddress: addresses.NativeTokenVault,
+      functionName: "getMaximumWithdrawalAmount",
+      params: {
+        user: account,
+      },
+    };
+
+    const updatedMaxAmount = (
+      await getMaximumWithdrawalAmount({
+        params: maxWithdrawalOptions,
+      })
+    ).toString();
+
+    console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
+    setMaxAmount(updatedMaxAmount);
   }
 
   useEffect(() => {
@@ -137,11 +161,12 @@ export default function Vote() {
   function handleCollectionChange(event, value) {
     console.log("value", value);
     console.log("collections", collections);
-    const collectionAddress = collections.find(
+    const collection = collections.find(
       (collection) => collection.label == value
-    ).address;
-    if (collectionAddress) {
-      updateCollectionVotes(collectionAddress);
+    );
+    if (collection) {
+      setSelectedCollection(collection);
+      updateCollectionVotes(collection.address);
     }
   }
 
@@ -171,37 +196,39 @@ export default function Vote() {
       </Modal>
       <Modal
         hasFooter={false}
-        title="Vote"
+        title={"Vote for " + selectedCollection.label}
         width="50%"
         isVisible={visibleVoteModal}
         onCloseButtonPressed={function () {
           setVisibleVoteModal(false);
         }}
       >
-        <Vote setVisibility={setVisibleVoteModal} />
+        <Vote {...selectedCollection} setVisibility={setVisibleVoteModal} />
       </Modal>
       <Modal
         hasFooter={false}
-        title="Remove Vote"
+        title={"Remove vote from " + selectedCollection.label}
         width="50%"
         isVisible={visibleRemoveVoteModal}
         onCloseButtonPressed={function () {
           setVisibleRemoveVoteModal(false);
         }}
       >
-        <RemoveVote setVisibility={setVisibleRemoveVoteModal} />
+        <RemoveVote
+          {...selectedCollection}
+          setVisibility={setVisibleRemoveVoteModal}
+        />
       </Modal>
       <div className="flex flex-row items-center justify-center border-4 m-8">
         <div className="flex flex-col items-center m-8">
           <div className="flex flex-row m-2">
             <Button
               text="Deposit"
+              theme="colored"
+              type="button"
               size="large"
-              loadingProps={{
-                spinnerColor: "#000000",
-              }}
-              loadingText="Confirming Deposit"
-              isLoading={depositLoading}
+              color="blue"
+              radius="5"
               onClick={async function () {
                 setVisibleDepositModal(true);
               }}
@@ -210,12 +237,11 @@ export default function Vote() {
           <div className="flex flex-row m-2">
             <Button
               text="Withdraw"
+              theme="colored"
+              type="button"
               size="large"
-              loadingProps={{
-                spinnerColor: "#000000",
-              }}
-              loadingText="Confirming Withdrawal"
-              isLoading={withdrawalLoading}
+              color="blue"
+              radius="5"
               onClick={async function () {
                 setVisibleWithdrawalModal(true);
               }}
@@ -239,7 +265,10 @@ export default function Vote() {
             </div>
             <div className="flex flex-row">
               <Typography variant="body16">
-                {formatUnits(voteTokenBalance, 18)} veLE
+                {formatUnits(voteTokenBalance, 18) +
+                  " veLE (" +
+                  formatUnits(maxAmount, 18) +
+                  " LE)"}
               </Typography>
             </div>
           </div>
@@ -306,11 +335,11 @@ export default function Vote() {
               <div className="flex flex-row justify-center items-center  m-2">
                 <Button
                   text="Vote"
-                  loadingProps={{
-                    spinnerColor: "#000000",
-                  }}
-                  loadingText="Confirming Vote"
-                  isLoading={voteLoading}
+                  theme="colored"
+                  type="button"
+                  size="large"
+                  color="blue"
+                  radius="5"
                   onClick={async function () {
                     setVisibleVoteModal(true);
                   }}
@@ -319,18 +348,18 @@ export default function Vote() {
               <div className="flex flex-row justify-center items-center  m-2">
                 <Button
                   text="Remove Vote"
-                  loadingProps={{
-                    spinnerColor: "#000000",
-                  }}
-                  loadingText="Confirming Vote Removal"
-                  isLoading={removeVoteLoading}
+                  theme="colored"
+                  type="button"
+                  size="large"
+                  color="blue"
+                  radius="5"
                   onClick={async function () {
                     setVisibleRemoveVoteModal(true);
                   }}
                 ></Button>
               </div>
             </div>
-            <div className="flex flex-col mx-8">
+            <div className="flex flex-col mx-16">
               <div className="flex flex-row m-2">
                 <div className="flex flex-col">
                   <div className="flex flex-row">

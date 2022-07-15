@@ -110,8 +110,8 @@ export default function Header() {
             </Link>
           </div>
           <div className="flex m-2">
-            <Link href="/vote">
-              <Button text="Vote" size="large" theme="outline"></Button>
+            <Link href="/stake">
+              <Button text="Stake LE" size="large" theme="outline"></Button>
             </Link>
           </div>
         </div>

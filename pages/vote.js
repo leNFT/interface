@@ -344,16 +344,33 @@ export default function Vote() {
               </div>
             </div>
             <div className="flex flex-col mx-8">
-              <div className="flex flex-row">
-                <Typography variant="subtitle1">
-                  {" "}
-                  Votes in this collection
-                </Typography>
+              <div className="flex flex-row m-2">
+                <div className="flex flex-col">
+                  <div className="flex flex-row">
+                    <Typography variant="subtitle1">
+                      {" "}
+                      My Collection Votes
+                    </Typography>
+                  </div>
+                  <div className="flex flex-row">
+                    <Typography variant="body16">
+                      {formatUnits(collectionVotes, 18)} veLE
+                    </Typography>
+                  </div>
+                </div>
               </div>
-              <div className="flex flex-row">
-                <Typography variant="body16">
-                  {formatUnits(collectionVotes, 18)} veLE
-                </Typography>
+              <div className="flex flex-row m-2">
+                <div className="flex flex-col">
+                  <div className="flex flex-row">
+                    <Typography variant="subtitle1">
+                      {" "}
+                      Collection LTV Boost
+                    </Typography>
+                  </div>
+                  <div className="flex flex-row">
+                    <Typography variant="body16">0%</Typography>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

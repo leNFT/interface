@@ -27,7 +27,7 @@ export default function Vote(props) {
     functionName: "vote",
     params: {
       amount: amount,
-      collection: props.collection,
+      collection: props.address,
     },
   });
 
@@ -107,7 +107,7 @@ export default function Vote(props) {
           loadingText="Confirming Vote"
           isLoading={votingLoading}
           onClick={async function () {
-            if (BigNumber.from(amount).lte(BigNumber.from(balance))) {
+            if (BigNumber.from(amount).lte(BigNumber.from(freeVotes))) {
               setVotingLoading(true);
               await vote({
                 onComplete: () => setVotingLoading(false),

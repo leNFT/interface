@@ -169,7 +169,7 @@ export default function DepositNativeToken(props) {
           ></Button>
         </div>
       ) : (
-        <div className="m-8">
+        <div className="mt-16 mb-8">
           <Button
             text="Approve"
             isFullWidth

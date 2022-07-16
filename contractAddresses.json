@@ -17,27 +17,27 @@
   "0x5": {
     "Name": "goerli",
     "wETH": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
-    "ValidationLogicLib": "0xcDDA7FBA77dEB49C7D9E14e8eDdb0255b29B39d7",
-    "SupplyLogicLib": "0x1C0F86CE7F7a06BC1bCD64CE75A395af37D52f2c",
-    "BorrowLogicLib": "0x0b9DF3Ada6d8bA9210E5E1e0916398081D8f6C09",
-    "LiquidationLogicLib": "0xbe3842Ec6cc40E7f1E6F51d480c4716c88445F27",
-    "AddressesProvider": "0xf3a1BC23dcF9C9B5348f6711ae998d32676B3490",
-    "Market": "0xA4890A017A5C3C70A2fF59ba3aBaD3318d414F35",
-    "LoanCenter": "0x36ae9D911934E7976a9f952e368713B0F3030dfA",
-    "InterestRate": "0xA243186C40A2F9751c39B4fd4e75e4FaF82f6397",
-    "NFTOracle": "0x9f6027737fAd95DB480FF7f58e10b8c76F175cF6",
-    "TokenOracle": "0x213b4601b83dC9dd827e8C363541ed0ddCaa6cD3",
-    "NativeTokenVault": "0x65D5e356fAEa9c33F5c8757Fc03F9b3f9FD09cAe",
-    "NativeToken": "0x267897D5af7a932B47eA58107EebC3B912c2d4d4",
-    "DebtToken": "0xcc66f9834e4d2f994e33aC95392f0e2129b95022",
+    "ValidationLogicLib": "0x0233410B49985fad860Bc02885512B32e5c8859B",
+    "SupplyLogicLib": "0xd51567D76e3012f37896E4433DB9421dAe7cF2d9",
+    "BorrowLogicLib": "0xA15aE08aAb9705f65Fd0489B6b12765F1a967133",
+    "LiquidationLogicLib": "0x67cFbCfFC5c214974FF91c073884163046d499c0",
+    "AddressesProvider": "0x5D40691Ec2BeA9Ad55B867124e34c433d2e215a3",
+    "Market": "0xb2b96Bf2A82354ba3bAb22104A1FF65e0ef9088c",
+    "LoanCenter": "0x09f4919abB0b9231CE6B47E7A90cd49D23A71787",
+    "InterestRate": "0x5dA38f82C19c0cC05dC13108F07284AD834077a6",
+    "NFTOracle": "0xD9c69fFcB80d165698953b96061d485e792B39B1",
+    "TokenOracle": "0x50803F2a7C2664F99261EDB20270090eDd77b0A5",
+    "NativeTokenVault": "0xc66bd0a55D4aAc46eC9705440F31db8a4699C064",
+    "NativeToken": "0x08E308406Ab474dB8594d9ad4a7703C62060828b",
+    "DebtToken": "0x3d2d70225963612d0933fa4b06bf3cb670b40f1a",
     "SupportedAssets": [
       {
         "name": "leNFT Testing NFT",
-        "address": "0xe97f6874ecddd12382533f1d7d0d78d3005e5177"
+        "address": "0x1702046df9cedd75522b9df9a6eda3887077b081"
       },
       {
         "name": "leNFT Testing NFT2",
-        "address": "0xb41128accfd9d498f8ad7bd82fe996527fff4fd2"
+        "address": "0x4e366da54ea3d11d8ab1e4a70da64990f8dd8de6"
       }
     ]
   }

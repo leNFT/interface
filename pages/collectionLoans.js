@@ -25,7 +25,7 @@ export default function CollectionLoans() {
   const [collectionLoans, setCollectionLoans] = useState([]);
   const [allowance, setAllowance] = useState("0");
   const [floorPrice, setFloorPrice] = useState("0");
-  const [maxCollateral, setMaxCollateralization] = useState("0");
+  const [maxCollateralization, setMaxCollateralization] = useState("0");
   const [loadingCollectionLoans, setLoadingCollectionLoans] = useState(true);
   const { isWeb3Enabled, chainId, account } = useMoralis();
   const dispatch = useNotification();
@@ -43,7 +43,7 @@ export default function CollectionLoans() {
 
   const { runContractFunction: getLoanDebt } = useWeb3Contract();
   const { runContractFunction: getNFTLoanId } = useWeb3Contract();
-  const { runContractFunction: getMaxCollateral } = useWeb3Contract();
+  const { runContractFunction: getMaxCollateralization } = useWeb3Contract();
   const { runContractFunction: getFloorPrice } = useWeb3Contract();
   const { runContractFunction: liquidate } = useWeb3Contract();
   const { runContractFunction: getAllowance } = useWeb3Contract();
@@ -56,21 +56,20 @@ export default function CollectionLoans() {
     var updatedCollectionLoans = [];
 
     //Get the max collaterization for the collection
-    const getMaxCollateralOptions = {
+    const getMaxCollateralizationOptions = {
       abi: nftOracleContract.abi,
       contractAddress: addresses.NFTOracle,
-      functionName: "getMaxCollateral",
+      functionName: "getCollectionMaxCollaterization",
       params: {
-        user: account,
         collection: selectedCollection,
       },
     };
-    const maxCollateral = await getMaxCollateral({
+    const updatedMaxCollateralization = await getMaxCollateralization({
       onError: (error) => console.log(error),
-      params: getMaxCollateralOptions,
+      params: getMaxCollateralizationOptions,
     });
-    setMaxCollateralization(maxCollateral.toString());
-    console.log("maxCollateral", maxCollateral.toString());
+    setMaxCollateralization(updatedMaxCollateralization.toString());
+    console.log("maxCollateralization", updatedMaxCollateralization.toString());
 
     //Get the max collaterization for the collection
     const getFloorPriceOptions = {
@@ -277,16 +276,13 @@ export default function CollectionLoans() {
               </div>
               <div className="flex flex-col mt-2">
                 <div className="flex flex-row">
-                  <Typography variant="subtitle2">Max LTV</Typography>
+                  <Typography variant="subtitle2">
+                    Max LTV (no boost)
+                  </Typography>
                 </div>
                 <div className="flex flex-row">
                   <Typography variant="caption14">
-                    {floorPrice != "0" &&
-                      BigNumber.from(maxCollateral)
-                        .mul(BigNumber.from(10000))
-                        .div(BigNumber.from(floorPrice))
-                        .toNumber() / 100}
-                    %
+                    {maxCollateralization / 100}%
                   </Typography>
                 </div>
               </div>
@@ -294,12 +290,19 @@ export default function CollectionLoans() {
             <div className="flex flex-col m-2">
               <div className="flex flex-row">
                 <Typography variant="subtitle2">
-                  Max Collateralization
+                  Max Collateralization (no boost)
                 </Typography>
               </div>
               <div className="flex flex-row">
                 <Typography variant="caption14">
-                  {formatUnits(maxCollateral, 18)} wETH
+                  {formatUnits(
+                    BigNumber.from(maxCollateralization)
+                      .mul(floorPrice)
+                      .div(10000)
+                      .toString(),
+                    18
+                  )}{" "}
+                  wETH
                 </Typography>
               </div>
             </div>

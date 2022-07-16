@@ -37,7 +37,7 @@ export default function Testing() {
   const { runContractFunction: mint10NativeToken } = useWeb3Contract({
     abi: nativeTokenContract.abi,
     contractAddress: addresses.NativeToken,
-    functionName: "mint",
+    functionName: "testMint",
     params: {
       account: account,
       amount: "10000000000000000000",

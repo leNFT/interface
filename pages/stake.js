@@ -32,6 +32,7 @@ export default function Stake() {
   const [visibleVoteModal, setVisibleVoteModal] = useState(false);
   const [visibleRemoveVoteModal, setVisibleRemoveVoteModal] = useState(false);
   const [maxAmount, setMaxAmount] = useState("0");
+  const [collectionBoost, setCollectionBoost] = useState(0);
 
   const addresses =
     chainId in contractAddresses
@@ -53,6 +54,7 @@ export default function Stake() {
   const { runContractFunction: getFreeVotes } = useWeb3Contract();
   const { runContractFunction: getCollectionVotes } = useWeb3Contract();
   const { runContractFunction: getMaximumWithdrawalAmount } = useWeb3Contract();
+  const { runContractFunction: getCollectionBoost } = useWeb3Contract();
 
   async function updateUI() {
     // Get the native token balance
@@ -139,8 +141,8 @@ export default function Stake() {
     }
   }, [isWeb3Enabled]);
 
-  async function updateCollectionVotes(collection) {
-    // Get the native token balance
+  async function updateCollectionDetails(collection) {
+    // Get the collection votes
     const getCollectionVotesOptions = {
       abi: nativeTokenVaultContract.abi,
       contractAddress: addresses.NativeTokenVault,
@@ -150,12 +152,29 @@ export default function Stake() {
         collection: collection,
       },
     };
-    const collectionVotes = await getCollectionVotes({
+    const updatedCollectionVotes = await getCollectionVotes({
       onError: (error) => console.log(error),
       params: getCollectionVotesOptions,
     });
-    console.log("collectionVotes", collectionVotes);
-    setCollectionVotes(collectionVotes.toString());
+    console.log("collectionVotes", updatedCollectionVotes);
+    setCollectionVotes(updatedCollectionVotes.toString());
+
+    // Get the collection collateralization boost
+    const getCollectionBoostOptions = {
+      abi: nativeTokenVaultContract.abi,
+      contractAddress: addresses.NativeTokenVault,
+      functionName: "getCollateralizationBoost",
+      params: {
+        user: account,
+        collection: collection,
+      },
+    };
+    const updatedCollectionBoost = await getCollectionBoost({
+      onError: (error) => console.log(error),
+      params: getCollectionBoostOptions,
+    });
+    console.log("collectionBoost", updatedCollectionBoost);
+    setCollectionBoost(updatedCollectionBoost.toString());
   }
 
   function handleCollectionChange(event, value) {
@@ -166,7 +185,7 @@ export default function Stake() {
     );
     if (collection) {
       setSelectedCollection(collection);
-      updateCollectionVotes(collection.address);
+      updateCollectionDetails(collection.address);
     }
   }
 
@@ -378,7 +397,9 @@ export default function Stake() {
                     <Typography variant="subtitle1"> LTV Boost</Typography>
                   </div>
                   <div className="flex flex-row">
-                    <Typography variant="body16">0%</Typography>
+                    <Typography variant="body16">
+                      {collectionBoost / 10000}%
+                    </Typography>
                   </div>
                 </div>
               </div>

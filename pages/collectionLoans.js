@@ -130,8 +130,6 @@ export default function CollectionLoans() {
       });
 
       // Add new loan to update array
-      console.log(debt.toString());
-      console.log(maxCollateral.toString());
       updatedCollectionLoans.push({
         loanId: loanId,
         debt: debt.toString(),
@@ -356,7 +354,10 @@ export default function CollectionLoans() {
                       color="success"
                       value={calculateHealthLevel(
                         collectionLoan.debt,
-                        maxCollateral
+                        BigNumber.from(maxCollateralization)
+                          .mul(floorPrice)
+                          .div(10000)
+                          .toString()
                       )}
                     />
                   </div>
@@ -367,7 +368,9 @@ export default function CollectionLoans() {
                       .lt(BigNumber.from(allowance)) ? (
                       <Button
                         disabled={BigNumber.from(collectionLoan.debt).lt(
-                          BigNumber.from(maxCollateral)
+                          BigNumber.from(maxCollateralization)
+                            .mul(floorPrice)
+                            .div(10000)
                         )}
                         text="Liquidate"
                         theme="colored"
@@ -404,7 +407,9 @@ export default function CollectionLoans() {
                         color="red"
                         radius="5"
                         disabled={BigNumber.from(collectionLoan.debt).lt(
-                          BigNumber.from(maxCollateral)
+                          BigNumber.from(maxCollateralization)
+                            .mul(floorPrice)
+                            .div(10000)
                         )}
                         loadingProps={{
                           spinnerColor: "#000000",

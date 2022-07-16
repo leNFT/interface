@@ -238,7 +238,7 @@ export default function Borrow(props) {
           />
         </div>
       ) : (
-        <div className="flex m-8">
+        <div className="flex mt-16 mb-8">
           <Button
             text="Approve Asset"
             isFullWidth

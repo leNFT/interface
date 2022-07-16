@@ -200,7 +200,7 @@ export default function Stake() {
           setVisibleDepositModal(false);
         }}
       >
-        <DepositNativeToken setVisibility={visibleDepositModal} />
+        <DepositNativeToken setVisibility={setVisibleDepositModal} />
       </Modal>
       <Modal
         hasFooter={false}
@@ -211,7 +211,7 @@ export default function Stake() {
           setVisibleWithdrawalModal(false);
         }}
       >
-        <WithdrawNativeToken setVisibility={visibleWithdrawalModal} />
+        <WithdrawNativeToken setVisibility={setVisibleWithdrawalModal} />
       </Modal>
       <Modal
         hasFooter={false}

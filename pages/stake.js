@@ -331,7 +331,7 @@ export default function Stake() {
             </div>
           </div>
           <div className="flex flex-row rounded justify-center items-center mt-16 mb-8">
-            <div className="flex flex-col mx-8">
+            <div className="flex flex-col">
               <div className="flex flex-row justify-center items-center  m-2">
                 <Button
                   text="Vote"

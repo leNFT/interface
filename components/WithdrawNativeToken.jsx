@@ -22,6 +22,15 @@ export default function WithdrawNativeToken(props) {
 
   const { runContractFunction: getMaximumWithdrawalAmount } = useWeb3Contract();
 
+  const { runContractFunction: withdraw } = useWeb3Contract({
+    abi: nativeTokenVaultContract.abi,
+    contractAddress: addresses.NativeTokenVault,
+    functionName: "withdraw",
+    params: {
+      amount: amount,
+    },
+  });
+
   async function updateMaxAmount() {
     const maxWithdrawalOptions = {
       abi: nativeTokenVaultContract.abi,
@@ -53,7 +62,7 @@ export default function WithdrawNativeToken(props) {
     dispatch({
       type: "info",
       message:
-        "Withdrawal Successful!  Please wait for the transaction confirmation.",
+        "Withdrawal Successful!  Please wait for transaction confirmation.",
       title: "Notification",
       position: "topR",
       icon: "bell",

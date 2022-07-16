@@ -78,8 +78,7 @@ export default function RepayLoan(props) {
     props.setVisibility(false);
     dispatch({
       type: "info",
-      message:
-        "Repay Successful!  Please wait for the transaction confirmation.",
+      message: "Repay Successful!  Please wait for transaction confirmation.",
       title: "Notification",
       position: "topR",
       icon: "bell",

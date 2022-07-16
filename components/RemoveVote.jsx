@@ -90,7 +90,7 @@ export default function RemoveVote(props) {
     dispatch({
       type: "info",
       message:
-        "Vote Remocal Successful!  Please wait for the transaction confirmation.",
+        "Vote Remocal Successful!  Please wait for transaction confirmation.",
       title: "Notification",
       position: "topR",
       icon: "bell",

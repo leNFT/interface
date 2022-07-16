@@ -89,8 +89,7 @@ export default function DepositNativeToken(props) {
     updateTokenBalance();
     dispatch({
       type: "info",
-      message:
-        "Deposit Successful! Please wait for the transaction confirmation.",
+      message: "Deposit Successful! Please wait for transaction confirmation.",
       title: "Notification",
       position: "topR",
       icon: "bell",

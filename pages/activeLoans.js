@@ -51,7 +51,7 @@ export default function ActiveLoans() {
 
   // Get active loans for the selected collection
   async function getCollectionLoans(selectedCollection) {
-    console.log("Getting collection loans...");
+    console.log("Getting collection loans...", selectedCollection);
     var collectionNFTs;
     var updatedCollectionLoans = [];
 

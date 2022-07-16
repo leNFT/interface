@@ -398,7 +398,7 @@ export default function Stake() {
                   </div>
                   <div className="flex flex-row">
                     <Typography variant="body16">
-                      {collectionBoost / 10000}%
+                      {collectionBoost / 100}%
                     </Typography>
                   </div>
                 </div>

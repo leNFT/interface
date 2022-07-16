@@ -29,7 +29,7 @@
     "TokenOracle": "0x213b4601b83dC9dd827e8C363541ed0ddCaa6cD3",
     "NativeTokenVault": "0x65D5e356fAEa9c33F5c8757Fc03F9b3f9FD09cAe",
     "NativeToken": "0x267897D5af7a932B47eA58107EebC3B912c2d4d4",
-    "DebtToken": "0xcc66f9834e4d2f994e33ac95392f0e2129b95022",
+    "DebtToken": "0xcc66f9834e4d2f994e33aC95392f0e2129b95022",
     "SupportedAssets": [
       {
         "name": "leNFT Testing NFT",

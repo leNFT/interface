@@ -128,8 +128,12 @@ export default function Header() {
             </Link>
           </div>
           <div className="flex m-2">
-            <Link href="/activeLoans">
-              <Button text="Active Loans" size="large" theme="outline"></Button>
+            <Link href="/collectionLoans">
+              <Button
+                text="Collection Loans"
+                size="large"
+                theme="outline"
+              ></Button>
             </Link>
           </div>
           <div className="flex m-2">

@@ -21,7 +21,7 @@ import Image from "next/image";
 import erc20 from "../contracts/erc20.json";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 
-export default function ActiveLoans() {
+export default function CollectionLoans() {
   const [collectionLoans, setCollectionLoans] = useState([]);
   const [allowance, setAllowance] = useState("0");
   const [floorPrice, setFloorPrice] = useState("0");
@@ -283,9 +283,9 @@ export default function ActiveLoans() {
                   <Typography variant="caption14">
                     {floorPrice != "0" &&
                       BigNumber.from(maxCollateral)
-                        .mul(BigNumber.from(100))
+                        .mul(BigNumber.from(10000))
                         .div(BigNumber.from(floorPrice))
-                        .toString()}
+                        .toNumber() / 100}
                     %
                   </Typography>
                 </div>

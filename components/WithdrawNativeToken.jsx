@@ -74,10 +74,13 @@ export default function WithdrawNativeToken(props) {
       params: getWithdrawRequestOptions,
     });
 
-    setLastWithdrawRequest({
-      amount: withdrawRequest.amount.toString(),
-      timestamp: withdrawRequest.timestamp.toNumber(),
-    });
+    // Withdraw might be undefined if no request was made before
+    if (withdrawRequest) {
+      setLastWithdrawRequest({
+        amount: withdrawRequest.amount.toString(),
+        timestamp: withdrawRequest.timestamp.toNumber(),
+      });
+    }
   }
 
   //Run once

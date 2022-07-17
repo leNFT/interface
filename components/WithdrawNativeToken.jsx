@@ -9,9 +9,17 @@ import { useState, useEffect } from "react";
 import nativeTokenVaultContract from "../contracts/NativeTokenVault.json";
 
 export default function WithdrawNativeToken(props) {
+  const ONE_DAY = 86400;
+  const ONE_WEEK = ONE_DAY * 7;
+  const UNVOTE_WINDOW = ONE_DAY * 2;
   const { isWeb3Enabled, chainId, account } = useMoralis();
   const [withdrawalLoading, setWithdrawalLoading] = useState(false);
+  const [requestLoading, setRequestLoading] = useState(false);
   const [amount, setAmount] = useState("0");
+  const [lastWithdrawRequest, setLastWithdrawRequest] = useState({
+    amount: "0",
+    timestamp: 0,
+  });
   const [maxAmount, setMaxAmount] = useState("0");
   const addresses =
     chainId in contractAddresses
@@ -21,6 +29,7 @@ export default function WithdrawNativeToken(props) {
   const dispatch = useNotification();
 
   const { runContractFunction: getMaximumWithdrawalAmount } = useWeb3Contract();
+  const { runContractFunction: getWithdrawRequest } = useWeb3Contract();
 
   const { runContractFunction: withdraw } = useWeb3Contract({
     abi: nativeTokenVaultContract.abi,
@@ -50,12 +59,79 @@ export default function WithdrawNativeToken(props) {
     console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
     setMaxAmount(updatedMaxAmount);
   }
+
+  async function getLastWithdrawRequest() {
+    const getWithdrawRequestOptions = {
+      abi: nativeTokenVaultContract.abi,
+      contractAddress: addresses.NativeTokenVault,
+      functionName: "getWithdrawRequest",
+      params: {
+        user: account,
+      },
+    };
+
+    const withdrawRequest = await getWithdrawRequest({
+      params: getWithdrawRequestOptions,
+    });
+
+    setLastWithdrawRequest({
+      amount: withdrawRequest.amount.toString(),
+      timestamp: withdrawRequest.timestamp.toNumber(),
+    });
+  }
+
   //Run once
   useEffect(() => {
     if (isWeb3Enabled) {
       updateMaxAmount();
+      getLastWithdrawRequest();
     }
   }, [isWeb3Enabled]);
+
+  function canWithdraw(requestTimestamp) {
+    let now = Date.now() / 1000; // Date in seconds
+
+    if (
+      now > requestTimestamp + ONE_WEEK &&
+      now < requestTimestamp + ONE_WEEK + UNVOTE_WINDOW
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  function getWithdrawalMessage(requestTimestamp) {
+    let now = Date.now() / 1000; // Date in seconds
+
+    if (now < requestTimestamp + ONE_WEEK) {
+      let hoursToWithdraw = (requestTimestamp + ONE_WEEK - now) / 3600;
+      return (
+        "Please wait until the withdrawal cooling down period is over, " +
+        hoursToWithdraw.toString() +
+        " hours."
+      );
+    }
+
+    if (
+      now > requestTimestamp + ONE_WEEK &&
+      now < requestTimestamp + ONE_WEEK + UNVOTE_WINDOW
+    ) {
+      let hoursUntilWithdrawClosed =
+        requestTimestamp + ONE_WEEK + UNVOTE_WINDOW - now;
+      return (
+        "You can withdraw for " +
+        hoursUntilWithdrawClosed.toString() +
+        " hours."
+      );
+    }
+
+    if (now > requestTimestamp + ONE_WEEK + UNVOTE_WINDOW) {
+      return "Please submit an withdrawal request to be able to withdraw. 7 days cooldown period.";
+    }
+
+    return "";
+  }
 
   const handleWithdrawalSuccess = async function () {
     props.setVisibility(false);
@@ -63,6 +139,17 @@ export default function WithdrawNativeToken(props) {
       type: "info",
       message:
         "Withdrawal Successful!  Please wait for transaction confirmation.",
+      title: "Notification",
+      position: "topR",
+      icon: "bell",
+    });
+  };
+
+  const handleRequestSuccess = async function () {
+    props.setVisibility(false);
+    dispatch({
+      type: "info",
+      message: "Request Successful! You will be able to withdraw in 7 days.",
       title: "Notification",
       position: "topR",
       icon: "bell",
@@ -79,7 +166,7 @@ export default function WithdrawNativeToken(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-row items-center justify-center">
+      <div className="flex flex-row items-center justify-center m-4">
         <div className="flex flex-col">
           <Typography variant="h4">Maximum withdrawal amount</Typography>
           <Typography variant="body16">
@@ -87,48 +174,88 @@ export default function WithdrawNativeToken(props) {
           </Typography>
         </div>
       </div>
-      <div className="flex flex-row items-center justify-center m-8">
-        <Input
-          label="Amount"
-          type="number"
-          step="any"
-          validation={{
-            numberMax: Number(formatUnits(maxAmount, 18)),
-            numberMin: 0,
-          }}
-          onChange={handleInputChange}
-        />
-      </div>
+      {!BigNumber.from(maxAmount).isZero() && (
+        <div>
+          <div className="flex flex-row items-center justify-center m-6">
+            <Input
+              label="Amount"
+              type="number"
+              step="any"
+              validation={{
+                numberMax: Number(formatUnits(maxAmount, 18)),
+                numberMin: 0,
+              }}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className="flex flex-row items-center text-center justify-center m-2">
+            <Typography variant="caption14">
+              {getWithdrawalMessage(lastWithdrawRequest.timestamp)}
+            </Typography>
+          </div>
+          {canWithdraw(lastWithdrawRequest.timestamp) ? (
+            <div className="mt-16 mb-8">
+              <Button
+                text="Withdraw"
+                isFullWidth
+                loadingProps={{
+                  spinnerColor: "#000000",
+                }}
+                loadingText="Confirming Withdrawal"
+                isLoading={withdrawalLoading}
+                onClick={async function () {
+                  if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
+                    setWithdrawalLoading(true);
+                    await withdraw({
+                      onComplete: () => setWithdrawalLoading(false),
+                      onSuccess: handleWithdrawalSuccess,
+                      onError: (error) => console.log(error),
+                    });
+                  } else {
+                    dispatch({
+                      type: "info",
+                      message: "Amount is bigger than max permited withdrawal",
+                      title: "Notification",
+                      position: "topR",
+                      icon: "bell",
+                    });
+                  }
+                }}
+              />
+            </div>
+          ) : (
+            <div className="mt-16 mb-8">
+              <Button
+                text="Request Withdrawal"
+                isFullWidth
+                loadingProps={{
+                  spinnerColor: "#000000",
+                }}
+                loadingText="Confirming Approval"
+                isLoading={requestLoading}
+                onClick={async function () {
+                  setRequestLoading(true);
+                  const requestWithdrawalOptions = {
+                    abi: NativeTokenVault.abi,
+                    contractAddress: addresses.NativeTokenVault,
+                    functionName: "createWithdrawRequest",
+                    params: {
+                      amount: balance,
+                    },
+                  };
 
-      <div className="mt-16 mb-8">
-        <Button
-          text="Withdraw"
-          isFullWidth
-          loadingProps={{
-            spinnerColor: "#000000",
-          }}
-          loadingText="Confirming Withdrawal"
-          isLoading={withdrawalLoading}
-          onClick={async function () {
-            if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
-              setWithdrawalLoading(true);
-              await withdraw({
-                onComplete: () => setWithdrawalLoading(false),
-                onSuccess: handleWithdrawalSuccess,
-                onError: (error) => console.log(error),
-              });
-            } else {
-              dispatch({
-                type: "info",
-                message: "Amount is bigger than max permited withdrawal",
-                title: "Notification",
-                position: "topR",
-                icon: "bell",
-              });
-            }
-          }}
-        />
-      </div>
+                  await requestWithdraw({
+                    onComplete: () => setRequestLoading(false),
+                    onSuccess: handleRequestSuccess,
+                    onError: (error) => console.log(error),
+                    params: requestWithdrawalOptions,
+                  });
+                }}
+              ></Button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -6,7 +6,8 @@ import marketContract from "../contracts/Market.json";
 import reserveContract from "../contracts/Reserve.json";
 import tokenOracleContract from "../contracts/TokenOracle.json";
 import Link from "next/link";
-import { ConnectButton, Button } from "web3uikit";
+import { ConnectButton } from "web3uikit";
+import { Button } from "grommet";
 
 export default function Header() {
   const [borrowRate, setBorrowRate] = useState(0);
@@ -124,26 +125,22 @@ export default function Header() {
         <div className="flex flex-row">
           <div className="flex m-2">
             <Link href="/app">
-              <Button text="Home" size="large" theme="outline" />
+              <Button size="medium" label="Home" />
             </Link>
           </div>
           <div className="flex m-2">
             <Link href="/collectionLoans">
-              <Button
-                text="Collections' Loans"
-                size="large"
-                theme="outline"
-              ></Button>
+              <Button size="medium" label="Collection Loans'" />
             </Link>
           </div>
           <div className="flex m-2">
             <Link href="/reserve">
-              <Button text="Deposit" size="large" theme="outline"></Button>
+              <Button size="medium" label="Supply" />
             </Link>
           </div>
           <div className="flex m-2">
             <Link href="/stake">
-              <Button text="Stake LE" size="large" theme="outline"></Button>
+              <Button size="medium" label="Stake" />
             </Link>
           </div>
         </div>

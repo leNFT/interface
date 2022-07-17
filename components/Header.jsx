@@ -123,17 +123,14 @@ export default function Header() {
       <div className="flex flex-col ml-12">
         <div className="flex flex-row">
           <div className="flex m-2">
-            <Button
-              href="/app"
-              text="Home"
-              size="large"
-              theme="outline"
-            ></Button>
+            <Link href="/app" passHref>
+              <Button text="Home" size="large" theme="outline"></Button>
+            </Link>
           </div>
           <div className="flex m-2">
             <Link href="/collectionLoans">
               <Button
-                text="Collection Loans"
+                text="Collections' Loans"
                 size="large"
                 theme="outline"
               ></Button>

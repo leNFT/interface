@@ -10,7 +10,7 @@ export default function Home() {
 
   const options = {
     chain: "goerli",
-    address: "0x60cF81baA73D76b223708cA4099c8166A7696A99",
+    address: "0x14f2fC7a4D9D47a7Dd62EAE76eBbeFFeFa2bE560",
     function_name: "getBorrowRate",
     abi: reserveContract.abi,
     params: {},

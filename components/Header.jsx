@@ -130,7 +130,7 @@ export default function Header() {
           </div>
           <div className="flex m-2">
             <Link href="/collectionLoans">
-              <Button size="medium" label="Collection Loans'" />
+              <Button size="medium" label="Collections' Loans" />
             </Link>
           </div>
           <div className="flex m-2">

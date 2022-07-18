@@ -138,7 +138,7 @@ export default function Header() {
             </Link>
           </div>
           <div className="flex m-2">
-            <Link href="/reserve">
+            <Link href="/supply">
               <Button size="medium" color="#eab676" label="Supply" />
             </Link>
           </div>

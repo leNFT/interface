@@ -1,7 +1,7 @@
 import styles from "../styles/Home.module.css";
 import { Icon } from "web3uikit";
 import Link from "next/link";
-import { Button } from "web3uikit";
+import { Button } from "grommet";
 
 export default function Footer() {
   return (
@@ -31,11 +31,7 @@ export default function Footer() {
         <Link href="/testing">
           <div className="mx-8">
             {" "}
-            <Button
-              color="red"
-              text="Testing Dashboard"
-              theme="colored"
-            ></Button>
+            <Button color="red" label="Testing Dashboard" size="small"></Button>
           </div>
         </Link>
       </footer>

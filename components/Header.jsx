@@ -125,22 +125,26 @@ export default function Header() {
         <div className="flex flex-row">
           <div className="flex m-2">
             <Link href="/app">
-              <Button size="medium" label="Home" />
+              <Button size="medium" color="#eab676" label="Home" />
             </Link>
           </div>
           <div className="flex m-2">
             <Link href="/collectionLoans">
-              <Button size="medium" label="Collections' Loans" />
+              <Button
+                size="medium"
+                color="#eab676"
+                label="Collections' Loans"
+              />
             </Link>
           </div>
           <div className="flex m-2">
             <Link href="/reserve">
-              <Button size="medium" label="Supply" />
+              <Button size="medium" color="#eab676" label="Supply" />
             </Link>
           </div>
           <div className="flex m-2">
             <Link href="/stake">
-              <Button size="medium" label="Stake" />
+              <Button size="medium" color="#eab676" label="Stake" />
             </Link>
           </div>
         </div>

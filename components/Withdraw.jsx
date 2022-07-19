@@ -26,7 +26,7 @@ export default function Withdraw(props) {
     contractAddress: addresses.Market,
     functionName: "withdraw",
     params: {
-      asset: addresses.wETH,
+      asset: addresses[props.asset].address,
       amount: amount,
     },
   });
@@ -85,7 +85,9 @@ export default function Withdraw(props) {
 
   function handleInputChange(e) {
     if (e.target.value != "") {
-      setAmount(parseUnits(e.target.value, 18).toString());
+      setAmount(
+        parseUnits(e.target.value, addresses[props.asset].decimals).toString()
+      );
     } else {
       setAmount("0");
     }
@@ -97,7 +99,9 @@ export default function Withdraw(props) {
         <div className="flex flex-col">
           <Typography variant="h4">Maximum withdrawal amount</Typography>
           <Typography variant="body16">
-            {formatUnits(maxAmount, 18)} wETH
+            {formatUnits(maxAmount, addresses[props.asset].decimals) +
+              " " +
+              props.asset}
           </Typography>
         </div>
       </div>
@@ -107,7 +111,9 @@ export default function Withdraw(props) {
           type="number"
           step="any"
           validation={{
-            numberMax: Number(formatUnits(maxAmount, 18)),
+            numberMax: Number(
+              formatUnits(maxAmount, addresses[props.asset].decimals)
+            ),
             numberMin: 0,
           }}
           onChange={handleInputChange}

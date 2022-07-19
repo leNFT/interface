@@ -75,7 +75,7 @@ export default function CollectionLoans() {
     const getFloorPriceOptions = {
       abi: nftOracleContract.abi,
       contractAddress: addresses.NFTOracle,
-      functionName: "getCollectionFloorPrice",
+      functionName: "getCollectionETHFloorPrice",
       params: {
         collection: selectedCollection,
       },

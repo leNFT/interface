@@ -16,8 +16,14 @@
   },
   "0x5": {
     "Name": "goerli",
-    "wETH": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
-    "USDC": "0x07865c6E87B9F70255377e024ace6630C1Eaa37F",
+    "wETH": {
+      "address": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
+      "decimals": 18
+    },
+    "USDC": {
+      "address": "0x07865c6E87B9F70255377e024ace6630C1Eaa37F",
+      "decimals": 6
+    },
     "ValidationLogicLib": "0xC6095e559d93838F6C5Cb1D0E81f9AbD17D281d7",
     "SupplyLogicLib": "0x22cE2a5F45835A449c51eb8842927471682B62B4",
     "BorrowLogicLib": "0xBf7771998A3b5253c78Cbe37fdF6e24b0EAEaEFf",

@@ -62,7 +62,7 @@ export default function Header() {
     const getNativeTokenPriceOptions = {
       abi: tokenOracleContract.abi,
       contractAddress: addresses.TokenOracle,
-      functionName: "getTokenPrice",
+      functionName: "getTokenETHPrice",
       params: {
         tokenAddress: addresses.NativeToken,
       },

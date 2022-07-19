@@ -32,7 +32,7 @@ export default function ReserveInfo(props) {
     contractAddress: addresses.Market,
     functionName: "getReserveAddress",
     params: {
-      asset: addresses[props.asset],
+      asset: addresses[props.asset].address,
     },
   });
 
@@ -134,25 +134,28 @@ export default function ReserveInfo(props) {
     <div className={styles.container}>
       <Modal
         hasFooter={false}
-        title="Deposit wETH"
+        title={"Deposit " + props.asset}
         isVisible={visibleDepositModal}
         width="50%"
         onCloseButtonPressed={function () {
           setVisibleDepositModal(false);
         }}
       >
-        <Deposit setVisibility={setVisibleDepositModal} />
+        <Deposit setVisibility={setVisibleDepositModal} asset={props.asset} />
       </Modal>
       <Modal
         hasFooter={false}
-        title="Withdraw wETH"
+        title={"Withdraw " + props.asset}
         width="50%"
         isVisible={visibleWithdrawalModal}
         onCloseButtonPressed={function () {
           setVisibleWithdrawalModal(false);
         }}
       >
-        <Withdraw setVisibility={setVisibleWithdrawalModal} />
+        <Withdraw
+          setVisibility={setVisibleWithdrawalModal}
+          asset={props.asset}
+        />
       </Modal>
       <div className="flex items-center justify-center">
         <div className="flex flex-col items-center m-16">
@@ -173,7 +176,7 @@ export default function ReserveInfo(props) {
             </div>
             <div className="flex flex-row mx-2 mb-2">
               <Typography variant="body16">
-                {formatUnits(maxAmount, 18)} wETH
+                {formatUnits(maxAmount, 18) + " " + props.asset}
               </Typography>
             </div>
           </div>
@@ -206,7 +209,7 @@ export default function ReserveInfo(props) {
             </div>
           </div>
         </div>
-        <div className="flex flex-col items-center m-16">
+        <div className="flex flex-col m-16">
           <div className="mb-8">
             <Typography variant="h1" color="blueCloudDark">
               Supply Rate @ {supplyRate / 100}%
@@ -219,12 +222,13 @@ export default function ReserveInfo(props) {
 
           <div>
             <Typography variant="caption14">
-              Underlying is {formatUnits(underlyingBalance, 18)} wETH
+              Underlying is{" "}
+              {formatUnits(underlyingBalance, 18) + " " + props.asset}
             </Typography>
           </div>
           <div>
             <Typography variant="caption14">
-              Debt is {formatUnits(debt, 18)} wETH
+              Debt is {formatUnits(debt, 18) + " " + props.asset}
             </Typography>
           </div>
         </div>

@@ -28,7 +28,7 @@ export default function Deposit(props) {
     contractAddress: addresses.Market,
     functionName: "getReserveAddress",
     params: {
-      asset: addresses.wETH,
+      asset: addresses[props.asset].address,
     },
   });
 
@@ -37,14 +37,14 @@ export default function Deposit(props) {
     contractAddress: addresses.Market,
     functionName: "deposit",
     params: {
-      asset: addresses.wETH,
+      asset: addresses[props.asset].address,
       amount: amount,
     },
   });
 
   const { runContractFunction: getBalance } = useWeb3Contract({
     abi: erc20,
-    contractAddress: addresses.wETH,
+    contractAddress: addresses[props.asset].address,
     functionName: "balanceOf",
     params: {
       _owner: account,
@@ -66,7 +66,7 @@ export default function Deposit(props) {
   async function getTokenAllowance() {
     const getAllowanceOptions = {
       abi: erc20,
-      contractAddress: addresses.wETH,
+      contractAddress: addresses[props.asset].address,
       functionName: "allowance",
       params: {
         _owner: account,
@@ -104,12 +104,12 @@ export default function Deposit(props) {
 
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
-    if (reserveAddress) {
+    if (reserveAddress && props.asset) {
       console.log("Got reserve address, setting the rest...", reserveAddress);
       getTokenAllowance();
       updateTokenBalance();
     }
-  }, [reserveAddress]);
+  }, [reserveAddress, props.asset]);
 
   const handleDepositSuccess = async function () {
     console.log("Deposited", amount);
@@ -137,7 +137,9 @@ export default function Deposit(props) {
 
   function handleInputChange(e) {
     if (e.target.value != "") {
-      setAmount(parseUnits(e.target.value, 18).toString());
+      setAmount(
+        parseUnits(e.target.value, addresses[props.asset].decimals).toString()
+      );
     } else {
       setAmount("0");
     }
@@ -149,7 +151,9 @@ export default function Deposit(props) {
         <div className="flex flex-col">
           <Typography variant="h4">My Balance</Typography>
           <Typography variant="body16">
-            {formatUnits(balance, 18)} wETH
+            {formatUnits(balance, addresses[props.asset].decimals) +
+              " " +
+              props.asset}
           </Typography>
         </div>
         {BigNumber.from(0).eq(parseUnits(balance)) && (
@@ -178,7 +182,9 @@ export default function Deposit(props) {
           type="number"
           step="any"
           validation={{
-            numberMax: Number(formatUnits(balance, 18)),
+            numberMax: Number(
+              formatUnits(balance, addresses[props.asset].decimals)
+            ),
             numberMin: 0,
           }}
           disabled={!approved}
@@ -229,7 +235,7 @@ export default function Deposit(props) {
               setApprovalLoading(true);
               const approveOptions = {
                 abi: erc20,
-                contractAddress: addresses.wETH,
+                contractAddress: addresses[props.asset].address,
                 functionName: "approve",
                 params: {
                   _spender: reserveAddress,

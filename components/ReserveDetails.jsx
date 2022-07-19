@@ -1,21 +1,26 @@
 import { BigNumber } from "@ethersproject/bignumber";
+import { Button, Modal, Typography, Tooltip, Icon } from "web3uikit";
 import styles from "../styles/Home.module.css";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import contractAddresses from "../contractAddresses.json";
-import { useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
+import { useMoralis, useWeb3Contract } from "react-moralis";
 import marketContract from "../contracts/Market.json";
 import reserveContract from "../contracts/Reserve.json";
-import { Typography } from "web3uikit";
 import LinearProgressWithLabel from "./LinearProgressWithLabel";
+import Deposit from "./Deposit";
+import Withdraw from "./Withdraw";
 
-export default function ReserveInfo() {
+export default function ReserveInfo(props) {
+  const { isWeb3Enabled, chainId, account } = useMoralis();
   const [debt, setDebt] = useState("0");
+  const [visibleDepositModal, setVisibleDepositModal] = useState(false);
+  const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
+  const [maxAmount, setMaxAmount] = useState("0");
   const [underlyingBalance, setUnderlyingBalance] = useState("0");
   const [supplyRate, setSupplyRate] = useState(0);
   const [utilizationRate, setUtilizationRate] = useState(0);
   const [reserveAddress, setReserveAddress] = useState("");
-  const { isWeb3Enabled, chainId, account } = useMoralis();
 
   const addresses =
     chainId in contractAddresses
@@ -27,7 +32,7 @@ export default function ReserveInfo() {
     contractAddress: addresses.Market,
     functionName: "getReserveAddress",
     params: {
-      asset: addresses.wETH,
+      asset: addresses[props.asset],
     },
   });
 
@@ -57,6 +62,15 @@ export default function ReserveInfo() {
     contractAddress: reserveAddress,
     functionName: "getSupplyRate",
     params: {},
+  });
+
+  const { runContractFunction: getMaximumWithdrawalAmount } = useWeb3Contract({
+    abi: reserveContract.abi,
+    contractAddress: reserveAddress,
+    functionName: "getMaximumWithdrawalAmount",
+    params: {
+      to: account,
+    },
   });
 
   async function getReserve() {
@@ -93,13 +107,20 @@ export default function ReserveInfo() {
     });
     console.log("Updated Supply Rate:", updatedSupplyRate);
     setSupplyRate(updatedSupplyRate.toNumber());
+
+    const updatedMaxAmount = await getMaximumWithdrawalAmount({
+      onError: (error) => console.log(error),
+    });
+    console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
+    setMaxAmount(updatedMaxAmount.toString());
   }
 
   useEffect(() => {
-    if (isWeb3Enabled) {
+    if (isWeb3Enabled && props.asset) {
       getReserve();
+      console.log("props.asset", props.asset);
     }
-  }, [isWeb3Enabled]);
+  }, [isWeb3Enabled, props.asset]);
 
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
@@ -111,25 +132,102 @@ export default function ReserveInfo() {
 
   return (
     <div className={styles.container}>
-      <div className="mb-8">
-        <Typography variant="h1" color="blueCloudDark">
-          Supply Rate @ {supplyRate / 100}%
-        </Typography>
-      </div>
-      <div>
-        <Typography variant="body16">Utilization Rate:</Typography>
-        <LinearProgressWithLabel value={utilizationRate / 100} />
-      </div>
+      <Modal
+        hasFooter={false}
+        title="Deposit wETH"
+        isVisible={visibleDepositModal}
+        width="50%"
+        onCloseButtonPressed={function () {
+          setVisibleDepositModal(false);
+        }}
+      >
+        <Deposit setVisibility={setVisibleDepositModal} />
+      </Modal>
+      <Modal
+        hasFooter={false}
+        title="Withdraw wETH"
+        width="50%"
+        isVisible={visibleWithdrawalModal}
+        onCloseButtonPressed={function () {
+          setVisibleWithdrawalModal(false);
+        }}
+      >
+        <Withdraw setVisibility={setVisibleWithdrawalModal} />
+      </Modal>
+      <div className="flex items-center justify-center">
+        <div className="flex flex-col items-center m-16">
+          <div className="flex flex-col m-4 border-4 rounded-2xl">
+            <div className="flex flex-row m-2">
+              <div className="flex flex-col">
+                <Typography variant="subtitle1">My Reserve Balance</Typography>
+              </div>
+              <div className="flex flex-col ml-1">
+                <Tooltip
+                  content="Deposits + interest accrued by the protocol"
+                  position="top"
+                  minWidth={200}
+                >
+                  <Icon fill="#68738D" size={18} svg="helpCircle" />
+                </Tooltip>
+              </div>
+            </div>
+            <div className="flex flex-row mx-2 mb-2">
+              <Typography variant="body16">
+                {formatUnits(maxAmount, 18)} wETH
+              </Typography>
+            </div>
+          </div>
+          <div className="flex flex-row">
+            <div className="m-4">
+              <Button
+                text="Deposit"
+                theme="colored"
+                type="button"
+                size="large"
+                color="blue"
+                radius="5"
+                onClick={async function () {
+                  setVisibleDepositModal(true);
+                }}
+              />
+            </div>
+            <div className="m-4">
+              <Button
+                text="Withdraw"
+                theme="colored"
+                type="button"
+                size="large"
+                color="blue"
+                radius="5"
+                onClick={async function () {
+                  setVisibleWithdrawalModal(true);
+                }}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col items-center m-16">
+          <div className="mb-8">
+            <Typography variant="h1" color="blueCloudDark">
+              Supply Rate @ {supplyRate / 100}%
+            </Typography>
+          </div>
+          <div>
+            <Typography variant="body16">Utilization Rate:</Typography>
+            <LinearProgressWithLabel value={utilizationRate / 100} />
+          </div>
 
-      <div>
-        <Typography variant="caption14">
-          Underlying is {formatUnits(underlyingBalance, 18)} wETH
-        </Typography>
-      </div>
-      <div>
-        <Typography variant="caption14">
-          Debt is {formatUnits(debt, 18)} wETH
-        </Typography>
+          <div>
+            <Typography variant="caption14">
+              Underlying is {formatUnits(underlyingBalance, 18)} wETH
+            </Typography>
+          </div>
+          <div>
+            <Typography variant="caption14">
+              Debt is {formatUnits(debt, 18)} wETH
+            </Typography>
+          </div>
+        </div>
       </div>
     </div>
   );

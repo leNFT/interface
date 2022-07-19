@@ -337,7 +337,7 @@
     },
     {
       "inputs": [],
-      "name": "getProtocolLiquidationFee",
+      "name": "getLiquidationFee",
       "outputs": [
         {
           "internalType": "uint256",

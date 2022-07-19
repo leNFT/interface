@@ -339,6 +339,14 @@ export default function CollectionLoans() {
                     )}
                   </div>
                   <div className="flex flex-row">
+                    <Typography variant="caption12">Asset ID</Typography>
+                  </div>
+                  <div className="flex flex-row  items-center">
+                    <Typography variant="caption14">
+                      {collectionLoan.tokenId}
+                    </Typography>
+                  </div>
+                  <div className="flex flex-row mt-2">
                     <Typography variant="caption12">Debt</Typography>
                   </div>
                   <div className="flex flex-row  items-center">

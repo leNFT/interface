@@ -5,6 +5,7 @@ import { useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
 import styles from "../styles/Home.module.css";
 import {
+  Icon,
   useNotification,
   Button,
   Input,
@@ -13,12 +14,15 @@ import {
 } from "web3uikit";
 import marketContract from "../contracts/Market.json";
 import nftOracleContract from "../contracts/NFTOracle.json";
+import tokenOracleContract from "../contracts/TokenOracle.json";
 import reserveContract from "../contracts/Reserve.json";
 import "bignumber.js";
 import erc721 from "../contracts/erc721.json";
 import Image from "next/image";
+import { Tab, Tabs } from "grommet";
 
 export default function Borrow(props) {
+  const PRICE_PRECISION = "1000000000000000000";
   const [amount, setAmount] = useState("0");
   const [maxAmount, setMaxAmount] = useState("0");
   const [approved, setApproved] = useState(false);
@@ -32,6 +36,7 @@ export default function Borrow(props) {
       : contractAddresses["0x1"];
 
   const dispatch = useNotification();
+  const [borrowAsset, setBorrowAsset] = useState("WETH");
 
   const { runContractFunction: getApproval } = useWeb3Contract();
   const { runContractFunction: approve } = useWeb3Contract();
@@ -41,20 +46,29 @@ export default function Borrow(props) {
     contractAddress: addresses.Market,
     functionName: "borrow",
     params: {
-      asset: addresses.wETH,
+      asset: addresses[borrowAsset].address,
       amount: amount,
       nftAddress: props.token_address,
       nftTokenID: props.token_id,
     },
   });
 
-  const { runContractFunction: getMaxCollateral } = useWeb3Contract({
+  const { runContractFunction: getMaxETHCollateral } = useWeb3Contract({
     abi: nftOracleContract.abi,
     contractAddress: addresses.NFTOracle,
-    functionName: "getMaxCollateral",
+    functionName: "getMaxETHCollateral",
     params: {
       user: account,
       collection: props.token_address,
+    },
+  });
+
+  const { runContractFunction: getTokenETHPrice } = useWeb3Contract({
+    abi: tokenOracleContract.abi,
+    contractAddress: addresses.TokenOracle,
+    functionName: "getTokenETHPrice",
+    params: {
+      tokenAddress: addresses[borrowAsset].address,
     },
   });
 
@@ -63,7 +77,7 @@ export default function Borrow(props) {
     contractAddress: addresses.Market,
     functionName: "getReserveAddress",
     params: {
-      asset: addresses.wETH,
+      asset: addresses[borrowAsset].address,
     },
   });
 
@@ -103,13 +117,22 @@ export default function Borrow(props) {
   }
 
   async function updateMaxBorrowAmount() {
-    const maxCollaterization = (await getMaxCollateral()).div(2).toString();
+    const tokenETHPrice = (await getTokenETHPrice()).toString();
+    console.log("tokenETHPrice", tokenETHPrice);
+    const maxETHCollateral = (await getMaxETHCollateral()).div(2).toString();
+    console.log("maxETHCollateral", maxETHCollateral);
+    const maxCollateral = BigNumber.from(maxETHCollateral)
+      .mul(tokenETHPrice)
+      .div(PRICE_PRECISION)
+      .toString();
+    console.log("maxCollateral", maxCollateral);
     const reserveUnderlying = (await getUnderlyingBalance()).toString();
-    const updatedMaxAmount = BigNumber.from(maxCollaterization).gt(
+    console.log("reserveUnderlying", reserveUnderlying);
+    const updatedMaxAmount = BigNumber.from(maxCollateral).gt(
       BigNumber.from(reserveUnderlying)
     )
       ? reserveUnderlying
-      : maxCollaterization;
+      : maxCollateral;
     console.log("Updated Max Borrow Amount:", updatedMaxAmount);
     setMaxAmount(updatedMaxAmount);
   }
@@ -123,9 +146,10 @@ export default function Borrow(props) {
 
   useEffect(() => {
     if (isWeb3Enabled) {
+      console.log("Getting reserve", addresses[borrowAsset].address);
       getReserve();
     }
-  }, [isWeb3Enabled]);
+  }, [isWeb3Enabled, borrowAsset]);
 
   const handleBorrowSuccess = async function () {
     props.setVisibility(false);
@@ -151,11 +175,21 @@ export default function Borrow(props) {
 
   function handleInputChange(e) {
     if (e.target.value != "") {
-      setAmount(parseUnits(e.target.value, 18).toString());
+      setAmount(
+        parseUnits(e.target.value, addresses[borrowAsset].decimals).toString()
+      );
     } else {
       setAmount("0");
     }
   }
+
+  const onActive = (nextIndex) => {
+    if (nextIndex == "0") {
+      setBorrowAsset("WETH");
+    } else if (nextIndex == "1") {
+      setBorrowAsset("USDC");
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -174,6 +208,18 @@ export default function Borrow(props) {
           Loading...
         </div>
       )}
+      <div className="flex flex-row m-8 items-center">
+        <Tabs flex="grow" alignSelf="center" onActive={onActive}>
+          <Tab
+            title="WETH"
+            icon={<Icon fill="#68738D" size={20} svg="eth" />}
+          />
+          <Tab
+            title="USDC"
+            icon={<Icon fill="#68738D" size={20} svg="usdc" />}
+          />
+        </Tabs>
+      </div>
       <div className="flex flex-row m-2">
         <div className="flex flex-col">
           <Typography variant="h4">Address</Typography>
@@ -190,7 +236,9 @@ export default function Borrow(props) {
         <div className="flex flex-col">
           <Typography variant="h4">Maximum borrowable amount</Typography>
           <Typography variant="body16">
-            {formatUnits(maxAmount, 18)} WETH
+            {formatUnits(maxAmount, addresses[borrowAsset].decimals) +
+              " " +
+              borrowAsset}
           </Typography>
         </div>
       </div>
@@ -200,7 +248,9 @@ export default function Borrow(props) {
           type="number"
           step="any"
           validation={{
-            numberMax: Number(formatUnits(maxAmount, 18)),
+            numberMax: Number(
+              formatUnits(maxAmount, addresses[borrowAsset].decimals)
+            ),
             numberMin: 0,
           }}
           disabled={!approved}

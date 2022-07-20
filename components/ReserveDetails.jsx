@@ -176,7 +176,9 @@ export default function ReserveInfo(props) {
             </div>
             <div className="flex flex-row mx-2 mb-2">
               <Typography variant="body16">
-                {formatUnits(maxAmount, 18) + " " + props.asset}
+                {formatUnits(maxAmount, addresses[props.asset].decimals) +
+                  " " +
+                  props.asset}
               </Typography>
             </div>
           </div>
@@ -223,12 +225,17 @@ export default function ReserveInfo(props) {
           <div>
             <Typography variant="caption14">
               Underlying is{" "}
-              {formatUnits(underlyingBalance, 18) + " " + props.asset}
+              {formatUnits(underlyingBalance, addresses[props.asset].decimals) +
+                " " +
+                props.asset}
             </Typography>
           </div>
           <div>
             <Typography variant="caption14">
-              Debt is {formatUnits(debt, 18) + " " + props.asset}
+              Debt is{" "}
+              {formatUnits(debt, addresses[props.asset].decimals) +
+                " " +
+                props.asset}
             </Typography>
           </div>
         </div>

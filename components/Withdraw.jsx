@@ -36,7 +36,7 @@ export default function Withdraw(props) {
     contractAddress: addresses.Market,
     functionName: "getReserveAddress",
     params: {
-      asset: addresses.wETH,
+      asset: addresses[props.asset].address,
     },
   });
 
@@ -66,10 +66,10 @@ export default function Withdraw(props) {
 
   //Run once
   useEffect(() => {
-    if (isWeb3Enabled) {
+    if (isWeb3Enabled && props.asset) {
       updateMaxAmount();
     }
-  }, [isWeb3Enabled]);
+  }, [isWeb3Enabled, props.asset]);
 
   const handleWithdrawalSuccess = async function () {
     props.setVisibility(false);

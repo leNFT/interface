@@ -83,6 +83,8 @@ export default function Deposit(props) {
 
     if (!allowance.eq(BigNumber.from(0))) {
       setApproved(true);
+    } else {
+      setApproved(false);
     }
   }
 
@@ -97,10 +99,10 @@ export default function Deposit(props) {
   }
 
   useEffect(() => {
-    if (isWeb3Enabled) {
+    if (isWeb3Enabled && props.asset) {
       getReserve();
     }
-  }, [isWeb3Enabled]);
+  }, [isWeb3Enabled, props.asset]);
 
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
@@ -156,25 +158,26 @@ export default function Deposit(props) {
               props.asset}
           </Typography>
         </div>
-        {BigNumber.from(0).eq(parseUnits(balance)) && (
-          <div className="flex flex-col ml-4">
-            <Link
-              href={
-                "https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=" +
-                addresses.wETH
-              }
-            >
-              <a target="_blank" rel="noopener noreferrer">
-                <Button
-                  text="Wrap ETH"
-                  theme="ghost"
-                  type="button"
-                  size="small"
-                />
-              </a>
-            </Link>
-          </div>
-        )}
+        {BigNumber.from(0).eq(parseUnits(balance)) &&
+          addresses[props.asset].decimals == "WETH" && (
+            <div className="flex flex-col ml-4">
+              <Link
+                href={
+                  "https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=" +
+                  addresses.WETH
+                }
+              >
+                <a target="_blank" rel="noopener noreferrer">
+                  <Button
+                    text="Wrap ETH"
+                    theme="ghost"
+                    type="button"
+                    size="small"
+                  />
+                </a>
+              </Link>
+            </div>
+          )}
       </div>
       <div className="flex flex-row items-center justify-center m-8">
         <Input
@@ -204,6 +207,7 @@ export default function Deposit(props) {
             onClick={async function () {
               if (BigNumber.from(amount).lte(BigNumber.from(balance))) {
                 setDepositLoading(true);
+                console.log("Depositing", amount);
                 await deposit({
                   onComplete: () => setDepositLoading(false),
                   onSuccess: handleDepositSuccess,

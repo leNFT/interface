@@ -24,7 +24,7 @@ export default function Header() {
     contractAddress: addresses.Market,
     functionName: "getReserveAddress",
     params: {
-      asset: addresses.wETH,
+      asset: addresses["WETH"].address,
     },
   });
 

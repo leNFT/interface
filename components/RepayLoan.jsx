@@ -8,11 +8,13 @@ import styles from "../styles/Home.module.css";
 import { useState, useEffect } from "react";
 import marketContract from "../contracts/Market.json";
 import loanCenterContract from "../contracts/LoanCenter.json";
+import reserveContract from "../contracts/Reserve.json";
 import erc20 from "../contracts/erc20.json";
 import Image from "next/image";
 
 export default function RepayLoan(props) {
-  const [debt, setDebt] = useState("0");
+  const [loan, setLoan] = useState();
+  const [debt, setDebt] = useState(0);
   const [balance, setBalance] = useState("0");
   const { isWeb3Enabled, chainId, account } = useMoralis();
   const [repayLoading, setRepayLoading] = useState(false);
@@ -20,6 +22,9 @@ export default function RepayLoan(props) {
     chainId in contractAddresses
       ? contractAddresses[chainId]
       : contractAddresses["0x1"];
+
+  const [asset, setAsset] = useState(addresses["WETH"].address);
+  const [symbol, setSymbol] = useState("WETH");
 
   const dispatch = useNotification();
 
@@ -34,12 +39,24 @@ export default function RepayLoan(props) {
 
   const { runContractFunction: getBalance } = useWeb3Contract({
     abi: erc20,
-    contractAddress: addresses.wETH,
+    contractAddress: asset,
     functionName: "balanceOf",
     params: {
       _owner: account,
     },
   });
+
+  const { runContractFunction: getLoan } = useWeb3Contract({
+    abi: loanCenterContract.abi,
+    contractAddress: addresses.LoanCenter,
+    functionName: "getLoan",
+    params: {
+      loanId: props.loan_id,
+    },
+  });
+
+  const { runContractFunction: getReserveAsset } = useWeb3Contract();
+  const { runContractFunction: getSymbol } = useWeb3Contract();
 
   const { runContractFunction: getDebt } = useWeb3Contract({
     abi: loanCenterContract.abi,
@@ -50,12 +67,54 @@ export default function RepayLoan(props) {
     },
   });
 
+  async function updateReserveAsset() {
+    const updatedAsset = await getReserveAsset({
+      params: {
+        abi: reserveContract.abi,
+        contractAddress: loan.reserve,
+        functionName: "getAsset",
+        params: {},
+      },
+      onError: (error) => console.log(error),
+    });
+
+    console.log("Updated Asset:", updatedAsset);
+    setAsset(updatedAsset);
+
+    const updatedAssetSymbol = await getSymbol({
+      params: {
+        abi: erc20,
+        contractAddress: updatedAsset,
+        functionName: "symbol",
+        params: {},
+      },
+      onError: (error) => console.log(error),
+    });
+
+    console.log("Updated Asset Symbol:", updatedAssetSymbol);
+    setSymbol(updatedAssetSymbol);
+  }
+
   async function updateTokenBalance() {
     const updatedBalance = await getBalance({
       onError: (error) => console.log(error),
     });
     console.log("Updated Balance:", updatedBalance);
     setBalance(updatedBalance.toString());
+  }
+
+  async function getLoanToRepay() {
+    const updatedLoan = await getLoan({
+      onError: (error) => console.log(error),
+    });
+    console.log("Updated Loan:", {
+      loanId: updatedLoan.loanId.toString(),
+      reserve: updatedLoan.reserve,
+    });
+    setLoan({
+      loanId: updatedLoan.loanId.toString(),
+      reserve: updatedLoan.reserve,
+    });
   }
 
   async function getLoanDebt() {
@@ -66,13 +125,24 @@ export default function RepayLoan(props) {
     setDebt(updatedDebt.toString());
   }
 
-  //Run once
   useEffect(() => {
     if (isWeb3Enabled) {
-      updateTokenBalance();
+      getLoanToRepay();
       getLoanDebt();
     }
-  }, [isWeb3Enabled]);
+  }, [isWeb3Enabled, props.loan_id]);
+
+  useEffect(() => {
+    if (loan) {
+      updateReserveAsset();
+    }
+  }, [loan]);
+
+  useEffect(() => {
+    if (asset) {
+      updateTokenBalance();
+    }
+  }, [asset]);
 
   const handleRepaySuccess = async function () {
     props.setVisibility(false);
@@ -96,14 +166,16 @@ export default function RepayLoan(props) {
       <div className="flex flex-row items-center m-2">
         <div className="flex flex-col">
           <Typography variant="h4">Debt</Typography>
-          <Typography variant="body16">{formatUnits(debt, 18)} wETH</Typography>
+          <Typography variant="body16">
+            {formatUnits(debt, addresses[symbol].decimals) + " " + symbol}
+          </Typography>
         </div>
       </div>
       <div className="flex flex-row items-center m-2">
         <div className="flex flex-col">
-          <Typography variant="h4">Your wETH balance</Typography>
+          <Typography variant="h4">Your balance</Typography>
           <Typography variant="body16">
-            {formatUnits(balance, 18)} wETH
+            {formatUnits(balance, addresses[symbol].decimals) + " " + symbol}
           </Typography>
         </div>
       </div>

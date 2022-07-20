@@ -19,7 +19,6 @@ import Image from "next/image";
 export default function App() {
   const [loadingUI, setLoadingUI] = useState(true);
   const [loans, setLoans] = useState([]);
-  const [loansDebt, setLoansDebt] = useState([]);
   const [supportedAssets, setSupportedAssets] = useState([]);
   const [unsupportedAssets, setUnsupportedAssets] = useState([]);
   const [visibleAssetModal, setVisibleAssetModal] = useState(false);
@@ -32,8 +31,6 @@ export default function App() {
       ? contractAddresses[chainId]
       : contractAddresses["0x1"];
   const Web3Api = useMoralisWeb3Api();
-
-  const { runContractFunction: getLoanDebt } = useWeb3Contract();
 
   async function setupUI() {
     console.log("Setting up UI");
@@ -52,21 +49,6 @@ export default function App() {
     for (let i = 0; i < userNFTs.length; i++) {
       if (userNFTs[i].token_address == contractAddresses[chainId].DebtToken) {
         updatedLoans.push(userNFTs[i]);
-
-        // Get the debt for each loan
-        const getLoanDebtOptions = {
-          abi: loanCenterContract.abi,
-          contractAddress: addresses.LoanCenter,
-          functionName: "getLoanDebt",
-          params: {
-            loanId: userNFTs[i].token_id,
-          },
-        };
-        const debt = await getLoanDebt({
-          onError: (error) => console.log(error),
-          params: getLoanDebtOptions,
-        });
-        updatedLoansDebt.push(debt.toString());
       } else if (
         contractAddresses[chainId].SupportedAssets.find(
           (collection) => collection.address == userNFTs[i].token_address
@@ -86,7 +68,6 @@ export default function App() {
     console.log("updatedUnsupportedAssets:", updatedUnsupportedAssets);
 
     setLoans(updatedLoans);
-    setLoansDebt(updatedLoansDebt);
     setSupportedAssets(updatedSupportedAssets);
     setUnsupportedAssets(updatedUnsupportedAssets);
 
@@ -130,7 +111,6 @@ export default function App() {
                   ) : (
                     <div className="flex flex-col items-center gap-1">
                       <Illustration height="180px" logo="chest" width="100%" />
-                      Debt: {formatUnits(loansDebt[index], 18)} wETH
                     </div>
                   )}
                 </div>
@@ -161,7 +141,7 @@ export default function App() {
             <Typography variant="body18">No NFT assets found :/</Typography>
           )
         ) : (
-          <div className="flex mt-2">
+          <div className="flex mt-8">
             <Typography variant="h1">Assets:</Typography>
           </div>
         )}

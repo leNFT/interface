@@ -146,7 +146,7 @@ export default function CollectionLoans() {
   async function getWETHAllowance() {
     const getAllowanceOptions = {
       abi: erc20,
-      contractAddress: addresses.wETH,
+      contractAddress: addresses["WETH"].address,
       functionName: "allowance",
       params: {
         _owner: account,
@@ -268,7 +268,7 @@ export default function CollectionLoans() {
                 </div>
                 <div className="flex flex-row">
                   <Typography variant="caption14">
-                    {formatUnits(floorPrice, 18)} wETH
+                    {formatUnits(floorPrice, 18)} WETH
                   </Typography>
                 </div>
               </div>
@@ -300,7 +300,7 @@ export default function CollectionLoans() {
                       .toString(),
                     18
                   )}{" "}
-                  wETH
+                  WETH
                 </Typography>
               </div>
             </div>
@@ -351,7 +351,7 @@ export default function CollectionLoans() {
                   </div>
                   <div className="flex flex-row  items-center">
                     <Typography variant="caption14">
-                      {formatUnits(collectionLoan.debt, 18)} wETH
+                      {formatUnits(collectionLoan.debt, 18)} WETH
                     </Typography>
                   </div>
                   <div className="flex flex-row mt-6">
@@ -426,7 +426,7 @@ export default function CollectionLoans() {
                         onClick={async function () {
                           const approveOptions = {
                             abi: erc20,
-                            contractAddress: addresses.wETH,
+                            contractAddress: addresses.WETH,
                             functionName: "approve",
                             params: {
                               _spender: addresses.Market,

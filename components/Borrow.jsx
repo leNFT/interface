@@ -166,7 +166,8 @@ export default function Borrow(props) {
     setApproved(true);
     dispatch({
       type: "info",
-      message: "Approval Successful! Please wait for transaction confirmation.",
+      message:
+        "Approval Successful! Please wait for tx confirmation to borrow.",
       title: "Notification",
       position: "topR",
       icon: "bell",

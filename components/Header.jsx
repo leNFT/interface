@@ -124,7 +124,7 @@ export default function Header() {
         )}
       </div>
       <div className="flex flex-col items-center self-center my-2">
-        <div className="flex flex-col md:flex-row ">
+        <div className="flex flex-col md:flex-row md:items-center">
           <div className="flex flex-col m-2">
             <Link href="/app">
               <Button size="medium" color="neutral-3" label="Home" />
@@ -151,7 +151,7 @@ export default function Header() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center mt-2">
         <ConnectButton moralisAuth={false} />
       </div>
     </div>

@@ -123,7 +123,7 @@ export default function Header() {
           </div>
         )}
       </div>
-      <div className="flex flex-col items-center self-center">
+      <div className="flex flex-col items-center self-center my-2">
         <div className="flex flex-col md:flex-row ">
           <div className="flex flex-col m-2">
             <Link href="/app">

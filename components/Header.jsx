@@ -94,7 +94,7 @@ export default function Header() {
   }, [reserveAddress]);
 
   return (
-    <div className="p-5 border-b-2 flex flex-row justify-between items-center">
+    <div className="p-5 border-b-2 flex flex-col md:flex-row justify-between items-center">
       <div className="flex flex-col items-center justify-content">
         <Link href="/">
           <a target="_blank" rel="noopener noreferrer">
@@ -108,27 +108,29 @@ export default function Header() {
             </div>
           </a>
         </Link>
-        <h1 className="font-bold text-xs">
-          {isWeb3Enabled && (
-            <div className="flex flex-col">
-              <div className="flex flex-row items-center">
+        {isWeb3Enabled && (
+          <div className="flex flex-col">
+            <div className="flex flex-row items-center">
+              <h1 className="font-bold text-xs">
                 Borrow Rate @ {borrowRate / 100}%
-              </div>
-              <div className="flex flex-row items-center">
-                LE price @ {formatUnits(nativeTokenPrice, 18)} ETH
-              </div>
+              </h1>
             </div>
-          )}
-        </h1>
+            <div className="flex flex-row items-center">
+              <h1 className="font-bold text-xs">
+                LE price @ {formatUnits(nativeTokenPrice, 18)} ETH
+              </h1>
+            </div>
+          </div>
+        )}
       </div>
       <div className="flex flex-col ml-12">
-        <div className="flex flex-row">
-          <div className="flex m-2">
+        <div className="flex flex-col md:flex-row">
+          <div className="flex flex-col m-2">
             <Link href="/app">
               <Button size="medium" color="neutral-3" label="Home" />
             </Link>
           </div>
-          <div className="flex m-2">
+          <div className="flex flex-col m-2">
             <Link href="/collectionLoans">
               <Button
                 size="medium"
@@ -137,12 +139,12 @@ export default function Header() {
               />
             </Link>
           </div>
-          <div className="flex m-2">
+          <div className="flex flex-col m-2">
             <Link href="/supply">
               <Button size="medium" color="neutral-3" label="Supply" />
             </Link>
           </div>
-          <div className="flex m-2">
+          <div className="flex flex-col m-2">
             <Link href="/stake">
               <Button size="medium" color="neutral-3" label="Stake" />
             </Link>

@@ -98,8 +98,8 @@ export default function Header() {
       <div className="flex flex-col items-center justify-content">
         <Link href="/">
           <a target="_blank" rel="noopener noreferrer">
-            <div className="mx-5 mt-5 mb-2 flex flex-row justify-between items-center">
-              <div className="flex flex-col items-center justify-content">
+            <div className="mx-5 mt-5 mb-2 flex flex-row items-center">
+              <div className="flex flex-col items-center">
                 <h1 className="font-bold text-2xl">leNFT</h1>
               </div>
               <div className="flex flex-col ml-1 mb-4 items-center justify-content">
@@ -109,7 +109,7 @@ export default function Header() {
           </a>
         </Link>
         {isWeb3Enabled && (
-          <div className="flex flex-col">
+          <div className="flex flex-col items-center">
             <div className="flex flex-row items-center">
               <h1 className="font-bold text-xs">
                 Borrow Rate @ {borrowRate / 100}%
@@ -123,8 +123,8 @@ export default function Header() {
           </div>
         )}
       </div>
-      <div className="flex flex-col ml-12">
-        <div className="flex flex-col md:flex-row">
+      <div className="flex flex-col items-center self-center">
+        <div className="flex flex-col md:flex-row ">
           <div className="flex flex-col m-2">
             <Link href="/app">
               <Button size="medium" color="neutral-3" label="Home" />
@@ -151,7 +151,7 @@ export default function Header() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col items-center">
         <ConnectButton moralisAuth={false} />
       </div>
     </div>

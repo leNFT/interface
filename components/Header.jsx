@@ -94,11 +94,11 @@ export default function Header() {
   }, [reserveAddress]);
 
   return (
-    <div className="p-5 border-b-2 flex flex-col md:flex-row justify-between items-center">
+    <div className="p-4 border-b-2 flex flex-col md:flex-row justify-between items-center">
       <div className="flex flex-col items-center justify-content">
         <Link href="/">
           <a target="_blank" rel="noopener noreferrer">
-            <div className="mx-5 mt-5 mb-2 flex flex-row items-center">
+            <div className="mx-5 my-2 flex flex-row items-center">
               <div className="flex flex-col items-center">
                 <h1 className="font-bold text-2xl">leNFT</h1>
               </div>

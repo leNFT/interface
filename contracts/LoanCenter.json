@@ -311,7 +311,7 @@
     {
       "inputs": [
         {
-          "internalType": "contract IMarketAddressesProvider",
+          "internalType": "contract IAddressesProvider",
           "name": "addressesProvider",
           "type": "address"
         }

@@ -25,15 +25,6 @@ export default function Testing() {
     },
   });
 
-  const { runContractFunction: mintNFT2 } = useWeb3Contract({
-    abi: testNFTContract.abi,
-    contractAddress: addresses.SupportedAssets[1].address,
-    functionName: "mint",
-    params: {
-      owner: account,
-    },
-  });
-
   const { runContractFunction: mint10NativeToken } = useWeb3Contract({
     abi: nativeTokenContract.abi,
     contractAddress: addresses.NativeToken,
@@ -55,21 +46,6 @@ export default function Testing() {
         onClick={async function () {
           setMintingLoading(true);
           await mintNFT({
-            onComplete: () => setMintingLoading(false),
-            onError: (error) => console.log(error),
-          });
-        }}
-      />
-      <Button
-        text="Mint Test NFT2"
-        isFullWidth
-        isLoading={mintingLoading}
-        loadingProps={{
-          spinnerColor: "#000000",
-        }}
-        onClick={async function () {
-          setMintingLoading(true);
-          await mintNFT2({
             onComplete: () => setMintingLoading(false),
             onError: (error) => console.log(error),
           });

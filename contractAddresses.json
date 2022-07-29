@@ -27,23 +27,23 @@
       "address": "0x07865c6E87B9F70255377e024ace6630C1Eaa37F",
       "decimals": 6
     },
-    "ValidationLogicLib": "0x51FB4CbA191fe0Bd1e52c0D1e1cbE8fd69F6c7dd",
-    "SupplyLogicLib": "0x7100C88f96DE14435A611a80c153A3bd221DB7f0",
-    "BorrowLogicLib": "0x91f4fb1A05C5A15c299d61128998FaBD075BDcE9",
-    "LiquidationLogicLib": "0xd905E2E17d1aaCF64Ece767C0B74757661255C7f",
-    "AddressesProvider": "0x3ceD851Ce959914e4d9C2694cBd9cbC6dEd9F9D4",
-    "Market": "0x79b98852450624cb18573BD9DbC28e2BD2E71eC8",
-    "LoanCenter": "0x8d84e9E54B0dfCb161C695301695b9fA1a0fC00f",
-    "InterestRate": "0x2115c6E62152131c023f8d5495f093A02915cF18",
-    "NFTOracle": "0x33289BaaD1F27AFcef6931fE3530183Ed1C4df8f",
-    "TokenOracle": "0x07f040AA1645DF4d7eCBb352deb5095fD73D7e40",
-    "NativeTokenVault": "0xDcc6e1FDbCaD04908fad021a8af54051dC4c1CD8",
-    "NativeToken": "0xABad79811e135F8e890271b1ed502C5783756530",
-    "DebtToken": "0xABad79811e135F8e890271b1ed502C5783756530",
+    "ValidationLogicLib": "0x52C66e3e4a48d3cAaF7E061B941Db4077C6c4EaE",
+    "SupplyLogicLib": "0x223E4c66ac7526b813b8fb0DAA9b652F8F5f6A38",
+    "BorrowLogicLib": "0xa4aa01eB7E8195a7a5B2D7236620187742595B2c",
+    "LiquidationLogicLib": "0x000a6b51b2A1251e74C940B795371737082A98Be",
+    "AddressesProvider": "0xc154d12bFd0dD7CE709D85B48Bb5BC96a286860E",
+    "Market": "0xAc7f8b027afbE179aB6300e5952E7E908355e35f",
+    "LoanCenter": "0x5F034975bb7350E722649Af2F8C378FB225642eE",
+    "InterestRate": "0x67edcAE3641b681dd7EA93519fCA6eD6221a9C96",
+    "NFTOracle": "0xA7336b74832715be9Ae9CBd98d1B10e40B1F4277",
+    "TokenOracle": "0x70f976725543Cc6b278B2D1fE6e34977898616EF",
+    "NativeTokenVault": "0xC74b1857bf4507Af2bEa6732808Cf9C5771D3784",
+    "NativeToken": "0x017A5D8221E56B3c5aEf5A6A2A15027382b23C64",
+    "DebtToken": "0x20bfe8c834ced6d9cbb2761dff6b5139d473c2fe",
     "SupportedAssets": [
       {
-        "name": "leNFT Testing NFT2",
-        "address": "0xb5d563F4536a97a228f20beE2B2913DE4C144dD7"
+        "name": "leNFT Testing NFT",
+        "address": "0x9fbf133ea8f0a0fd5617705d090256e488f770d3"
       }
     ]
   }

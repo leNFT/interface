@@ -24,7 +24,6 @@ import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 export default function CollectionLoans() {
   const [collectionLoans, setCollectionLoans] = useState([]);
   const [allowance, setAllowance] = useState("0");
-  const [floorPrice, setFloorPrice] = useState("0");
   const [maxCollateralization, setMaxCollateralization] = useState("0");
   const [loadingCollectionLoans, setLoadingCollectionLoans] = useState(true);
   const { isWeb3Enabled, chainId, account } = useMoralis();
@@ -44,10 +43,6 @@ export default function CollectionLoans() {
   const { runContractFunction: getLoanDebt } = useWeb3Contract();
   const { runContractFunction: getNFTLoanId } = useWeb3Contract();
   const { runContractFunction: getMaxCollateralization } = useWeb3Contract();
-  const { runContractFunction: getFloorPrice } = useWeb3Contract();
-  const { runContractFunction: liquidate } = useWeb3Contract();
-  const { runContractFunction: getAllowance } = useWeb3Contract();
-  const { runContractFunction: approve } = useWeb3Contract();
 
   // Get active loans for the selected collection
   async function getCollectionLoans(selectedCollection) {
@@ -70,21 +65,6 @@ export default function CollectionLoans() {
     });
     setMaxCollateralization(updatedMaxCollateralization.toString());
     console.log("maxCollateralization", updatedMaxCollateralization.toString());
-
-    //Get the max collaterization for the collection
-    const getFloorPriceOptions = {
-      abi: nftOracleContract.abi,
-      contractAddress: addresses.NFTOracle,
-      functionName: "getCollectionETHFloorPrice",
-      params: {
-        collection: selectedCollection,
-      },
-    };
-    const floorPrice = await getFloorPrice({
-      onError: (error) => console.log(error),
-      params: getFloorPriceOptions,
-    });
-    setFloorPrice(floorPrice.toString());
 
     // Get the token ids for the selected collection
     const options = {
@@ -143,31 +123,9 @@ export default function CollectionLoans() {
     setLoadingCollectionLoans(false);
   }
 
-  async function getWETHAllowance() {
-    const getAllowanceOptions = {
-      abi: erc20,
-      contractAddress: addresses["WETH"].address,
-      functionName: "allowance",
-      params: {
-        _owner: account,
-        _spender: addresses.Market,
-      },
-    };
-
-    const allowance = await getAllowance({
-      onError: (error) => console.log(error),
-      params: getAllowanceOptions,
-    });
-
-    console.log("Got allowance:", allowance);
-
-    setAllowance(allowance.toString());
-  }
-
   // Runs once
   useEffect(() => {
     if (isWeb3Enabled) {
-      getWETHAllowance();
       //Fill the collections with the supported assets
       var updatedCollections = [];
       console.log("SupportedAssets", addresses.SupportedAssets);
@@ -198,37 +156,6 @@ export default function CollectionLoans() {
       getCollectionLoans(collectionAddress.address);
     }
   }
-
-  function calculateHealthLevel(debtString, maxCollateralString) {
-    const maxCollateralNumber = BigNumber.from(maxCollateralString);
-    const debtNumber = BigNumber.from(debtString);
-
-    return maxCollateralNumber
-      .sub(debtNumber)
-      .mul(BigNumber.from(100))
-      .div(maxCollateralNumber)
-      .toNumber();
-  }
-
-  const handleLiquidateSuccess = async function () {
-    dispatch({
-      type: "info",
-      message: "Liquidation Successful",
-      title: "Notification",
-      position: "topR",
-      icon: "bell",
-    });
-  };
-
-  const handleApprovalSuccess = async function () {
-    dispatch({
-      type: "info",
-      message: "Approval Successful",
-      title: "Notification",
-      position: "topR",
-      icon: "bell",
-    });
-  };
 
   return (
     <div className={styles.container}>
@@ -262,16 +189,6 @@ export default function CollectionLoans() {
         <div className="flex flex-col border-4 rounded-lg m-8 ">
           <div className="flex flex-row">
             <div className="flex flex-col m-2">
-              <div className="flex flex-col">
-                <div className="flex flex-row">
-                  <Typography variant="subtitle2">Floor Price</Typography>
-                </div>
-                <div className="flex flex-row">
-                  <Typography variant="caption14">
-                    {formatUnits(floorPrice, 18)} WETH
-                  </Typography>
-                </div>
-              </div>
               <div className="flex flex-col mt-2">
                 <div className="flex flex-row">
                   <Typography variant="subtitle2">
@@ -283,25 +200,6 @@ export default function CollectionLoans() {
                     {maxCollateralization / 100}%
                   </Typography>
                 </div>
-              </div>
-            </div>
-            <div className="flex flex-col m-2">
-              <div className="flex flex-row">
-                <Typography variant="subtitle2">
-                  Max Collateralization (no boost)
-                </Typography>
-              </div>
-              <div className="flex flex-row">
-                <Typography variant="caption14">
-                  {formatUnits(
-                    BigNumber.from(maxCollateralization)
-                      .mul(floorPrice)
-                      .div(10000)
-                      .toString(),
-                    18
-                  )}{" "}
-                  WETH
-                </Typography>
               </div>
             </div>
           </div>
@@ -353,95 +251,6 @@ export default function CollectionLoans() {
                     <Typography variant="caption14">
                       {formatUnits(collectionLoan.debt, 18)} WETH
                     </Typography>
-                  </div>
-                  <div className="flex flex-row mt-6">
-                    <Typography variant="caption12">Health Level</Typography>
-                  </div>
-                  <div>
-                    <LinearProgressWithLabel
-                      color="success"
-                      value={calculateHealthLevel(
-                        collectionLoan.debt,
-                        BigNumber.from(maxCollateralization)
-                          .mul(floorPrice)
-                          .div(10000)
-                          .toString()
-                      )}
-                    />
-                  </div>
-                  <div className="flex flex-row m-4 items-center justify-center">
-                    {BigNumber.from(floorPrice)
-                      .mul(BigNumber.from(82))
-                      .div(BigNumber.from(100))
-                      .lt(BigNumber.from(allowance)) ? (
-                      <Button
-                        disabled={BigNumber.from(collectionLoan.debt).lt(
-                          BigNumber.from(maxCollateralization)
-                            .mul(floorPrice)
-                            .div(10000)
-                        )}
-                        text="Liquidate"
-                        theme="colored"
-                        type="button"
-                        size="small"
-                        color="red"
-                        radius="5"
-                        onClick={async function () {
-                          const getLiquidateOptions = {
-                            abi: marketContract.abi,
-                            contractAddress: addresses.Market,
-                            functionName: "liquidate",
-                            params: {
-                              loanId: collectionLoan.loanId,
-                            },
-                          };
-                          console.log(
-                            "Liquidation loan",
-                            collectionLoan.loanId
-                          );
-                          await liquidate({
-                            onError: (error) => console.log(error),
-                            onSuccess: handleLiquidateSuccess,
-                            params: getLiquidateOptions,
-                          });
-                        }}
-                      />
-                    ) : (
-                      <Button
-                        text="Approve Liquidation"
-                        theme="colored"
-                        type="button"
-                        size="small"
-                        color="red"
-                        radius="5"
-                        disabled={BigNumber.from(collectionLoan.debt).lt(
-                          BigNumber.from(maxCollateralization)
-                            .mul(floorPrice)
-                            .div(10000)
-                        )}
-                        loadingProps={{
-                          spinnerColor: "#000000",
-                        }}
-                        loadingText="Confirming Approval"
-                        onClick={async function () {
-                          const approveOptions = {
-                            abi: erc20,
-                            contractAddress: addresses.WETH,
-                            functionName: "approve",
-                            params: {
-                              _spender: addresses.Market,
-                              _value: floorPrice,
-                            },
-                          };
-
-                          await approve({
-                            onSuccess: handleApprovalSuccess,
-                            onError: (error) => console.log(error),
-                            params: approveOptions,
-                          });
-                        }}
-                      ></Button>
-                    )}
                   </div>
                 </Card>
               </div>

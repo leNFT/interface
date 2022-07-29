@@ -163,7 +163,7 @@ export default function Stake() {
     const getCollectionBoostOptions = {
       abi: nativeTokenVaultContract.abi,
       contractAddress: addresses.NativeTokenVault,
-      functionName: "getCollateralizationBoost",
+      functionName: "getVoteCollateralizationBoost",
       params: {
         user: account,
         collection: collection,

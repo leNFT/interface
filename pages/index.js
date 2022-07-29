@@ -10,16 +10,15 @@ export default function Home() {
 
   const options = {
     chain: "goerli",
-    address: "0x4086252993936452Af25c41Fc618cc74Fd921B2B",
+    address: "0x7aE02e6B7e17987fB4D16540085566A13f5acce4",
     function_name: "getBorrowRate",
     abi: reserveContract.abi,
     params: {},
   };
 
-  const { fetch, data, error, isLoading } = useMoralisWeb3ApiCall(
-    native.runContractFunction,
-    { ...options }
-  );
+  const { fetch } = useMoralisWeb3ApiCall(native.runContractFunction, {
+    ...options,
+  });
 
   async function updateUI() {
     let updatedBorrowRate = await fetch();

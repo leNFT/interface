@@ -1,6 +1,7 @@
 import fetch from "node-fetch";
 
 export async function getTokenPriceSig(request, collection, tokenId) {
+  const serverAddress = "https://lenft-api-w27ha.ondigitalocean.app";
   const options = {
     method: "GET",
     headers: {
@@ -8,7 +9,11 @@ export async function getTokenPriceSig(request, collection, tokenId) {
     },
   };
   const tokenBestBidResponse = await fetch(
-    "/api/assetPrice?address=" + collection + "&tokenId=" + tokenId,
+    serverAddress +
+      "/api/assetPrice?address=" +
+      collection +
+      "&tokenId=" +
+      tokenId,
     options
   ).catch((err) => console.error(err));
   const priceSig = await tokenBestBidResponse.json();

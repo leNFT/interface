@@ -1,4 +1,3 @@
-import crypto from "crypto";
 import fetch from "node-fetch";
 
 export async function getTokenPriceSig(request, collection, tokenId) {

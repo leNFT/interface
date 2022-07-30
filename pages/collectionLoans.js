@@ -10,6 +10,7 @@ import nftOracleContract from "../contracts/NFTOracle.json";
 import { useMoralisWeb3Api, useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
 import {
+  Modal,
   useNotification,
   Card,
   Illustration,
@@ -23,10 +24,11 @@ import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 
 export default function CollectionLoans() {
   const [collectionLoans, setCollectionLoans] = useState([]);
-  const [allowance, setAllowance] = useState("0");
+  const [selectedLoan, setSelectedLoan] = useState();
   const [maxCollateralization, setMaxCollateralization] = useState("0");
+  const [visibleLiquidateModal, setVisibleLiquidateModal] = useState(false);
   const [loadingCollectionLoans, setLoadingCollectionLoans] = useState(true);
-  const { isWeb3Enabled, chainId, account } = useMoralis();
+  const { isWeb3Enabled, chainId } = useMoralis();
   const dispatch = useNotification();
   const addresses =
     chainId in contractAddresses
@@ -159,6 +161,20 @@ export default function CollectionLoans() {
 
   return (
     <div className={styles.container}>
+      <Modal
+        hasFooter={false}
+        title={"Deposit " + props.asset}
+        isVisible={visibleLiquidateModal}
+        width="50%"
+        onCloseButtonPressed={function () {
+          setVisibleLiquidateModal(false);
+        }}
+      >
+        <Liquidate
+          setVisibility={setVisibleLiquidateModal}
+          loan={selectedLoan}
+        />
+      </Modal>
       <div className="flex flex-row m-2 items-center justify-center">
         <div className="flex flex-col items-center justify-center">
           <Autocomplete
@@ -214,7 +230,14 @@ export default function CollectionLoans() {
           <div id="collectionLoansContainer" className="flex p-2">
             {collectionLoans.map((collectionLoan) => (
               <div key={collectionLoan.loanId} className="m-4">
-                <Card title={"Loan #" + collectionLoan.loanId}>
+                <Card
+                  title={"Loan #" + collectionLoan.loanId}
+                  onClick={function () {
+                    console.log("CLICK");
+                    setSelectedLoan(collectionLoan.loanId);
+                    setVisibleLiquidateModal(true);
+                  }}
+                >
                   <div className="flex flex-row justify-center p-2">
                     {collectionLoan.tokenURI ? (
                       <div className="flex flex-col items-center justify-center gap-2">
@@ -247,7 +270,7 @@ export default function CollectionLoans() {
                   <div className="flex flex-row mt-2">
                     <Typography variant="caption12">Debt</Typography>
                   </div>
-                  <div className="flex flex-row  items-center">
+                  <div className="flex flex-row  items-center mb-2">
                     <Typography variant="caption14">
                       {formatUnits(collectionLoan.debt, 18)} WETH
                     </Typography>

@@ -8,7 +8,6 @@ import { useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
 import marketContract from "../contracts/Market.json";
 import reserveContract from "../contracts/Reserve.json";
-import { Typography } from "web3uikit";
 
 export default function Liquidate(props) {
   const { isWeb3Enabled, chainId, account } = useMoralis();

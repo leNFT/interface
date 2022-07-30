@@ -20,7 +20,7 @@ import {
 } from "web3uikit";
 import Image from "next/image";
 import erc20 from "../contracts/erc20.json";
-import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
+import Liquidate from "../components/Liquidate";
 
 export default function CollectionLoans() {
   const [collectionLoans, setCollectionLoans] = useState([]);

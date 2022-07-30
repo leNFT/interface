@@ -32,4 +32,4 @@ yarn-error.log*
 .vercel
 
 # keys
-/pages/api/keys.json
+/pages/api/setupKeys.js

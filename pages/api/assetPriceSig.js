@@ -3,7 +3,6 @@ import { parseUnits } from "@ethersproject/units";
 import { utils } from "ethers";
 import { getMessage } from "eip-712";
 import { getBestBid } from "./getBestBid.js";
-import keys from "./keys.json";
 
 const ONE_HOUR = 3600;
 

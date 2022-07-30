@@ -1,5 +1,4 @@
 import fetch from "node-fetch";
-import keys from "./keys.json";
 
 export async function getBestBid(collection, tokenId) {
   const options = {

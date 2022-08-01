@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import fetch from "node-fetch";
 
-export async function getTokenPriceSig(request, collection, tokenId) {
+export async function getTokenPriceSig(requestId, collection, tokenId) {
   const serverAddress = "https://lenft-api-w27ha.ondigitalocean.app";
   const options = {
     method: "GET",
@@ -12,7 +12,7 @@ export async function getTokenPriceSig(request, collection, tokenId) {
   const requestURL =
     serverAddress +
     "/api/assetPriceSig?requestId=" +
-    request +
+    requestId +
     "&address=" +
     collection +
     "&tokenId=" +

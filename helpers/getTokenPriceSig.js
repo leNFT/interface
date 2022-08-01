@@ -9,16 +9,18 @@ export async function getTokenPriceSig(request, collection, tokenId) {
       Accept: "application/json",
     },
   };
-  const tokenBestBidResponse = await fetch(
+  const requestURL =
     serverAddress +
-      "/api/assetPriceSig?requestId=" +
-      request +
-      "&address=" +
-      collection +
-      "&tokenId=" +
-      tokenId,
-    options
-  ).catch((err) => console.error(err));
+    "/api/assetPriceSig?requestId=" +
+    request +
+    "&address=" +
+    collection +
+    "&tokenId=" +
+    tokenId;
+  console.log(requestURL);
+  const tokenBestBidResponse = await fetch(requestURL, options).catch((err) =>
+    console.error(err)
+  );
   const priceSig = await tokenBestBidResponse.json();
 
   return priceSig;

@@ -17,11 +17,11 @@ function MyApp({ Component, pageProps }) {
       serverUrl="https://mrmnjfhprkn8.usemoralis.com:2053/server"
       appId="SHMhOUhuFQ7rN4QvfItwiFG3qwaz4TEHz4hE78eP"
     >
-      <LayoutComponent>
-        <NotificationProvider>
+      <NotificationProvider>
+        <LayoutComponent>
           <Component {...pageProps} />
-        </NotificationProvider>
-      </LayoutComponent>
+        </LayoutComponent>
+      </NotificationProvider>
     </MoralisProvider>
   );
 }

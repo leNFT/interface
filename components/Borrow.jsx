@@ -44,9 +44,7 @@ export default function Borrow(props) {
 
   const { runContractFunction: getApproval } = useWeb3Contract();
   const { runContractFunction: approve } = useWeb3Contract();
-
   const { runContractFunction: borrow } = useWeb3Contract();
-
   const { runContractFunction: getTokenMaxETHCollateral } = useWeb3Contract();
 
   const { runContractFunction: getTokenETHPrice } = useWeb3Contract({

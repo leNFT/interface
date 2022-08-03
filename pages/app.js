@@ -86,9 +86,9 @@ export default function App() {
   return (
     <div className={styles.container}>
       <div className={styles.main}>
-        {loans.length > 0 && <Typography variant="h1">Loans:</Typography>}
+        {loans.length > 0 && <Typography variant="h1">Loans</Typography>}
         <div className="flex">
-          {loans.map((loan, index) => (
+          {loans.map((loan, _) => (
             <div key={loan.token_id} className="m-4">
               <Card
                 title={"Loan #" + loan.token_id}
@@ -142,7 +142,7 @@ export default function App() {
           )
         ) : (
           <div className="flex mt-8">
-            <Typography variant="h1">Assets:</Typography>
+            <Typography variant="h1">Wallet</Typography>
           </div>
         )}
         {supportedAssets.length != 0 && (

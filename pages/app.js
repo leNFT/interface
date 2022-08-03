@@ -215,7 +215,7 @@ export default function App() {
                   }
                   isDisabled={true}
                 >
-                  <Tooltip content="Coming Soon!" position="top">
+                  <Tooltip content="Unsupported collateral" position="top">
                     <div className="p-2">
                       {unsupportedAsset.token_uri ? (
                         <div className="flex flex-col items-end gap-2">

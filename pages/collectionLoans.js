@@ -21,6 +21,8 @@ import {
   Loading,
   Typography,
   Button,
+  Tooltip,
+  Icon,
 } from "web3uikit";
 import Image from "next/image";
 import erc20 from "../contracts/erc20.json";
@@ -323,7 +325,18 @@ export default function CollectionLoans() {
                     </Typography>
                   </div>
                   <div className="flex flex-row mt-6">
-                    <Typography variant="caption12">Health Level</Typography>
+                    <div className="flex flex-col">
+                      <Typography variant="caption12">Health Level</Typography>
+                    </div>
+                    <div className="flex flex-col ml-1">
+                      <Tooltip
+                        content="Represents the relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
+                        position="top"
+                        minWidth={300}
+                      >
+                        <Icon fill="#68738D" size={14} svg="helpCircle" />
+                      </Tooltip>
+                    </div>
                   </div>
                   <div>
                     <LinearProgressWithLabel

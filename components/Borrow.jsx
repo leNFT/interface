@@ -209,6 +209,7 @@ export default function Borrow(props) {
             src={props.token_uri}
             height="200"
             width="200"
+            unoptimized={true}
           />
         </div>
       ) : (

@@ -295,6 +295,7 @@ export default function CollectionLoans() {
                           src={collectionLoan.tokenURI}
                           height="140"
                           width="140"
+                          unoptimized={true}
                         />
                       </div>
                     ) : (

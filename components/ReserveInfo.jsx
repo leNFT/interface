@@ -200,11 +200,7 @@ export default function ReserveInfo(props) {
                   position="top"
                   minWidth={200}
                 >
-                  <HelpCircle
-                    fontSize="20px"
-                    color="#000000"
-                    title="HelpCircle Icon"
-                  />
+                  <HelpCircle fontSize="20px" color="#000000" />
                 </Tooltip>
               </div>
             </div>

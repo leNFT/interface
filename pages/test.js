@@ -6,7 +6,7 @@ import nativeTokenContract from "../contracts/NativeToken.json";
 import { useState } from "react";
 import { useWeb3Contract, useMoralis } from "react-moralis";
 
-export default function Testing() {
+export default function Test() {
   const [mintingLoading, setMintingLoading] = useState(false);
   const [nativeTokenLoading, setNativeTokenLoading] = useState(false);
   const { chainId, account } = useMoralis();

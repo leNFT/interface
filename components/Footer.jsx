@@ -28,12 +28,6 @@ export default function Footer() {
         >
           <Icon fill="#000000" size={32} svg="github" />
         </a>
-        <Link href="/testing">
-          <div className="mx-8">
-            {" "}
-            <Button color="red" label="Testing Dashboard" size="small"></Button>
-          </div>
-        </Link>
       </footer>
     </div>
   );

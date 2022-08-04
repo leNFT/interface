@@ -5,11 +5,6 @@ import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import marketContract from "../contracts/Market.json";
-import erc20 from "../contracts/erc20.json";
-import nativeTokenVaultContract from "../contracts/NativeTokenVault.json";
-import nativeTokenContract from "../contracts/NativeToken.json";
 
 export default function RemoveVote(props) {
   const { isWeb3Enabled, chainId, account } = useMoralis();

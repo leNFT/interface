@@ -1,7 +1,7 @@
 import contractAddresses from "../contractAddresses.json";
 import { useNotification } from "web3uikit";
 import { BigNumber } from "@ethersproject/bignumber";
-import { formatUnits, parseUnits } from "@ethersproject/units";
+import { formatUnits } from "@ethersproject/units";
 import { useWeb3Contract, useMoralis } from "react-moralis";
 import { Button, Typography } from "web3uikit";
 import styles from "../styles/Home.module.css";
@@ -10,7 +10,6 @@ import marketContract from "../contracts/Market.json";
 import loanCenterContract from "../contracts/LoanCenter.json";
 import reserveContract from "../contracts/Reserve.json";
 import erc20 from "../contracts/erc20.json";
-import Image from "next/image";
 
 export default function RepayLoan(props) {
   const [loan, setLoan] = useState();

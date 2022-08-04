@@ -64,7 +64,7 @@ export default function Header() {
       contractAddress: addresses.TokenOracle,
       functionName: "getTokenETHPrice",
       params: {
-        tokenAddress: addresses.NativeToken,
+        token: addresses.NativeToken,
       },
     };
 

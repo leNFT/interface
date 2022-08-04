@@ -6,6 +6,7 @@ import contractAddresses from "../contractAddresses.json";
 import { useState, useEffect } from "react";
 import { useMoralis, useWeb3Contract } from "react-moralis";
 import marketContract from "../contracts/Market.json";
+import tokenOracleContract from "../contracts/TokenOracle.json";
 import reserveContract from "../contracts/Reserve.json";
 import LinearProgressWithLabel from "./LinearProgressWithLabel";
 import Deposit from "./Deposit";
@@ -21,6 +22,7 @@ export default function ReserveInfo(props) {
   const [supplyRate, setSupplyRate] = useState(0);
   const [utilizationRate, setUtilizationRate] = useState(0);
   const [reserveAddress, setReserveAddress] = useState("");
+  const [ethPrice, setETHPrice] = useState("0");
 
   const addresses =
     chainId in contractAddresses
@@ -73,6 +75,33 @@ export default function ReserveInfo(props) {
     },
   });
 
+  const { runContractFunction: getTokenETHPrice } = useWeb3Contract();
+
+  async function updateAssetETHPrice() {
+    const updatedAssetETHPriceOptions = {
+      abi: tokenOracleContract.abi,
+      contractAddress: addresses.TokenOracle,
+      functionName: "getTokenETHPrice",
+      params: {
+        token: addresses[props.asset].address,
+      },
+    };
+
+    console.log(
+      "addresses[props.asset].address",
+      addresses[props.asset].address
+    );
+
+    const updatedAssetETHPrice = (
+      await getTokenETHPrice({
+        onError: (error) => console.log(error),
+        params: updatedAssetETHPriceOptions,
+      })
+    ).toString();
+    setETHPrice(updatedAssetETHPrice);
+    console.log("updatedAssetETHPrice", updatedAssetETHPrice);
+  }
+
   async function getReserve() {
     const updatedReserveAddress = (
       await getReserveAddress({
@@ -119,6 +148,9 @@ export default function ReserveInfo(props) {
     if (isWeb3Enabled && props.asset) {
       getReserve();
       console.log("props.asset", props.asset);
+      if (props.asset != "WETH") {
+        updateAssetETHPrice();
+      }
     }
   }, [isWeb3Enabled, props.asset]);
 
@@ -238,6 +270,13 @@ export default function ReserveInfo(props) {
                 props.asset}
             </Typography>
           </div>
+          {props.asset != "WETH" && (
+            <div>
+              <Typography variant="caption14">
+                {"1 ETH = " + formatUnits(ethPrice, 18) + " " + props.asset}
+              </Typography>
+            </div>
+          )}
         </div>
       </div>
     </div>

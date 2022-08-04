@@ -52,7 +52,7 @@ export default function Borrow(props) {
     contractAddress: addresses.TokenOracle,
     functionName: "getTokenETHPrice",
     params: {
-      tokenAddress: addresses[borrowAsset].address,
+      token: addresses[borrowAsset].address,
     },
   });
 

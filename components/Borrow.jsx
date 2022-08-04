@@ -116,7 +116,6 @@ export default function Borrow(props) {
       contractAddress: addresses.NFTOracle,
       functionName: "getTokenMaxETHCollateral",
       params: {
-        user: account,
         collection: props.token_address,
         tokenId: props.token_id,
         request: requestID,

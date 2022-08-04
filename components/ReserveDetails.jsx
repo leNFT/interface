@@ -269,10 +269,7 @@ export default function ReserveInfo(props) {
           </div>
           <div>
             <Typography variant="caption14">
-              {"1 ETH = " +
-                Math.trunc(formatUnits(ethPrice, 18)) +
-                " " +
-                props.asset}
+              {"1 " + props.asset + " = " + formatUnits(ethPrice, 18) + " ETH"}
             </Typography>
           </div>
         </div>

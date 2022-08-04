@@ -148,9 +148,7 @@ export default function ReserveInfo(props) {
     if (isWeb3Enabled && props.asset) {
       getReserve();
       console.log("props.asset", props.asset);
-      if (props.asset != "WETH") {
-        updateAssetETHPrice();
-      }
+      updateAssetETHPrice();
     }
   }, [isWeb3Enabled, props.asset]);
 
@@ -270,13 +268,14 @@ export default function ReserveInfo(props) {
                 props.asset}
             </Typography>
           </div>
-          {props.asset != "WETH" && (
-            <div>
-              <Typography variant="caption14">
-                {"1 ETH = " + formatUnits(ethPrice, 18) + " " + props.asset}
-              </Typography>
-            </div>
-          )}
+          <div>
+            <Typography variant="caption14">
+              {"1 ETH = " +
+                Math.trunc(formatUnits(ethPrice, 18)) +
+                " " +
+                props.asset}
+            </Typography>
+          </div>
         </div>
       </div>
     </div>

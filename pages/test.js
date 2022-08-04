@@ -1,4 +1,4 @@
-import { Button } from "web3uikit";
+import { Button } from "@web3uikit/core";
 import testNFTContract from "../contracts/test/TestNFT.json";
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";

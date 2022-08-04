@@ -1,7 +1,5 @@
 import styles from "../styles/Home.module.css";
-import { Icon } from "web3uikit";
-import Link from "next/link";
-import { Button } from "grommet";
+import { Github, Discord, Twitter } from "@web3uikit/icons";
 
 export default function Footer() {
   return (
@@ -12,21 +10,21 @@ export default function Footer() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Icon fill="#000000" size={32} svg="discord" />
+          <Discord fontSize="32px" color="#000000" title="Discord Icon" />
         </a>
         <a
           href="https://twitter.com/lenftapp"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Icon fill="#000000" size={32} svg="twitter" />
+          <Twitter fontSize="32px" color="#000000" title="Twitter Icon" />
         </a>
         <a
           href="https://github.com/leNFT"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Icon fill="#000000" size={32} svg="github" />
+          <Github fontSize="32px" color="#000000" title="Github Icon" />
         </a>
       </footer>
     </div>

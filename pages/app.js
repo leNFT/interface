@@ -1,8 +1,6 @@
 import styles from "../styles/Home.module.css";
-import { formatUnits, parseUnits } from "@ethersproject/units";
-import loanCenterContract from "../contracts/LoanCenter.json";
 import contractAddresses from "../contractAddresses.json";
-import { useMoralisWeb3Api, useMoralis, useWeb3Contract } from "react-moralis";
+import { useMoralisWeb3Api, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
 import {
   Card,
@@ -11,7 +9,7 @@ import {
   Modal,
   Typography,
   Loading,
-} from "web3uikit";
+} from "@web3uikit/core";
 import Borrow from "../components/Borrow";
 import RepayLoan from "../components/RepayLoan";
 import Image from "next/image";
@@ -106,6 +104,7 @@ export default function App() {
                         src={loan.token_uri}
                         height="200"
                         width="200"
+                        unoptimized={true}
                       />
                     </div>
                   ) : (
@@ -166,6 +165,7 @@ export default function App() {
                             src={supportedAsset.token_uri}
                             height="200"
                             width="200"
+                            unoptimized={true}
                           />
                         </div>
                       ) : (
@@ -224,6 +224,7 @@ export default function App() {
                             src={unsupportedAsset.token_uri}
                             height="140"
                             width="140"
+                            unoptimized={true}
                           />
                         </div>
                       ) : (

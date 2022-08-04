@@ -5,7 +5,7 @@ import marketContract from "../contracts/Market.json";
 import reserveContract from "../contracts/Reserve.json";
 //import tokenOracleContract from "../contracts/TokenOracle.json";
 import Link from "next/link";
-import { ConnectButton } from "web3uikit";
+import { ConnectButton } from "@web3uikit/web3";
 import { Button } from "grommet";
 
 export default function Header() {
@@ -123,7 +123,7 @@ export default function Header() {
                 size="small"
                 color="neutral-3"
                 label="Stake LE (soon)"
-                disabled="true"
+                disabled={true}
               />
             </Link>
           </div>

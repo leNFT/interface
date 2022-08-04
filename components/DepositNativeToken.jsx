@@ -1,6 +1,6 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits, parseUnits } from "@ethersproject/units";
-import { useNotification, Button, Input, Typography } from "web3uikit";
+import { useNotification, Button, Input, Typography } from "@web3uikit/core";
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { useWeb3Contract, useMoralis } from "react-moralis";

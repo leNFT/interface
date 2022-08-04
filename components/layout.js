@@ -3,7 +3,7 @@ import Footer from "./Footer";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import { useMoralis } from "react-moralis";
-import { Typography } from "web3uikit";
+import { Typography } from "@web3uikit/core";
 
 export default function Layout({ children }) {
   const { isWeb3Enabled, chainId } = useMoralis();

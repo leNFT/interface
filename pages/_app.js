@@ -4,7 +4,7 @@ import SplashLayout from "../components/splashLayout";
 import { useRouter } from "next/router";
 import React from "react";
 import { MoralisProvider } from "react-moralis";
-import { NotificationProvider } from "web3uikit";
+import { NotificationProvider } from "@web3uikit/core";
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();

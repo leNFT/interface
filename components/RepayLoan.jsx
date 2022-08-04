@@ -1,9 +1,9 @@
 import contractAddresses from "../contractAddresses.json";
-import { useNotification } from "web3uikit";
+import { useNotification } from "@web3uikit/core";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits } from "@ethersproject/units";
 import { useWeb3Contract, useMoralis } from "react-moralis";
-import { Button, Typography } from "web3uikit";
+import { Button, Typography } from "@web3uikit/core";
 import styles from "../styles/Home.module.css";
 import { useState, useEffect } from "react";
 import marketContract from "../contracts/Market.json";

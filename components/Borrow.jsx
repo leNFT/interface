@@ -8,14 +8,14 @@ import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
 import styles from "../styles/Home.module.css";
+import { Eth, Usdc } from "@web3uikit/icons";
 import {
-  Icon,
   useNotification,
   Button,
   Input,
   Illustration,
   Typography,
-} from "web3uikit";
+} from "@web3uikit/core";
 import marketContract from "../contracts/Market.json";
 import nftOracleContract from "../contracts/NFTOracle.json";
 import tokenOracleContract from "../contracts/TokenOracle.json";
@@ -219,14 +219,8 @@ export default function Borrow(props) {
       )}
       <div className="flex flex-row m-8 items-center">
         <Tabs flex="grow" alignSelf="center" onActive={onActive}>
-          <Tab
-            title="WETH"
-            icon={<Icon fill="#68738D" size={20} svg="eth" />}
-          />
-          <Tab
-            title="USDC"
-            icon={<Icon fill="#68738D" size={20} svg="usdc" />}
-          />
+          <Tab title="WETH" icon={<Eth fontSize="32px" color="#000000" />} />
+          <Tab title="USDC" icon={<Usdc fontSize="32px" color="#000000" />} />
         </Tabs>
       </div>
       <div className="flex flex-row m-2">

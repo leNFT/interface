@@ -23,7 +23,7 @@ import {
   Button,
   Tooltip,
   Icon,
-} from "web3uikit";
+} from "@web3uikit/core";
 import Image from "next/image";
 import erc20 from "../contracts/erc20.json";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";

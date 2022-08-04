@@ -1,4 +1,5 @@
-import { Button, Modal, Typography, Tooltip, Icon } from "web3uikit";
+import { Button, Modal, Typography, Tooltip } from "@web3uikit/core";
+import { HelpCircle } from "@web3uikit/icons";
 import styles from "../styles/Home.module.css";
 import { formatUnits } from "@ethersproject/units";
 import contractAddresses from "../contractAddresses.json";
@@ -199,7 +200,11 @@ export default function ReserveInfo(props) {
                   position="top"
                   minWidth={200}
                 >
-                  <Icon fill="#68738D" size={18} svg="helpCircle" />
+                  <HelpCircle
+                    fontSize="20px"
+                    color="#000000"
+                    title="HelpCircle Icon"
+                  />
                 </Tooltip>
               </div>
             </div>

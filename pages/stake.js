@@ -12,7 +12,7 @@ import {
   Tooltip,
   Icon,
   useNotification,
-} from "web3uikit";
+} from "@web3uikit/core";
 import { useState, useEffect } from "react";
 import { useMoralis, useWeb3Contract } from "react-moralis";
 import erc20 from "../contracts/erc20.json";

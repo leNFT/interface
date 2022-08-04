@@ -1,17 +1,15 @@
 import { useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
-import { formatUnits, parseUnits } from "@ethersproject/units";
 import contractAddresses from "../contractAddresses.json";
 import marketContract from "../contracts/Market.json";
 import reserveContract from "../contracts/Reserve.json";
-import tokenOracleContract from "../contracts/TokenOracle.json";
+//import tokenOracleContract from "../contracts/TokenOracle.json";
 import Link from "next/link";
 import { ConnectButton, Tooltip } from "web3uikit";
 import { Button } from "grommet";
 
 export default function Header() {
   const [borrowRate, setBorrowRate] = useState(0);
-  const [nativeTokenPrice, setNativeTokenPrice] = useState(0);
   const [reserveAddress, setReserveAddress] = useState("");
   const { isWeb3Enabled, chainId } = useMoralis();
   const addresses =
@@ -29,7 +27,6 @@ export default function Header() {
   });
 
   const { runContractFunction: getBorrowRate } = useWeb3Contract();
-  const { runContractFunction: getNativeTokenPrice } = useWeb3Contract();
 
   async function getReserve() {
     const updatedReserveAddress = (
@@ -58,25 +55,6 @@ export default function Header() {
 
     console.log("New updated borrowRate:", updatedBorrowRate);
     setBorrowRate(updatedBorrowRate);
-
-    const getNativeTokenPriceOptions = {
-      abi: tokenOracleContract.abi,
-      contractAddress: addresses.TokenOracle,
-      functionName: "getTokenETHPrice",
-      params: {
-        token: addresses.NativeToken,
-      },
-    };
-
-    const updatedNativeTokenPrice = (
-      await getNativeTokenPrice({
-        onError: (error) => console.log(error),
-        params: getNativeTokenPriceOptions,
-      })
-    ).toString();
-
-    console.log("New LE price:", updatedNativeTokenPrice);
-    setNativeTokenPrice(updatedNativeTokenPrice);
   }
 
   useEffect(() => {
@@ -113,11 +91,6 @@ export default function Header() {
             <div className="flex flex-row items-center">
               <h1 className="font-bold text-xs">
                 Borrow Rate @ {borrowRate / 100}%
-              </h1>
-            </div>
-            <div className="flex flex-row items-center">
-              <h1 className="font-bold text-xs">
-                LE price @ {formatUnits(nativeTokenPrice, 18)} ETH
               </h1>
             </div>
           </div>

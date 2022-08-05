@@ -15,6 +15,7 @@ import {
   Input,
   Illustration,
   Typography,
+  Loading,
 } from "@web3uikit/core";
 import marketContract from "../contracts/Market.json";
 import nftOracleContract from "../contracts/NFTOracle.json";
@@ -23,7 +24,7 @@ import reserveContract from "../contracts/Reserve.json";
 import "bignumber.js";
 import erc721 from "../contracts/erc721.json";
 import Image from "next/image";
-import { Tab, Tabs } from "grommet";
+import { TabList, Tab } from "@web3uikit/core";
 
 export default function Borrow(props) {
   const PRICE_PRECISION = "1000000000000000000";
@@ -31,6 +32,7 @@ export default function Borrow(props) {
   const [maxAmount, setMaxAmount] = useState("0");
   const [approved, setApproved] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
+  const [loadingMaxAmount, setLoadingMaxAmount] = useState(false);
   const [reserveAddress, setReserveAddress] = useState("");
   const [borrowLoading, setBorrowLoading] = useState(false);
   const { isWeb3Enabled, chainId, account } = useMoralis();
@@ -143,6 +145,7 @@ export default function Borrow(props) {
       : maxCollateral;
     console.log("Updated Max Borrow Amount:", updatedMaxAmount);
     setMaxAmount(updatedMaxAmount);
+    setLoadingMaxAmount(false);
   }
 
   useEffect(() => {
@@ -154,6 +157,7 @@ export default function Borrow(props) {
 
   useEffect(() => {
     if (isWeb3Enabled) {
+      setLoadingMaxAmount(true);
       console.log("Getting reserve", addresses[borrowAsset].address);
       getReserve();
     }
@@ -189,10 +193,10 @@ export default function Borrow(props) {
     }
   }
 
-  const onActive = (nextIndex) => {
-    if (nextIndex == "0") {
+  const onTabChange = (selectedKey) => {
+    if (selectedKey == "0") {
       setBorrowAsset("WETH");
-    } else if (nextIndex == "1") {
+    } else if (selectedKey == "1") {
       setBorrowAsset("USDC");
     }
   };
@@ -215,11 +219,24 @@ export default function Borrow(props) {
           Loading...
         </div>
       )}
-      <div className="flex flex-row m-8 items-center">
-        <Tabs flex="grow" alignSelf="center" onActive={onActive}>
-          <Tab title="WETH" icon={<Eth fontSize="32px" color="#000000" />} />
-          <Tab title="USDC" icon={<Usdc fontSize="32px" color="#000000" />} />
-        </Tabs>
+      <div className="flex flex-row m-8 items-center justify-center">
+        <TabList
+          isWidthAuto
+          defaultActiveKey={0}
+          onChange={onTabChange}
+          tabStyle="bulbSeperate"
+        >
+          <Tab
+            lineHeight={0}
+            tabKey={0}
+            tabName={<Eth fontSize="32px" color="#000000" />}
+          ></Tab>
+          <Tab
+            lineHeight={0}
+            tabKey={1}
+            tabName={<Usdc fontSize="32px" color="#000000" />}
+          ></Tab>
+        </TabList>
       </div>
       <div className="flex flex-row m-2">
         <div className="flex flex-col">
@@ -233,14 +250,20 @@ export default function Borrow(props) {
           <Typography variant="body16">{props.token_id}</Typography>
         </div>
       </div>
-      <div className="flex flex-row m-2">
+      <div className="flex flex-row m-1">
         <div className="flex flex-col">
           <Typography variant="subtitle2">Maximum borrowable amount</Typography>
-          <Typography variant="body16">
-            {formatUnits(maxAmount, addresses[borrowAsset].decimals) +
-              " " +
-              borrowAsset}
-          </Typography>
+          {loadingMaxAmount ? (
+            <div className="m-2">
+              <Loading size={14} spinnerColor="#000000" />
+            </div>
+          ) : (
+            <Typography variant="body16">
+              {formatUnits(maxAmount, addresses[borrowAsset].decimals) +
+                " " +
+                borrowAsset}
+            </Typography>
+          )}
         </div>
       </div>
       <div className="flex flex-row items-center justify-center m-8">

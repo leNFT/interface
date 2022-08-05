@@ -11,7 +11,6 @@ import reserveContract from "../contracts/Reserve.json";
 import LinearProgressWithLabel from "./LinearProgressWithLabel";
 import Deposit from "./Deposit";
 import Withdraw from "./Withdraw";
-import { Eth } from "@web3uikit/icons";
 
 export default function ReserveInfo(props) {
   const { isWeb3Enabled, chainId, account } = useMoralis();

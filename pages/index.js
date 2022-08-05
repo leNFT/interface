@@ -67,7 +67,7 @@ export default function Home() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              docs (soon™)]
+              docs]
             </a>
           </div>
         </div>

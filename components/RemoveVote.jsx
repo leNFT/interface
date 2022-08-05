@@ -94,7 +94,7 @@ export default function RemoveVote(props) {
     <div className={styles.container}>
       <div className="flex flex-row items-center justify-center">
         <div className="flex flex-col">
-          <Typography variant="h4">Maximum removable votes</Typography>
+          <Typography variant="subtitle2">Maximum removable votes</Typography>
           <Typography variant="body16">
             {formatUnits(maxAmount, 18)} veLE
           </Typography>

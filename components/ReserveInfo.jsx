@@ -11,6 +11,7 @@ import reserveContract from "../contracts/Reserve.json";
 import LinearProgressWithLabel from "./LinearProgressWithLabel";
 import Deposit from "./Deposit";
 import Withdraw from "./Withdraw";
+import { Eth } from "@web3uikit/icons";
 
 export default function ReserveInfo(props) {
   const { isWeb3Enabled, chainId, account } = useMoralis();
@@ -213,7 +214,7 @@ export default function ReserveInfo(props) {
               {loadingReserve ? (
                 <Loading size={12} spinnerColor="#000000" />
               ) : (
-                <Typography variant="body16">
+                <Typography variant="h4">
                   {formatUnits(maxAmount, addresses[props.asset].decimals) +
                     " " +
                     props.asset}

@@ -223,19 +223,19 @@ export default function Borrow(props) {
       </div>
       <div className="flex flex-row m-2">
         <div className="flex flex-col">
-          <Typography variant="h4">Address</Typography>
-          <Typography variant="caption14">{props.token_address}</Typography>
+          <Typography variant="subtitle2">Address</Typography>
+          <Typography variant="body16">{props.token_address}</Typography>
         </div>
       </div>
       <div className="flex flex-row m-2">
         <div className="flex flex-col">
-          <Typography variant="h4">Asset ID</Typography>
+          <Typography variant="subtitle2">Asset ID</Typography>
           <Typography variant="body16">{props.token_id}</Typography>
         </div>
       </div>
       <div className="flex flex-row m-2">
         <div className="flex flex-col">
-          <Typography variant="h4">Maximum borrowable amount</Typography>
+          <Typography variant="subtitle2">Maximum borrowable amount</Typography>
           <Typography variant="body16">
             {formatUnits(maxAmount, addresses[borrowAsset].decimals) +
               " " +

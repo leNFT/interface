@@ -168,7 +168,7 @@ export default function WithdrawNativeToken(props) {
     <div className={styles.container}>
       <div className="flex flex-row items-center justify-center m-4">
         <div className="flex flex-col">
-          <Typography variant="h4">Maximum withdrawal amount</Typography>
+          <Typography variant="subtitle2">Maximum withdrawal amount</Typography>
           <Typography variant="body16">
             {formatUnits(maxAmount, 18)} LE
           </Typography>

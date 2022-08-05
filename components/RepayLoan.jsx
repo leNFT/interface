@@ -157,13 +157,13 @@ export default function RepayLoan(props) {
     <div className={styles.container}>
       <div className="flex flex-row m-2">
         <div className="flex flex-col">
-          <Typography variant="h4">Loan ID</Typography>
+          <Typography variant="subtitle2">Loan ID</Typography>
           <Typography variant="body16">{props.loan_id}</Typography>
         </div>
       </div>
       <div className="flex flex-row items-center m-2">
         <div className="flex flex-col">
-          <Typography variant="h4">Debt</Typography>
+          <Typography variant="subtitle2">Debt</Typography>
           <Typography variant="body16">
             {formatUnits(debt, addresses[symbol].decimals) + " " + symbol}
           </Typography>
@@ -171,7 +171,7 @@ export default function RepayLoan(props) {
       </div>
       <div className="flex flex-row items-center m-2">
         <div className="flex flex-col">
-          <Typography variant="h4">Your balance</Typography>
+          <Typography variant="subtitle2">Your balance</Typography>
           <Typography variant="body16">
             {formatUnits(balance, addresses[symbol].decimals) + " " + symbol}
           </Typography>

@@ -76,7 +76,7 @@ export default function Vote(props) {
     <div className={styles.container}>
       <div className="flex flex-row items-center justify-center">
         <div className="flex flex-col">
-          <Typography variant="h4">Free Votes</Typography>
+          <Typography variant="subtitle2">Free Votes</Typography>
           <Typography variant="body16">
             {formatUnits(freeVotes, 18)} LE
           </Typography>

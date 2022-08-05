@@ -1,6 +1,7 @@
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
-import { useMoralisWeb3Api, useMoralis } from "react-moralis";
+import { getTokenPrice } from "../helpers/getTokenPrice.js";
+import { useMoralisWeb3Api, useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
 import {
   Card,
@@ -10,9 +11,15 @@ import {
   Typography,
   Loading,
 } from "@web3uikit/core";
+import { HelpCircle } from "@web3uikit/icons";
+import { BigNumber } from "@ethersproject/bignumber";
 import Borrow from "../components/Borrow";
 import RepayLoan from "../components/RepayLoan";
 import Image from "next/image";
+import nftOracleContract from "../contracts/NFTOracle.json";
+import loanCenterContract from "../contracts/LoanCenter.json";
+import { calculateHealthLevel } from "../helpers/healthLevel";
+import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 
 export default function App() {
   const [loadingUI, setLoadingUI] = useState(true);
@@ -30,6 +37,11 @@ export default function App() {
       : contractAddresses["0x1"];
   const Web3Api = useMoralisWeb3Api();
 
+  const { runContractFunction: getLoanDebt } = useWeb3Contract();
+  const { runContractFunction: getLoan } = useWeb3Contract();
+  const { runContractFunction: getCollectionMaxCollateralization } =
+    useWeb3Contract();
+
   async function setupUI() {
     console.log("Setting up UI");
 
@@ -40,16 +52,78 @@ export default function App() {
     console.log("userNFTs:", userNFTs);
     console.log("supportedAssets:", contractAddresses[chainId].SupportedAssets);
     var updatedLoans = [];
-    var updatedLoansDebt = [];
     var updatedSupportedAssets = [];
     var updatedUnsupportedAssets = [];
 
     for (let i = 0; i < userNFTs.length; i++) {
-      if (userNFTs[i].token_address == contractAddresses[chainId].DebtToken) {
-        updatedLoans.push(userNFTs[i]);
+      if (
+        userNFTs[i].token_address ==
+        contractAddresses[chainId].DebtToken.toLowerCase()
+      ) {
+        // Get loan details
+        const getLoanOptions = {
+          abi: loanCenterContract.abi,
+          contractAddress: addresses.LoanCenter,
+          functionName: "getLoan",
+          params: {
+            loanId: userNFTs[i].token_id,
+          },
+        };
+        const loan = await getLoan({
+          onError: (error) => console.log(error),
+          params: getLoanOptions,
+        });
+
+        console.log("loan", loan);
+
+        // Get loan debt
+        const getLoanDebtOptions = {
+          abi: loanCenterContract.abi,
+          contractAddress: addresses.LoanCenter,
+          functionName: "getLoanDebt",
+          params: {
+            loanId: userNFTs[i].token_id,
+          },
+        };
+        const debt = await getLoanDebt({
+          onError: (error) => console.log(error),
+          params: getLoanDebtOptions,
+        });
+
+        // Get token price
+        const tokenPrice = await getTokenPrice(
+          loan.nftAsset.toLowerCase(),
+          loan.nftTokenId
+        );
+
+        // Get max LTV of collection
+        const getCollectionMaxCollateralizationOptions = {
+          abi: nftOracleContract.abi,
+          contractAddress: addresses.NFTOracle,
+          functionName: "getCollectionMaxCollaterization",
+          params: {
+            collection: loan.nftAsset,
+          },
+        };
+
+        const maxLTV = await getCollectionMaxCollateralization({
+          onError: (error) => console.log(error),
+          params: getCollectionMaxCollateralizationOptions,
+        });
+
+        // Save relevant loan info
+        updatedLoans.push({
+          loanId: userNFTs[i].token_id,
+          tokenURI: "",
+          amount: loan.amount,
+          debt: debt,
+          tokenPrice: tokenPrice,
+          maxLTV: maxLTV,
+        });
       } else if (
         contractAddresses[chainId].SupportedAssets.find(
-          (collection) => collection.address == userNFTs[i].token_address
+          (collection) =>
+            collection.address.toLowerCase() == userNFTs[i].token_address
         )
       ) {
         updatedSupportedAssets.push(userNFTs[i]);
@@ -87,31 +161,55 @@ export default function App() {
         {loans.length > 0 && <Typography variant="h1">Loans</Typography>}
         <div className="flex">
           {loans.map((loan, _) => (
-            <div key={loan.token_id} className="m-4">
+            <div key={loan.loanId} className="m-4">
               <Card
-                title={"Loan #" + loan.token_id}
+                title={"Loan #" + loan.loanId}
                 onClick={function () {
                   console.log("CLICK");
                   setSelectedLoan(loan);
                   setVisibleLoanModal(true);
                 }}
               >
-                <div className="p-2">
-                  {loan.token_uri ? (
-                    <div className="flex flex-col items-end gap-2">
+                <div className="flex flex-col p-2">
+                  <div className="flex flex-row items-end gap-2">
+                    {loan.tokenURI ? (
                       <Image
-                        loader={() => loan.token_uri}
-                        src={loan.token_uri}
+                        loader={() => loan.tokenURI}
+                        src={loan.tokenURI}
                         height="200"
                         width="200"
                         unoptimized={true}
                       />
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center gap-1">
+                    ) : (
                       <Illustration height="180px" logo="chest" width="100%" />
+                    )}
+                  </div>
+                  <div className="flex flex-row mt-6">
+                    <div className="flex flex-col">
+                      <Typography variant="caption12">Health Level</Typography>
                     </div>
-                  )}
+                    <div className="flex flex-col ml-1">
+                      <Tooltip
+                        content="Represents the relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
+                        position="top"
+                        minWidth={300}
+                      >
+                        <HelpCircle fontSize="14px" color="#000000" />
+                      </Tooltip>
+                    </div>
+                  </div>
+                  <div>
+                    <LinearProgressWithLabel
+                      color="success"
+                      value={calculateHealthLevel(
+                        loan.debt,
+                        BigNumber.from(loan.maxLTV)
+                          .mul(loan.tokenPrice)
+                          .div(10000)
+                          .toString()
+                      )}
+                    />
+                  </div>
                 </div>
               </Card>
             </div>
@@ -127,7 +225,7 @@ export default function App() {
             >
               <RepayLoan
                 setVisibility={setVisibleLoanModal}
-                loan_id={selectedLoan.token_id}
+                loan_id={selectedLoan.loanId}
               />
             </Modal>
           )}

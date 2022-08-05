@@ -14,6 +14,7 @@ import marketContract from "../contracts/Market.json";
 import nftOracleContract from "../contracts/NFTOracle.json";
 import { useMoralisWeb3Api, useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
+import { calculateHealthLevel } from "../helpers/healthLevel";
 import {
   useNotification,
   Card,
@@ -90,8 +91,6 @@ export default function CollectionLoans() {
       options
     );
     collectionNFTs = collectionNFTsResponse.result;
-
-    console.log("collectionNFTs:", collectionNFTs);
 
     for (let i = 0; i < collectionNFTs.length; i++) {
       // Get the loan ID of each NFT
@@ -196,21 +195,6 @@ export default function CollectionLoans() {
       setLoadingCollectionLoans(true);
       getCollectionLoans(collectionAddress.address);
     }
-  }
-
-  function calculateHealthLevel(debtString, maxCollateralString) {
-    const maxCollateralNumber = BigNumber.from(maxCollateralString);
-    const debtNumber = BigNumber.from(debtString);
-
-    console.log("Calculation health level...");
-    console.log("Debt:", debtString);
-    console.log("Max Collateral:", maxCollateralString);
-
-    return maxCollateralNumber
-      .sub(debtNumber)
-      .mul(BigNumber.from(100))
-      .div(maxCollateralNumber)
-      .toNumber();
   }
 
   const handleLiquidateSuccess = async function () {

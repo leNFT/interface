@@ -117,7 +117,7 @@ export default function DepositNativeToken(props) {
     <div className={styles.container}>
       <div className="flex flex-row items-center justify-center">
         <div className="flex flex-col">
-          <Typography variant="h4">My Balance</Typography>
+          <Typography variant="subtitle2">My Balance</Typography>
           <Typography variant="body16">
             {formatUnits(balance, 18)} LE
           </Typography>

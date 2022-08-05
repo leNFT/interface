@@ -95,7 +95,7 @@ export default function Withdraw(props) {
     <div className={styles.container}>
       <div className="flex flex-row items-center justify-center">
         <div className="flex flex-col">
-          <Typography variant="h4">Maximum withdrawal amount</Typography>
+          <Typography variant="subtitle2">Maximum withdrawal amount</Typography>
           <Typography variant="body16">
             {formatUnits(maxAmount, addresses[props.asset].decimals) +
               " " +

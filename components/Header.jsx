@@ -73,7 +73,7 @@ export default function Header() {
 
   return (
     <div className="p-4 border-b-2 flex flex-col md:flex-row justify-between items-center">
-      <div className="flex flex-col items-center justify-content">
+      <div className="flex flex-col items-center justify-content md:pr-20">
         <Link href="/">
           <a target="_blank" rel="noopener noreferrer">
             <div className="mx-5 my-2 flex flex-row items-center">

@@ -1,4 +1,4 @@
-import { Button, Modal, Typography, Tooltip } from "@web3uikit/core";
+import { Button, Modal, Typography, Tooltip, Loading } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
 import styles from "../styles/Home.module.css";
 import { formatUnits } from "@ethersproject/units";
@@ -210,11 +210,15 @@ export default function ReserveInfo(props) {
               </div>
             </div>
             <div className="flex flex-row mx-2 mb-2">
-              <Typography variant="body16">
-                {formatUnits(maxAmount, addresses[props.asset].decimals) +
-                  " " +
-                  props.asset}
-              </Typography>
+              {loadingReserve ? (
+                <Loading size={12} spinnerColor="#000000" />
+              ) : (
+                <Typography variant="body16">
+                  {formatUnits(maxAmount, addresses[props.asset].decimals) +
+                    " " +
+                    props.asset}
+                </Typography>
+              )}
             </div>
           </div>
           <div className="flex flex-row">
@@ -256,27 +260,48 @@ export default function ReserveInfo(props) {
             <Typography variant="body16">Utilization Rate:</Typography>
             <LinearProgressWithLabel value={utilizationRate / 100} />
           </div>
+          {loadingReserve ? (
+            <div className="flex m-4">
+              <Loading size={12} spinnerColor="#000000" />
+            </div>
+          ) : (
+            <div>
+              <div>
+                <Typography variant="caption14">
+                  Underlying is{" "}
+                  {formatUnits(
+                    underlyingBalance,
+                    addresses[props.asset].decimals
+                  ) +
+                    " " +
+                    props.asset}
+                </Typography>
+              </div>
+              <div>
+                <Typography variant="caption14">
+                  Debt is{" "}
+                  {formatUnits(debt, addresses[props.asset].decimals) +
+                    " " +
+                    props.asset}
+                </Typography>
+              </div>
+            </div>
+          )}
 
           <div>
-            <Typography variant="caption14">
-              Underlying is{" "}
-              {formatUnits(underlyingBalance, addresses[props.asset].decimals) +
-                " " +
-                props.asset}
-            </Typography>
-          </div>
-          <div>
-            <Typography variant="caption14">
-              Debt is{" "}
-              {formatUnits(debt, addresses[props.asset].decimals) +
-                " " +
-                props.asset}
-            </Typography>
-          </div>
-          <div>
-            <Typography variant="caption14">
-              {"1 " + props.asset + " = " + formatUnits(ethPrice, 18) + " ETH"}
-            </Typography>
+            {loadingPrice ? (
+              <div className="flex m-4">
+                <Loading size={12} spinnerColor="#000000" />
+              </div>
+            ) : (
+              <Typography variant="caption14">
+                {"1 " +
+                  props.asset +
+                  " = " +
+                  formatUnits(ethPrice, 18) +
+                  " ETH"}
+              </Typography>
+            )}
           </div>
         </div>
       </div>

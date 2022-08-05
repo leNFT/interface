@@ -88,22 +88,20 @@ export default function DepositNativeToken(props) {
     props.setVisibility(false);
     updateTokenBalance();
     dispatch({
-      type: "info",
-      message: "Deposit Successful! Please wait for transaction confirmation.",
-      title: "Notification",
+      type: "success",
+      message: "Please wait for transaction confirmation.",
+      title: "Deposit Successful!",
       position: "topR",
-      icon: "bell",
     });
   };
 
   const handleApprovalSuccess = async function () {
     setApproved(true);
     dispatch({
-      type: "info",
-      message: "Approval Successful!",
-      title: "Notification",
+      type: "success",
+      message: "Please wait for transaction confirmation.",
+      title: "Approval Successful!",
       position: "topR",
-      icon: "bell",
     });
   };
 
@@ -142,11 +140,15 @@ export default function DepositNativeToken(props) {
         <div className="mt-16 mb-8">
           <Button
             text="Deposit"
+            theme="secondary"
             isFullWidth
             loadingProps={{
               spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
             }}
-            loadingText="Confirming Deposit"
+            loadingText=""
             isLoading={depositLoading}
             onClick={async function () {
               if (BigNumber.from(amount).lte(BigNumber.from(balance))) {
@@ -158,11 +160,10 @@ export default function DepositNativeToken(props) {
                 });
               } else {
                 dispatch({
-                  type: "info",
+                  type: "error",
                   message: "Amount is bigger than balance",
-                  title: "Notification",
+                  title: "Error",
                   position: "topR",
-                  icon: "bell",
                 });
               }
             }}
@@ -172,11 +173,15 @@ export default function DepositNativeToken(props) {
         <div className="mt-16 mb-8">
           <Button
             text="Approve"
+            theme="secondary"
             isFullWidth
             loadingProps={{
               spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
             }}
-            loadingText="Confirming Approval"
+            loadingText=""
             isLoading={approvalLoading}
             onClick={async function () {
               setApprovalLoading(true);

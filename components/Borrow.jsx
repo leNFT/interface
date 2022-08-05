@@ -162,23 +162,20 @@ export default function Borrow(props) {
   const handleBorrowSuccess = async function () {
     props.setVisibility(false);
     dispatch({
-      type: "info",
-      message: "Loan Created! Please wait for transaction confirmation.",
-      title: "Notification",
+      type: "success",
+      message: "Please wait for transaction confirmation.",
+      title: "Loan Created!",
       position: "topR",
-      icon: "bell",
     });
   };
 
   const handleApprovalSuccess = async function () {
     setApproved(true);
     dispatch({
-      type: "info",
-      message:
-        "Approval Successful! Please wait for tx confirmation to borrow.",
-      title: "Notification",
+      type: "success",
+      message: "Please wait for tx confirmation to borrow.",
+      title: "Approval Successful!",
       position: "topR",
-      icon: "bell",
     });
   };
 
@@ -265,11 +262,15 @@ export default function Borrow(props) {
         <div className="mt-16 mb-8">
           <Button
             text="Create Loan"
+            theme="secondary"
             isFullWidth
             loadingProps={{
               spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
             }}
-            loadingText="Creating Loan"
+            loadingText=""
             isLoading={borrowLoading}
             onClick={async function () {
               if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
@@ -303,9 +304,9 @@ export default function Borrow(props) {
                 });
               } else {
                 dispatch({
-                  type: "info",
+                  type: "error",
                   message: "Amount too big!",
-                  title: "Notification",
+                  title: "Error",
                   position: "topR",
                   icon: "bell",
                 });
@@ -317,11 +318,15 @@ export default function Borrow(props) {
         <div className="flex mt-16 mb-8">
           <Button
             text="Approve Asset"
+            theme="secondary"
             isFullWidth
             loadingProps={{
               spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
             }}
-            loadingText="Approving Asset"
+            loadingText=""
             isLoading={approvalLoading}
             onClick={async function () {
               setApprovalLoading(true);

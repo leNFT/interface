@@ -146,11 +146,10 @@ export default function RepayLoan(props) {
   const handleRepaySuccess = async function () {
     props.setVisibility(false);
     dispatch({
-      type: "info",
-      message: "Repay Successful!  Please wait for transaction confirmation.",
-      title: "Notification",
+      type: "success",
+      message: "Please wait for transaction confirmation.",
+      title: "Repay Successful!",
       position: "topR",
-      icon: "bell",
     });
   };
 
@@ -181,11 +180,15 @@ export default function RepayLoan(props) {
       <div className="flex m-8">
         <Button
           text="Repay Loan"
+          theme="secondary"
           isFullWidth
           loadingProps={{
             spinnerColor: "#000000",
+            spinnerType: "loader",
+            direction: "right",
+            size: "24",
           }}
-          loadingText="Confirming Loan Repayment"
+          loadingText=""
           isLoading={repayLoading}
           onClick={async function () {
             if (BigNumber.from(debt).lte(BigNumber.from(balance))) {
@@ -197,11 +200,10 @@ export default function RepayLoan(props) {
               });
             } else {
               dispatch({
-                type: "info",
+                type: "error",
                 message: "Amount is bigger than balance",
-                title: "Notification",
+                title: "Error",
                 position: "topR",
-                icon: "bell",
               });
             }
           }}

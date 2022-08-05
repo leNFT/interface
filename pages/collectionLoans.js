@@ -215,21 +215,19 @@ export default function CollectionLoans() {
 
   const handleLiquidateSuccess = async function () {
     dispatch({
-      type: "info",
-      message: "Liquidation Successful",
-      title: "Notification",
+      type: "success",
+      message: "Please wait for transaction confirmation.",
+      title: "Liquidation Successful",
       position: "topR",
-      icon: "bell",
     });
   };
 
   const handleApprovalSuccess = async function () {
     dispatch({
-      type: "info",
-      message: "Approval Successful",
-      title: "Notification",
+      type: "success",
+      message: "Please wait for transaction confirmation.",
+      title: "Approval Successful!",
       position: "topR",
-      icon: "bell",
     });
   };
 

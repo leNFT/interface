@@ -23,6 +23,8 @@ export default function ReserveInfo(props) {
   const [utilizationRate, setUtilizationRate] = useState(0);
   const [reserveAddress, setReserveAddress] = useState("");
   const [ethPrice, setETHPrice] = useState("0");
+  const [loadingPrice, setLoadingPrice] = useState(false);
+  const [loadingReserve, setLoadingReserve] = useState(false);
 
   const addresses =
     chainId in contractAddresses
@@ -87,11 +89,6 @@ export default function ReserveInfo(props) {
       },
     };
 
-    console.log(
-      "addresses[props.asset].address",
-      addresses[props.asset].address
-    );
-
     const updatedAssetETHPrice = (
       await getTokenETHPrice({
         onError: (error) => console.log(error),
@@ -100,6 +97,9 @@ export default function ReserveInfo(props) {
     ).toString();
     setETHPrice(updatedAssetETHPrice);
     console.log("updatedAssetETHPrice", updatedAssetETHPrice);
+
+    //Stop loading
+    setLoadingPrice(false);
   }
 
   async function getReserve() {
@@ -142,12 +142,17 @@ export default function ReserveInfo(props) {
     });
     console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
     setMaxAmount(updatedMaxAmount.toString());
+
+    //Stop loading
+    setLoadingReserve(false);
   }
 
   useEffect(() => {
     if (isWeb3Enabled && props.asset) {
-      getReserve();
       console.log("props.asset", props.asset);
+      setLoadingPrice(true);
+      setLoadingReserve(true);
+      getReserve();
       updateAssetETHPrice();
     }
   }, [isWeb3Enabled, props.asset]);

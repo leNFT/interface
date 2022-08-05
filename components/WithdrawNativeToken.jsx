@@ -139,12 +139,10 @@ export default function WithdrawNativeToken(props) {
   const handleWithdrawalSuccess = async function () {
     props.setVisibility(false);
     dispatch({
-      type: "info",
-      message:
-        "Withdrawal Successful!  Please wait for transaction confirmation.",
-      title: "Notification",
+      type: "success",
+      message: "Please wait for transaction confirmation.",
+      title: "Withdrawal Successful!",
       position: "topR",
-      icon: "bell",
     });
   };
 
@@ -152,10 +150,9 @@ export default function WithdrawNativeToken(props) {
     props.setVisibility(false);
     dispatch({
       type: "info",
-      message: "Request Successful! You will be able to withdraw in 7 days.",
-      title: "Notification",
+      message: "You will be able to withdraw in 7 days.",
+      title: "Request Successful!",
       position: "topR",
-      icon: "bell",
     });
   };
 
@@ -216,11 +213,10 @@ export default function WithdrawNativeToken(props) {
                     });
                   } else {
                     dispatch({
-                      type: "info",
+                      type: "error",
                       message: "Amount is bigger than max permited withdrawal",
-                      title: "Notification",
+                      title: "Error",
                       position: "topR",
-                      icon: "bell",
                     });
                   }
                 }}

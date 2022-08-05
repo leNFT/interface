@@ -57,11 +57,10 @@ export default function Vote(props) {
     props.setVisibility(false);
     updateFreeVotes();
     dispatch({
-      type: "info",
-      message: "Deposit Successful! Please wait for transaction confirmation.",
-      title: "Notification",
+      type: "success",
+      message: "Please wait for transaction confirmation.",
+      title: "Deposit Successful!",
       position: "topR",
-      icon: "bell",
     });
   };
 
@@ -98,11 +97,15 @@ export default function Vote(props) {
       <div className="flex flex-row items-center justify-center mt-16 mb-8">
         <Button
           text="Vote"
+          theme="secondary"
           isFullWidth
           loadingProps={{
             spinnerColor: "#000000",
+            spinnerType: "loader",
+            direction: "right",
+            size: "24",
           }}
-          loadingText="Confirming Vote"
+          loadingText=""
           isLoading={votingLoading}
           onClick={async function () {
             if (BigNumber.from(amount).lte(BigNumber.from(freeVotes))) {
@@ -114,11 +117,10 @@ export default function Vote(props) {
               });
             } else {
               dispatch({
-                type: "info",
+                type: "error",
                 message: "Amount is bigger than balance",
-                title: "Notification",
+                title: "Error",
                 position: "topR",
-                icon: "bell",
               });
             }
           }}

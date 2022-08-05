@@ -74,12 +74,10 @@ export default function Withdraw(props) {
   const handleWithdrawalSuccess = async function () {
     props.setVisibility(false);
     dispatch({
-      type: "info",
-      message:
-        "Withdrawal Successful!  Please wait for transaction confirmation.",
-      title: "Notification",
+      type: "success",
+      message: "Please wait for transaction confirmation.",
+      title: "Withdrawal Successful! ",
       position: "topR",
-      icon: "bell",
     });
   };
 
@@ -123,11 +121,15 @@ export default function Withdraw(props) {
       <div className="mt-16 mb-8">
         <Button
           text="Withdraw"
+          theme="secondary"
           isFullWidth
           loadingProps={{
             spinnerColor: "#000000",
+            spinnerType: "loader",
+            direction: "right",
+            size: "24",
           }}
-          loadingText="Confirming Withdrawal"
+          loadingText=""
           isLoading={withdrawalLoading}
           onClick={async function () {
             if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
@@ -139,11 +141,10 @@ export default function Withdraw(props) {
               });
             } else {
               dispatch({
-                type: "info",
+                type: "error",
                 message: "Amount is bigger than max permited withdrawal",
-                title: "Notification",
+                title: "Error",
                 position: "topR",
-                icon: "bell",
               });
             }
           }}

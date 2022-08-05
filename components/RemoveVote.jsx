@@ -83,12 +83,10 @@ export default function RemoveVote(props) {
   const handleRemoveVoteSuccess = async function () {
     props.setVisibility(false);
     dispatch({
-      type: "info",
-      message:
-        "Vote Remocal Successful!  Please wait for transaction confirmation.",
-      title: "Notification",
+      type: "success",
+      message: "Please wait for transaction confirmation.",
+      title: "Vote Removal Successful!",
       position: "topR",
-      icon: "bell",
     });
   };
 
@@ -118,11 +116,15 @@ export default function RemoveVote(props) {
       <div className="mt-16 mb-8">
         <Button
           text="Remove Votes"
+          theme="secondary"
           isFullWidth
           loadingProps={{
             spinnerColor: "#000000",
+            spinnerType: "loader",
+            direction: "right",
+            size: "24",
           }}
-          loadingText="Confirming Vote Removal"
+          loadingText=""
           isLoading={removeVotingLoading}
           onClick={async function () {
             if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
@@ -134,11 +136,10 @@ export default function RemoveVote(props) {
               });
             } else {
               dispatch({
-                type: "info",
+                type: "error",
                 message: "Amount is bigger than used votes",
-                title: "Notification",
+                title: "Error",
                 position: "topR",
-                icon: "bell",
               });
             }
           }}

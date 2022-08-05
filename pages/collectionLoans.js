@@ -5,7 +5,7 @@ import {
   getTokenPriceSig,
 } from "../helpers/getTokenPriceSig.js";
 import contractAddresses from "../contractAddresses.json";
-import { formatUnits, parseUnits } from "@ethersproject/units";
+import { formatUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
@@ -22,8 +22,8 @@ import {
   Typography,
   Button,
   Tooltip,
-  Icon,
 } from "@web3uikit/core";
+import { HelpCircle } from "@web3uikit/icons";
 import Image from "next/image";
 import erc20 from "../contracts/erc20.json";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
@@ -333,7 +333,7 @@ export default function CollectionLoans() {
                         position="top"
                         minWidth={300}
                       >
-                        <Icon fill="#68738D" size={14} svg="helpCircle" />
+                        <HelpCircle fontSize="14px" color="#000000" />
                       </Tooltip>
                     </div>
                   </div>

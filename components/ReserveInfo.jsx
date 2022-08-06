@@ -21,6 +21,7 @@ export default function ReserveInfo(props) {
   const [maxAmount, setMaxAmount] = useState("0");
   const [underlyingBalance, setUnderlyingBalance] = useState("0");
   const [supplyRate, setSupplyRate] = useState(0);
+  const [borrowRate, setBorrowRate] = useState(0);
   const [utilizationRate, setUtilizationRate] = useState(0);
   const [reserveAddress, setReserveAddress] = useState("");
   const [ethPrice, setETHPrice] = useState("0");
@@ -66,6 +67,13 @@ export default function ReserveInfo(props) {
     abi: reserveContract.abi,
     contractAddress: reserveAddress,
     functionName: "getSupplyRate",
+    params: {},
+  });
+
+  const { runContractFunction: getBorrowRate } = useWeb3Contract({
+    abi: reserveContract.abi,
+    contractAddress: reserveAddress,
+    functionName: "getBorrowRate",
     params: {},
   });
 
@@ -137,6 +145,12 @@ export default function ReserveInfo(props) {
     });
     console.log("Updated Supply Rate:", updatedSupplyRate);
     setSupplyRate(updatedSupplyRate.toNumber());
+
+    const updatedBorrowRate = await getBorrowRate({
+      onError: (error) => console.log(error),
+    });
+    console.log("Updated Borrow Rate:", updatedBorrowRate);
+    setBorrowRate(updatedBorrowRate.toNumber());
 
     const updatedMaxAmount = await getMaximumWithdrawalAmount({
       onError: (error) => console.log(error),
@@ -267,6 +281,11 @@ export default function ReserveInfo(props) {
             </div>
           ) : (
             <div>
+              <div>
+                <Typography variant="caption14">
+                  Borrow Rate @ {borrowRate / 100}%
+                </Typography>
+              </div>
               <div>
                 <Typography variant="caption14">
                   Underlying is{" "}

@@ -33,9 +33,11 @@ export default function Borrow(props) {
   const [approved, setApproved] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [loadingMaxAmount, setLoadingMaxAmount] = useState(false);
+  const [loadingBorrowRate, setLoadingBorrowRate] = useState(false);
   const [reserveAddress, setReserveAddress] = useState("");
   const [borrowLoading, setBorrowLoading] = useState(false);
   const { isWeb3Enabled, chainId, account } = useMoralis();
+  const [borrowRate, setBorrowRate] = useState(0);
   const addresses =
     chainId in contractAddresses
       ? contractAddresses[chainId]
@@ -48,6 +50,7 @@ export default function Borrow(props) {
   const { runContractFunction: approve } = useWeb3Contract();
   const { runContractFunction: borrow } = useWeb3Contract();
   const { runContractFunction: getTokenMaxETHCollateral } = useWeb3Contract();
+  const { runContractFunction: getBorrowRate } = useWeb3Contract();
 
   const { runContractFunction: getTokenETHPrice } = useWeb3Contract({
     abi: tokenOracleContract.abi,
@@ -102,6 +105,26 @@ export default function Borrow(props) {
     setApproved(approval == addresses.Market);
   }
 
+  async function updateReserveBorrowRate() {
+    const getBorrowRateOptions = {
+      abi: reserveContract.abi,
+      contractAddress: reserveAddress,
+      functionName: "getBorrowRate",
+      params: {},
+    };
+
+    const updatedBorrowRate = (
+      await getBorrowRate({
+        onError: (error) => console.log(error),
+        params: getBorrowRateOptions,
+      })
+    ).toNumber();
+
+    console.log("New updated borrowRate:", updatedBorrowRate);
+    setBorrowRate(updatedBorrowRate);
+    setLoadingBorrowRate(false);
+  }
+
   async function updateMaxBorrowAmount() {
     const tokenETHPrice = (await getTokenETHPrice()).toString();
     console.log("tokenETHPrice", tokenETHPrice);
@@ -152,12 +175,14 @@ export default function Borrow(props) {
     if (reserveAddress) {
       getTokenApproval();
       updateMaxBorrowAmount();
+      updateReserveBorrowRate();
     }
   }, [reserveAddress, props.token_id]);
 
   useEffect(() => {
     if (isWeb3Enabled) {
       setLoadingMaxAmount(true);
+      setLoadingBorrowRate(true);
       console.log("Getting reserve", addresses[borrowAsset].address);
       getReserve();
     }
@@ -251,7 +276,7 @@ export default function Borrow(props) {
           <Typography variant="body16">{props.token_id}</Typography>
         </div>
       </div>
-      <div className="flex flex-row m-1">
+      <div className="flex flex-row m-2">
         <div className="flex flex-col">
           <Typography variant="subtitle2">Maximum borrowable amount</Typography>
           {loadingMaxAmount ? (
@@ -264,6 +289,18 @@ export default function Borrow(props) {
                 " " +
                 borrowAsset}
             </Typography>
+          )}
+        </div>
+      </div>
+      <div className="flex flex-row m-2">
+        <div className="flex flex-col">
+          <Typography variant="subtitle2">Reserve Borrow Rate</Typography>
+          {loadingBorrowRate ? (
+            <div className="m-2">
+              <Loading size={14} spinnerColor="#000000" />
+            </div>
+          ) : (
+            <Typography variant="body16">{borrowRate / 100}%</Typography>
           )}
         </div>
       </div>

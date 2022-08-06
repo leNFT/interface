@@ -113,6 +113,7 @@ export default function RepayLoan(props) {
     });
     setLoan({
       loanId: updatedLoan.loanId.toString(),
+      borrowRate: updatedLoan.borrowRate,
       reserve: updatedLoan.reserve,
     });
   }
@@ -186,6 +187,12 @@ export default function RepayLoan(props) {
           <Typography variant="body16">
             {formatUnits(debt, addresses[symbol].decimals) + " " + symbol}
           </Typography>
+        </div>
+      </div>
+      <div className="flex flex-row items-center m-2">
+        <div className="flex flex-col">
+          <Typography variant="subtitle2">Interest Rate</Typography>
+          <Typography variant="body16">{loan.borrowRate / 100}%</Typography>
         </div>
       </div>
       <div className="flex flex-row items-center m-2">

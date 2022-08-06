@@ -1,5 +1,5 @@
 import styles from "../styles/Home.module.css";
-import { Github, Discord, Twitter } from "@web3uikit/icons";
+import { Github, Discord, Twitter, Book } from "@web3uikit/icons";
 
 export default function Footer() {
   return (
@@ -25,6 +25,13 @@ export default function Footer() {
           rel="noopener noreferrer"
         >
           <Github fontSize="32px" color="#000000" title="Github Icon" />
+        </a>
+        <a
+          href="https://lenft.gitbook.io/lenft-docs/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Book fontSize="32px" color="#000000" title="Book Icon" />
         </a>
       </footer>
     </div>

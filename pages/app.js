@@ -9,7 +9,6 @@ import {
   Card,
   Tooltip,
   Illustration,
-  Modal,
   Typography,
   Loading,
 } from "@web3uikit/core";
@@ -22,6 +21,7 @@ import nftOracleContract from "../contracts/NFTOracle.json";
 import loanCenterContract from "../contracts/LoanCenter.json";
 import { calculateHealthLevel } from "../helpers/healthLevel";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
+import StyledModal from "../components/StyledModal";
 
 export default function App() {
   const [loadingUI, setLoadingUI] = useState(true);
@@ -59,6 +59,7 @@ export default function App() {
     var updatedSupportedAssets = [];
     var updatedUnsupportedAssets = [];
 
+    // Loop through all of tthe user NFTs
     for (let i = 0; i < userNFTs.length; i++) {
       if (
         userNFTs[i].token_address ==
@@ -77,8 +78,6 @@ export default function App() {
           onError: (error) => console.log(error),
           params: getLoanOptions,
         });
-
-        console.log("loan", loan);
 
         // Get loan debt
         const getLoanDebtOptions = {
@@ -129,8 +128,6 @@ export default function App() {
           onError: (error) => console.log(error),
           params: getTokenURIOptions,
         });
-
-        console.log("tokenURI", tokenURI);
 
         // Save relevant loan info
         updatedLoans.push({
@@ -216,7 +213,6 @@ export default function App() {
               <Card
                 title={"Loan #" + loan.loanId}
                 onClick={function () {
-                  console.log("CLICK");
                   setSelectedLoan(loan);
                   setVisibleLoanModal(true);
                 }}
@@ -266,7 +262,7 @@ export default function App() {
             </div>
           ))}
           {selectedLoan && (
-            <Modal
+            <StyledModal
               hasFooter={false}
               width="50%"
               isVisible={visibleLoanModal}
@@ -277,8 +273,9 @@ export default function App() {
               <RepayLoan
                 setVisibility={setVisibleLoanModal}
                 loan_id={selectedLoan.loanId}
+                token_uri={selectedLoan.tokenURI}
               />
-            </Modal>
+            </StyledModal>
           )}
         </div>
         {supportedAssets.length == 0 && unsupportedAssets.length == 0 ? (
@@ -345,7 +342,7 @@ export default function App() {
               </div>
             ))}
             {selectedAsset && (
-              <Modal
+              <StyledModal
                 hasFooter={false}
                 width="50%"
                 isVisible={visibleAssetModal}
@@ -359,7 +356,7 @@ export default function App() {
                   token_id={selectedAsset.token_id}
                   token_uri={selectedAsset.token_uri}
                 />
-              </Modal>
+              </StyledModal>
             )}
           </div>
         )}

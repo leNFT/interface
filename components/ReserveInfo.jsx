@@ -1,6 +1,7 @@
 import { Button, Modal, Typography, Tooltip, Loading } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
 import styles from "../styles/Home.module.css";
+import StyledModal from "../components/StyledModal";
 import { formatUnits } from "@ethersproject/units";
 import contractAddresses from "../contractAddresses.json";
 import { useState, useEffect } from "react";
@@ -167,7 +168,7 @@ export default function ReserveInfo(props) {
 
   return (
     <div className={styles.container}>
-      <Modal
+      <StyledModal
         hasFooter={false}
         title={"Deposit " + props.asset}
         isVisible={visibleDepositModal}
@@ -177,8 +178,8 @@ export default function ReserveInfo(props) {
         }}
       >
         <Deposit setVisibility={setVisibleDepositModal} asset={props.asset} />
-      </Modal>
-      <Modal
+      </StyledModal>
+      <StyledModal
         hasFooter={false}
         title={"Withdraw " + props.asset}
         width="50%"
@@ -191,7 +192,7 @@ export default function ReserveInfo(props) {
           setVisibility={setVisibleWithdrawalModal}
           asset={props.asset}
         />
-      </Modal>
+      </StyledModal>
       <div className="flex items-center justify-center">
         <div className="flex flex-col items-center m-16">
           <div className="flex flex-col m-4 border-4 rounded-2xl">

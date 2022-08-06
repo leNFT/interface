@@ -5,14 +5,8 @@ import { formatUnits, parseUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import {
-  Button,
-  Modal,
-  Typography,
-  Tooltip,
-  Icon,
-  useNotification,
-} from "@web3uikit/core";
+import { Button, Modal, Typography } from "@web3uikit/core";
+import StyledModal from "../components/StyledModal";
 import { useState, useEffect } from "react";
 import { useMoralis, useWeb3Contract } from "react-moralis";
 import erc20 from "../contracts/erc20.json";
@@ -191,7 +185,7 @@ export default function Stake() {
 
   return (
     <div className={styles.container}>
-      <Modal
+      <StyledModal
         hasFooter={false}
         title="Deposit LE"
         isVisible={visibleDepositModal}
@@ -201,8 +195,8 @@ export default function Stake() {
         }}
       >
         <DepositNativeToken setVisibility={setVisibleDepositModal} />
-      </Modal>
-      <Modal
+      </StyledModal>
+      <StyledModal
         hasFooter={false}
         title="Withdraw LE"
         width="50%"
@@ -212,8 +206,8 @@ export default function Stake() {
         }}
       >
         <WithdrawNativeToken setVisibility={setVisibleWithdrawalModal} />
-      </Modal>
-      <Modal
+      </StyledModal>
+      <StyledModal
         hasFooter={false}
         title={"Vote for " + selectedCollection.label}
         width="50%"
@@ -223,8 +217,8 @@ export default function Stake() {
         }}
       >
         <Vote {...selectedCollection} setVisibility={setVisibleVoteModal} />
-      </Modal>
-      <Modal
+      </StyledModal>
+      <StyledModal
         hasFooter={false}
         title={"Remove vote from " + selectedCollection.label}
         width="50%"
@@ -237,7 +231,7 @@ export default function Stake() {
           {...selectedCollection}
           setVisibility={setVisibleRemoveVoteModal}
         />
-      </Modal>
+      </StyledModal>
       <div className="flex flex-row items-center justify-center border-4 m-8">
         <div className="flex flex-col items-center m-8">
           <div className="flex flex-row m-2">

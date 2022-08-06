@@ -1,5 +1,5 @@
 import contractAddresses from "../contractAddresses.json";
-import { useNotification } from "@web3uikit/core";
+import { useNotification, Illustration } from "@web3uikit/core";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits } from "@ethersproject/units";
 import { useWeb3Contract, useMoralis } from "react-moralis";
@@ -10,6 +10,7 @@ import marketContract from "../contracts/Market.json";
 import loanCenterContract from "../contracts/LoanCenter.json";
 import reserveContract from "../contracts/Reserve.json";
 import erc20 from "../contracts/erc20.json";
+import Image from "next/image";
 
 export default function RepayLoan(props) {
   const [loan, setLoan] = useState();
@@ -155,6 +156,19 @@ export default function RepayLoan(props) {
 
   return (
     <div className={styles.container}>
+      <div className="flex flex-row justify-center mb-8">
+        {props.token_uri ? (
+          <Image
+            loader={() => props.token_uri}
+            src={props.token_uri}
+            height="200"
+            width="200"
+            unoptimized={true}
+          />
+        ) : (
+          <Illustration height="180px" logo="chest" width="100%" />
+        )}
+      </div>
       <div className="flex flex-row m-2">
         <div className="flex flex-col">
           <Typography variant="subtitle2">Loan ID</Typography>
@@ -171,7 +185,7 @@ export default function RepayLoan(props) {
       </div>
       <div className="flex flex-row items-center m-2">
         <div className="flex flex-col">
-          <Typography variant="subtitle2">Your balance</Typography>
+          <Typography variant="subtitle2">Your {symbol} balance</Typography>
           <Typography variant="body16">
             {formatUnits(balance, addresses[symbol].decimals) + " " + symbol}
           </Typography>

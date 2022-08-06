@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const StyledModal = styled(Modal)`
   div {
-    background-color: rgb(254, 250, 241);
+    background-color: rgb(241, 242, 251);
   }
 `;
 

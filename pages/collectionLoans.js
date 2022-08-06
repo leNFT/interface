@@ -248,7 +248,7 @@ export default function CollectionLoans() {
           <div className="flex flex-row">
             <div className="flex flex-col m-2">
               <div className="flex flex-row">
-                <Typography variant="subtitle2">Max LTV (no boost)</Typography>
+                <Typography variant="subtitle2">Max LTV</Typography>
               </div>
               <div className="flex flex-row">
                 <Typography variant="caption14">

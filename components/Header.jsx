@@ -1,4 +1,4 @@
-import { useWeb3Contract, useMoralis } from "react-moralis";
+import { useWeb3Contract, useMoralis, useChain } from "react-moralis";
 import { useState, useEffect } from "react";
 import contractAddresses from "../contractAddresses.json";
 import marketContract from "../contracts/Market.json";
@@ -6,12 +6,14 @@ import reserveContract from "../contracts/Reserve.json";
 import Link from "next/link";
 import { ConnectButton } from "@web3uikit/web3";
 import { Tooltip, BannerStrip } from "@web3uikit/core";
+import { Reload } from "@web3uikit/icons";
 import { Button } from "grommet";
 
 export default function Header() {
   const [borrowRate, setBorrowRate] = useState(0);
   const [reserveAddress, setReserveAddress] = useState("");
   const { isWeb3Enabled, chainId } = useMoralis();
+  const { switchNetwork } = useChain();
   const addresses =
     chainId in contractAddresses
       ? contractAddresses[chainId]
@@ -74,8 +76,18 @@ export default function Header() {
   return (
     <div>
       {chainId != "0x1" && (
-        <div className="mb-2">
+        <div className="mb-6">
           <BannerStrip
+            buttonDisplayed
+            buttonConfig={{
+              onClick: function noRefCheck() {
+                switchNetwork("0x1");
+              },
+              iconLayout: "icon-only",
+              icon: (
+                <Reload fontSize="26px" color="#000000" title="Reload Icon" />
+              ),
+            }}
             text="Please change to the Ethereum mainnet."
             type="warning"
           />

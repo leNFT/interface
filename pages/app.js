@@ -4,6 +4,7 @@ import { getTokenPrice } from "../helpers/getTokenPrice.js";
 import { formatUnits } from "@ethersproject/units";
 import { useMoralisWeb3Api, useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
+import erc721 from "../contracts/erc721.json";
 import {
   Card,
   Tooltip,
@@ -43,6 +44,7 @@ export default function App() {
   const { runContractFunction: getLoan } = useWeb3Contract();
   const { runContractFunction: getCollectionMaxCollateralization } =
     useWeb3Contract();
+  const { runContractFunction: getTokenURI } = useWeb3Contract();
 
   async function setupUI() {
     console.log("Setting up UI");
@@ -113,10 +115,27 @@ export default function App() {
           params: getCollectionMaxCollateralizationOptions,
         });
 
+        //Get token URI
+        const getTokenURIOptions = {
+          abi: erc721,
+          contractAddress: loan.nftAsset,
+          functionName: "tokenURI",
+          params: {
+            tokenId: loan.nftTokenId,
+          },
+        };
+
+        const tokenURI = await getTokenURI({
+          onError: (error) => console.log(error),
+          params: getTokenURIOptions,
+        });
+
+        console.log("tokenURI", tokenURI);
+
         // Save relevant loan info
         updatedLoans.push({
           loanId: userNFTs[i].token_id,
-          tokenURI: "",
+          tokenURI: tokenURI,
           amount: loan.amount,
           debt: debt,
           tokenPrice: tokenPrice,

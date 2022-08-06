@@ -313,31 +313,34 @@ export default function App() {
                     setSelectedAsset(supportedAsset);
                     setVisibleAssetModal(true);
                   }}
+                  tooltipText={
+                    <span style={{ width: 160 }}>
+                      Click on the NFT to use as loan collateral
+                    </span>
+                  }
                 >
-                  <Tooltip content="Use as collateral!" position="top">
-                    <div className="p-2">
-                      {supportedAsset.token_uri ? (
-                        <div className="flex flex-col items-end gap-2">
-                          <Image
-                            loader={() => supportedAsset.token_uri}
-                            src={supportedAsset.token_uri}
-                            height="200"
-                            width="200"
-                            unoptimized={true}
-                          />
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center gap-1">
-                          <Illustration
-                            height="180px"
-                            logo="token"
-                            width="100%"
-                          />
-                          Loading...
-                        </div>
-                      )}
-                    </div>
-                  </Tooltip>
+                  <div className="p-6">
+                    {supportedAsset.token_uri ? (
+                      <div className="flex flex-col items-end gap-2">
+                        <Image
+                          loader={() => supportedAsset.token_uri}
+                          src={supportedAsset.token_uri}
+                          height="200"
+                          width="200"
+                          unoptimized={true}
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-1">
+                        <Illustration
+                          height="180px"
+                          logo="token"
+                          width="100%"
+                        />
+                        Loading...
+                      </div>
+                    )}
+                  </div>
                 </Card>
               </div>
             ))}
@@ -377,32 +380,32 @@ export default function App() {
                     title={
                       unsupportedAsset.name + " #" + unsupportedAsset.token_id
                     }
-                    isDisabled={true}
+                    tooltipText={
+                      <span style={{ width: 140 }}>Unsupported Asset</span>
+                    }
                   >
-                    <Tooltip content="Unsupported collateral" position="top">
-                      <div className="p-2">
-                        {unsupportedAsset.token_uri ? (
-                          <div className="flex flex-col items-end gap-2">
-                            <Image
-                              loader={() => unsupportedAsset.token_uri}
-                              src={unsupportedAsset.token_uri}
-                              height="140"
-                              width="140"
-                              unoptimized={true}
-                            />
-                          </div>
-                        ) : (
-                          <div className="flex flex-col items-center gap-1">
-                            <Illustration
-                              height="140px"
-                              logo="lazyNft"
-                              width="100%"
-                            />
-                            Loading...
-                          </div>
-                        )}
-                      </div>
-                    </Tooltip>
+                    <div className="p-6">
+                      {unsupportedAsset.token_uri ? (
+                        <div className="flex flex-col items-end">
+                          <Image
+                            loader={() => unsupportedAsset.token_uri}
+                            src={unsupportedAsset.token_uri}
+                            height="140"
+                            width="140"
+                            unoptimized={true}
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center gap-1">
+                          <Illustration
+                            height="140px"
+                            logo="lazyNft"
+                            width="100%"
+                          />
+                          Loading...
+                        </div>
+                      )}
+                    </div>
                   </Card>
                 )}
               </div>

@@ -1,6 +1,7 @@
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { getTokenPrice } from "../helpers/getTokenPrice.js";
+import { formatUnits } from "@ethersproject/units";
 import { useMoralisWeb3Api, useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
 import {
@@ -30,6 +31,7 @@ export default function App() {
   const [visibleLoanModal, setVisibleLoanModal] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState();
   const [selectedLoan, setSelectedLoan] = useState();
+  const [walletMaxBorrowable, setWalletMaxBorrowable] = useState("0");
   const { isWeb3Enabled, chainId, account } = useMoralis();
   const addresses =
     chainId in contractAddresses
@@ -126,6 +128,35 @@ export default function App() {
             collection.address.toLowerCase() == userNFTs[i].token_address
         )
       ) {
+        // Get token price
+        const tokenPrice = await getTokenPrice(
+          userNFTs[i].token_address,
+          userNFTs[i].token_id
+        );
+
+        // Get max LTV of collection
+        const getCollectionMaxCollateralizationOptions = {
+          abi: nftOracleContract.abi,
+          contractAddress: addresses.NFTOracle,
+          functionName: "getCollectionMaxCollaterization",
+          params: {
+            collection: userNFTs[i].token_address,
+          },
+        };
+
+        const maxLTV = await getCollectionMaxCollateralization({
+          onError: (error) => console.log(error),
+          params: getCollectionMaxCollateralizationOptions,
+        });
+
+        //Update wallet max borrowable
+        const assetMaxCollateral = BigNumber.from(maxLTV)
+          .mul(tokenPrice)
+          .div(10000)
+          .toString();
+        setWalletMaxBorrowable(walletMaxBorrowable + assetMaxCollateral);
+
+        // Add asset to supported assets
         updatedSupportedAssets.push(userNFTs[i]);
       } else {
         // Get max 9 unsupported assets
@@ -159,7 +190,7 @@ export default function App() {
     <div className={styles.container}>
       <div className={styles.main}>
         {loans.length > 0 && <Typography variant="h1">Loans</Typography>}
-        <div className="flex">
+        <div className="flex mb-4">
           {loans.map((loan, _) => (
             <div key={loan.loanId} className="m-4">
               <Card
@@ -237,8 +268,22 @@ export default function App() {
             <Typography variant="body18">No NFT assets found :/</Typography>
           )
         ) : (
-          <div className="flex mt-4">
-            <Typography variant="h1">Wallet</Typography>
+          <div className="flex flex-col mt-4">
+            <div className="flex flex-row justify-center mt-4">
+              <Typography variant="h1">Wallet</Typography>
+            </div>
+            <div className="flex flex-row justify-center">
+              <Typography variant="subtitle1">
+                ({supportedAssets.length} supported assets)
+              </Typography>
+            </div>
+            <div className="flex flex-row justify-center mt-2">
+              <Typography variant="subtitle3">
+                You can borrow up to{" "}
+                {formatUnits(BigNumber.from(walletMaxBorrowable).div(2), 18)}{" "}
+                WETH
+              </Typography>
+            </div>
           </div>
         )}
         {supportedAssets.length != 0 && (
@@ -248,7 +293,6 @@ export default function App() {
                 <Card
                   title={supportedAsset.name + " #" + supportedAsset.token_id}
                   onClick={function () {
-                    console.log("CLICK");
                     setSelectedAsset(supportedAsset);
                     setVisibleAssetModal(true);
                   }}

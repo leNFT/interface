@@ -277,7 +277,7 @@ export default function App() {
                 ({supportedAssets.length} supported assets)
               </Typography>
             </div>
-            <div className="flex flex-row justify-center mt-2">
+            <div className="flex flex-row justify-center mt-2 border-b-2">
               <Typography variant="subtitle3">
                 You can borrow up to{" "}
                 {formatUnits(BigNumber.from(walletMaxBorrowable).div(2), 18)}{" "}

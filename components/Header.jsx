@@ -5,7 +5,7 @@ import marketContract from "../contracts/Market.json";
 import reserveContract from "../contracts/Reserve.json";
 import Link from "next/link";
 import { ConnectButton } from "@web3uikit/web3";
-import { Tooltip } from "@web3uikit/core";
+import { Tooltip, BannerStrip } from "@web3uikit/core";
 import { Button } from "grommet";
 
 export default function Header() {
@@ -72,67 +72,77 @@ export default function Header() {
   }, [reserveAddress]);
 
   return (
-    <div className="p-4 border-b-2 flex flex-col md:flex-row justify-between items-center">
-      <div className="flex flex-col items-center justify-content lg:pr-20">
-        <Link href="/">
-          <a target="_blank" rel="noopener noreferrer">
-            <div className="mx-5 my-2 flex flex-row items-center">
-              <div className="flex flex-col items-center">
-                <h1 className="font-bold text-2xl">leNFT</h1>
+    <div>
+      {chainId != "0x1" && (
+        <div className="mb-2">
+          <BannerStrip
+            text="Please change to Ethereum mainnet."
+            type="warning"
+          />
+        </div>
+      )}
+      <div className="p-4 border-b-2 flex flex-col md:flex-row justify-between items-center">
+        <div className="flex flex-col items-center justify-content lg:pr-20">
+          <Link href="/">
+            <a target="_blank" rel="noopener noreferrer">
+              <div className="mx-5 my-2 flex flex-row items-center">
+                <div className="flex flex-col items-center">
+                  <h1 className="font-bold text-2xl">leNFT</h1>
+                </div>
+                <div className="flex flex-col ml-1 mb-4 items-center justify-content">
+                  <h1 className="text-2xl">.finance</h1>
+                </div>
               </div>
-              <div className="flex flex-col ml-1 mb-4 items-center justify-content">
-                <h1 className="text-2xl">.finance</h1>
+            </a>
+          </Link>
+          {isWeb3Enabled && (
+            <div className="flex flex-col items-center">
+              <div className="flex flex-row items-center">
+                <h1 className="font-bold text-xs">
+                  Borrow Rate @ {borrowRate / 100}%
+                </h1>
               </div>
             </div>
-          </a>
-        </Link>
-        {isWeb3Enabled && (
-          <div className="flex flex-col items-center">
-            <div className="flex flex-row items-center">
-              <h1 className="font-bold text-xs">
-                Borrow Rate @ {borrowRate / 100}%
-              </h1>
+          )}
+        </div>
+        <div className="flex flex-col items-center self-center my-2">
+          <div className="flex flex-col md:flex-row md:items-center">
+            <div className="flex flex-col m-2">
+              <Link href="/app">
+                <Button size="medium" color="neutral-3" label="Home" />
+              </Link>
             </div>
-          </div>
-        )}
-      </div>
-      <div className="flex flex-col items-center self-center my-2">
-        <div className="flex flex-col md:flex-row md:items-center">
-          <div className="flex flex-col m-2">
-            <Link href="/app">
-              <Button size="medium" color="neutral-3" label="Home" />
-            </Link>
-          </div>
-          <div className="flex flex-col m-2">
-            <Link href="/collectionLoans">
-              <Button
-                size="medium"
-                color="neutral-3"
-                label="Collections' Loans"
-              />
-            </Link>
-          </div>
-          <div className="flex flex-col m-2">
-            <Link href="/supply">
-              <Button size="medium" color="neutral-3" label="Supply" />
-            </Link>
-          </div>
-          <div className="flex flex-col m-2">
-            <Link href="">
-              <Tooltip content={"soon :)"} position="bottom">
+            <div className="flex flex-col m-2">
+              <Link href="/collectionLoans">
                 <Button
-                  size="small"
+                  size="medium"
                   color="neutral-3"
-                  label="Stake LE (soon)"
-                  disabled={true}
+                  label="Collections' Loans"
                 />
-              </Tooltip>
-            </Link>
+              </Link>
+            </div>
+            <div className="flex flex-col m-2">
+              <Link href="/supply">
+                <Button size="medium" color="neutral-3" label="Supply" />
+              </Link>
+            </div>
+            <div className="flex flex-col m-2">
+              <Link href="">
+                <Tooltip content={"soon :)"} position="bottom">
+                  <Button
+                    size="small"
+                    color="neutral-3"
+                    label="Stake LE (soon)"
+                    disabled={true}
+                  />
+                </Tooltip>
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
-      <div className="flex flex-col items-center mt-2">
-        <ConnectButton moralisAuth={false} />
+        <div className="flex flex-col items-center mt-2">
+          <ConnectButton moralisAuth={false} />
+        </div>
       </div>
     </div>
   );

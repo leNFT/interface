@@ -128,7 +128,7 @@ export default function App() {
       ) {
         updatedSupportedAssets.push(userNFTs[i]);
       } else {
-        // Get max 5 unsupported assets
+        // Get max 9 unsupported assets
         if (updatedUnsupportedAssets.length < 9) {
           updatedUnsupportedAssets.push(userNFTs[i]);
         }
@@ -230,7 +230,6 @@ export default function App() {
             </Modal>
           )}
         </div>
-
         {supportedAssets.length == 0 && unsupportedAssets.length == 0 ? (
           loadingUI ? (
             <Loading size={16} spinnerColor="#2E7DAF" spinnerType="wave" />
@@ -305,39 +304,46 @@ export default function App() {
             id="unsupportedAssetsContainer"
             className="flex border-2 rounded-3xl m-2 p-2"
           >
-            {unsupportedAssets.map((unsupportedAsset) => (
-              <div key={unsupportedAsset.token_hash} className="m-4">
-                <Card
-                  title={
-                    unsupportedAsset.name + " #" + unsupportedAsset.token_id
-                  }
-                  isDisabled={true}
-                >
-                  <Tooltip content="Unsupported collateral" position="top">
-                    <div className="p-2">
-                      {unsupportedAsset.token_uri ? (
-                        <div className="flex flex-col items-end gap-2">
-                          <Image
-                            loader={() => unsupportedAsset.token_uri}
-                            src={unsupportedAsset.token_uri}
-                            height="140"
-                            width="140"
-                            unoptimized={true}
-                          />
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center gap-1">
-                          <Illustration
-                            height="140px"
-                            logo="lazyNft"
-                            width="100%"
-                          />
-                          Loading...
-                        </div>
-                      )}
-                    </div>
-                  </Tooltip>
-                </Card>
+            {unsupportedAssets.map((unsupportedAsset, index) => (
+              <div
+                key={unsupportedAsset.token_hash}
+                className="flex m-4 items-center"
+              >
+                {index == 8 && unsupportedAssets.length == 9 ? (
+                  <div>... and some more.</div>
+                ) : (
+                  <Card
+                    title={
+                      unsupportedAsset.name + " #" + unsupportedAsset.token_id
+                    }
+                    isDisabled={true}
+                  >
+                    <Tooltip content="Unsupported collateral" position="top">
+                      <div className="p-2">
+                        {unsupportedAsset.token_uri ? (
+                          <div className="flex flex-col items-end gap-2">
+                            <Image
+                              loader={() => unsupportedAsset.token_uri}
+                              src={unsupportedAsset.token_uri}
+                              height="140"
+                              width="140"
+                              unoptimized={true}
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center gap-1">
+                            <Illustration
+                              height="140px"
+                              logo="lazyNft"
+                              width="100%"
+                            />
+                            Loading...
+                          </div>
+                        )}
+                      </div>
+                    </Tooltip>
+                  </Card>
+                )}
               </div>
             ))}
           </div>

@@ -4,6 +4,8 @@
 
 html,
 body {
+  @apply bg-gradient-to-br from-pink-50 via-rose-50 to-indigo-100;
+  min-height: 100vh;
   padding: 0;
   margin: 0;
   background-color:rgb(252, 244, 244);

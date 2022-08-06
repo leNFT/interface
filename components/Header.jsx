@@ -141,9 +141,9 @@ export default function Header() {
             <div className="flex flex-col m-2">
               <div className="flex justify-center">
                 <Link href="">
-                  <Tooltip content={"soon :)"} position="bottom">
+                  <Tooltip content={"soon :)"} position="bottom" minWidth={70}>
                     <Button
-                      size="small"
+                      size="medium"
                       color="neutral-3"
                       label="Stake LE"
                       disabled={true}

@@ -125,7 +125,7 @@ export default function Header() {
               </Link>
             </div>
             <div className="flex flex-col m-2">
-              <Link href="/collectionLoans">
+              <Link href="/loanExplorer">
                 <Button
                   size="medium"
                   color="neutral-3"

@@ -29,7 +29,7 @@ import Image from "next/image";
 import erc20 from "../contracts/erc20.json";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 
-export default function CollectionLoans() {
+export default function LoanExplorer() {
   const [collectionLoans, setCollectionLoans] = useState([]);
   const [allowance, setAllowance] = useState("0");
   const [maxCollateralization, setMaxCollateralization] = useState("0");

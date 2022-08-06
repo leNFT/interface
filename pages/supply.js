@@ -25,14 +25,28 @@ export default function Supply() {
           <Tab
             lineHeight={0}
             tabKey={1}
-            tabName={<Eth fontSize="32px" color="#000000" />}
+            tabName={
+              <div className="flex flex-row items-center">
+                <div className="flex flex-col">
+                  <Eth fontSize="32px" color="#000000" />
+                </div>
+                <div className="flex flex-col mx-2">WETH</div>
+              </div>
+            }
           >
             <ReserveDetails asset={"WETH"} />
           </Tab>
           <Tab
             lineHeight={0}
             tabKey={2}
-            tabName={<Usdc fontSize="32px" color="#000000" />}
+            tabName={
+              <div className="flex flex-row items-center">
+                <div className="flex flex-col">
+                  <Usdc fontSize="32px" color="#000000" />
+                </div>
+                <div className="flex flex-col mx-2">USDC</div>
+              </div>
+            }
           >
             <ReserveDetails asset={"USDC"} />
           </Tab>

@@ -232,6 +232,7 @@ export default function Borrow(props) {
             tabName={<Eth fontSize="32px" color="#000000" />}
           ></Tab>
           <Tab
+            isDisabled
             lineHeight={0}
             tabKey={1}
             tabName={<Usdc fontSize="32px" color="#000000" />}
@@ -268,6 +269,7 @@ export default function Borrow(props) {
       </div>
       <div className="flex flex-row items-center justify-center m-8">
         <Input
+          labelBgColor="rgb(241, 242, 251)"
           label="Amount"
           type="number"
           step="any"

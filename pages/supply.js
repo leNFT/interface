@@ -38,6 +38,7 @@ export default function Supply() {
           </Tab>
           <Tab
             lineHeight={0}
+            isDisabled
             tabKey={2}
             tabName={
               <div className="flex flex-row items-center">

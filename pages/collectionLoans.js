@@ -352,6 +352,11 @@ export default function CollectionLoans() {
                         radius="5"
                         onClick={async function () {
                           const requestId = getNewRequestID();
+                          const priceSig = await getTokenPriceSig(
+                            requestId,
+                            collectionLoan.tokenAddress,
+                            collectionLoan.tokenId
+                          );
                           const getLiquidateOptions = {
                             abi: marketContract.abi,
                             contractAddress: addresses.Market,
@@ -359,17 +364,10 @@ export default function CollectionLoans() {
                             params: {
                               loanId: collectionLoan.loanId,
                               request: requestId,
-                              packet: getTokenPriceSig(
-                                requestId,
-                                collectionLoan.tokenAddress,
-                                collectionLoan.tokenId
-                              ),
+                              packet: priceSig,
                             },
                           };
-                          console.log(
-                            "Liquidation loan",
-                            collectionLoan.loanId
-                          );
+                          console.log("Liquidation loan", collectionLoan);
                           await liquidate({
                             onError: (error) => console.log(error),
                             onSuccess: handleLiquidateSuccess,
@@ -397,7 +395,7 @@ export default function CollectionLoans() {
                         onClick={async function () {
                           const approveOptions = {
                             abi: erc20,
-                            contractAddress: addresses.WETH,
+                            contractAddress: addresses["WETH"].address,
                             functionName: "approve",
                             params: {
                               _spender: addresses.Market,

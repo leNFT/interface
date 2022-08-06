@@ -24,7 +24,7 @@ export default function Layout({ children }) {
           ) : (
             <div className={styles.container}>
               <div className={styles.main}>
-                <Typography variant="subtitle1">
+                <Typography variant="h1">
                   Chain ID not supported (Testnet: Goerli)
                 </Typography>
               </div>
@@ -34,7 +34,7 @@ export default function Layout({ children }) {
           <div className={styles.container}>
             <div className={styles.main}>
               <Typography variant="subtitle1">
-                Please connect a Web 3 wallet.
+                Connect a Web 3 wallet by clicking the connect wallet button.
               </Typography>
             </div>
           </div>

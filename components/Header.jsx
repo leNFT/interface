@@ -75,7 +75,7 @@ export default function Header() {
 
   return (
     <div>
-      {chainId != "0x1" && (
+      {chainId != "0x1" && isWeb3Enabled && (
         <div className="mb-6">
           <BannerStrip
             buttonDisplayed

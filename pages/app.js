@@ -152,9 +152,10 @@ export default function App() {
         //Update wallet max borrowable
         const assetMaxCollateral = BigNumber.from(maxLTV)
           .mul(tokenPrice)
-          .div(10000)
-          .toString();
-        setWalletMaxBorrowable(walletMaxBorrowable + assetMaxCollateral);
+          .div(10000);
+        const updatedWalletMaxBorrowable =
+          BigNumber.from(walletMaxBorrowable).add(assetMaxCollateral);
+        setWalletMaxBorrowable(updatedWalletMaxBorrowable.toString());
 
         // Add asset to supported assets
         updatedSupportedAssets.push(userNFTs[i]);
@@ -270,14 +271,11 @@ export default function App() {
         ) : (
           <div className="flex flex-col mt-4">
             <div className="flex flex-row justify-center mt-4">
-              <Typography variant="h1">Wallet</Typography>
-            </div>
-            <div className="flex flex-row justify-center">
-              <Typography variant="subtitle1">
-                ({supportedAssets.length} supported assets)
+              <Typography variant="h1">
+                Wallet: {supportedAssets.length} supported asset
               </Typography>
             </div>
-            <div className="flex flex-row justify-center mt-2 border-b-2">
+            <div className="flex flex-row justify-center mt-2">
               <Typography variant="subtitle3">
                 You can borrow up to{" "}
                 {formatUnits(BigNumber.from(walletMaxBorrowable).div(2), 18)}{" "}

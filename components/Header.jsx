@@ -76,7 +76,7 @@ export default function Header() {
       {chainId != "0x1" && (
         <div className="mb-2">
           <BannerStrip
-            text="Please change to Ethereum mainnet."
+            text="Please change to the Ethereum mainnet."
             type="warning"
           />
         </div>

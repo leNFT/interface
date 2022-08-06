@@ -6,8 +6,8 @@ import reserveContract from "../contracts/Reserve.json";
 import Link from "next/link";
 import { ConnectButton } from "@web3uikit/web3";
 import { Tooltip, BannerStrip } from "@web3uikit/core";
-import { Reload } from "@web3uikit/icons";
 import { Button } from "grommet";
+import { Home, Search, Reload, Plus, LockClosed } from "@web3uikit/icons";
 
 export default function Header() {
   const [borrowRate, setBorrowRate] = useState(0);
@@ -121,7 +121,12 @@ export default function Header() {
           <div className="flex flex-col md:flex-row md:items-center">
             <div className="flex flex-col m-2">
               <Link href="/app">
-                <Button size="medium" color="neutral-3" label="Home" />
+                <Button
+                  size="medium"
+                  color="neutral-3"
+                  label="Home"
+                  icon={<Home fontSize="24px" color="#000000" />}
+                />
               </Link>
             </div>
             <div className="flex flex-col m-2">
@@ -129,13 +134,19 @@ export default function Header() {
                 <Button
                   size="medium"
                   color="neutral-3"
-                  label="Collections' Loans"
+                  label="Loan Explorer"
+                  icon={<Search fontSize="24px" color="#000000" />}
                 />
               </Link>
             </div>
             <div className="flex flex-col m-2">
               <Link href="/supply">
-                <Button size="medium" color="neutral-3" label="Supply" />
+                <Button
+                  size="medium"
+                  color="neutral-3"
+                  label="Supply"
+                  icon={<Plus fontSize="24px" color="#000000" />}
+                />
               </Link>
             </div>
             <div className="flex flex-col m-2">
@@ -147,6 +158,7 @@ export default function Header() {
                       color="neutral-3"
                       label="Stake LE"
                       disabled={true}
+                      icon={<LockClosed fontSize="24px" color="#000000" />}
                     />
                   </Tooltip>
                 </Link>

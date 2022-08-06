@@ -156,7 +156,7 @@ export default function RepayLoan(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-row justify-center mb-8">
+      <div className="flex flex-row justify-center mb-2">
         {props.token_uri ? (
           <Image
             loader={() => props.token_uri}
@@ -168,6 +168,11 @@ export default function RepayLoan(props) {
         ) : (
           <Illustration height="180px" logo="chest" width="100%" />
         )}
+      </div>
+      <div className="flex flex-row justify-center mb-8">
+        <Typography variant="caption16">
+          {props.token_name + " #" + props.token_id}
+        </Typography>
       </div>
       <div className="flex flex-row m-2">
         <div className="flex flex-col">

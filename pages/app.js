@@ -129,9 +129,16 @@ export default function App() {
           params: getTokenURIOptions,
         });
 
+        //Find token name
+        const tokenName = addresses.SupportedAssets.find(
+          (collection) => collection.address == loan.nftAsset.toLowerCase()
+        ).name;
+
         // Save relevant loan info
         updatedLoans.push({
           loanId: userNFTs[i].token_id,
+          tokenName: tokenName,
+          tokenId: loan.nftTokenId.toString(),
           tokenURI: tokenURI,
           amount: loan.amount,
           debt: debt,
@@ -273,6 +280,8 @@ export default function App() {
               <RepayLoan
                 setVisibility={setVisibleLoanModal}
                 loan_id={selectedLoan.loanId}
+                token_name={selectedLoan.tokenName}
+                token_id={selectedLoan.tokenId}
                 token_uri={selectedLoan.tokenURI}
               />
             </StyledModal>

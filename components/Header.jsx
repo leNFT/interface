@@ -127,16 +127,18 @@ export default function Header() {
               </Link>
             </div>
             <div className="flex flex-col m-2">
-              <Link href="">
-                <Tooltip content={"soon :)"} position="bottom">
-                  <Button
-                    size="small"
-                    color="neutral-3"
-                    label="Stake LE (soon)"
-                    disabled={true}
-                  />
-                </Tooltip>
-              </Link>
+              <div className="flex justify-center">
+                <Link href="">
+                  <Tooltip content={"soon :)"} position="bottom">
+                    <Button
+                      size="small"
+                      color="neutral-3"
+                      label="Stake LE"
+                      disabled={true}
+                    />
+                  </Tooltip>
+                </Link>
+              </div>
             </div>
           </div>
         </div>

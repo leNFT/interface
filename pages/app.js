@@ -208,7 +208,7 @@ export default function App() {
       setupUI();
     }
     console.log("useEffect called");
-  }, [isWeb3Enabled]);
+  }, [isWeb3Enabled, account]);
 
   return (
     <div className={styles.container}>

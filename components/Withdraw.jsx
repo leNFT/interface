@@ -103,7 +103,23 @@ export default function Withdraw(props) {
           </Typography>
         </div>
       </div>
-      <div className="flex flex-row justify-center mt-16">
+      <div className="flex flex-row items-center justify-center mx-8 mt-12 mb-2">
+        <Input
+          labelBgColor="rgb(241, 242, 251)"
+          label="Amount"
+          type="number"
+          step="any"
+          value={amount && formatUnits(amount, addresses[props.asset].decimals)}
+          validation={{
+            numberMax: Number(
+              formatUnits(maxAmount, addresses[props.asset].decimals)
+            ),
+            numberMin: 0,
+          }}
+          onChange={handleInputChange}
+        />
+      </div>
+      <div className="flex flex-row justify-center">
         <div className="flex flex-col">
           <Button
             onClick={() =>
@@ -138,22 +154,6 @@ export default function Withdraw(props) {
             theme="outline"
           />
         </div>
-      </div>
-      <div className="flex flex-row items-center justify-center m-8">
-        <Input
-          labelBgColor="rgb(241, 242, 251)"
-          label="Amount"
-          type="number"
-          step="any"
-          value={amount && formatUnits(amount, addresses[props.asset].decimals)}
-          validation={{
-            numberMax: Number(
-              formatUnits(maxAmount, addresses[props.asset].decimals)
-            ),
-            numberMin: 0,
-          }}
-          onChange={handleInputChange}
-        />
       </div>
       <div className="mt-16 mb-8">
         <Button

@@ -398,7 +398,9 @@ export default function App() {
                       unsupportedAsset.name + " #" + unsupportedAsset.token_id
                     }
                     tooltipText={
-                      <span style={{ width: 140 }}>Unsupported Assets</span>
+                      <span style={{ width: 215 }}>
+                        Asset not supported by leNFT
+                      </span>
                     }
                   >
                     <div className="p-6">

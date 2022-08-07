@@ -12,7 +12,7 @@ import reserveContract from "../contracts/Reserve.json";
 export default function Withdraw(props) {
   const { isWeb3Enabled, chainId, account } = useMoralis();
   const [withdrawalLoading, setWithdrawalLoading] = useState(false);
-  const [amount, setAmount] = useState("0");
+  const [amount, setAmount] = useState("");
   const [maxAmount, setMaxAmount] = useState("0");
   const addresses =
     chainId in contractAddresses
@@ -103,12 +103,49 @@ export default function Withdraw(props) {
           </Typography>
         </div>
       </div>
+      <div className="flex flex-row justify-center mt-16">
+        <div className="flex flex-col">
+          <Button
+            onClick={() =>
+              setAmount(BigNumber.from(maxAmount).mul(2500).div(10000))
+            }
+            text="25%"
+            theme="outline"
+          />
+        </div>
+        <div className="flex flex-col">
+          <Button
+            onClick={() =>
+              setAmount(BigNumber.from(maxAmount).mul(5000).div(10000))
+            }
+            text="50%"
+            theme="outline"
+          />
+        </div>
+        <div className="flex flex-col">
+          <Button
+            onClick={() =>
+              setAmount(BigNumber.from(maxAmount).mul(7500).div(10000))
+            }
+            text="75%"
+            theme="outline"
+          />
+        </div>
+        <div className="flex flex-col">
+          <Button
+            onClick={() => setAmount(maxAmount)}
+            text="100%"
+            theme="outline"
+          />
+        </div>
+      </div>
       <div className="flex flex-row items-center justify-center m-8">
         <Input
           labelBgColor="rgb(241, 242, 251)"
           label="Amount"
           type="number"
           step="any"
+          value={amount && formatUnits(amount, addresses[props.asset].decimals)}
           validation={{
             numberMax: Number(
               formatUnits(maxAmount, addresses[props.asset].decimals)
@@ -118,7 +155,6 @@ export default function Withdraw(props) {
           onChange={handleInputChange}
         />
       </div>
-
       <div className="mt-16 mb-8">
         <Button
           text="Withdraw"

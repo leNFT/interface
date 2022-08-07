@@ -359,7 +359,8 @@ export default function LoanExplorer() {
                           const priceSig = await getTokenPriceSig(
                             requestId,
                             collectionLoan.tokenAddress,
-                            collectionLoan.tokenId
+                            collectionLoan.tokenId,
+                            chainId
                           );
                           const getLiquidateOptions = {
                             abi: marketContract.abi,

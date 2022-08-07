@@ -157,7 +157,8 @@ export default function Borrow(props) {
     const priceSig = await getTokenPriceSig(
       requestID,
       props.token_address,
-      props.token_id
+      props.token_id,
+      chainId
     );
 
     const tokenMaxETHCollateralOptions = {
@@ -383,7 +384,8 @@ export default function Borrow(props) {
                 const priceSig = await getTokenPriceSig(
                   requestID,
                   props.token_address,
-                  props.token_id
+                  props.token_id,
+                  chainId
                 );
                 console.log("Got price sig", priceSig);
                 const borrowOptions = {

@@ -3,6 +3,7 @@ import {
   getTokenPriceSig,
   getNewRequestID,
 } from "../helpers/getTokenPriceSig.js";
+import { getTokenPrice } from "../helpers/getTokenPrice.js";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useWeb3Contract, useMoralis } from "react-moralis";
@@ -30,6 +31,8 @@ export default function Borrow(props) {
   const PRICE_PRECISION = "1000000000000000000";
   const [amount, setAmount] = useState("0");
   const [maxAmount, setMaxAmount] = useState("0");
+  const [tokenPrice, setTokenPrice] = useState("0");
+  const [tokenMaxCollateralization, setTokenMaxCollateralization] = useState(0);
   const [approved, setApproved] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [loadingMaxAmount, setLoadingMaxAmount] = useState(false);
@@ -60,6 +63,16 @@ export default function Borrow(props) {
       token: addresses[borrowAsset].address,
     },
   });
+
+  const { runContractFunction: getCollectionMaxCollateralization } =
+    useWeb3Contract({
+      abi: nftOracleContract.abi,
+      contractAddress: addresses.NFTOracle,
+      functionName: "getCollectionMaxCollaterization",
+      params: {
+        collection: props.token_address,
+      },
+    });
 
   const { runContractFunction: getReserveAddress } = useWeb3Contract({
     abi: marketContract.abi,
@@ -126,6 +139,18 @@ export default function Borrow(props) {
   }
 
   async function updateMaxBorrowAmount() {
+    // Get token price
+    const price = await getTokenPrice(props.token_address, props.token_id);
+    setTokenPrice(price);
+
+    //Get token max collateralization
+    const maxCollateralization = (
+      await getCollectionMaxCollateralization()
+    ).toString();
+    console.log("maxCollateralization updated", maxCollateralization);
+    setTokenMaxCollateralization(maxCollateralization);
+
+    // Get max amount borrowable
     const tokenETHPrice = (await getTokenETHPrice()).toString();
     console.log("tokenETHPrice", tokenETHPrice);
     // Get updated price trusted server signature from server
@@ -294,7 +319,24 @@ export default function Borrow(props) {
       </div>
       <div className="flex flex-row m-2">
         <div className="flex flex-col">
-          <Typography variant="subtitle2">Reserve Borrow Rate</Typography>
+          <Typography variant="subtitle2">Asset Pricing</Typography>
+          {loadingMaxAmount ? (
+            <div className="m-2">
+              <Loading size={14} spinnerColor="#000000" />
+            </div>
+          ) : (
+            <Typography variant="body16">
+              {formatUnits(tokenPrice, 18) +
+                " WETH @ " +
+                tokenMaxCollateralization / 100 +
+                "% Max LTV"}
+            </Typography>
+          )}
+        </div>
+      </div>
+      <div className="flex flex-row m-2">
+        <div className="flex flex-col">
+          <Typography variant="subtitle2">Interest Rate</Typography>
           {loadingBorrowRate ? (
             <div className="m-2">
               <Loading size={14} spinnerColor="#000000" />

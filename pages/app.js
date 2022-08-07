@@ -398,7 +398,7 @@ export default function App() {
                       unsupportedAsset.name + " #" + unsupportedAsset.token_id
                     }
                     tooltipText={
-                      <span style={{ width: 140 }}>Unsupported Asset</span>
+                      <span style={{ width: 140 }}>Unsupported Assets</span>
                     }
                   >
                     <div className="p-6">

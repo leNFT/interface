@@ -39,7 +39,7 @@ export default function Borrow(props) {
   const [loadingBorrowRate, setLoadingBorrowRate] = useState(false);
   const [reserveAddress, setReserveAddress] = useState("");
   const [borrowLoading, setBorrowLoading] = useState(false);
-  const { isWeb3Enabled, chainId, account } = useMoralis();
+  const { isWeb3Enabled, chainId } = useMoralis();
   const [borrowRate, setBorrowRate] = useState(0);
   const addresses =
     chainId in contractAddresses
@@ -133,7 +133,6 @@ export default function Borrow(props) {
       })
     ).toNumber();
 
-    console.log("New updated borrowRate:", updatedBorrowRate);
     setBorrowRate(updatedBorrowRate);
     setLoadingBorrowRate(false);
   }

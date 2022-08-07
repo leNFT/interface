@@ -5,16 +5,20 @@ import { formatUnits } from "@ethersproject/units";
 import { useWeb3Contract, useMoralis } from "react-moralis";
 import { Button, Typography } from "@web3uikit/core";
 import styles from "../styles/Home.module.css";
+import nftOracleContract from "../contracts/NFTOracle.json";
 import { useState, useEffect } from "react";
 import marketContract from "../contracts/Market.json";
 import loanCenterContract from "../contracts/LoanCenter.json";
 import reserveContract from "../contracts/Reserve.json";
 import erc20 from "../contracts/erc20.json";
 import Image from "next/image";
+import { getTokenPrice } from "../helpers/getTokenPrice.js";
 
 export default function RepayLoan(props) {
   const [loan, setLoan] = useState();
   const [debt, setDebt] = useState(0);
+  const [tokenPrice, setTokenPrice] = useState("0");
+  const [tokenMaxCollateralization, setTokenMaxCollateralization] = useState(0);
   const [balance, setBalance] = useState("0");
   const { isWeb3Enabled, chainId, account } = useMoralis();
   const [repayLoading, setRepayLoading] = useState(false);
@@ -27,6 +31,16 @@ export default function RepayLoan(props) {
   const [symbol, setSymbol] = useState("WETH");
 
   const dispatch = useNotification();
+
+  const { runContractFunction: getCollectionMaxCollateralization } =
+    useWeb3Contract({
+      abi: nftOracleContract.abi,
+      contractAddress: addresses.NFTOracle,
+      functionName: "getCollectionMaxCollaterization",
+      params: {
+        collection: props.token_address,
+      },
+    });
 
   const { runContractFunction: repayLoan } = useWeb3Contract({
     abi: marketContract.abi,
@@ -77,8 +91,6 @@ export default function RepayLoan(props) {
       },
       onError: (error) => console.log(error),
     });
-
-    console.log("Updated Asset:", updatedAsset);
     setAsset(updatedAsset);
 
     const updatedAssetSymbol = await getSymbol({
@@ -90,8 +102,6 @@ export default function RepayLoan(props) {
       },
       onError: (error) => console.log(error),
     });
-
-    console.log("Updated Asset Symbol:", updatedAssetSymbol);
     setSymbol(updatedAssetSymbol);
   }
 
@@ -99,7 +109,6 @@ export default function RepayLoan(props) {
     const updatedBalance = await getBalance({
       onError: (error) => console.log(error),
     });
-    console.log("Updated Balance:", updatedBalance);
     setBalance(updatedBalance.toString());
   }
 
@@ -122,14 +131,31 @@ export default function RepayLoan(props) {
     const updatedDebt = await getDebt({
       onError: (error) => console.log(error),
     });
-    console.log("Updated Debt:", updatedDebt);
     setDebt(updatedDebt.toString());
+  }
+
+  async function getAssetPricing() {
+    // Get token price
+    const price = await getTokenPrice(
+      props.token_address.toLowerCase(),
+      props.token_id
+    );
+    setTokenPrice(price);
+    console.log("price", price);
+
+    //Get token max collateralization
+    const maxCollateralization = (
+      await getCollectionMaxCollateralization()
+    ).toString();
+    console.log("maxCollateralization updated", maxCollateralization);
+    setTokenMaxCollateralization(maxCollateralization);
   }
 
   useEffect(() => {
     if (isWeb3Enabled) {
       getLoanToRepay();
       getLoanDebt();
+      getAssetPricing();
     }
   }, [isWeb3Enabled, props.loan_id]);
 
@@ -196,6 +222,17 @@ export default function RepayLoan(props) {
             <Typography variant="body16">{loan.borrowRate / 100}%</Typography>
           </div>
         )}
+      </div>
+      <div className="flex flex-row items-center m-2">
+        <div className="flex flex-col">
+          <Typography variant="subtitle2">Asset Pricing</Typography>
+          <Typography variant="body16">
+            {formatUnits(tokenPrice, 18) +
+              " WETH @ " +
+              tokenMaxCollateralization / 100 +
+              "% Max LTV"}
+          </Typography>
+        </div>
       </div>
       <div className="flex flex-row items-center m-2">
         <div className="flex flex-col">

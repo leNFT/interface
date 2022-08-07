@@ -138,6 +138,7 @@ export default function App() {
         updatedLoans.push({
           loanId: userNFTs[i].token_id,
           tokenName: tokenName,
+          tokenAddress: loan.nftAsset,
           tokenId: loan.nftTokenId.toString(),
           tokenURI: tokenURI,
           amount: loan.amount,
@@ -281,6 +282,7 @@ export default function App() {
                 setVisibility={setVisibleLoanModal}
                 loan_id={selectedLoan.loanId}
                 token_name={selectedLoan.tokenName}
+                token_address={selectedLoan.tokenAddress}
                 token_id={selectedLoan.tokenId}
                 token_uri={selectedLoan.tokenURI}
               />

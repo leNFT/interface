@@ -122,7 +122,11 @@ export default function LoanExplorer() {
       });
 
       const tokenPrice = await getTokenPrice(
-        collectionNFTs[i].token_address,
+        // Get checksumed token adress
+        contractAddresses[chainId].SupportedAssets.find(
+          (collection) =>
+            collection.address.toLowerCase() == collectionNFTs[i].token_address
+        ).address,
         collectionNFTs[i].token_id
       );
 

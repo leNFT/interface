@@ -1,7 +1,12 @@
 import crypto from "crypto";
 import fetch from "node-fetch";
 
-export async function getTokenPriceSig(requestId, collection, tokenId) {
+export async function getTokenPriceSig(
+  requestId,
+  collection,
+  tokenId,
+  chainId
+) {
   const serverAddress = "https://lenft-api-w27ha.ondigitalocean.app";
   const options = {
     method: "GET",
@@ -16,7 +21,9 @@ export async function getTokenPriceSig(requestId, collection, tokenId) {
     "&address=" +
     collection +
     "&tokenId=" +
-    tokenId;
+    tokenId +
+    "&chainId=" +
+    chainId;
   console.log(requestURL);
   const tokenBestBidResponse = await fetch(requestURL, options).catch((err) =>
     console.error(err)

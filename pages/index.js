@@ -1,5 +1,6 @@
 import styles from "../styles/Home.module.css";
 import Link from "next/link";
+import { Button } from "@web3uikit/core";
 
 export default function Home() {
   return (
@@ -43,15 +44,20 @@ export default function Home() {
             </a>
           </div>
         </div>
-        <div className="flex flex-row mt-32">
+        <div className="flex flex-row mt-48">
           <Link href="/app">
             <a>
-              <h1 className="font-bold text-3xl">go to app.</h1>
+              <Button
+                onClick={function noRefCheck() {}}
+                size="xl"
+                color="blue"
+                theme="colored"
+                text="go to app"
+              />
             </a>
           </Link>
         </div>
-        <div className="flex flex-row mb-16">(goerli testnet)</div>
-        <div className="flex flex-row m-16 max-w-lg">
+        <div className="flex flex-row m-16 max-w-lg text-center">
           leNFT is a peer-to-pool NFT lending market. it allows you to get
           instant liquidity using your NFTs as collateral
         </div>

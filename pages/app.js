@@ -79,6 +79,8 @@ export default function App() {
           params: getLoanOptions,
         });
 
+        console.log("got loan", loan);
+
         // Get loan debt
         const getLoanDebtOptions = {
           abi: loanCenterContract.abi,
@@ -94,10 +96,7 @@ export default function App() {
         });
 
         // Get token price
-        const tokenPrice = await getTokenPrice(
-          loan.nftAsset.toLowerCase(),
-          loan.nftTokenId
-        );
+        const tokenPrice = await getTokenPrice(loan.nftAsset, loan.nftTokenId);
 
         // Get max LTV of collection
         const getCollectionMaxCollateralizationOptions = {
@@ -131,7 +130,7 @@ export default function App() {
 
         //Find token name
         const tokenName = addresses.SupportedAssets.find(
-          (collection) => collection.address == loan.nftAsset.toLowerCase()
+          (collection) => collection.address == loan.nftAsset
         ).name;
 
         // Save relevant loan info
@@ -154,7 +153,10 @@ export default function App() {
       ) {
         // Get token price
         const tokenPrice = await getTokenPrice(
-          userNFTs[i].token_address,
+          contractAddresses[chainId].SupportedAssets.find(
+            (collection) =>
+              collection.address.toLowerCase() == userNFTs[i].token_address
+          ).address,
           userNFTs[i].token_id
         );
 
@@ -363,7 +365,14 @@ export default function App() {
               >
                 <Borrow
                   setVisibility={setVisibleAssetModal}
-                  token_address={selectedAsset.token_address}
+                  token_address={
+                    // Get checksumed token adress
+                    contractAddresses[chainId].SupportedAssets.find(
+                      (collection) =>
+                        collection.address.toLowerCase() ==
+                        selectedAsset.token_address
+                    ).address
+                  }
                   token_id={selectedAsset.token_id}
                   token_uri={selectedAsset.token_uri}
                 />

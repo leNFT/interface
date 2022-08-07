@@ -136,10 +136,7 @@ export default function RepayLoan(props) {
 
   async function getAssetPricing() {
     // Get token price
-    const price = await getTokenPrice(
-      props.token_address.toLowerCase(),
-      props.token_id
-    );
+    const price = await getTokenPrice(props.token_address, props.token_id);
     setTokenPrice(price);
     console.log("price", price);
 

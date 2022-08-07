@@ -301,7 +301,7 @@ export default function App() {
           <div className="flex flex-col mt-4">
             <div className="flex flex-row justify-center mt-4">
               <Typography variant="h1">
-                Wallet: {supportedAssets.length} supported asset
+                Wallet: {supportedAssets.length} supported assets
               </Typography>
             </div>
             <div className="flex flex-row justify-center my-2">

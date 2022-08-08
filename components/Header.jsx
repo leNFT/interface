@@ -47,7 +47,7 @@ export default function Header() {
               </div>
               <div className="flex flex-row justify-center">
                 <h1 className="font-bold text-xs text-red-700">
-                  ALPHA VERSION
+                  [ ALPHA VERSION ]
                 </h1>
               </div>
             </a>

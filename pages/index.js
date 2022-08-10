@@ -4,47 +4,43 @@ import { Button } from "@web3uikit/core";
 
 export default function Home() {
   return (
-    <div className={styles.container}>
-      <div className={styles.main}>
-        <div className="flex flex-row">
-          <div className="flex m-4">
+      <nav>
+        <ul id="main-nav" class="nav" >
+          <li>
             <a
               href="http://discord.gg/hWyBHrUDAk"
               target="_blank"
-              rel="noopener noreferrer"
-            >
-              [discord
-            </a>
-          </div>
-          <div className="flex m-4">
-            <a
+              rel="noopener noreferrer">
+            Discord
+          </a>
+          </li>
+          <li>
+          <a
               href="https://twitter.com/lenftapp"
               target="_blank"
               rel="noopener noreferrer"
-            >
-              twitter
+            >Twitter
             </a>
-          </div>
-          <div className="flex m-4">
-            <a
+          </li>
+          <li>
+          <a
               href="https://github.com/leNFT"
               target="_blank"
               rel="noopener noreferrer"
             >
-              github
+            Github
             </a>
-          </div>
-          <div className="flex m-4">
-            <a
+          </li>
+          <li>
+          <a
               href="https://lenft.gitbook.io/lenft-docs/"
               target="_blank"
               rel="noopener noreferrer"
             >
-              docs]
+            Docs
             </a>
-          </div>
-        </div>
-        <div className="flex flex-row mt-48">
+          </li>
+          <ul>
           <Link href="/app">
             <a>
               <Button
@@ -56,12 +52,8 @@ export default function Home() {
               />
             </a>
           </Link>
-        </div>
-        <div className="flex flex-row m-16 max-w-lg text-center">
-          leNFT is a peer-to-pool NFT lending market. it allows you to get
-          instant liquidity using your NFTs as collateral
-        </div>
-      </div>
-    </div>
+          </ul>
+        </ul>
+        </nav>
   );
 }

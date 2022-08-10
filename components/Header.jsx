@@ -1,8 +1,4 @@
-import { useWeb3Contract, useMoralis, useChain } from "react-moralis";
-import { useState, useEffect } from "react";
-import contractAddresses from "../contractAddresses.json";
-import marketContract from "../contracts/Market.json";
-import reserveContract from "../contracts/Reserve.json";
+import { useMoralis, useChain } from "react-moralis";
 import Link from "next/link";
 import { ConnectButton } from "@web3uikit/web3";
 import { Tooltip, BannerStrip } from "@web3uikit/core";

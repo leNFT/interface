@@ -13,13 +13,13 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
-#unsupportedAssetsContainer {
+.walletContainer {
   display: grid;
   grid-gap: 40px;
   grid-template-columns: repeat(3, 1fr);
 }
 
-#collectionLoansContainer {
+#loanExplorerContainer {
     display: grid;
       grid-gap: 20px;
       grid-template-columns: repeat(3, 1fr);

@@ -22,6 +22,7 @@ import loanCenterContract from "../contracts/LoanCenter.json";
 import { calculateHealthLevel } from "../helpers/healthLevel";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 import StyledModal from "../components/StyledModal";
+import { Divider } from "@mui/material";
 
 export default function App() {
   const [loadingUI, setLoadingUI] = useState(true);
@@ -216,12 +217,11 @@ export default function App() {
   return (
     <div className={styles.container}>
       <div className={styles.main}>
-        {loans.length > 0 && <Typography variant="h1">Loans</Typography>}
+        {loans.length > 0 && <Typography variant="h1">My Loans</Typography>}
         <div className="flex mb-4">
           {loans.map((loan, _) => (
             <div key={loan.loanId} className="m-4">
               <Card
-                title={"Loan #" + loan.loanId}
                 onClick={function () {
                   setSelectedLoan(loan);
                   setVisibleLoanModal(true);
@@ -313,47 +313,53 @@ export default function App() {
             </div>
           </div>
         )}
-        {supportedAssets.length != 0 && (
-          <div className="flex border-8 rounded-3xl m-2 p-2">
-            {supportedAssets.map((supportedAsset) => (
-              <div key={supportedAsset.token_hash} className="m-4">
-                <Card
-                  title={supportedAsset.name + " #" + supportedAsset.token_id}
-                  onClick={function () {
-                    setSelectedAsset(supportedAsset);
-                    setVisibleAssetModal(true);
-                  }}
-                  tooltipText={
-                    <span style={{ width: 160 }}>
-                      Click on the NFT to use as loan collateral
-                    </span>
-                  }
-                >
-                  <div className="p-6">
-                    {supportedAsset.token_uri ? (
-                      <div className="flex flex-col items-end gap-2">
-                        <Image
-                          loader={() => supportedAsset.token_uri}
-                          src={supportedAsset.token_uri}
-                          height="200"
-                          width="200"
-                          unoptimized={true}
-                        />
+        {(supportedAssets.length != 0 || unsupportedAssets.length != 0) && (
+          <div className="flex flex-col border-2 rounded-3xl m-2 p-2">
+            {supportedAssets.length != 0 && (
+              <div className="flex flex-row grid grid-cols-3 gap-4">
+                {supportedAssets.map((supportedAsset) => (
+                  <div key={supportedAsset.token_hash} className="m-4">
+                    <Card
+                      title={
+                        supportedAsset.name + " #" + supportedAsset.token_id
+                      }
+                      onClick={function () {
+                        setSelectedAsset(supportedAsset);
+                        setVisibleAssetModal(true);
+                      }}
+                      tooltipText={
+                        <span style={{ width: 160 }}>
+                          Click on the NFT to use as loan collateral
+                        </span>
+                      }
+                    >
+                      <div className="p-6">
+                        {supportedAsset.token_uri ? (
+                          <div className="flex flex-col gap-2">
+                            <Image
+                              loader={() => supportedAsset.token_uri}
+                              src={supportedAsset.token_uri}
+                              height="200"
+                              width="200"
+                              unoptimized={true}
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center gap-1">
+                            <Illustration
+                              height="180px"
+                              logo="token"
+                              width="100%"
+                            />
+                            Loading...
+                          </div>
+                        )}
                       </div>
-                    ) : (
-                      <div className="flex flex-col items-center gap-1">
-                        <Illustration
-                          height="180px"
-                          logo="token"
-                          width="100%"
-                        />
-                        Loading...
-                      </div>
-                    )}
+                    </Card>
                   </div>
-                </Card>
+                ))}
               </div>
-            ))}
+            )}
             {selectedAsset && (
               <StyledModal
                 hasFooter={false}
@@ -378,57 +384,59 @@ export default function App() {
                 />
               </StyledModal>
             )}
-          </div>
-        )}
-        {unsupportedAssets.length != 0 && (
-          <div
-            id="unsupportedAssetsContainer"
-            className="flex border-2 rounded-3xl m-2 p-2"
-          >
-            {unsupportedAssets.map((unsupportedAsset, index) => (
-              <div
-                key={unsupportedAsset.token_hash}
-                className="flex m-4 items-center"
-              >
-                {index == 8 && unsupportedAssets.length == 9 ? (
-                  <div>... and some more.</div>
-                ) : (
-                  <Card
-                    title={
-                      unsupportedAsset.name + " #" + unsupportedAsset.token_id
-                    }
-                    tooltipText={
-                      <span style={{ width: 215 }}>
-                        Asset not supported by leNFT
-                      </span>
-                    }
-                  >
-                    <div className="p-6">
-                      {unsupportedAsset.token_uri ? (
-                        <div className="flex flex-col items-end">
-                          <Image
-                            loader={() => unsupportedAsset.token_uri}
-                            src={unsupportedAsset.token_uri}
-                            height="140"
-                            width="140"
-                            unoptimized={true}
-                          />
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center gap-1">
-                          <Illustration
-                            height="140px"
-                            logo="lazyNft"
-                            width="100%"
-                          />
-                          Loading...
-                        </div>
-                      )}
-                    </div>
-                  </Card>
-                )}
+            {supportedAssets.length != 0 && unsupportedAssets.length != 0 && (
+              <div className="m-4 items-center justify-center">
+                <Divider variant="middle" />
               </div>
-            ))}
+            )}
+            {unsupportedAssets.length != 0 && (
+              <div className="flex flex-row grid grid-cols-3">
+                {unsupportedAssets.map((unsupportedAsset, index) => (
+                  <div
+                    key={unsupportedAsset.token_hash}
+                    className="flex m-4 items-center justify-center max-w-[220px]"
+                  >
+                    {index == 8 && unsupportedAssets.length == 9 ? (
+                      <div className="flex items-center p-6">
+                        <Typography variant="subtitle2">
+                          ...and some more
+                        </Typography>
+                      </div>
+                    ) : (
+                      <Card
+                        cursorType="default"
+                        title={
+                          unsupportedAsset.name +
+                          " #" +
+                          unsupportedAsset.token_id
+                        }
+                        isDisabled
+                      >
+                        <div className="flex justify-center p-6">
+                          {unsupportedAsset.token_uri ? (
+                            <div className="flex flex-col items-center gap-1">
+                              <Image
+                                loader={() => unsupportedAsset.token_uri}
+                                src={unsupportedAsset.token_uri}
+                                height="100"
+                                width="100"
+                                unoptimized={true}
+                              />
+                            </div>
+                          ) : (
+                            <div className="flex flex-col items-center justify-center w-24 h-24">
+                              <Typography variant="subtitle2" italic>
+                                Loading...
+                              </Typography>
+                            </div>
+                          )}
+                        </div>
+                      </Card>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>

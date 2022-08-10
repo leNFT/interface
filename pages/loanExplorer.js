@@ -241,7 +241,7 @@ export default function LoanExplorer() {
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Supported Collections"
+                label="leNFT Collections"
                 sx={{
                   "& label": { paddingLeft: (theme) => theme.spacing(2) },
                   "& input": { paddingLeft: (theme) => theme.spacing(3.5) },
@@ -275,7 +275,7 @@ export default function LoanExplorer() {
             <Loading size={16} spinnerColor="#2E7DAF" spinnerType="wave" />
           </div>
         ) : collectionLoans.length != 0 ? (
-          <div id="collectionLoansContainer" className="flex p-2">
+          <div id="loanExplorerContainer" className="flex p-2">
             {collectionLoans.map((collectionLoan) => (
               <div key={collectionLoan.loanId} className="m-4">
                 <Card title={"Loan #" + collectionLoan.loanId}>

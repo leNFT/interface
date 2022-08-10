@@ -26,6 +26,7 @@ import "bignumber.js";
 import erc721 from "../contracts/erc721.json";
 import Image from "next/image";
 import { TabList, Tab } from "@web3uikit/core";
+import { Divider } from "@mui/material";
 
 export default function Borrow(props) {
   const PRICE_PRECISION = "1000000000000000000";
@@ -291,6 +292,38 @@ export default function Borrow(props) {
       </div>
       <div className="flex flex-row m-2">
         <div className="flex flex-col">
+          <Typography variant="subtitle1">Maximum borrowable amount</Typography>
+          {loadingMaxAmount ? (
+            <div className="m-2">
+              <Loading size={16} spinnerColor="#000000" />
+            </div>
+          ) : (
+            <Typography variant="body18">
+              {formatUnits(maxAmount, addresses[borrowAsset].decimals) +
+                " " +
+                borrowAsset}
+            </Typography>
+          )}
+        </div>
+      </div>
+      <div className="flex flex-row m-2">
+        <div className="flex flex-col">
+          <Typography variant="subtitle1">Interest Rate</Typography>
+          {loadingBorrowRate ? (
+            <div className="m-2">
+              <Loading size={16} spinnerColor="#000000" />
+            </div>
+          ) : (
+            <Typography variant="body18">{borrowRate / 100}%</Typography>
+          )}
+        </div>
+      </div>
+      <div className="m-8">
+        <Divider />
+      </div>
+
+      <div className="flex flex-row m-2">
+        <div className="flex flex-col">
           <Typography variant="subtitle2">Address</Typography>
           <Typography variant="body16">{props.token_address}</Typography>
         </div>
@@ -299,22 +332,6 @@ export default function Borrow(props) {
         <div className="flex flex-col">
           <Typography variant="subtitle2">Asset ID</Typography>
           <Typography variant="body16">{props.token_id}</Typography>
-        </div>
-      </div>
-      <div className="flex flex-row m-2">
-        <div className="flex flex-col">
-          <Typography variant="subtitle2">Maximum borrowable amount</Typography>
-          {loadingMaxAmount ? (
-            <div className="m-2">
-              <Loading size={14} spinnerColor="#000000" />
-            </div>
-          ) : (
-            <Typography variant="body16">
-              {formatUnits(maxAmount, addresses[borrowAsset].decimals) +
-                " " +
-                borrowAsset}
-            </Typography>
-          )}
         </div>
       </div>
       <div className="flex flex-row m-2">
@@ -331,18 +348,6 @@ export default function Borrow(props) {
                 tokenMaxCollateralization / 100 +
                 "% Max LTV"}
             </Typography>
-          )}
-        </div>
-      </div>
-      <div className="flex flex-row m-2">
-        <div className="flex flex-col">
-          <Typography variant="subtitle2">Interest Rate</Typography>
-          {loadingBorrowRate ? (
-            <div className="m-2">
-              <Loading size={14} spinnerColor="#000000" />
-            </div>
-          ) : (
-            <Typography variant="body16">{borrowRate / 100}%</Typography>
           )}
         </div>
       </div>

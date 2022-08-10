@@ -390,7 +390,7 @@ export default function App() {
               </div>
             )}
             {unsupportedAssets.length != 0 && (
-              <div className="flex flex-row grid grid-cols-1 md:grid-cols-4 gap-2 justify-items-center">
+              <div className="flex flex-row grid grid-cols-2 md:grid-cols-4 gap-2 justify-items-center">
                 {unsupportedAssets.map((unsupportedAsset, index) => (
                   <div
                     key={unsupportedAsset.token_hash}
@@ -414,7 +414,7 @@ export default function App() {
                       >
                         <div className="flex justify-center p-6">
                           {unsupportedAsset.token_uri ? (
-                            <div className="flex flex-col items-center gap-1">
+                            <div className="flex flex-col items-center">
                               <Image
                                 loader={() => unsupportedAsset.token_uri}
                                 src={unsupportedAsset.token_uri}
@@ -424,8 +424,8 @@ export default function App() {
                               />
                             </div>
                           ) : (
-                            <div className="flex flex-col items-center justify-center w-24 h-24">
-                              <Typography variant="subtitle2" italic>
+                            <div className="flex flex-col items-center justify-center">
+                              <Typography variant="subtitle3" italic>
                                 Loading...
                               </Typography>
                             </div>

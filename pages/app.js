@@ -218,7 +218,7 @@ export default function App() {
     <div className={styles.container}>
       <div className={styles.main}>
         {loans.length > 0 && <Typography variant="h1">My Loans</Typography>}
-        <div className="flex mb-4">
+        <div className="flex grid grid-cols-1 md:grid-cols-3 gap-4 justify-items-center">
           {loans.map((loan, _) => (
             <div key={loan.loanId} className="m-4">
               <Card
@@ -228,7 +228,7 @@ export default function App() {
                 }}
               >
                 <div className="flex flex-col p-2">
-                  <div className="flex flex-row items-end gap-2">
+                  <div className="flex flex-row items-center gap-2">
                     {loan.tokenURI ? (
                       <Image
                         loader={() => loan.tokenURI}
@@ -316,7 +316,7 @@ export default function App() {
         {(supportedAssets.length != 0 || unsupportedAssets.length != 0) && (
           <div className="flex flex-col border-2 rounded-3xl m-2 p-2">
             {supportedAssets.length != 0 && (
-              <div className="flex flex-row grid grid-cols-3 gap-4">
+              <div className="flex flex-row grid grid-cols-1 md:grid-cols-3 gap-4 justify-items-center">
                 {supportedAssets.map((supportedAsset) => (
                   <div key={supportedAsset.token_hash} className="m-4">
                     <Card
@@ -390,7 +390,7 @@ export default function App() {
               </div>
             )}
             {unsupportedAssets.length != 0 && (
-              <div className="flex flex-row grid grid-cols-3">
+              <div className="flex flex-row grid grid-cols-1 md:grid-cols-4 gap-2 justify-items-center">
                 {unsupportedAssets.map((unsupportedAsset, index) => (
                   <div
                     key={unsupportedAsset.token_hash}

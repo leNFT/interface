@@ -32,7 +32,7 @@
 }
 
 .title a {
-  color: #0070f3;
+  color: red;
   text-decoration: none;
 }
 
@@ -109,6 +109,70 @@
 .logo {
   height: 1em;
   margin-left: 0.5rem;
+}
+
+.headerCenter {
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  padding: 28px;
+  left: 0;
+  right: 0;
+}
+
+.headerLogo {
+  width: 100%;
+  max-width: 1600px;
+  display: flex;
+  flex-direction: row;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  justify-content: space-between;
+}
+
+.headerLogoImg {
+  width: 4em;
+  height: 4em;
+}
+
+.nav {
+  display: flex;
+  justify-content: flex-end;
+  -webkit-box-align: center;
+  align-items: center;
+  margin-left: 50px;
+}
+
+.nav li {
+  margin-left: 80px;
+}
+
+.nav a {
+  text-align: center;
+  position: relative;
+}
+
+.nav button {
+  height: 56px;
+  min-width: 180px;
+}
+
+.indexDescribe {
+  display: flex;
+  flex-direction: column;
+}
+
+.indexProtocolDescribe {
+  padding: 20px;
+  font-size: 2rem;
+}
+
+.indexProtocolDescribe2 {
+  padding: 20px;
+  font-size: 1.5rem;
+  max-width: 350px;
+  font-size: 1.5rem;
 }
 
 @media (max-width: 600px) {

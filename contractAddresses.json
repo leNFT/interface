@@ -19,7 +19,7 @@
     "NativeTokenVault": "",
     "NativeToken": "",
     "DebtToken": "0x765F6E28Be958d579056DEAA7A25892F0c82308b",
-    "SupportedAssets": [""]
+    "SupportedAssets": []
   },
   "0x539": {
     "Name": "hardhat",

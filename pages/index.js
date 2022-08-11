@@ -12,7 +12,7 @@ export default function Home() {
       <div className={styles.headerCenter}>
         <div className={styles.headerLogo}>
           <a>
-            <img src="logo.png" className={styles.headerLogoImg}></img> 
+            <img src="symbol.png" className={styles.headerLogoImg}></img> 
           </a>
         </div>
     
@@ -72,9 +72,9 @@ export default function Home() {
       <div className={styles.main}>
         <div className={styles.indexDescribe}>
           <p className={styles.indexProtocolDescribe}>
-            leNFT is a Peer-To-Pool NFT liquidity Protocol </p>
+            leNFT is a Peer-To-Pool NFT Liquidity Protocol </p>
           <p className={styles.indexProtocolDescribe2}>
-            Mortgage NFT to borrow Deposit assets earn interest </p>
+            Borrow using only your NFTs Gain interest on your ETH </p>
        </div>
       </div>
     </div>    

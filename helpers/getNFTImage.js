@@ -15,7 +15,7 @@ export async function getNFTImage(address, tokenId, chainId) {
     "https://eth-" +
     chainName +
     ".g.alchemy.com/nft/v2/" +
-    process.env.ALCHEMY_API_KEY +
+    process.env.NEXT_PUBLIC_ALCHEMY_API_KEY +
     "/getNFTMetadata";
 
   const options = {

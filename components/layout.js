@@ -20,17 +20,19 @@ export default function Layout({ children }) {
       <main>
         {isWeb3Enabled ? (
           supportedChains.includes(chainId) ? (
-            <div>{children}</div>
+            <div className={styles.container}>
+              <div className={styles.main}>{children}</div>
+            </div>
           ) : (
             <div className={styles.container}>
-              <div className={styles.main}>
+              <div className={styles.mainInfo}>
                 <Typography variant="h1">Chain ID not supported</Typography>
               </div>
             </div>
           )
         ) : (
           <div className={styles.container}>
-            <div className={styles.main}>
+            <div className={styles.mainInfo}>
               <Typography variant="subtitle1">
                 Connect a Web 3 wallet by clicking the connect wallet button.
               </Typography>

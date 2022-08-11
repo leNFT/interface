@@ -217,230 +217,226 @@ export default function App() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.main}>
-        {loans.length > 0 && <Typography variant="h1">My Loans</Typography>}
-        <div className="flex grid grid-cols-1 md:grid-cols-3 gap-4 justify-items-center">
-          {loans.map((loan, _) => (
-            <div key={loan.loanId} className="m-4">
-              <Card
-                onClick={function () {
-                  setSelectedLoan(loan);
-                  setVisibleLoanModal(true);
-                }}
-              >
-                <div className="flex flex-col p-2">
-                  <div className="flex flex-row items-center gap-2">
-                    {loan.tokenURI ? (
-                      <Image
-                        loader={() => loan.tokenURI}
-                        src={loan.tokenURI}
-                        height="200"
-                        width="200"
-                        unoptimized={true}
-                      />
-                    ) : (
-                      <Illustration height="180px" logo="chest" width="100%" />
-                    )}
-                  </div>
-                  <div className="flex flex-row mt-6">
-                    <div className="flex flex-col">
-                      <Typography variant="caption12">Health Level</Typography>
-                    </div>
-                    <div className="flex flex-col ml-1">
-                      <Tooltip
-                        content="Represents the relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
-                        position="top"
-                        minWidth={300}
-                      >
-                        <HelpCircle fontSize="14px" color="#000000" />
-                      </Tooltip>
-                    </div>
-                  </div>
-                  <div>
-                    <LinearProgressWithLabel
-                      color="success"
-                      value={calculateHealthLevel(
-                        loan.debt,
-                        BigNumber.from(loan.maxLTV)
-                          .mul(loan.tokenPrice)
-                          .div(10000)
-                          .toString()
-                      )}
-                    />
-                  </div>
-                </div>
-              </Card>
-            </div>
-          ))}
-          {selectedLoan && (
-            <StyledModal
-              hasFooter={false}
-              width="50%"
-              isVisible={visibleLoanModal}
-              onCloseButtonPressed={function () {
-                setVisibleLoanModal(false);
+      {loans.length > 0 && <Typography variant="h1">My Loans</Typography>}
+      <div className="flex grid grid-cols-1 md:grid-cols-3 gap-4 justify-items-center">
+        {loans.map((loan, _) => (
+          <div key={loan.loanId} className="m-4">
+            <Card
+              onClick={function () {
+                setSelectedLoan(loan);
+                setVisibleLoanModal(true);
               }}
             >
-              <RepayLoan
-                setVisibility={setVisibleLoanModal}
-                loan_id={selectedLoan.loanId}
-                token_name={selectedLoan.tokenName}
-                token_address={selectedLoan.tokenAddress}
-                token_id={selectedLoan.tokenId}
-                token_uri={selectedLoan.tokenURI}
-              />
-            </StyledModal>
-          )}
-        </div>
-        {supportedAssets.length == 0 && unsupportedAssets.length == 0 ? (
-          loadingUI ? (
+              <div className="flex flex-col p-2">
+                <div className="flex flex-row items-center gap-2">
+                  {loan.tokenURI ? (
+                    <Image
+                      loader={() => loan.tokenURI}
+                      src={loan.tokenURI}
+                      height="200"
+                      width="200"
+                      unoptimized={true}
+                    />
+                  ) : (
+                    <Illustration height="180px" logo="chest" width="100%" />
+                  )}
+                </div>
+                <div className="flex flex-row mt-6">
+                  <div className="flex flex-col">
+                    <Typography variant="caption12">Health Level</Typography>
+                  </div>
+                  <div className="flex flex-col ml-1">
+                    <Tooltip
+                      content="Represents the relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
+                      position="top"
+                      minWidth={300}
+                    >
+                      <HelpCircle fontSize="14px" color="#000000" />
+                    </Tooltip>
+                  </div>
+                </div>
+                <div>
+                  <LinearProgressWithLabel
+                    color="success"
+                    value={calculateHealthLevel(
+                      loan.debt,
+                      BigNumber.from(loan.maxLTV)
+                        .mul(loan.tokenPrice)
+                        .div(10000)
+                        .toString()
+                    )}
+                  />
+                </div>
+              </div>
+            </Card>
+          </div>
+        ))}
+        {selectedLoan && (
+          <StyledModal
+            hasFooter={false}
+            width="50%"
+            isVisible={visibleLoanModal}
+            onCloseButtonPressed={function () {
+              setVisibleLoanModal(false);
+            }}
+          >
+            <RepayLoan
+              setVisibility={setVisibleLoanModal}
+              loan_id={selectedLoan.loanId}
+              token_name={selectedLoan.tokenName}
+              token_address={selectedLoan.tokenAddress}
+              token_id={selectedLoan.tokenId}
+              token_uri={selectedLoan.tokenURI}
+            />
+          </StyledModal>
+        )}
+      </div>
+
+      {supportedAssets.length == 0 && unsupportedAssets.length == 0 ? (
+        <div className="flex justify-center items-center">
+          {loadingUI ? (
             <Loading size={16} spinnerColor="#2E7DAF" spinnerType="wave" />
           ) : (
             <Typography variant="body18">No NFT assets found :/</Typography>
-          )
-        ) : (
-          <div className="flex flex-col mt-4">
-            <div className="flex flex-row justify-center text-center mt-4">
-              <Typography variant="h1">
-                Wallet: {supportedAssets.length} supported assets
-              </Typography>
-            </div>
-            <div className="flex flex-row justify-center my-2">
-              <Typography variant="subtitle3">
-                You can borrow up to{" "}
-                {formatUnits(BigNumber.from(walletMaxBorrowable).div(2), 18)}{" "}
-                WETH
-              </Typography>
-            </div>
+          )}
+        </div>
+      ) : (
+        <div className="flex flex-col mt-4">
+          <div className="flex flex-row justify-center text-center mt-4">
+            <Typography variant="h1">
+              Wallet: {supportedAssets.length} supported assets
+            </Typography>
           </div>
-        )}
-        {(supportedAssets.length != 0 || unsupportedAssets.length != 0) && (
-          <div className="flex flex-col border-2 rounded-3xl m-2 p-2">
-            {supportedAssets.length != 0 && (
-              <div className="flex flex-row grid grid-cols-1 md:grid-cols-3 gap-4 justify-items-center">
-                {supportedAssets.map((supportedAsset) => (
-                  <div key={supportedAsset.token_hash} className="m-4">
+          <div className="flex flex-row justify-center my-2">
+            <Typography variant="subtitle3">
+              You can borrow up to{" "}
+              {formatUnits(BigNumber.from(walletMaxBorrowable).div(2), 18)} WETH
+            </Typography>
+          </div>
+        </div>
+      )}
+      {(supportedAssets.length != 0 || unsupportedAssets.length != 0) && (
+        <div className="flex flex-col border-2 rounded-3xl m-2 p-2">
+          {supportedAssets.length != 0 && (
+            <div className="flex flex-row grid grid-cols-1 md:grid-cols-3 gap-4 justify-items-center">
+              {supportedAssets.map((supportedAsset) => (
+                <div key={supportedAsset.token_hash} className="m-4">
+                  <Card
+                    title={supportedAsset.name + " #" + supportedAsset.token_id}
+                    onClick={function () {
+                      setSelectedAsset(supportedAsset);
+                      setVisibleAssetModal(true);
+                    }}
+                    tooltipText={
+                      <span style={{ width: 160 }}>
+                        Click on the NFT to use as loan collateral
+                      </span>
+                    }
+                  >
+                    <div className="p-6">
+                      {supportedAsset.token_uri ? (
+                        <div className="flex flex-col gap-2">
+                          <Image
+                            loader={() => supportedAsset.token_uri}
+                            src={supportedAsset.token_uri}
+                            height="200"
+                            width="200"
+                            unoptimized={true}
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center gap-1">
+                          <Illustration
+                            height="180px"
+                            logo="token"
+                            width="100%"
+                          />
+                          Loading...
+                        </div>
+                      )}
+                    </div>
+                  </Card>
+                </div>
+              ))}
+            </div>
+          )}
+          {selectedAsset && (
+            <StyledModal
+              hasFooter={false}
+              width="50%"
+              isVisible={visibleAssetModal}
+              onCloseButtonPressed={function () {
+                setVisibleAssetModal(false);
+              }}
+            >
+              <Borrow
+                setVisibility={setVisibleAssetModal}
+                token_address={
+                  // Get checksumed token adress
+                  contractAddresses[chainId].SupportedAssets.find(
+                    (collection) =>
+                      collection.address.toLowerCase() ==
+                      selectedAsset.token_address
+                  ).address
+                }
+                token_id={selectedAsset.token_id}
+                token_uri={selectedAsset.token_uri}
+              />
+            </StyledModal>
+          )}
+          {supportedAssets.length != 0 && unsupportedAssets.length != 0 && (
+            <div className="m-4 items-center justify-center">
+              <Divider variant="middle" />
+            </div>
+          )}
+          {unsupportedAssets.length != 0 && (
+            <div className="flex flex-row grid grid-cols-2 md:grid-cols-4 gap-2 justify-items-center">
+              {unsupportedAssets.map((unsupportedAsset, index) => (
+                <div
+                  key={unsupportedAsset.token_hash}
+                  className="flex m-4 items-center justify-center max-w-[220px]"
+                >
+                  {index == 8 && unsupportedAssets.length == 9 ? (
+                    <div className="flex items-center p-6">
+                      <Typography variant="subtitle2">
+                        ...and some more
+                      </Typography>
+                    </div>
+                  ) : (
                     <Card
+                      cursorType="default"
                       title={
-                        supportedAsset.name + " #" + supportedAsset.token_id
+                        unsupportedAsset.name + " #" + unsupportedAsset.token_id
                       }
-                      onClick={function () {
-                        setSelectedAsset(supportedAsset);
-                        setVisibleAssetModal(true);
-                      }}
-                      tooltipText={
-                        <span style={{ width: 160 }}>
-                          Click on the NFT to use as loan collateral
-                        </span>
-                      }
+                      isDisabled
                     >
-                      <div className="p-6">
-                        {supportedAsset.token_uri ? (
-                          <div className="flex flex-col gap-2">
+                      <div className="flex justify-center p-6">
+                        {unsupportedAsset.token_uri ? (
+                          <div className="flex flex-col items-center">
                             <Image
-                              loader={() => supportedAsset.token_uri}
-                              src={supportedAsset.token_uri}
-                              height="200"
-                              width="200"
+                              loader={() => unsupportedAsset.token_uri}
+                              src={unsupportedAsset.token_uri}
+                              height="100"
+                              width="100"
                               unoptimized={true}
                             />
                           </div>
                         ) : (
-                          <div className="flex flex-col items-center gap-1">
-                            <Illustration
-                              height="180px"
-                              logo="token"
-                              width="100%"
-                            />
-                            Loading...
+                          <div className="flex flex-col items-center justify-center">
+                            <Typography variant="subtitle3" italic>
+                              Loading...
+                            </Typography>
                           </div>
                         )}
                       </div>
                     </Card>
-                  </div>
-                ))}
-              </div>
-            )}
-            {selectedAsset && (
-              <StyledModal
-                hasFooter={false}
-                width="50%"
-                isVisible={visibleAssetModal}
-                onCloseButtonPressed={function () {
-                  setVisibleAssetModal(false);
-                }}
-              >
-                <Borrow
-                  setVisibility={setVisibleAssetModal}
-                  token_address={
-                    // Get checksumed token adress
-                    contractAddresses[chainId].SupportedAssets.find(
-                      (collection) =>
-                        collection.address.toLowerCase() ==
-                        selectedAsset.token_address
-                    ).address
-                  }
-                  token_id={selectedAsset.token_id}
-                  token_uri={selectedAsset.token_uri}
-                />
-              </StyledModal>
-            )}
-            {supportedAssets.length != 0 && unsupportedAssets.length != 0 && (
-              <div className="m-4 items-center justify-center">
-                <Divider variant="middle" />
-              </div>
-            )}
-            {unsupportedAssets.length != 0 && (
-              <div className="flex flex-row grid grid-cols-2 md:grid-cols-4 gap-2 justify-items-center">
-                {unsupportedAssets.map((unsupportedAsset, index) => (
-                  <div
-                    key={unsupportedAsset.token_hash}
-                    className="flex m-4 items-center justify-center max-w-[220px]"
-                  >
-                    {index == 8 && unsupportedAssets.length == 9 ? (
-                      <div className="flex items-center p-6">
-                        <Typography variant="subtitle2">
-                          ...and some more
-                        </Typography>
-                      </div>
-                    ) : (
-                      <Card
-                        cursorType="default"
-                        title={
-                          unsupportedAsset.name +
-                          " #" +
-                          unsupportedAsset.token_id
-                        }
-                        isDisabled
-                      >
-                        <div className="flex justify-center p-6">
-                          {unsupportedAsset.token_uri ? (
-                            <div className="flex flex-col items-center">
-                              <Image
-                                loader={() => unsupportedAsset.token_uri}
-                                src={unsupportedAsset.token_uri}
-                                height="100"
-                                width="100"
-                                unoptimized={true}
-                              />
-                            </div>
-                          ) : (
-                            <div className="flex flex-col items-center justify-center">
-                              <Typography variant="subtitle3" italic>
-                                Loading...
-                              </Typography>
-                            </div>
-                          )}
-                        </div>
-                      </Card>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

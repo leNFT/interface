@@ -170,7 +170,7 @@ export default function ReserveInfo(props) {
       getReserve();
       updateAssetETHPrice();
     }
-  }, [isWeb3Enabled, props.asset]);
+  }, [isWeb3Enabled, account, props.asset]);
 
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
@@ -178,7 +178,7 @@ export default function ReserveInfo(props) {
       console.log("Got reserve address, setting the rest...", reserveAddress);
       getReserveDetails();
     }
-  }, [reserveAddress]);
+  }, [reserveAddress, account]);
 
   return (
     <div className={styles.container}>

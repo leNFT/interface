@@ -1,10 +1,10 @@
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { getTokenPrice } from "../helpers/getTokenPrice.js";
+import { getNFTImage } from "../helpers/getNFTImage.js";
 import { formatUnits } from "@ethersproject/units";
 import { useMoralisWeb3Api, useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
-import erc721 from "../contracts/erc721.json";
 import {
   Card,
   Tooltip,
@@ -45,22 +45,21 @@ export default function App() {
   const { runContractFunction: getLoan } = useWeb3Contract();
   const { runContractFunction: getCollectionMaxCollateralization } =
     useWeb3Contract();
-  const { runContractFunction: getTokenURI } = useWeb3Contract();
 
   async function setupUI() {
     console.log("Setting up UI");
 
-    // Get user NFT assets
+    // Get user NFT assets, special case for testnet goerli
     const options = { chain: chainId, address: account };
     const userNFTsResponse = await Web3Api.account.getNFTs(options);
     const userNFTs = userNFTsResponse.result;
-    console.log("userNFTs:", userNFTs);
     console.log("supportedAssets:", contractAddresses[chainId].SupportedAssets);
     var updatedLoans = [];
     var updatedSupportedAssets = [];
     var updatedUnsupportedAssets = [];
 
     // Loop through all of tthe user NFTs
+    console.log("Found " + userNFTs.length + " NFTs for user " + account);
     for (let i = 0; i < userNFTs.length; i++) {
       if (
         userNFTs[i].token_address ==
@@ -79,8 +78,6 @@ export default function App() {
           onError: (error) => console.log(error),
           params: getLoanOptions,
         });
-
-        console.log("got loan", loan);
 
         // Get loan debt
         const getLoanDebtOptions = {
@@ -114,20 +111,11 @@ export default function App() {
           params: getCollectionMaxCollateralizationOptions,
         });
 
-        //Get token URI
-        const getTokenURIOptions = {
-          abi: erc721,
-          contractAddress: loan.nftAsset,
-          functionName: "tokenURI",
-          params: {
-            tokenId: loan.nftTokenId,
-          },
-        };
-
-        const tokenURI = await getTokenURI({
-          onError: (error) => console.log(error),
-          params: getTokenURIOptions,
-        });
+        const tokenURI = await getNFTImage(
+          loan.nftAsset,
+          loan.nftTokenId,
+          chainId
+        );
 
         //Find token name
         const tokenName = addresses.SupportedAssets.find(
@@ -184,11 +172,24 @@ export default function App() {
           BigNumber.from(walletMaxBorrowable).add(assetMaxCollateral);
         setWalletMaxBorrowable(updatedWalletMaxBorrowable.toString());
 
+        //Replace token URI
+        userNFTs[i].token_uri = await getNFTImage(
+          userNFTs[i].token_address,
+          userNFTs[i].token_id,
+          chainId
+        );
+
         // Add asset to supported assets
         updatedSupportedAssets.push(userNFTs[i]);
       } else {
         // Get max 9 unsupported assets
         if (updatedUnsupportedAssets.length < 9) {
+          //Replace token URI
+          userNFTs[i].token_uri = await getNFTImage(
+            userNFTs[i].token_address,
+            userNFTs[i].token_id,
+            chainId
+          );
           updatedUnsupportedAssets.push(userNFTs[i]);
         }
       }
@@ -212,7 +213,7 @@ export default function App() {
       setupUI();
     }
     console.log("useEffect called");
-  }, [isWeb3Enabled, account]);
+  }, [isWeb3Enabled, account, chainId]);
 
   return (
     <div className={styles.container}>

@@ -1,5 +1,6 @@
 import styles from "../styles/Home.module.css";
 import { getTokenPrice } from "../helpers/getTokenPrice.js";
+import { getNFTImage } from "../helpers/getNFTImage.js";
 import {
   getNewRequestID,
   getTokenPriceSig,
@@ -131,13 +132,20 @@ export default function LoanExplorer() {
         collectionNFTs[i].token_id
       );
 
+      //Get token URI for image
+      const tokenURI = await getNFTImage(
+        collectionNFTs[i].token_address,
+        collectionNFTs[i].token_id,
+        chainId
+      );
+
       // Add new loan to update array
       updatedCollectionLoans.push({
         loanId: loanId,
         debt: debt.toString(),
         tokenAddress: collectionNFTs[i].token_address,
         tokenId: collectionNFTs[i].token_id,
-        tokenURI: collectionNFTs[i].token_uri,
+        tokenURI: tokenURI,
         price: tokenPrice,
       });
     }
@@ -191,7 +199,7 @@ export default function LoanExplorer() {
         setLoadingCollectionLoans(false);
       }
     }
-  }, [isWeb3Enabled]);
+  }, [isWeb3Enabled, account, chainId]);
 
   function handleCollectionChange(_event, value) {
     console.log("value", value);

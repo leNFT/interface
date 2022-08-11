@@ -5,7 +5,7 @@ import { Eth, Usdc } from "@web3uikit/icons";
 export default function Supply() {
   return (
     <div className={styles.container}>
-      <div className="flex justify-center m-4">
+      <div className="flex justify-center">
         <TabList
           isWidthAuto
           defaultActiveKey={1}

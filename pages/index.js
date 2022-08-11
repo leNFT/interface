@@ -9,10 +9,10 @@ export default function Home() {
   return (
 
     <div className={styles.main}>
-      <div className={styles.header_center}>
-        <div className={styles.header_logo}>
+      <div className={styles.headerCenter}>
+        <div className={styles.headerLogo}>
           <a>
-            <img src="logo.png" className={styles.header_logo_img}></img> 
+            <img src="logo.png" className={styles.headerLogoImg}></img> 
           </a>
         </div>
     
@@ -70,10 +70,10 @@ export default function Home() {
       </div>
     
       <div className={styles.main}>
-        <div className={styles.index_describe}>
-          <p className={styles.index_protocol_describe}>
+        <div className={styles.indexDescribe}>
+          <p className={styles.indexProtocolDescribe}>
             leNFT is a Peer-To-Pool NFT liquidity Protocol </p>
-          <p className={styles.index_protocol_describe_more}>
+          <p className={styles.indexProtocolDescribe2}>
             Mortgage NFT to borrow Deposit assets earn interest </p>
        </div>
       </div>

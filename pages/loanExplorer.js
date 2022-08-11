@@ -448,9 +448,15 @@ export default function LoanExplorer() {
           </div>
         ) : (
           <div className="flex mb-32 mt-16 items-center justify-center">
-            <Typography variant="body18">
-              No active loans in this collection.
-            </Typography>
+            {collections.length != 0 ? (
+              <Typography variant="body18">
+                No active loans in this collection.
+              </Typography>
+            ) : (
+              <Typography variant="body18">
+                leNFT doesn't support any NFT collections (yet).
+              </Typography>
+            )}
           </div>
         )}
       </div>

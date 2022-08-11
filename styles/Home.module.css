@@ -163,15 +163,13 @@
   flex-direction: column;
 }
 
-.indexProtocolDescribe {
+.indexDescribeTitle {
   padding: 20px;
   font-size: 2rem;
 }
 
-.indexProtocolDescribe2 {
+.indexDescribeSubtitle {
   padding: 20px;
-  font-size: 1.5rem;
-  max-width: 350px;
   font-size: 1.5rem;
 }
 

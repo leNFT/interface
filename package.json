@@ -17,6 +17,7 @@
     "@web3uikit/icons": "^0.1.4",
     "@web3uikit/web3": "^0.1.4",
     "bignumber.js": "^9.0.2",
+    "dotenv": "^16.0.1",
     "eip-712": "^1.0.0",
     "grommet": "^2.25.0",
     "magic-sdk": "^8.1.1",

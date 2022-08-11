@@ -7,7 +7,7 @@ import { Typography } from "@web3uikit/core";
 
 export default function Layout({ children }) {
   const { isWeb3Enabled, chainId } = useMoralis();
-  const supportedChains = ["0x5"];
+  const supportedChains = ["0x1", "0x5"];
 
   return (
     <>

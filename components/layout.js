@@ -7,7 +7,7 @@ import { Typography } from "@web3uikit/core";
 
 export default function Layout({ children }) {
   const { isWeb3Enabled, chainId } = useMoralis();
-  const supportedChains = ["0x5"];
+  const supportedChains = ["0x1", "0x5"];
 
   return (
     <>
@@ -24,9 +24,7 @@ export default function Layout({ children }) {
           ) : (
             <div className={styles.container}>
               <div className={styles.main}>
-                <Typography variant="h1">
-                  Chain ID not supported (Testnet: Goerli)
-                </Typography>
+                <Typography variant="h1">Chain ID not supported</Typography>
               </div>
             </div>
           )

@@ -8,7 +8,7 @@ export default function Home() {
       <div className={styles.headerCenter}>
         <div className={styles.headerLogo}>
           <a>
-            <img src="symbol.png" className={styles.headerLogoImg}></img>
+            <img src="symbol-no-bg.png" className={styles.headerLogoImg}></img>
           </a>
         </div>
 

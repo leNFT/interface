@@ -293,7 +293,7 @@ export default function App() {
       </div>
 
       {supportedAssets.length == 0 && unsupportedAssets.length == 0 ? (
-        <div className="flex justify-center items-center">
+        <div className="flex mt-16 justify-center items-center">
           {loadingUI ? (
             <Loading size={16} spinnerColor="#2E7DAF" spinnerType="wave" />
           ) : (

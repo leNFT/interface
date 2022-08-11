@@ -77,7 +77,7 @@ export default function Header() {
                   size="medium"
                   color="neutral-3"
                   label="Supply"
-                  icon={<Plus fontSize="24px" color="#000000" />}
+                  icon={<Plus fontSize="20px" color="#000000" />}
                 />
               </Link>
             </div>

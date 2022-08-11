@@ -46,12 +46,7 @@ export default function LoanExplorer() {
     chainId in contractAddresses
       ? contractAddresses[chainId]
       : contractAddresses["0x1"];
-  const [collections, setCollections] = useState([
-    {
-      label: addresses.SupportedAssets[0].name,
-      address: addresses.SupportedAssets[0].address,
-    },
-  ]);
+  const [collections, setCollections] = useState([]);
   const Web3Api = useMoralisWeb3Api();
 
   const { runContractFunction: getLoanDebt } = useWeb3Contract();
@@ -186,12 +181,15 @@ export default function LoanExplorer() {
         });
         console.log("asset", asset);
       }
-      //setCollections(updatedCollections);
       console.log("updatedCollections", updatedCollections);
       setCollections(updatedCollections);
 
       // Get the default collection loans
-      getCollectionLoans(updatedCollections[0].address);
+      if (collections.length > 0) {
+        getCollectionLoans(updatedCollections[0].address);
+      } else {
+        setLoadingCollectionLoans(false);
+      }
     }
   }, [isWeb3Enabled]);
 

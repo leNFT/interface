@@ -1,11 +1,23 @@
 import styles from "../styles/Home.module.css";
 import Link from "next/link";
 import { Button } from "@web3uikit/core";
+import { style } from "@mui/system";
+import { STATEMENT_TYPES } from "@babel/types";
+import { StyleSheetManager } from "styled-components";
 
 export default function Home() {
   return (
-      <nav>
-        <ul id="main-nav" class="nav" >
+
+    <div className={styles.main}>
+      <div className={styles.header_center}>
+        <div className={styles.header_logo}>
+          <a>
+            <img src="logo.png" className={styles.header_logo_img}></img> 
+          </a>
+        </div>
+    
+        <nav>
+          <ul id="main-nav" className={styles.nav} >
           <li>
             <a
               href="http://discord.gg/hWyBHrUDAk"
@@ -15,16 +27,17 @@ export default function Home() {
           </a>
           </li>
           <li>
-          <a
+            <a
               href="https://twitter.com/lenftapp"
               target="_blank"
               rel="noopener noreferrer"
-            >Twitter
+            >
+            Twitter
             </a>
           </li>
           <li>
           <a
-              href="https://github.com/leNFT"
+            href="https://github.com/leNFT"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -33,27 +46,37 @@ export default function Home() {
           </li>
           <li>
           <a
-              href="https://lenft.gitbook.io/lenft-docs/"
-              target="_blank"
-              rel="noopener noreferrer"
+            href="https://lenft.gitbook.io/lenft-docs/"
+            target="_blank"
+            rel="noopener noreferrer"
             >
             Docs
             </a>
           </li>
-          <ul>
+          <li>
           <Link href="/app">
             <a>
               <Button
                 onClick={function noRefCheck() {}}
-                size="xl"
                 color="blue"
                 theme="colored"
-                text="go to app"
+                text="Launch App"
               />
             </a>
           </Link>
-          </ul>
+          </li>
         </ul>
         </nav>
+      </div>
+    
+      <div className={styles.main}>
+        <div className={styles.index_describe}>
+          <p className={styles.index_protocol_describe}>
+            leNFT is a Peer-To-Pool NFT liquidity Protocol </p>
+          <p className={styles.index_protocol_describe_more}>
+            Mortgage NFT to borrow Deposit assets earn interest </p>
+       </div>
+      </div>
+    </div>    
   );
 }

@@ -24,9 +24,7 @@ export default function Layout({ children }) {
           ) : (
             <div className={styles.container}>
               <div className={styles.main}>
-                <Typography variant="h1">
-                  Chain ID not supported (Testnet: Goerli)
-                </Typography>
+                <Typography variant="h1">Chain ID not supported</Typography>
               </div>
             </div>
           )

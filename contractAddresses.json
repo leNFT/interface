@@ -3,12 +3,23 @@
     "Name": "eth",
     "WETH": {
       "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-      "decimals": 18
+      "decimals": 18,
+      "reserve": "0x344ec0E9EF2754EA19133108B9502c4a651FdD3F"
     },
-    "Market": "",
-    "LoanCenter": "",
-    "DebtToken": "",
-    "SupportedAssets": [""]
+    "ValidationLogicLib": "0xff72283b13B517e3c523F1D598f68f1ce3d70B4a",
+    "SupplyLogicLib": "0x2F2639e45426438A3BDfC22A3E8dAe68bc618A7e",
+    "BorrowLogicLib": "0xF3fdb480AA30fea37FCb82519a8787291dc4f43f",
+    "LiquidationLogicLib": "0x5E13571cB6c3f8d5f9DbC2900b06e0DD62ce6036",
+    "AddressesProvider": "0x650e27CE45ad26dE4Db29c99ce58904633155c26",
+    "Market": "0x44Cc19a97039C08BadA059fB2985dF936d876BB4",
+    "LoanCenter": "0xB0a569Ae5cE17b0cD2402100b0626e95aC5db828",
+    "InterestRate": "0xc8DD4046379B03caAC9ffA74b3c748D1bfddf13e",
+    "NFTOracle": "0x3d6cBFf88a752336427805cfaD95788265beB0E9",
+    "TokenOracle": "0xebfa34f6Da8CAb51cFaF535E271Cf0AC6CE2ef5f",
+    "NativeTokenVault": "",
+    "NativeToken": "",
+    "DebtToken": "0x765F6E28Be958d579056DEAA7A25892F0c82308b",
+    "SupportedAssets": []
   },
   "0x539": {
     "Name": "hardhat",

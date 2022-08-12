@@ -56,7 +56,7 @@ export default function Header() {
                 <Button
                   size="medium"
                   color="neutral-3"
-                  label="Home"
+                  label="H o m e"
                   icon={<Home fontSize="24px" color="#000000" />}
                 />
               </Link>
@@ -66,7 +66,7 @@ export default function Header() {
                 <Button
                   size="medium"
                   color="neutral-3"
-                  label="Loan Explorer"
+                  label="E x p l o r e r"
                   icon={<Search fontSize="24px" color="#000000" />}
                 />
               </Link>
@@ -76,7 +76,7 @@ export default function Header() {
                 <Button
                   size="medium"
                   color="neutral-3"
-                  label="Supply"
+                  label="S u p p l y"
                   icon={<Plus fontSize="18px" color="#000000" />}
                 />
               </Link>
@@ -88,7 +88,7 @@ export default function Header() {
                     <Button
                       size="medium"
                       color="neutral-3"
-                      label="Stake LE"
+                      label="S t a k e"
                       disabled={true}
                       icon={<LockClosed fontSize="24px" color="#000000" />}
                     />

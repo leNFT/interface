@@ -25,6 +25,7 @@ import {
   Tooltip,
 } from "@web3uikit/core";
 import Card from "@mui/material/Card";
+import Box from "@mui/material/Box";
 import CardContent from "@mui/material/CardContent";
 import { HelpCircle } from "@web3uikit/icons";
 import Image from "next/image";
@@ -264,12 +265,25 @@ export default function LoanExplorer() {
           <div className="flex flex-row">
             <div className="flex flex-col m-2">
               <div className="flex flex-row">
-                <Typography variant="subtitle2">Max LTV</Typography>
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Max LTV
+                </Box>
               </div>
               <div className="flex flex-row">
-                <Typography variant="caption14">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                  }}
+                >
                   {maxCollateralization / 100}%
-                </Typography>
+                </Box>
               </div>
             </div>
           </div>
@@ -463,13 +477,23 @@ export default function LoanExplorer() {
         ) : (
           <div className="flex mb-32 mt-16 items-center justify-center">
             {collections.length != 0 ? (
-              <Typography variant="body18">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "h6.fontSize",
+                }}
+              >
                 Please select a supported collection with active loans.
-              </Typography>
+              </Box>
             ) : (
-              <Typography variant="body18">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "h6.fontSize",
+                }}
+              >
                 leNFT does not support any NFT collections (yet).
-              </Typography>
+              </Box>
             )}
           </div>
         )}

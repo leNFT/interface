@@ -12,6 +12,7 @@ import reserveContract from "../contracts/Reserve.json";
 import LinearProgressWithLabel from "./LinearProgressWithLabel";
 import Deposit from "./Deposit";
 import Withdraw from "./Withdraw";
+import Box from "@mui/material/Box";
 
 export default function ReserveInfo(props) {
   const { isWeb3Enabled, chainId, account } = useMoralis();
@@ -212,7 +213,15 @@ export default function ReserveInfo(props) {
           <div className="flex flex-col m-4 border-4 rounded-2xl">
             <div className="flex flex-row m-2">
               <div className="flex flex-col">
-                <Typography variant="subtitle1">My Reserve Balance</Typography>
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "h6.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  My Reserve Balance
+                </Box>
               </div>
               <div className="flex flex-col ml-1">
                 <Tooltip
@@ -228,11 +237,16 @@ export default function ReserveInfo(props) {
               {loadingReserve ? (
                 <Loading size={12} spinnerColor="#000000" />
               ) : (
-                <Typography variant="h4">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "body16.fontSize",
+                  }}
+                >
                   {formatUnits(maxAmount, addresses[props.asset].decimals) +
                     " " +
                     props.asset}
-                </Typography>
+                </Box>
               )}
             </div>
           </div>
@@ -267,12 +281,25 @@ export default function ReserveInfo(props) {
         </div>
         <div className="flex flex-col m-16">
           <div className="mb-8">
-            <Typography variant="h1" color="blueCloudDark">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "h4.fontSize",
+                fontWeight: "bold",
+              }}
+            >
               Supply Rate @ {supplyRate / 100}%
-            </Typography>
+            </Box>
           </div>
           <div>
-            <Typography variant="body16">Utilization Rate:</Typography>
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "body1.fontSize",
+              }}
+            >
+              Utilization Rate:
+            </Box>
             <LinearProgressWithLabel value={utilizationRate / 100} />
           </div>
           {loadingReserve ? (
@@ -281,13 +308,23 @@ export default function ReserveInfo(props) {
             </div>
           ) : (
             <div>
-              <div>
-                <Typography variant="caption14">
+              <div className="my-2">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "body1.fontSize",
+                  }}
+                >
                   Borrow Rate @ {borrowRate / 100}%
-                </Typography>
+                </Box>
               </div>
-              <div>
-                <Typography variant="caption14">
+              <div className="my-2">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "body1.fontSize",
+                  }}
+                >
                   Underlying is{" "}
                   {formatUnits(
                     underlyingBalance,
@@ -295,32 +332,43 @@ export default function ReserveInfo(props) {
                   ) +
                     " " +
                     props.asset}
-                </Typography>
+                </Box>
               </div>
-              <div>
-                <Typography variant="caption14">
+              <div className="my-2">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "body1.fontSize",
+                  }}
+                >
                   Debt is{" "}
                   {formatUnits(debt, addresses[props.asset].decimals) +
                     " " +
                     props.asset}
-                </Typography>
+                </Box>
               </div>
             </div>
           )}
-
           <div>
             {loadingPrice ? (
               <div className="flex m-4">
                 <Loading size={12} spinnerColor="#000000" />
               </div>
             ) : (
-              <Typography variant="caption14">
-                {"1 " +
-                  props.asset +
-                  " = " +
-                  formatUnits(ethPrice, 18) +
-                  " ETH"}
-              </Typography>
+              <div className="my-2">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "body2.fontSize",
+                  }}
+                >
+                  {"1 " +
+                    props.asset +
+                    " = " +
+                    formatUnits(ethPrice, 18) +
+                    " ETH"}
+                </Box>
+              </div>
             )}
           </div>
         </div>

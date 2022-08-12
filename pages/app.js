@@ -5,7 +5,7 @@ import { getNFTImage } from "../helpers/getNFTImage.js";
 import { formatUnits } from "@ethersproject/units";
 import { useMoralisWeb3Api, useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
-import { Tooltip, Illustration, Typography, Loading } from "@web3uikit/core";
+import { Tooltip, Illustration, Loading } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
 import { BigNumber } from "@ethersproject/bignumber";
 import Borrow from "../components/Borrow";
@@ -20,6 +20,8 @@ import { Divider } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { CardActionArea } from "@mui/material";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 export default function App() {
   const [loadingUI, setLoadingUI] = useState(true);
@@ -216,9 +218,19 @@ export default function App() {
   return (
     <div className={styles.container}>
       {loans.length > 0 && (
-        <div className="flex flex-col border-2 rounded-3xl m-2 p-2 bg-black/5">
+        <div className="flex flex-col border-2 mb-8 rounded-3xl m-2 p-2 bg-black/5">
           <div className="px-8 pt-6 pb-2">
-            <Typography variant="h1">My Loans</Typography>
+            <Typography variant="div">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "h4.fontSize",
+                  letterSpacing: 24,
+                }}
+              >
+                My Loans
+              </Box>
+            </Typography>
           </div>
           <div className="flex grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {loans.map((loan, _) => (
@@ -258,9 +270,14 @@ export default function App() {
                       )}
                       <div className="flex flex-row mt-6">
                         <div className="flex flex-col">
-                          <Typography variant="caption12">
+                          <Box
+                            sx={{
+                              fontFamily: "Monospace",
+                              fontSize: "caption",
+                            }}
+                          >
                             Health Level
-                          </Typography>
+                          </Box>
                         </div>
                         <div className="flex flex-col ml-1">
                           <Tooltip
@@ -321,19 +338,31 @@ export default function App() {
         </div>
       )}
       {(supportedAssets.length != 0 || unsupportedAssets.length != 0) && (
-        <div className="flex flex-col mt-16 border-2 rounded-3xl m-2 p-2 bg-black/5">
+        <div className="flex flex-col mt-8 border-2 rounded-3xl m-2 p-2 bg-black/5">
           <div className="px-8 pt-6 pb-2">
             <div className="flex flex-row">
-              <Typography variant="h1">
-                Wallet: {supportedAssets.length} supported assets
-              </Typography>
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "h4.fontSize",
+                  letterSpacing: 24,
+                }}
+              >
+                Wallet: {supportedAssets.length} assets
+              </Box>
             </div>
-            <div className="flex flex-row my-2">
-              <Typography variant="subtitle3">
+            <div className="flex flex-row my-4">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "body1.fontSize",
+                  letterSpacing: 2,
+                }}
+              >
                 You can borrow up to{" "}
                 {formatUnits(BigNumber.from(walletMaxBorrowable).div(2), 18)}{" "}
                 WETH
-              </Typography>
+              </Box>
             </div>
           </div>
           {supportedAssets.length != 0 && (
@@ -379,11 +408,16 @@ export default function App() {
                           </div>
                         )}
                         <div className="flex mt-4 justify-center">
-                          <Typography variant="subtitle3">
+                          <Box
+                            sx={{
+                              fontFamily: "Monospace",
+                              fontSize: "subtitle1.fontSize",
+                            }}
+                          >
                             {supportedAsset.name +
                               " #" +
                               supportedAsset.token_id}
-                          </Typography>
+                          </Box>
                         </div>
                       </CardContent>
                     </CardActionArea>
@@ -430,9 +464,14 @@ export default function App() {
                 >
                   {index == 8 && unsupportedAssets.length == 9 ? (
                     <div className="flex items-center p-6">
-                      <Typography variant="subtitle2">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle1.fontSize",
+                        }}
+                      >
                         ...and some more
-                      </Typography>
+                      </Box>
                     </div>
                   ) : (
                     <Card
@@ -462,12 +501,17 @@ export default function App() {
                               </Typography>
                             </div>
                           )}
-                          <div className="mt-2">
-                            <Typography variant="subtitle3">
+                          <div className="p-2 mt-4">
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "subtitle2.fontSize",
+                              }}
+                            >
                               {unsupportedAsset.name +
                                 " #" +
                                 unsupportedAsset.token_id}
-                            </Typography>
+                            </Box>
                           </div>
                         </CardContent>
                       </CardActionArea>

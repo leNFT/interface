@@ -20,7 +20,7 @@ export default function Supply() {
                 <div className="flex flex-col">
                   <Eth fontSize="32px" color="#000000" />
                 </div>
-                <div className="flex flex-col mx-2">WETH</div>
+                <div className="flex flex-col mx-2">W E T H</div>
               </div>
             }
           >
@@ -35,7 +35,7 @@ export default function Supply() {
                 <div className="flex flex-col">
                   <Usdc fontSize="32px" color="#000000" />
                 </div>
-                <div className="flex flex-col mx-2">USDC</div>
+                <div className="flex flex-col mx-2">U S D C</div>
               </div>
             }
           >

@@ -38,7 +38,7 @@ function isLoanLiquidatable(debt, maxCollateralization, price) {
   );
 }
 
-export default function LoanExplorer() {
+export default function LoanSearch() {
   const [collectionLoans, setCollectionLoans] = useState([]);
   const [allowance, setAllowance] = useState("0");
   const [maxCollateralization, setMaxCollateralization] = useState("0");
@@ -248,7 +248,7 @@ export default function LoanExplorer() {
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="leNFT Collections"
+                label="Search NFT Collections"
                 sx={{
                   "& label": { paddingLeft: (theme) => theme.spacing(2) },
                   "& input": { paddingLeft: (theme) => theme.spacing(3.5) },

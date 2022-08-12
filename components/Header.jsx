@@ -74,7 +74,7 @@ export default function Header() {
               </Link>
             </div>
             <div className="flex flex-col m-2">
-              <Link href="/loanExplorer">
+              <Link href="/loanSearch">
                 <Button
                   size="medium"
                   color="neutral-3"
@@ -87,7 +87,7 @@ export default function Header() {
                         letterSpacing: 4,
                       }}
                     >
-                      Explorer
+                      Loan Search
                     </Box>
                   }
                   icon={<Search fontSize="20px" color="#000000" />}

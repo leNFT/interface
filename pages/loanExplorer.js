@@ -233,7 +233,7 @@ export default function LoanExplorer() {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-row m-2 items-center justify-center">
+      <div className="flex flex-row items-center justify-center">
         <div className="flex flex-col items-center justify-center">
           <Autocomplete
             disablePortal
@@ -260,7 +260,7 @@ export default function LoanExplorer() {
             )}
           />
         </div>
-        <div className="flex flex-col border-4 rounded-lg m-8 ">
+        <div className="flex flex-col border-2 rounded-lg m-2 ml-8 ">
           <div className="flex flex-row">
             <div className="flex flex-col m-2">
               <div className="flex flex-row">

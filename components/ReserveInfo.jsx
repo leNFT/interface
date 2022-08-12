@@ -220,7 +220,7 @@ export default function ReserveInfo(props) {
                     fontWeight: "bold",
                   }}
                 >
-                  My Reserve Balance
+                  <div class="text-black">My Reserve Balance</div>
                 </Box>
               </div>
               <div className="flex flex-col ml-1">
@@ -288,7 +288,7 @@ export default function ReserveInfo(props) {
                 fontWeight: "bold",
               }}
             >
-              Supply Rate @ {supplyRate / 100}%
+              <div class="text-black">Supply Rate @ {supplyRate / 100}%</div>
             </Box>
           </div>
           <div>

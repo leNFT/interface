@@ -10,7 +10,6 @@ export async function getNFTImage(address, tokenId, chainId) {
     return "Unsupported ChainID";
   }
 
-  console.log("getNFTImage");
   const serverAddress =
     "https://eth-" +
     chainName +

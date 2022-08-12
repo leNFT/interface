@@ -227,8 +227,8 @@ export default function ReserveInfo(props) {
         )}
       </div>
       <div className="flex items-center justify-center">
-        <div className="flex flex-col items-center m-16">
-          <div className="flex flex-col m-4 border-4 rounded-2xl">
+        <div className="flex flex-col items-center p-4 rounded-3xl m-16 bg-black/5 shadow-lg">
+          <div className="flex flex-col m-4 rounded-2xl">
             <div className="flex flex-row m-2">
               <div className="flex flex-col">
                 <Box
@@ -271,12 +271,15 @@ export default function ReserveInfo(props) {
           <div className="flex flex-row">
             <div className="m-4">
               <Button
+                customize={{
+                  backgroundColor: "grey",
+                  fontSize: 18,
+                  textColor: "white",
+                }}
                 text="Deposit"
-                theme="colored"
-                type="button"
+                theme="custom"
                 size="large"
-                color="blue"
-                radius="5"
+                radius="12"
                 onClick={async function () {
                   setVisibleDepositModal(true);
                 }}
@@ -284,12 +287,15 @@ export default function ReserveInfo(props) {
             </div>
             <div className="m-4">
               <Button
+                customize={{
+                  backgroundColor: "grey",
+                  fontSize: 18,
+                  textColor: "white",
+                }}
                 text="Withdraw"
-                theme="colored"
-                type="button"
+                theme="custom"
                 size="large"
-                color="blue"
-                radius="5"
+                radius="12"
                 onClick={async function () {
                   setVisibleWithdrawalModal(true);
                 }}

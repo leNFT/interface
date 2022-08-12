@@ -218,141 +218,14 @@ export default function App() {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-col border-2 mb-8 rounded-3xl m-2 p-2 bg-black/5">
-        <div className="p-8">
-          <Box
-            sx={{
-              fontFamily: "Monospace",
-              fontSize: "h4.fontSize",
-              letterSpacing: 24,
-            }}
-          >
-            My Loans
-          </Box>
+      {loadingUI ? (
+        <div className="flex justify-center m-16">
+          <Loading size={16} spinnerColor="#2E7DAF" spinnerType="wave" />
         </div>
-        {loans.length == 0 ? (
-          <div className="p-8">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle1.fontSize",
-              }}
-            >
-              You have 0 active loans.
-            </Box>
-          </div>
-        ) : (
-          <div className="flex grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {loans.map((loan, _) => (
-              <div
-                key={loan.loanId}
-                className="flex m-4 items-center justify-center max-w-[300px]"
-              >
-                <Card
-                  sx={{
-                    borderRadius: 4,
-                    background:
-                      "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
-                  }}
-                >
-                  <CardActionArea
-                    onClick={function () {
-                      setSelectedLoan(loan);
-                      setVisibleLoanModal(true);
-                    }}
-                  >
-                    <CardContent>
-                      {loan.tokenURI ? (
-                        <Image
-                          loader={() => loan.tokenURI}
-                          src={loan.tokenURI}
-                          height="200"
-                          width="200"
-                          unoptimized={true}
-                          className="rounded-3xl"
-                        />
-                      ) : (
-                        <Illustration
-                          height="180px"
-                          logo="chest"
-                          width="100%"
-                        />
-                      )}
-                      <div className="flex flex-row mt-6">
-                        <div className="flex flex-col">
-                          <Box
-                            sx={{
-                              fontFamily: "Monospace",
-                              fontSize: "caption",
-                            }}
-                          >
-                            Health Level
-                          </Box>
-                        </div>
-                        <div className="flex flex-col ml-1">
-                          <Tooltip
-                            content="Represents the relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
-                            position="top"
-                            minWidth={200}
-                          >
-                            <HelpCircle fontSize="14px" color="#000000" />
-                          </Tooltip>
-                        </div>
-                      </div>
-                      <div>
-                        <LinearProgressWithLabel
-                          color="success"
-                          value={calculateHealthLevel(
-                            loan.debt,
-                            BigNumber.from(loan.maxLTV)
-                              .mul(loan.tokenPrice)
-                              .div(10000)
-                              .toString()
-                          )}
-                        />
-                      </div>
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
-              </div>
-            ))}
-            {selectedLoan && (
-              <StyledModal
-                hasFooter={false}
-                width="50%"
-                isVisible={visibleLoanModal}
-                onCloseButtonPressed={function () {
-                  setVisibleLoanModal(false);
-                }}
-              >
-                <RepayLoan
-                  setVisibility={setVisibleLoanModal}
-                  loan_id={selectedLoan.loanId}
-                  token_name={selectedLoan.tokenName}
-                  token_address={selectedLoan.tokenAddress}
-                  token_id={selectedLoan.tokenId}
-                  token_uri={selectedLoan.tokenURI}
-                />
-              </StyledModal>
-            )}
-          </div>
-        )}
-      </div>
-      {supportedAssets.length == 0 && unsupportedAssets.length == 0 && (
-        <div className="flex mt-16 justify-center items-center">
-          {loadingUI ? (
-            <Loading size={16} spinnerColor="#2E7DAF" spinnerType="wave" />
-          ) : (
-            <Typography variant="body18">
-              No NFT assets found in {account}
-            </Typography>
-          )}
-        </div>
-      )}
-      {(supportedAssets.length != 0 || unsupportedAssets.length != 0) && (
-        <div className="flex flex-col mt-8 border-2 rounded-3xl m-2 p-2 bg-black/5">
-          <div className="p-8">
-            <div className="flex flex-row">
+      ) : (
+        <div>
+          <div className="flex flex-col border-2 mb-8 rounded-3xl m-2 p-2 bg-black/5">
+            <div className="p-8">
               <Box
                 sx={{
                   fontFamily: "Monospace",
@@ -360,135 +233,27 @@ export default function App() {
                   letterSpacing: 24,
                 }}
               >
-                NFT Wallet
+                My Loans
               </Box>
             </div>
-            <div className="flex flex-row my-4">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "body1.fontSize",
-                  letterSpacing: 2,
-                }}
-              >
-                {" "}
-                {"You can use " +
-                  supportedAssets.length +
-                  " NFTs and borrow up to " +
-                  formatUnits(BigNumber.from(walletMaxBorrowable).div(2), 18) +
-                  " WETH"}
-              </Box>
-            </div>
-          </div>
-          {supportedAssets.length != 0 && (
-            <div className="flex flex-row grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
-              {supportedAssets.map((supportedAsset) => (
-                <div
-                  key={supportedAsset.token_hash}
-                  className="flex m-4 items-center justify-center max-w-[300px]"
+            {loans.length == 0 ? (
+              <div className="p-8">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                  }}
                 >
-                  <Card
-                    sx={{
-                      borderRadius: 4,
-                      background:
-                        "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
-                    }}
+                  You have 0 active loans.
+                </Box>
+              </div>
+            ) : (
+              <div className="flex grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                {loans.map((loan, _) => (
+                  <div
+                    key={loan.loanId}
+                    className="flex m-4 items-center justify-center max-w-[300px]"
                   >
-                    <CardActionArea
-                      onClick={function () {
-                        setSelectedAsset(supportedAsset);
-                        setVisibleAssetModal(true);
-                      }}
-                    >
-                      <CardContent>
-                        {supportedAsset.token_uri ? (
-                          <div className="flex flex-col items-center">
-                            <Image
-                              loader={() => supportedAsset.token_uri}
-                              src={supportedAsset.token_uri}
-                              height="200"
-                              width="200"
-                              unoptimized={true}
-                              className="rounded-2xl"
-                            />
-                          </div>
-                        ) : (
-                          <div className="flex flex-col items-center justify-center">
-                            <Illustration
-                              height="180px"
-                              logo="token"
-                              width="100%"
-                            />
-                            Loading...
-                          </div>
-                        )}
-
-                        <Box
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "subtitle1.fontSize",
-                          }}
-                        >
-                          <div className="flex flex-col mt-4 items-center">
-                            <div>{supportedAsset.name}</div>
-                            <div>{"# " + supportedAsset.token_id}</div>
-                          </div>
-                        </Box>
-                      </CardContent>
-                    </CardActionArea>
-                  </Card>
-                </div>
-              ))}
-            </div>
-          )}
-          {selectedAsset && (
-            <StyledModal
-              hasFooter={false}
-              width="50%"
-              isVisible={visibleAssetModal}
-              onCloseButtonPressed={function () {
-                setVisibleAssetModal(false);
-              }}
-            >
-              <Borrow
-                setVisibility={setVisibleAssetModal}
-                token_address={
-                  // Get checksumed token adress
-                  contractAddresses[chainId].SupportedAssets.find(
-                    (collection) =>
-                      collection.address.toLowerCase() ==
-                      selectedAsset.token_address
-                  ).address
-                }
-                token_id={selectedAsset.token_id}
-                token_uri={selectedAsset.token_uri}
-              />
-            </StyledModal>
-          )}
-          {supportedAssets.length != 0 && unsupportedAssets.length != 0 && (
-            <div className="m-4 items-center justify-center">
-              <Divider variant="middle" />
-            </div>
-          )}
-          {unsupportedAssets.length != 0 && (
-            <div className="flex flex-row grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2">
-              {unsupportedAssets.map((unsupportedAsset, index) => (
-                <div
-                  key={unsupportedAsset.token_hash}
-                  className="flex m-4 items-center justify-center max-w-[220px]"
-                >
-                  {index == 8 && unsupportedAssets.length == 9 ? (
-                    <div className="flex items-center p-6">
-                      <Box
-                        sx={{
-                          fontFamily: "Monospace",
-                          fontSize: "subtitle1.fontSize",
-                        }}
-                      >
-                        ...and more unsupported NFTs
-                      </Box>
-                    </div>
-                  ) : (
                     <Card
                       sx={{
                         borderRadius: 4,
@@ -496,47 +261,281 @@ export default function App() {
                           "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                       }}
                     >
-                      <CardActionArea>
+                      <CardActionArea
+                        onClick={function () {
+                          setSelectedLoan(loan);
+                          setVisibleLoanModal(true);
+                        }}
+                      >
                         <CardContent>
-                          {unsupportedAsset.token_uri ? (
+                          {loan.tokenURI ? (
+                            <Image
+                              loader={() => loan.tokenURI}
+                              src={loan.tokenURI}
+                              height="200"
+                              width="200"
+                              unoptimized={true}
+                              className="rounded-3xl"
+                            />
+                          ) : (
+                            <Illustration
+                              height="180px"
+                              logo="chest"
+                              width="100%"
+                            />
+                          )}
+                          <div className="flex flex-row mt-6">
+                            <div className="flex flex-col">
+                              <Box
+                                sx={{
+                                  fontFamily: "Monospace",
+                                  fontSize: "caption",
+                                }}
+                              >
+                                Health Level
+                              </Box>
+                            </div>
+                            <div className="flex flex-col ml-1">
+                              <Tooltip
+                                content="Represents the relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
+                                position="top"
+                                minWidth={200}
+                              >
+                                <HelpCircle fontSize="14px" color="#000000" />
+                              </Tooltip>
+                            </div>
+                          </div>
+                          <div>
+                            <LinearProgressWithLabel
+                              color="success"
+                              value={calculateHealthLevel(
+                                loan.debt,
+                                BigNumber.from(loan.maxLTV)
+                                  .mul(loan.tokenPrice)
+                                  .div(10000)
+                                  .toString()
+                              )}
+                            />
+                          </div>
+                        </CardContent>
+                      </CardActionArea>
+                    </Card>
+                  </div>
+                ))}
+                {selectedLoan && (
+                  <StyledModal
+                    hasFooter={false}
+                    width="50%"
+                    isVisible={visibleLoanModal}
+                    onCloseButtonPressed={function () {
+                      setVisibleLoanModal(false);
+                    }}
+                  >
+                    <RepayLoan
+                      setVisibility={setVisibleLoanModal}
+                      loan_id={selectedLoan.loanId}
+                      token_name={selectedLoan.tokenName}
+                      token_address={selectedLoan.tokenAddress}
+                      token_id={selectedLoan.tokenId}
+                      token_uri={selectedLoan.tokenURI}
+                    />
+                  </StyledModal>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col mt-8 border-2 rounded-3xl m-2 p-2 bg-black/5">
+            <div className="p-8">
+              <div className="flex flex-row">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "h4.fontSize",
+                    letterSpacing: 24,
+                  }}
+                >
+                  NFT Wallet
+                </Box>
+              </div>
+              <div className="flex flex-row my-4">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "body1.fontSize",
+                    letterSpacing: 2,
+                  }}
+                >
+                  {" "}
+                  {"You can use " +
+                    supportedAssets.length +
+                    " NFTs and borrow up to " +
+                    formatUnits(
+                      BigNumber.from(walletMaxBorrowable).div(2),
+                      18
+                    ) +
+                    " WETH"}
+                </Box>
+              </div>
+            </div>
+            {supportedAssets.length != 0 && (
+              <div className="flex flex-row grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                {supportedAssets.map((supportedAsset) => (
+                  <div
+                    key={supportedAsset.token_hash}
+                    className="flex m-4 items-center justify-center max-w-[300px]"
+                  >
+                    <Card
+                      sx={{
+                        borderRadius: 4,
+                        background:
+                          "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
+                      }}
+                    >
+                      <CardActionArea
+                        onClick={function () {
+                          setSelectedAsset(supportedAsset);
+                          setVisibleAssetModal(true);
+                        }}
+                      >
+                        <CardContent>
+                          {supportedAsset.token_uri ? (
                             <div className="flex flex-col items-center">
                               <Image
-                                loader={() => unsupportedAsset.token_uri}
-                                src={unsupportedAsset.token_uri}
-                                height="100"
-                                width="100"
+                                loader={() => supportedAsset.token_uri}
+                                src={supportedAsset.token_uri}
+                                height="200"
+                                width="200"
                                 unoptimized={true}
                                 className="rounded-2xl"
                               />
                             </div>
                           ) : (
                             <div className="flex flex-col items-center justify-center">
-                              <Typography variant="subtitle3" italic>
-                                Image Unavailable.
-                              </Typography>
+                              <Illustration
+                                height="180px"
+                                logo="token"
+                                width="100%"
+                              />
+                              Loading...
                             </div>
                           )}
+
                           <Box
                             sx={{
                               fontFamily: "Monospace",
-                              fontSize: "subtitle2.fontSize",
+                              fontSize: "subtitle1.fontSize",
                             }}
                           >
                             <div className="flex flex-col mt-4 items-center">
-                              <div>{unsupportedAsset.name}</div>
-                              <div>{"#" + unsupportedAsset.token_id}</div>
+                              <div>{supportedAsset.name}</div>
+                              <div>{"# " + supportedAsset.token_id}</div>
                             </div>
                           </Box>
                         </CardContent>
                       </CardActionArea>
                     </Card>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
+                  </div>
+                ))}
+              </div>
+            )}
+            {selectedAsset && (
+              <StyledModal
+                hasFooter={false}
+                width="50%"
+                isVisible={visibleAssetModal}
+                onCloseButtonPressed={function () {
+                  setVisibleAssetModal(false);
+                }}
+              >
+                <Borrow
+                  setVisibility={setVisibleAssetModal}
+                  token_address={
+                    // Get checksumed token adress
+                    contractAddresses[chainId].SupportedAssets.find(
+                      (collection) =>
+                        collection.address.toLowerCase() ==
+                        selectedAsset.token_address
+                    ).address
+                  }
+                  token_id={selectedAsset.token_id}
+                  token_uri={selectedAsset.token_uri}
+                />
+              </StyledModal>
+            )}
+            {supportedAssets.length != 0 && unsupportedAssets.length != 0 && (
+              <div className="m-4 items-center justify-center">
+                <Divider variant="middle" />
+              </div>
+            )}
+            {unsupportedAssets.length != 0 && (
+              <div className="flex flex-row grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2">
+                {unsupportedAssets.map((unsupportedAsset, index) => (
+                  <div
+                    key={unsupportedAsset.token_hash}
+                    className="flex m-4 items-center justify-center max-w-[220px]"
+                  >
+                    {index == 8 && unsupportedAssets.length == 9 ? (
+                      <div className="flex items-center p-6">
+                        <Box
+                          sx={{
+                            fontFamily: "Monospace",
+                            fontSize: "subtitle1.fontSize",
+                          }}
+                        >
+                          ...and more unsupported NFTs
+                        </Box>
+                      </div>
+                    ) : (
+                      <Card
+                        sx={{
+                          borderRadius: 4,
+                          background:
+                            "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
+                        }}
+                      >
+                        <CardActionArea>
+                          <CardContent>
+                            {unsupportedAsset.token_uri ? (
+                              <div className="flex flex-col items-center">
+                                <Image
+                                  loader={() => unsupportedAsset.token_uri}
+                                  src={unsupportedAsset.token_uri}
+                                  height="100"
+                                  width="100"
+                                  unoptimized={true}
+                                  className="rounded-2xl"
+                                />
+                              </div>
+                            ) : (
+                              <div className="flex flex-col items-center justify-center">
+                                <Typography variant="subtitle3" italic>
+                                  Image Unavailable.
+                                </Typography>
+                              </div>
+                            )}
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "subtitle2.fontSize",
+                              }}
+                            >
+                              <div className="flex flex-col mt-4 items-center">
+                                <div>{unsupportedAsset.name}</div>
+                                <div>{"#" + unsupportedAsset.token_id}</div>
+                              </div>
+                            </Box>
+                          </CardContent>
+                        </CardActionArea>
+                      </Card>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      )}
+      )}{" "}
     </div>
   );
 }

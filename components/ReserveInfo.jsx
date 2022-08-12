@@ -208,6 +208,24 @@ export default function ReserveInfo(props) {
           asset={props.asset}
         />
       </StyledModal>
+      <div className="flex justify-center">
+        {loadingPrice ? (
+          <div className="flex m-4">
+            <Loading size={12} spinnerColor="#000000" />
+          </div>
+        ) : (
+          <div className="my-2">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "body2.fontSize",
+              }}
+            >
+              {"1 " + props.asset + " = " + formatUnits(ethPrice, 18) + " ETH"}
+            </Box>
+          </div>
+        )}
+      </div>
       <div className="flex items-center justify-center">
         <div className="flex flex-col items-center m-16">
           <div className="flex flex-col m-4 border-4 rounded-2xl">
@@ -349,28 +367,6 @@ export default function ReserveInfo(props) {
               </div>
             </div>
           )}
-          <div>
-            {loadingPrice ? (
-              <div className="flex m-4">
-                <Loading size={12} spinnerColor="#000000" />
-              </div>
-            ) : (
-              <div className="my-2">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "body2.fontSize",
-                  }}
-                >
-                  {"1 " +
-                    props.asset +
-                    " = " +
-                    formatUnits(ethPrice, 18) +
-                    " ETH"}
-                </Box>
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </div>

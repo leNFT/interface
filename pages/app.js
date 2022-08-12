@@ -224,7 +224,7 @@ export default function App() {
         </div>
       ) : (
         <div>
-          <div className="flex flex-col border-2 mb-8 rounded-3xl m-2 p-2 bg-black/5">
+          <div className="flex flex-col mb-8 rounded-3xl m-2 p-2 bg-black/5 shadow-lg">
             <div className="p-8">
               <Box
                 sx={{
@@ -345,7 +345,7 @@ export default function App() {
             )}
           </div>
 
-          <div className="flex flex-col mt-8 border-2 rounded-3xl m-2 p-2 bg-black/5">
+          <div className="flex flex-col mt-8 rounded-3xl m-2 p-2 bg-black/5 shadow-lg">
             <div className="p-8">
               <div className="flex flex-row">
                 <Box

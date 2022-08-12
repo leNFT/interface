@@ -295,7 +295,7 @@ export default function LoanSearch() {
             <Loading size={16} spinnerColor="#2E7DAF" spinnerType="wave" />
           </div>
         ) : collectionLoans.length != 0 ? (
-          <div className="flex flex-col border-2 rounded-3xl m-2 p-2 bg-black/5">
+          <div className="flex flex-col rounded-3xl m-2 p-2 bg-black/5 shadow-lg">
             <div className="flex flex-row grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {collectionLoans.map((collectionLoan) => (
                 <div

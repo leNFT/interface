@@ -10,10 +10,16 @@ export default function LinearProgressWithLabel(props) {
       <Box sx={{ width: "100%", mr: 1 }}>
         <LinearProgress variant="determinate" {...props} />
       </Box>
-      <Box sx={{ minWidth: 35 }}>
-        <Typography variant="body2" color="text.secondary">{`${Math.round(
-          props.value
-        )}%`}</Typography>
+      <Box
+        sx={{
+          fontFamily: "Monospace",
+          fontSize: "body2.fontSize",
+        }}
+      >
+        {`${Math.round(props.value)}%`}
+      </Box>
+      <Box sx={{ maxWidth: 35 }}>
+        <Typography variant="body2" color="text.secondary"></Typography>
       </Box>
     </Box>
   );

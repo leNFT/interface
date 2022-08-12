@@ -36,16 +36,33 @@ export default function Header() {
             <a target="_blank" rel="noopener noreferrer">
               <div className="mx-5 mt-2 flex flex-row items-center">
                 <div className="flex flex-col items-center">
-                  <h1 className="font-bold text-2xl">leNFT</h1>
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                    }}
+                  >
+                    <div className="font-bold text-2xl">leNFT</div>
+                  </Box>
                 </div>
                 <div className="flex flex-col ml-1 mb-4 items-center justify-content">
-                  <h1 className="text-2xl">.finance</h1>
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                    }}
+                  >
+                    <div className="text-2xl">.finance</div>
+                  </Box>
                 </div>
               </div>
               <div className="flex flex-row justify-center">
-                <h1 className="font-bold text-xs text-red-700">
-                  [ ALPHA VERSION ]
-                </h1>
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle2.fontSize",
+                  }}
+                >
+                  <div className="text-red-700">[ ALPHA ]</div>
+                </Box>
               </div>
             </a>
           </Link>
@@ -55,13 +72,14 @@ export default function Header() {
             <div className="flex flex-col m-2">
               <Link href="/app">
                 <Button
+                  primary
                   size="medium"
-                  color="neutral-3"
+                  color="#eae5ea"
                   label={
                     <Box
                       sx={{
                         fontFamily: "Monospace",
-                        fontSize: "button.fontSize",
+                        fontSize: "subtitle2.fontSize",
                         fontWeight: "bold",
                         letterSpacing: 4,
                       }}
@@ -76,13 +94,14 @@ export default function Header() {
             <div className="flex flex-col m-2">
               <Link href="/loanSearch">
                 <Button
+                  primary
                   size="medium"
-                  color="neutral-3"
+                  color="#eae5ea"
                   label={
                     <Box
                       sx={{
                         fontFamily: "Monospace",
-                        fontSize: "button.fontSize",
+                        fontSize: "subtitle2.fontSize",
                         fontWeight: "bold",
                         letterSpacing: 4,
                       }}
@@ -97,13 +116,14 @@ export default function Header() {
             <div className="flex flex-col m-2">
               <Link href="/supply">
                 <Button
+                  primary
                   size="medium"
-                  color="neutral-3"
+                  color="#eae5ea"
                   label={
                     <Box
                       sx={{
                         fontFamily: "Monospace",
-                        fontSize: "button.fontSize",
+                        fontSize: "subtitle2.fontSize",
                         fontWeight: "bold",
                         letterSpacing: 4,
                       }}
@@ -120,13 +140,14 @@ export default function Header() {
                 <Link href="">
                   <Tooltip content={"soon :)"} position="bottom" minWidth={70}>
                     <Button
+                      primary
                       size="medium"
-                      color="neutral-3"
+                      color="#eae5ea"
                       label={
                         <Box
                           sx={{
                             fontFamily: "Monospace",
-                            fontSize: "button.fontSize",
+                            fontSize: "subtitle2.fontSize",
                             fontWeight: "bold",
                             letterSpacing: 4,
                           }}

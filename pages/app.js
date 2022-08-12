@@ -243,7 +243,7 @@ export default function App() {
                   sx={{
                     borderRadius: 4,
                     background:
-                      "linear-gradient(to right bottom, #f1f2fd, #fdf1f5)",
+                      "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                   }}
                 >
                   <CardActionArea
@@ -351,7 +351,7 @@ export default function App() {
                   letterSpacing: 24,
                 }}
               >
-                NFT Wallet ({supportedAssets.length} supported)
+                NFT Wallet
               </Box>
             </div>
             <div className="flex flex-row my-4">
@@ -362,9 +362,12 @@ export default function App() {
                   letterSpacing: 2,
                 }}
               >
-                You can borrow up to{" "}
-                {formatUnits(BigNumber.from(walletMaxBorrowable).div(2), 18)}{" "}
-                WETH
+                {" "}
+                {"You can use " +
+                  supportedAssets.length +
+                  " NFTs and borrow up to " +
+                  formatUnits(BigNumber.from(walletMaxBorrowable).div(2), 18) +
+                  " WETH"}
               </Box>
             </div>
           </div>
@@ -379,7 +382,7 @@ export default function App() {
                     sx={{
                       borderRadius: 4,
                       background:
-                        "linear-gradient(to right bottom, #f1f2fd, #fdf1f5)",
+                        "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                     }}
                   >
                     <CardActionArea
@@ -481,7 +484,7 @@ export default function App() {
                       sx={{
                         borderRadius: 4,
                         background:
-                          "linear-gradient(to right bottom, #f1f2fd, #fdf1f5)",
+                          "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                       }}
                     >
                       <CardActionArea>

@@ -306,7 +306,7 @@ export default function LoanSearch() {
                     sx={{
                       borderRadius: 4,
                       background:
-                        "linear-gradient(to right bottom, #f1f2fd, #fdf1f5)",
+                        "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                     }}
                   >
                     <CardContent>

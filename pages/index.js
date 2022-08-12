@@ -4,7 +4,7 @@ import { Button } from "@web3uikit/core";
 
 export default function Home() {
   return (
-    <div className={styles.main}>
+    <div className={styles.mainIndex}>
       <div className={styles.headerCenter}>
         <div className={styles.headerLogo}>
           <a>

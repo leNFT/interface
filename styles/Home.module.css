@@ -7,6 +7,10 @@
   padding: 2rem 0;
 }
 
+.mainIndex {
+  padding: 2rem 4rem;
+}
+
 .mainInfo {
   min-height: 75vh;
   padding: 2rem 0;
@@ -164,10 +168,12 @@
 .indexDescribe {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  padding: 2rem 8rem;
 }
 
 .indexDescribeTitle {
-  padding: 40px;
+  padding: 2rem;
   font-size: 2rem;
 }
 

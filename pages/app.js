@@ -219,7 +219,7 @@ export default function App() {
     <div className={styles.container}>
       {loans.length > 0 && (
         <div className="flex flex-col border-2 mb-8 rounded-3xl m-2 p-2 bg-black/5">
-          <div className="px-8 pt-6 pb-2">
+          <div className="p-8">
             <Typography variant="div">
               <Box
                 sx={{
@@ -283,7 +283,7 @@ export default function App() {
                           <Tooltip
                             content="Represents the relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
                             position="top"
-                            minWidth={300}
+                            minWidth={200}
                           >
                             <HelpCircle fontSize="14px" color="#000000" />
                           </Tooltip>
@@ -339,7 +339,7 @@ export default function App() {
       )}
       {(supportedAssets.length != 0 || unsupportedAssets.length != 0) && (
         <div className="flex flex-col mt-8 border-2 rounded-3xl m-2 p-2 bg-black/5">
-          <div className="px-8 pt-6 pb-2">
+          <div className="p-8">
             <div className="flex flex-row">
               <Box
                 sx={{

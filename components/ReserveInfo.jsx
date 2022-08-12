@@ -288,7 +288,7 @@ export default function ReserveInfo(props) {
                 fontWeight: "bold",
               }}
             >
-              <div class="text-black">Supply Rate @ {supplyRate / 100}%</div>
+              <div class="text-black">Supply Rate: {supplyRate / 100}%</div>
             </Box>
           </div>
           <div>
@@ -315,7 +315,7 @@ export default function ReserveInfo(props) {
                     fontSize: "body1.fontSize",
                   }}
                 >
-                  Borrow Rate @ {borrowRate / 100}%
+                  Borrow Rate: {borrowRate / 100}%
                 </Box>
               </div>
               <div className="my-2">
@@ -325,7 +325,7 @@ export default function ReserveInfo(props) {
                     fontSize: "body1.fontSize",
                   }}
                 >
-                  Underlying is{" "}
+                  Underlying:{" "}
                   {formatUnits(
                     underlyingBalance,
                     addresses[props.asset].decimals
@@ -341,7 +341,7 @@ export default function ReserveInfo(props) {
                     fontSize: "body1.fontSize",
                   }}
                 >
-                  Debt is{" "}
+                  Debt:{" "}
                   {formatUnits(debt, addresses[props.asset].decimals) +
                     " " +
                     props.asset}

@@ -473,7 +473,7 @@ export default function App() {
                           fontSize: "subtitle1.fontSize",
                         }}
                       >
-                        ...and some more
+                        ...and more unsupported NFTs
                       </Box>
                     </div>
                   ) : (

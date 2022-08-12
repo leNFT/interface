@@ -218,21 +218,34 @@ export default function App() {
 
   return (
     <div className={styles.container}>
-      {loans.length > 0 && (
-        <div className="flex flex-col border-2 mb-8 rounded-3xl m-2 p-2 bg-black/5">
+      <div className="flex flex-col border-2 mb-8 rounded-3xl m-2 p-2 bg-black/5">
+        <div className="p-8">
+          <Typography variant="div">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "h4.fontSize",
+                letterSpacing: 24,
+              }}
+            >
+              My Loans
+            </Box>
+          </Typography>
+        </div>
+        {loans.length == 0 ? (
           <div className="p-8">
             <Typography variant="div">
               <Box
                 sx={{
                   fontFamily: "Monospace",
-                  fontSize: "h4.fontSize",
-                  letterSpacing: 24,
+                  fontSize: "subtitle1.fontSize",
                 }}
               >
-                My Loans
+                You have 0 active loans.
               </Box>
             </Typography>
           </div>
+        ) : (
           <div className="flex grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {loans.map((loan, _) => (
               <div
@@ -327,8 +340,8 @@ export default function App() {
               </StyledModal>
             )}
           </div>
-        </div>
-      )}
+        )}
+      </div>
       {supportedAssets.length == 0 && unsupportedAssets.length == 0 && (
         <div className="flex mt-16 justify-center items-center">
           {loadingUI ? (

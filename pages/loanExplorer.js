@@ -18,13 +18,14 @@ import { useState, useEffect } from "react";
 import { calculateHealthLevel } from "../helpers/healthLevel";
 import {
   useNotification,
-  Card,
   Illustration,
   Loading,
   Typography,
   Button,
   Tooltip,
 } from "@web3uikit/core";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
 import { HelpCircle } from "@web3uikit/icons";
 import Image from "next/image";
 import erc20 from "../contracts/erc20.json";
@@ -238,8 +239,7 @@ export default function LoanExplorer() {
           <Autocomplete
             disablePortal
             options={collections}
-            defaultValue={collections[0]}
-            sx={{ width: 500 }}
+            sx={{ minWidth: 400 }}
             isOptionEqualToValue={(option, value) =>
               option.address === value.address
             }
@@ -281,177 +281,190 @@ export default function LoanExplorer() {
             <Loading size={16} spinnerColor="#2E7DAF" spinnerType="wave" />
           </div>
         ) : collectionLoans.length != 0 ? (
-          <div id="loanExplorerContainer" className="flex p-2">
-            {collectionLoans.map((collectionLoan) => (
-              <div key={collectionLoan.loanId} className="m-4">
-                <Card title={"Loan #" + collectionLoan.loanId}>
-                  <div className="flex flex-row justify-center p-2">
-                    {collectionLoan.tokenURI ? (
-                      <div className="flex flex-col items-center justify-center gap-2">
-                        <Image
-                          loader={() => collectionLoan.tokenURI}
-                          src={collectionLoan.tokenURI}
-                          height="140"
-                          width="140"
-                          unoptimized={true}
-                          className="rounded-2xl"
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center gap-1">
-                        <Illustration
-                          height="140px"
-                          logo="chest"
-                          width="100%"
-                        />
-                        Loading...
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex flex-row">
-                    <Typography variant="caption12">Asset ID</Typography>
-                  </div>
-                  <div className="flex flex-row  items-center">
-                    <Typography variant="caption14">
-                      {collectionLoan.tokenId}
-                    </Typography>
-                  </div>
-                  <div className="flex flex-row mt-2">
-                    <Typography variant="caption12">Debt</Typography>
-                  </div>
-                  <div className="flex flex-row  items-center">
-                    <Typography variant="caption14">
-                      {formatUnits(collectionLoan.debt, 18)} WETH
-                    </Typography>
-                  </div>
-                  <div className="flex flex-row mt-6">
-                    <div className="flex flex-col">
-                      <Typography variant="caption12">Health Level</Typography>
-                    </div>
-                    <div className="flex flex-col ml-1">
-                      <Tooltip
-                        content="Represents the relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
-                        position="top"
-                        minWidth={300}
-                      >
-                        <HelpCircle fontSize="14px" color="#000000" />
-                      </Tooltip>
-                    </div>
-                  </div>
-                  <div>
-                    <LinearProgressWithLabel
-                      color="success"
-                      value={calculateHealthLevel(
-                        collectionLoan.debt,
-                        BigNumber.from(maxCollateralization)
-                          .mul(collectionLoan.price)
-                          .div(10000)
-                          .toString()
-                      )}
-                    />
-                  </div>
-                  <div className="flex flex-row m-4 items-center justify-center">
-                    <div className="flex flex-col">
-                      {BigNumber.from(collectionLoan.price)
-                        .mul(BigNumber.from(82))
-                        .div(BigNumber.from(100))
-                        .lt(BigNumber.from(allowance)) ? (
-                        <Button
-                          disabled={isLoanLiquidatable(
-                            collectionLoan.debt,
-                            maxCollateralization,
-                            collectionLoan.price
-                          )}
-                          text="Liquidate"
-                          theme="colored"
-                          type="button"
-                          size="small"
-                          color="red"
-                          radius="5"
-                          onClick={async function () {
-                            const requestId = getNewRequestID();
-                            const priceSig = await getTokenPriceSig(
-                              requestId,
-                              collectionLoan.tokenAddress,
-                              collectionLoan.tokenId,
-                              chainId
-                            );
-                            const getLiquidateOptions = {
-                              abi: marketContract.abi,
-                              contractAddress: addresses.Market,
-                              functionName: "liquidate",
-                              params: {
-                                loanId: collectionLoan.loanId,
-                                request: requestId,
-                                packet: priceSig,
-                              },
-                            };
-                            console.log("Liquidation loan", collectionLoan);
-                            await liquidate({
-                              onError: (error) => console.log(error),
-                              onSuccess: handleLiquidateSuccess,
-                              params: getLiquidateOptions,
-                            });
-                          }}
-                        />
+          <div className="flex flex-col border-2 rounded-3xl m-2 p-2 bg-black/5">
+            <div className="flex flex-row grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {collectionLoans.map((collectionLoan) => (
+                <div
+                  key={collectionLoan.loanId}
+                  className="flex m-4 items-center justify-center"
+                >
+                  <Card
+                    sx={{
+                      borderRadius: 4,
+                      background:
+                        "linear-gradient(to right bottom, #f1f2fd, #fdf1f5)",
+                    }}
+                  >
+                    <CardContent>
+                      {collectionLoan.tokenURI ? (
+                        <div className="flex flex-col items-center">
+                          <Image
+                            loader={() => collectionLoan.tokenURI}
+                            src={collectionLoan.tokenURI}
+                            height="200"
+                            width="200"
+                            unoptimized={true}
+                            className="rounded-3xl"
+                          />
+                        </div>
                       ) : (
-                        <Button
-                          text="Approve WETH for Liquidation"
-                          theme="colored"
-                          type="button"
-                          size="small"
-                          color="red"
-                          radius="5"
-                          disabled={isLoanLiquidatable(
-                            collectionLoan.debt,
-                            maxCollateralization,
-                            collectionLoan.price
-                          )}
-                          loadingProps={{
-                            spinnerColor: "#000000",
-                          }}
-                          loadingText="Confirming Approval"
-                          onClick={async function () {
-                            const approveOptions = {
-                              abi: erc20,
-                              contractAddress: addresses["WETH"].address,
-                              functionName: "approve",
-                              params: {
-                                _spender: addresses.Market,
-                                _value: collectionLoan.price,
-                              },
-                            };
-
-                            await approve({
-                              onSuccess: handleApprovalSuccess,
-                              onError: (error) => console.log(error),
-                              params: approveOptions,
-                            });
-                          }}
-                        ></Button>
-                      )}
-                      {isLoanLiquidatable(
-                        collectionLoan.debt,
-                        maxCollateralization,
-                        collectionLoan.price
-                      ) && (
-                        <div className="flex justify-center">
-                          <Typography variant="caption14">
-                            Liquidation condtitions not met
-                          </Typography>
+                        <div className="flex flex-col items-center justify-center">
+                          <Illustration
+                            height="140px"
+                            logo="chest"
+                            width="100%"
+                          />
+                          Loading...
                         </div>
                       )}
-                    </div>
-                  </div>
-                </Card>
-              </div>
-            ))}
+                      <div className="flex flex-row mt-8">
+                        <Typography variant="caption14">Asset ID</Typography>
+                      </div>
+                      <div className="flex flex-row  items-center">
+                        <Typography variant="caption16">
+                          {collectionLoan.tokenId}
+                        </Typography>
+                      </div>
+                      <div className="flex flex-row mt-2">
+                        <Typography variant="caption14">Debt</Typography>
+                      </div>
+                      <div className="flex flex-row  items-center">
+                        <Typography variant="caption16">
+                          {formatUnits(collectionLoan.debt, 18)} WETH
+                        </Typography>
+                      </div>
+                      <div className="flex flex-row mt-6">
+                        <div className="flex flex-col">
+                          <Typography variant="caption14">
+                            Health Level
+                          </Typography>
+                        </div>
+                        <div className="flex flex-col ml-1">
+                          <Tooltip
+                            content="Represents the relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
+                            position="top"
+                            minWidth={300}
+                          >
+                            <HelpCircle fontSize="14px" color="#000000" />
+                          </Tooltip>
+                        </div>
+                      </div>
+                      <div>
+                        <LinearProgressWithLabel
+                          color="success"
+                          value={calculateHealthLevel(
+                            collectionLoan.debt,
+                            BigNumber.from(maxCollateralization)
+                              .mul(collectionLoan.price)
+                              .div(10000)
+                              .toString()
+                          )}
+                        />
+                      </div>
+                      <div className="flex flex-row m-4 items-center justify-center">
+                        <div className="flex flex-col">
+                          {BigNumber.from(collectionLoan.price)
+                            .mul(BigNumber.from(82))
+                            .div(BigNumber.from(100))
+                            .lt(BigNumber.from(allowance)) ? (
+                            <Button
+                              disabled={isLoanLiquidatable(
+                                collectionLoan.debt,
+                                maxCollateralization,
+                                collectionLoan.price
+                              )}
+                              text="Liquidate"
+                              theme="colored"
+                              type="button"
+                              size="small"
+                              color="red"
+                              radius="5"
+                              onClick={async function () {
+                                const requestId = getNewRequestID();
+                                const priceSig = await getTokenPriceSig(
+                                  requestId,
+                                  collectionLoan.tokenAddress,
+                                  collectionLoan.tokenId,
+                                  chainId
+                                );
+                                const getLiquidateOptions = {
+                                  abi: marketContract.abi,
+                                  contractAddress: addresses.Market,
+                                  functionName: "liquidate",
+                                  params: {
+                                    loanId: collectionLoan.loanId,
+                                    request: requestId,
+                                    packet: priceSig,
+                                  },
+                                };
+                                console.log("Liquidation loan", collectionLoan);
+                                await liquidate({
+                                  onError: (error) => console.log(error),
+                                  onSuccess: handleLiquidateSuccess,
+                                  params: getLiquidateOptions,
+                                });
+                              }}
+                            />
+                          ) : (
+                            <Button
+                              text="Approve WETH for Liquidation"
+                              theme="colored"
+                              type="button"
+                              size="small"
+                              color="red"
+                              radius="5"
+                              disabled={isLoanLiquidatable(
+                                collectionLoan.debt,
+                                maxCollateralization,
+                                collectionLoan.price
+                              )}
+                              loadingProps={{
+                                spinnerColor: "#000000",
+                              }}
+                              loadingText="Confirming Approval"
+                              onClick={async function () {
+                                const approveOptions = {
+                                  abi: erc20,
+                                  contractAddress: addresses["WETH"].address,
+                                  functionName: "approve",
+                                  params: {
+                                    _spender: addresses.Market,
+                                    _value: collectionLoan.price,
+                                  },
+                                };
+
+                                await approve({
+                                  onSuccess: handleApprovalSuccess,
+                                  onError: (error) => console.log(error),
+                                  params: approveOptions,
+                                });
+                              }}
+                            ></Button>
+                          )}
+                          {isLoanLiquidatable(
+                            collectionLoan.debt,
+                            maxCollateralization,
+                            collectionLoan.price
+                          ) && (
+                            <div className="flex justify-center">
+                              <Typography variant="caption14">
+                                Liquidation condtitions not met
+                              </Typography>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              ))}
+            </div>
           </div>
         ) : (
           <div className="flex mb-32 mt-16 items-center justify-center">
             {collections.length != 0 ? (
               <Typography variant="body18">
-                No active loans in this collection.
+                Please select a supported collection with active loans.
               </Typography>
             ) : (
               <Typography variant="body18">

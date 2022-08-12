@@ -13,12 +13,6 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
-#loanExplorerContainer {
-    display: grid;
-      grid-gap: 20px;
-      grid-template-columns: repeat(3, 1fr);
-}
-
 a {
   color: inherit;
   text-decoration: none;

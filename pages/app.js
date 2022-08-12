@@ -19,7 +19,6 @@ import StyledModal from "../components/StyledModal";
 import { Divider } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
 import { CardActionArea } from "@mui/material";
 
 export default function App() {
@@ -221,7 +220,7 @@ export default function App() {
           <div className="px-8 pt-6 pb-2">
             <Typography variant="h1">My Loans</Typography>
           </div>
-          <div className="flex grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="flex grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {loans.map((loan, _) => (
               <div
                 key={loan.loanId}
@@ -248,7 +247,7 @@ export default function App() {
                           height="200"
                           width="200"
                           unoptimized={true}
-                          className="rounded-2xl"
+                          className="rounded-3xl"
                         />
                       ) : (
                         <Illustration
@@ -322,7 +321,7 @@ export default function App() {
         </div>
       )}
       {(supportedAssets.length != 0 || unsupportedAssets.length != 0) && (
-        <div className="flex flex-col border-2 rounded-3xl m-2 p-2 bg-black/5">
+        <div className="flex flex-col mt-16 border-2 rounded-3xl m-2 p-2 bg-black/5">
           <div className="px-8 pt-6 pb-2">
             <div className="flex flex-row">
               <Typography variant="h1">
@@ -423,7 +422,7 @@ export default function App() {
             </div>
           )}
           {unsupportedAssets.length != 0 && (
-            <div className="flex flex-row grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 justify-items-center">
+            <div className="flex flex-row grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2">
               {unsupportedAssets.map((unsupportedAsset, index) => (
                 <div
                   key={unsupportedAsset.token_hash}

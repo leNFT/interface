@@ -4,6 +4,7 @@ import { ConnectButton } from "@web3uikit/web3";
 import { Tooltip, BannerStrip } from "@web3uikit/core";
 import { Button } from "grommet";
 import { Home, Search, Reload, Plus, LockClosed } from "@web3uikit/icons";
+import Box from "@mui/material/Box";
 
 export default function Header() {
   const { isWeb3Enabled, chainId } = useMoralis();
@@ -56,8 +57,19 @@ export default function Header() {
                 <Button
                   size="medium"
                   color="neutral-3"
-                  label="H o m e"
-                  icon={<Home fontSize="24px" color="#000000" />}
+                  label={
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "button.fontSize",
+                        fontWeight: "bold",
+                        letterSpacing: 4,
+                      }}
+                    >
+                      Home
+                    </Box>
+                  }
+                  icon={<Home fontSize="20px" color="#000000" />}
                 />
               </Link>
             </div>
@@ -66,8 +78,19 @@ export default function Header() {
                 <Button
                   size="medium"
                   color="neutral-3"
-                  label="E x p l o r e r"
-                  icon={<Search fontSize="24px" color="#000000" />}
+                  label={
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "button.fontSize",
+                        fontWeight: "bold",
+                        letterSpacing: 4,
+                      }}
+                    >
+                      Explorer
+                    </Box>
+                  }
+                  icon={<Search fontSize="20px" color="#000000" />}
                 />
               </Link>
             </div>
@@ -76,8 +99,19 @@ export default function Header() {
                 <Button
                   size="medium"
                   color="neutral-3"
-                  label="S u p p l y"
-                  icon={<Plus fontSize="18px" color="#000000" />}
+                  label={
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "button.fontSize",
+                        fontWeight: "bold",
+                        letterSpacing: 4,
+                      }}
+                    >
+                      Supply
+                    </Box>
+                  }
+                  icon={<Plus fontSize="16px" color="#000000" />}
                 />
               </Link>
             </div>
@@ -88,9 +122,20 @@ export default function Header() {
                     <Button
                       size="medium"
                       color="neutral-3"
-                      label="S t a k e"
+                      label={
+                        <Box
+                          sx={{
+                            fontFamily: "Monospace",
+                            fontSize: "button.fontSize",
+                            fontWeight: "bold",
+                            letterSpacing: 4,
+                          }}
+                        >
+                          Stake
+                        </Box>
+                      }
                       disabled={true}
-                      icon={<LockClosed fontSize="24px" color="#000000" />}
+                      icon={<LockClosed fontSize="20px" color="#000000" />}
                     />
                   </Tooltip>
                 </Link>

@@ -39,23 +39,23 @@
       "decimals": 6,
       "priceFeed": "0xb4c4a493AB6356497713A78FFA6c60FB53517c63"
     },
-    "ValidationLogicLib": "0x2Ae495820d76e0806e64261a8bE16390ED95d7f5",
-    "SupplyLogicLib": "0x66017AdB81055F762e326eBAE63266645e317396",
-    "BorrowLogicLib": "0x2aa9b7662Cc486AC967B4F23B78E6181D2891492",
-    "LiquidationLogicLib": "0x4a509F06Ec3A6B1DF06dfF0a8e1BceE12FB9ec21",
-    "AddressesProvider": "0xDF4ab4488aa77177cFf6272CA42c3568237f9369",
-    "Market": "0xb654ceEc2ef77ED6Cb614F75a2C8f0cC57079bdb",
-    "LoanCenter": "0xB723Bb2e736220b98e9A3329D801C1C34e2301F8",
-    "InterestRate": "0xd93E74C9C1F21C2a8cE1F2d4C06d9F0EAE564A96",
-    "NFTOracle": "0xD810Bd78678816Da92D1c3E07dE66E7a67cc7F5a",
-    "TokenOracle": "0xab35A66B7bBbD5176572a84F277Aa6c674d55874",
+    "ValidationLogicLib": "0x1c7F432d1c24630AEF81b3a1a9faBa3B2fF2aB10",
+    "SupplyLogicLib": "0x1FFc385f90DfA847217062A9026cf8710578abea",
+    "BorrowLogicLib": "0xFeca70f5c9d37D74cDB972B0A8FCEe2F9de1549D",
+    "LiquidationLogicLib": "0xa5A7eD6c32783cC07313a839808Ea446b9F7EA8c",
+    "AddressesProvider": "0x5d9cAEDF0D4be1F4098a95319f900Ae1653a5BDF",
+    "Market": "0x30417D67825F8804099F8A1736AA4EfB2Ccf2a24",
+    "LoanCenter": "0x486B8A71730d9cDD39f0bAbB71A0dDbc98691A17",
+    "InterestRate": "0x71664D7A725f690Bf6a8763276f1Faa58bE9a141",
+    "NFTOracle": "0xC6Fe25E17B940e131988c053f219789BD6a2f8B7",
+    "TokenOracle": "0x5052Ac56f0d3F481E6Ee7c78b74d5F9838892e72",
     "NativeTokenVault": "0xca641eE8a24478B1298221aB816d85482363fCf8",
     "NativeToken": "0x1382B34846e50E0b345D1a87d520a740CAeC5D0A",
-    "DebtToken": "0x4eBB9882075A843fE4Cbd09C1839750E97021cae",
+    "DebtToken": "0x2bff7f13eBD427d794549b5c1C6Fd7600924851f",
     "SupportedAssets": [
       {
         "name": "leNFT Testing NFT",
-        "address": "0x578F3dBa2366dc52f46305E25f3BC7bcE9229819"
+        "address": "0x0171dB1e3Cc005d2A6E0BA531509D007a5B8C1a8"
       }
     ]
   }

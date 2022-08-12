@@ -220,30 +220,26 @@ export default function App() {
     <div className={styles.container}>
       <div className="flex flex-col border-2 mb-8 rounded-3xl m-2 p-2 bg-black/5">
         <div className="p-8">
-          <Typography variant="div">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "h4.fontSize",
-                letterSpacing: 24,
-              }}
-            >
-              My Loans
-            </Box>
-          </Typography>
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "h4.fontSize",
+              letterSpacing: 24,
+            }}
+          >
+            My Loans
+          </Box>
         </div>
         {loans.length == 0 ? (
           <div className="p-8">
-            <Typography variant="div">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "subtitle1.fontSize",
-                }}
-              >
-                You have 0 active loans.
-              </Box>
-            </Typography>
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle1.fontSize",
+              }}
+            >
+              You have 0 active loans.
+            </Box>
           </div>
         ) : (
           <div className="flex grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">

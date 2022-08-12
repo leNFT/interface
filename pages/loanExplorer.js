@@ -260,7 +260,7 @@ export default function LoanExplorer() {
             )}
           />
         </div>
-        <div className="flex flex-col border-2 rounded-lg m-2 ml-8 ">
+        <div className="flex flex-col border-2 rounded-lg m-2 ml-8 p-1">
           <div className="flex flex-row">
             <div className="flex flex-col m-2">
               <div className="flex flex-row">

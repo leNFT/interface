@@ -294,6 +294,7 @@ export default function LoanExplorer() {
                           height="140"
                           width="140"
                           unoptimized={true}
+                          className="rounded-2xl"
                         />
                       </div>
                     ) : (

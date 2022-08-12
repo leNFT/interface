@@ -236,6 +236,7 @@ export default function App() {
                       height="200"
                       width="200"
                       unoptimized={true}
+                      className="rounded-2xl"
                     />
                   ) : (
                     <Illustration height="180px" logo="chest" width="100%" />
@@ -342,6 +343,7 @@ export default function App() {
                             height="200"
                             width="200"
                             unoptimized={true}
+                            className="rounded-2xl"
                           />
                         </div>
                       ) : (
@@ -419,12 +421,13 @@ export default function App() {
                               height="100"
                               width="100"
                               unoptimized={true}
+                              className="rounded-2xl"
                             />
                           </div>
                         ) : (
                           <div className="flex flex-col items-center justify-center">
                             <Typography variant="subtitle3" italic>
-                              Loading...
+                              Image Unavailable.
                             </Typography>
                           </div>
                         )}

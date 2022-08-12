@@ -194,7 +194,7 @@ export default function RepayLoan(props) {
         )}
       </div>
       <div className="flex flex-row justify-center mb-8">
-        <Typography variant="caption16">
+        <Typography variant="caption18">
           {props.token_name + " #" + props.token_id}
         </Typography>
       </div>

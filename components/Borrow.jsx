@@ -53,7 +53,6 @@ export default function Borrow(props) {
   const { runContractFunction: getApproval } = useWeb3Contract();
   const { runContractFunction: approve } = useWeb3Contract();
   const { runContractFunction: borrow } = useWeb3Contract();
-  const { runContractFunction: getTokenMaxETHCollateral } = useWeb3Contract();
   const { runContractFunction: getBorrowRate } = useWeb3Contract();
 
   const { runContractFunction: getTokenETHPrice } = useWeb3Contract({
@@ -153,32 +152,12 @@ export default function Borrow(props) {
     // Get max amount borrowable
     const tokenETHPrice = (await getTokenETHPrice()).toString();
     console.log("tokenETHPrice", tokenETHPrice);
-    // Get updated price trusted server signature from server
-    const requestID = getNewRequestID();
-    const priceSig = await getTokenPriceSig(
-      requestID,
-      props.token_address,
-      props.token_id,
-      chainId
-    );
 
-    const tokenMaxETHCollateralOptions = {
-      abi: nftOracleContract.abi,
-      contractAddress: addresses.NFTOracle,
-      functionName: "getTokenMaxETHCollateral",
-      params: {
-        collection: props.token_address,
-        tokenId: props.token_id,
-        request: requestID,
-        packet: priceSig,
-      },
-    };
-    const liquidationCollateral = await getTokenMaxETHCollateral({
-      onError: (error) => console.log(error),
-      params: tokenMaxETHCollateralOptions,
-    });
-    console.log("liquidationCollateral", liquidationCollateral.toString());
-    const maxETHCollateral = liquidationCollateral.div(2).toString();
+    const maxETHCollateral = BigNumber.from(price)
+      .mul(maxCollateralization)
+      .div(10000)
+      .div(2)
+      .toString();
     console.log("maxETHCollateral", maxETHCollateral);
     const maxCollateral = BigNumber.from(maxETHCollateral)
       .mul(tokenETHPrice)

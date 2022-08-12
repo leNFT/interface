@@ -1,4 +1,4 @@
-import { Button, Modal, Typography, Tooltip, Loading } from "@web3uikit/core";
+import { Button, Tooltip, Loading } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
 import styles from "../styles/Home.module.css";
 import StyledModal from "../components/StyledModal";

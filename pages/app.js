@@ -348,7 +348,7 @@ export default function App() {
                   letterSpacing: 24,
                 }}
               >
-                Wallet: {supportedAssets.length} assets
+                NFT Wallet ({supportedAssets.length} supported)
               </Box>
             </div>
             <div className="flex flex-row my-4">

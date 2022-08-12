@@ -366,7 +366,6 @@ export default function App() {
                     letterSpacing: 2,
                   }}
                 >
-                  {" "}
                   {"You can use " +
                     supportedAssets.length +
                     " NFTs and borrow up to " +

@@ -209,6 +209,7 @@ export default function App() {
   // Runs once
   useEffect(() => {
     if (isWeb3Enabled) {
+      setLoadingUI(true);
       console.log("Web3 Enabled, ChainId:", chainId);
       setupUI();
     }
@@ -333,7 +334,9 @@ export default function App() {
           {loadingUI ? (
             <Loading size={16} spinnerColor="#2E7DAF" spinnerType="wave" />
           ) : (
-            <Typography variant="body18">No NFT assets found :/</Typography>
+            <Typography variant="body18">
+              No NFT assets found in {account}
+            </Typography>
           )}
         </div>
       )}
@@ -407,18 +410,18 @@ export default function App() {
                             Loading...
                           </div>
                         )}
-                        <div className="flex mt-4 justify-center">
-                          <Box
-                            sx={{
-                              fontFamily: "Monospace",
-                              fontSize: "subtitle1.fontSize",
-                            }}
-                          >
-                            {supportedAsset.name +
-                              " #" +
-                              supportedAsset.token_id}
-                          </Box>
-                        </div>
+
+                        <Box
+                          sx={{
+                            fontFamily: "Monospace",
+                            fontSize: "subtitle1.fontSize",
+                          }}
+                        >
+                          <div className="flex flex-col mt-4 items-center">
+                            <div>{supportedAsset.name}</div>
+                            <div>{"# " + supportedAsset.token_id}</div>
+                          </div>
+                        </Box>
                       </CardContent>
                     </CardActionArea>
                   </Card>
@@ -501,18 +504,17 @@ export default function App() {
                               </Typography>
                             </div>
                           )}
-                          <div className="p-2 mt-4">
-                            <Box
-                              sx={{
-                                fontFamily: "Monospace",
-                                fontSize: "subtitle2.fontSize",
-                              }}
-                            >
-                              {unsupportedAsset.name +
-                                " #" +
-                                unsupportedAsset.token_id}
-                            </Box>
-                          </div>
+                          <Box
+                            sx={{
+                              fontFamily: "Monospace",
+                              fontSize: "subtitle2.fontSize",
+                            }}
+                          >
+                            <div className="flex flex-col mt-4 items-center">
+                              <div>{unsupportedAsset.name}</div>
+                              <div>{"#" + unsupportedAsset.token_id}</div>
+                            </div>
+                          </Box>
                         </CardContent>
                       </CardActionArea>
                     </Card>

@@ -454,7 +454,7 @@ export default function LoanExplorer() {
               </Typography>
             ) : (
               <Typography variant="body18">
-                leNFT doesn't support any NFT collections (yet).
+                leNFT does not support any NFT collections (yet).
               </Typography>
             )}
           </div>

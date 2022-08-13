@@ -516,9 +516,8 @@ export default function App() {
                                 <Image
                                   loader={() => unsupportedAsset.token_uri}
                                   src={unsupportedAsset.token_uri}
-                                  height="100"
-                                  width="100"
-                                  unoptimized={true}
+                                  height="120"
+                                  width="120"
                                   className="rounded-2xl"
                                 />
                               </div>

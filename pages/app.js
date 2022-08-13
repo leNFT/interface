@@ -232,7 +232,7 @@ export default function App() {
                   letterSpacing: 24,
                 }}
               >
-                <div className="text-2xl md:text-4xl">My Loans</div>
+                <div className="text-xl md:text-4xl">My Loans</div>
               </Box>
             </div>
             {loans.length == 0 ? (
@@ -352,7 +352,7 @@ export default function App() {
                     letterSpacing: 24,
                   }}
                 >
-                  <div className="text-2xl md:text-4xl">NFT Wallet</div>
+                  <div className="text-xl md:text-4xl">NFT Wallet</div>
                 </Box>
               </div>
               <div className="flex flex-row my-4">

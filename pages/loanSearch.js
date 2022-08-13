@@ -241,7 +241,7 @@ export default function LoanSearch() {
           <Autocomplete
             disablePortal
             options={collections}
-            sx={{ minWidth: 400 }}
+            sx={{ minWidth: 380 }}
             isOptionEqualToValue={(option, value) =>
               option.address === value.address
             }

@@ -310,9 +310,10 @@ export default function ReserveInfo(props) {
                 fontFamily: "Monospace",
                 fontSize: "h4.fontSize",
                 fontWeight: "bold",
+                lineHeight: 1,
               }}
             >
-              <div className="text-black">Supply Rate: {supplyRate / 100}%</div>
+              <div>Supply Rate: {supplyRate / 100}%</div>
             </Box>
           </div>
           <div>

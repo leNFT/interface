@@ -226,8 +226,8 @@ export default function ReserveInfo(props) {
           </div>
         )}
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center">
-        <div className="flex flex-col items-center p-4 rounded-3xl m-16 bg-black/5 shadow-lg">
+      <div className="flex flex-col md:flex-row items-center justify-center p-8">
+        <div className="flex flex-col items-center p-4 rounded-3xl m-8 md:m-16 bg-black/5 shadow-lg">
           <div className="flex flex-col m-4 rounded-2xl">
             <div className="flex flex-row m-2">
               <div className="flex flex-col">
@@ -303,7 +303,7 @@ export default function ReserveInfo(props) {
             </div>
           </div>
         </div>
-        <div className="flex flex-col m-16">
+        <div className="flex flex-col my-16 md:mx-16">
           <div className="mb-8">
             <Box
               sx={{

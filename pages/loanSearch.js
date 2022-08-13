@@ -236,7 +236,7 @@ export default function LoanSearch() {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-row items-center justify-center">
+      <div className="flex flex-col md:flex-row items-center justify-center">
         <div className="flex flex-col items-center justify-center">
           <Autocomplete
             disablePortal

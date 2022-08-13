@@ -31,6 +31,7 @@ import { HelpCircle } from "@web3uikit/icons";
 import Image from "next/image";
 import erc20 from "../contracts/erc20.json";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
+import { fontFamily } from "@mui/system";
 
 function isLoanLiquidatable(debt, maxCollateralization, price) {
   return BigNumber.from(debt).lt(
@@ -250,11 +251,18 @@ export default function LoanSearch() {
                 {...params}
                 label="Search NFT Collections"
                 sx={{
-                  "& label": { paddingLeft: (theme) => theme.spacing(2) },
-                  "& input": { paddingLeft: (theme) => theme.spacing(3.5) },
+                  "& label": {
+                    paddingLeft: (theme) => theme.spacing(2),
+                    fontFamily: "Monospace",
+                  },
+                  "& input": {
+                    paddingLeft: (theme) => theme.spacing(3.5),
+                    fontFamily: "Monospace",
+                  },
                   "& fieldset": {
                     paddingLeft: (theme) => theme.spacing(2.5),
                     borderRadius: "25px",
+                    fontFamily: "Monospace",
                   },
                 }}
               />

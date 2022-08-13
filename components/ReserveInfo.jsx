@@ -226,7 +226,7 @@ export default function ReserveInfo(props) {
           </div>
         )}
       </div>
-      <div className="flex items-center justify-center">
+      <div className="flex flex-col md:flex-row items-center justify-center">
         <div className="flex flex-col items-center p-4 rounded-3xl m-16 bg-black/5 shadow-lg">
           <div className="flex flex-col m-4 rounded-2xl">
             <div className="flex flex-row m-2">
@@ -273,7 +273,7 @@ export default function ReserveInfo(props) {
               <Button
                 customize={{
                   backgroundColor: "grey",
-                  fontSize: 18,
+                  fontSize: 20,
                   textColor: "white",
                 }}
                 text="Deposit"
@@ -289,7 +289,7 @@ export default function ReserveInfo(props) {
               <Button
                 customize={{
                   backgroundColor: "grey",
-                  fontSize: 18,
+                  fontSize: 20,
                   textColor: "white",
                 }}
                 text="Withdraw"

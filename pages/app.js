@@ -5,7 +5,12 @@ import { getNFTImage } from "../helpers/getNFTImage.js";
 import { formatUnits } from "@ethersproject/units";
 import { useMoralisWeb3Api, useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
-import { Tooltip, Illustration, Loading } from "@web3uikit/core";
+import {
+  useNotification,
+  Tooltip,
+  Illustration,
+  Loading,
+} from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
 import { BigNumber } from "@ethersproject/bignumber";
 import Borrow from "../components/Borrow";
@@ -34,6 +39,7 @@ export default function App() {
   const [selectedLoan, setSelectedLoan] = useState();
   const [walletMaxBorrowable, setWalletMaxBorrowable] = useState("0");
   const { isWeb3Enabled, chainId, account } = useMoralis();
+  const dispatch = useNotification();
   const addresses =
     chainId in contractAddresses
       ? contractAddresses[chainId]
@@ -215,6 +221,16 @@ export default function App() {
     }
     console.log("useEffect called");
   }, [isWeb3Enabled, account, chainId]);
+
+  const handleUnsupportedAssetClick = async function () {
+    console.log("UNSUPPORTED ASSET");
+    dispatch({
+      type: "warning",
+      message: "NFT collection is not supported by leNFT.",
+      title: "Unsupported Asset",
+      position: "topR",
+    });
+  };
 
   return (
     <div className={styles.container}>
@@ -490,7 +506,7 @@ export default function App() {
                             "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                         }}
                       >
-                        <CardActionArea>
+                        <CardActionArea onClick={handleUnsupportedAssetClick}>
                           <CardContent>
                             {unsupportedAsset.token_uri ? (
                               <div className="flex flex-col items-center">

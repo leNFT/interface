@@ -31,7 +31,7 @@ import { HelpCircle } from "@web3uikit/icons";
 import Image from "next/image";
 import erc20 from "../contracts/erc20.json";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
-import { fontFamily } from "@mui/system";
+import Divider from "@mui/material/Divider";
 
 function isLoanLiquidatable(debt, maxCollateralization, price) {
   return BigNumber.from(debt).lt(
@@ -205,14 +205,15 @@ export default function LoanSearch() {
   }, [isWeb3Enabled, account, chainId]);
 
   function handleCollectionChange(_event, value) {
-    console.log("value", value);
-    console.log("collections", collections);
     const collectionAddress = collections.find(
       (collection) => collection.label == value
     );
     if (collectionAddress) {
       setLoadingCollectionLoans(true);
       getCollectionLoans(collectionAddress.address);
+    } else {
+      setCollectionLoans([]);
+      setMaxCollateralization(0);
     }
   }
 
@@ -269,9 +270,9 @@ export default function LoanSearch() {
             )}
           />
         </div>
-        <div className="flex flex-col border-2 rounded-lg m-2 ml-8 p-1">
+        <div className="flex flex-col border-2 rounded-3xl m-2 md:ml-8 p-1">
           <div className="flex flex-row">
-            <div className="flex flex-col m-2">
+            <div className="flex flex-col m-4">
               <div className="flex flex-row">
                 <Box
                   sx={{
@@ -291,6 +292,30 @@ export default function LoanSearch() {
                   }}
                 >
                   {maxCollateralization / 100}%
+                </Box>
+              </div>
+            </div>
+            <Divider orientation="vertical" variant="middle" flexItem />
+            <div className="flex flex-col m-4">
+              <div className="flex flex-row">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Active Loans
+                </Box>
+              </div>
+              <div className="flex flex-row">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                  }}
+                >
+                  {collectionLoans.length}
                 </Box>
               </div>
             </div>

@@ -213,7 +213,7 @@ export default function LoanSearch() {
       getCollectionLoans(collectionAddress.address);
     } else {
       setCollectionLoans([]);
-      setMaxCollateralization(0);
+      setMaxCollateralization("0");
     }
   }
 

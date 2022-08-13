@@ -19,7 +19,12 @@
     "NativeTokenVault": "",
     "NativeToken": "",
     "DebtToken": "0x765F6E28Be958d579056DEAA7A25892F0c82308b",
-    "SupportedAssets": []
+    "SupportedAssets": [
+      {
+        "name": "Pudgy Penguins",
+        "address": "0xBd3531dA5CF5857e7CfAA92426877b022e612cf8"
+      }
+    ]
   },
   "0x539": {
     "Name": "hardhat",

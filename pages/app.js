@@ -364,7 +364,7 @@ export default function App() {
                     fontFamily: "Monospace",
                   }}
                 >
-                  <div className="text-sm md:text-xl">
+                  <div className="text-sm md:text-lg">
                     {"You can use " +
                       supportedAssets.length +
                       " NFTs and borrow up to " +

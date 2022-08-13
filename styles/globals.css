@@ -4,7 +4,7 @@
 
 html,
 body {
-  @apply bg-gradient-to-t from-pink-50 via-rose-50 to-indigo-50;
+  @apply bg-gradient-to-t from-rose-100 via-rose-50 to-indigo-50;
   min-height: 100vh;
   padding: 0;
   margin: 0;

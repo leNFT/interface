@@ -222,11 +222,10 @@ export default function App() {
     console.log("useEffect called");
   }, [isWeb3Enabled, account, chainId]);
 
-  const handleUnsupportedAssetClick = async function () {
-    console.log("UNSUPPORTED ASSET");
+  const handleUnsupportedAssetClick = async function (assetName) {
     dispatch({
       type: "warning",
-      message: "NFT collection is not supported by leNFT.",
+      message: assetName + " is not supported by leNFT.",
       title: "Unsupported Asset",
       position: "topR",
     });
@@ -506,7 +505,11 @@ export default function App() {
                             "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                         }}
                       >
-                        <CardActionArea onClick={handleUnsupportedAssetClick}>
+                        <CardActionArea
+                          onClick={() =>
+                            handleUnsupportedAssetClick(unsupportedAsset.name)
+                          }
+                        >
                           <CardContent>
                             {unsupportedAsset.token_uri ? (
                               <div className="flex flex-col items-center">

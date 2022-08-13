@@ -343,7 +343,6 @@ export default function App() {
               </div>
             )}
           </div>
-
           <div className="flex flex-col mt-8 rounded-3xl m-2 p-2 bg-black/5 shadow-lg">
             <div className="p-8">
               <div className="flex flex-row">
@@ -353,9 +352,7 @@ export default function App() {
                     letterSpacing: 24,
                   }}
                 >
-                  <div className="text-xl sm:text-2xl md:text-4xl">
-                    NFT Wallet
-                  </div>
+                  <div className="text-2xl md:text-4xl">NFT Wallet</div>
                 </Box>
               </div>
               <div className="flex flex-row my-4">
@@ -426,7 +423,7 @@ export default function App() {
                               fontSize: "subtitle1.fontSize",
                             }}
                           >
-                            <div className="flex flex-col mt-4 items-center">
+                            <div className="flex flex-col mt-4 items-center text-center">
                               <div>{supportedAsset.name}</div>
                               <div>{"# " + supportedAsset.token_id}</div>
                             </div>
@@ -519,7 +516,7 @@ export default function App() {
                                 fontSize: "subtitle2.fontSize",
                               }}
                             >
-                              <div className="flex flex-col mt-4 items-center">
+                              <div className="flex flex-col mt-4 items-center text-center">
                                 <div>{unsupportedAsset.name}</div>
                                 <div>{"#" + unsupportedAsset.token_id}</div>
                               </div>

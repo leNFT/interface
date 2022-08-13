@@ -229,11 +229,10 @@ export default function App() {
               <Box
                 sx={{
                   fontFamily: "Monospace",
-                  fontSize: "h4.fontSize",
                   letterSpacing: 24,
                 }}
               >
-                My Loans
+                <div className="text-2xl md:text-4xl">My Loans</div>
               </Box>
             </div>
             {loans.length == 0 ? (
@@ -351,29 +350,30 @@ export default function App() {
                 <Box
                   sx={{
                     fontFamily: "Monospace",
-                    fontSize: "h4.fontSize",
                     letterSpacing: 24,
                   }}
                 >
-                  NFT Wallet
+                  <div className="text-sm sm:text-xl md:text-4xl">
+                    NFT Wallet
+                  </div>
                 </Box>
               </div>
               <div className="flex flex-row my-4">
                 <Box
                   sx={{
                     fontFamily: "Monospace",
-                    fontSize: "body1.fontSize",
-                    letterSpacing: 2,
                   }}
                 >
-                  {"You can use " +
-                    supportedAssets.length +
-                    " NFTs and borrow up to " +
-                    formatUnits(
-                      BigNumber.from(walletMaxBorrowable).div(2),
-                      18
-                    ) +
-                    " WETH"}
+                  <div className="text-sm md:text-xl">
+                    {"You can use " +
+                      supportedAssets.length +
+                      " NFTs and borrow up to " +
+                      formatUnits(
+                        BigNumber.from(walletMaxBorrowable).div(2),
+                        18
+                      ) +
+                      " WETH"}
+                  </div>
                 </Box>
               </div>
             </div>

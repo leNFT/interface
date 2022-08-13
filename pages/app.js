@@ -353,7 +353,7 @@ export default function App() {
                     letterSpacing: 24,
                   }}
                 >
-                  <div className="text-sm sm:text-xl md:text-4xl">
+                  <div className="text-xl sm:text-2xl md:text-4xl">
                     NFT Wallet
                   </div>
                 </Box>

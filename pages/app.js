@@ -188,8 +188,8 @@ export default function App() {
         // Add asset to supported assets
         updatedSupportedAssets.push(userNFTs[i]);
       } else {
-        // Get max 9 unsupported assets
-        if (updatedUnsupportedAssets.length < 9) {
+        // Get max 5 unsupported assets
+        if (updatedUnsupportedAssets.length < 5) {
           //Replace token URI
           userNFTs[i].token_uri = await getNFTImage(
             userNFTs[i].token_address,
@@ -486,7 +486,7 @@ export default function App() {
                     key={unsupportedAsset.token_hash}
                     className="flex m-4 items-center justify-center max-w-[220px]"
                   >
-                    {index == 8 && unsupportedAssets.length == 9 ? (
+                    {index == 4 && unsupportedAssets.length == 5 ? (
                       <div className="flex items-center p-6">
                         <Box
                           sx={{

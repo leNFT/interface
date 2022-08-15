@@ -10,7 +10,7 @@ const StyledModal = styled(Modal)`
 
   span,
   h2 {
-    font-family: Monospace !important;
+    font-family: Monospace;
   }
 `;
 

@@ -149,6 +149,7 @@
   -webkit-box-align: center;
   align-items: center;
   margin-left: 50px;
+  font-family: monospace;
 }
 
 .nav li {
@@ -169,6 +170,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  font-family: monospace;
   padding: 2rem 8rem;
 }
 

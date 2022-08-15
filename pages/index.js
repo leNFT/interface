@@ -1,6 +1,7 @@
 import styles from "../styles/Home.module.css";
 import Link from "next/link";
-import { Button } from "@web3uikit/core";
+import { Button } from "grommet";
+import Box from "@mui/material/Box";
 
 export default function Home() {
   return (
@@ -53,7 +54,23 @@ export default function Home() {
             <li>
               <Link href="/app">
                 <a>
-                  <Button color="blue" theme="colored" text="Launch App" />
+                  <Button
+                    primary
+                    size="medium"
+                    color="#eae5ea"
+                    label={
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle2.fontSize",
+                          fontWeight: "bold",
+                          letterSpacing: 4,
+                        }}
+                      >
+                        Launch App
+                      </Box>
+                    }
+                  />
                 </a>
               </Link>
             </li>

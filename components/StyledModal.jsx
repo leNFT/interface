@@ -7,6 +7,11 @@ const StyledModal = styled(Modal)`
     rgba(230, 242, 245, 0.95),
     rgba(253, 241, 233, 0.95)
   );
+
+  span,
+  h2 {
+    font-family: Monospace !important;
+  }
 `;
 
 export default StyledModal;

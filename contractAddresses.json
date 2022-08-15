@@ -14,7 +14,7 @@
     "Market": "0x44Cc19a97039C08BadA059fB2985dF936d876BB4",
     "LoanCenter": "0xB0a569Ae5cE17b0cD2402100b0626e95aC5db828",
     "InterestRate": "0xc8DD4046379B03caAC9ffA74b3c748D1bfddf13e",
-    "NFTOracle": "0x3d6cBFf88a752336427805cfaD95788265beB0E9",
+    "NFTOracle": "0x1201774090d15e6872c26D6a0941d7Ca1d35c051",
     "TokenOracle": "0xebfa34f6Da8CAb51cFaF535E271Cf0AC6CE2ef5f",
     "NativeTokenVault": "",
     "NativeToken": "",

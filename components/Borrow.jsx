@@ -205,6 +205,7 @@ export default function Borrow(props) {
 
   const handleApprovalSuccess = async function () {
     setApproved(true);
+    setApprovalLoading(false);
     dispatch({
       type: "success",
       message: "Please wait for tx confirmation to borrow.",
@@ -430,7 +431,6 @@ export default function Borrow(props) {
               };
 
               await approve({
-                onComplete: setApprovalLoading(false),
                 onSuccess: handleApprovalSuccess,
                 onError: (error) => console.log(error),
                 params: approveOptions,

@@ -127,6 +127,7 @@ export default function Deposit(props) {
 
   const handleApprovalSuccess = async function () {
     setApproved(true);
+    setApprovalLoading(false);
     dispatch({
       type: "success",
       message: "Please wait for transaction confirmation.",
@@ -255,7 +256,6 @@ export default function Deposit(props) {
               };
 
               await approve({
-                onComplete: () => setApprovalLoading(false),
                 onSuccess: handleApprovalSuccess,
                 onError: (error) => console.log(error),
                 params: approveOptions,

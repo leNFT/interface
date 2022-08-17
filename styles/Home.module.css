@@ -199,6 +199,16 @@
   .nav li {
     margin-left: 20px;
   }
+  .indexDescribe {
+    padding: 1rem 4rem;
+  }
+  .indexDescribeTitle {
+    padding: 1rem;
+  }
+  .indexDescribeSubtitle {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
 }
 
 @media (max-width: 600px) {

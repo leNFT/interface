@@ -18,7 +18,7 @@
   height: 100%;
   min-height: 100vh;
   padding: 2rem 4rem;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.7);
 }
 
 .mainInfo {
@@ -186,13 +186,13 @@
 
 .indexDescribeTitle {
   padding: 2rem;
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: 1000;
 }
 
 .indexDescribeSubtitle {
   padding: 60px;
-  font-weight: 600;
+  font-weight: 800;
   font-size: 1.5rem;
 }
 @media (max-width: 1080px) {

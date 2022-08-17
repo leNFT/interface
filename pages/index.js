@@ -89,7 +89,7 @@ export default function Home() {
             </div>
             <div className={styles.indexDescribeSubtitle}>
               <li>Borrow money using your NFTs</li>
-              <li>Gain interest on your ETH</li>
+              <li>Earn interest on your ETH</li>
             </div>
             <div className={styles.indexDescribeSubtitle}>
               <Link href="https://lenft.gitbook.io/lenft-docs/readme/supported-collections">

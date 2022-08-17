@@ -85,7 +85,7 @@ export default function Home() {
         <div className={styles.main}>
           <div className={styles.indexDescribe}>
             <div className={styles.indexDescribeTitle}>
-              leNFT is a Peer-To-Pool NFT Liquidity Protocol
+              leNFT is all about NFT-backed loans.
             </div>
             <div className={styles.indexDescribeSubtitle}>
               <li>Borrow money using your NFTs</li>

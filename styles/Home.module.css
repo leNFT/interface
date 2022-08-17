@@ -9,7 +9,7 @@
 
 .mainIndex {
   background-image: url("/paris-pixelated-bg.png");
-  background-size: auto;
+  background-size: cover;
 }
 
 .opac {

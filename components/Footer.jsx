@@ -36,9 +36,12 @@ export default function Footer() {
         href="https://lenft.gitbook.io/lenft-docs/readme/supported-collections"
         target="_blank"
         rel="noopener noreferrer"
-        className="font-extrabold text-lg"
+        className="font-bold text-sm"
       >
-        Supported Collections
+        <div>
+          <div>Supported</div>
+          <div>Collections</div>
+        </div>
       </a>
     </footer>
   );

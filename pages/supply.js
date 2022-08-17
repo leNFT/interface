@@ -25,21 +25,6 @@ export default function Supply() {
         >
           <ReserveDetails asset={"WETH"} />
         </Tab>
-        <Tab
-          lineHeight={0}
-          isDisabled
-          tabKey={2}
-          tabName={
-            <div className="flex flex-row items-center">
-              <div className="flex flex-col">
-                <Usdc fontSize="32px" color="#000000" />
-              </div>
-              <div className="flex flex-col mx-2">U S D C</div>
-            </div>
-          }
-        >
-          <ReserveDetails asset={"USDC"} />
-        </Tab>
       </TabList>
     </div>
   );

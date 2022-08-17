@@ -262,12 +262,6 @@ export default function Borrow(props) {
             tabKey={0}
             tabName={<Eth fontSize="32px" color="#000000" />}
           ></Tab>
-          <Tab
-            isDisabled
-            lineHeight={0}
-            tabKey={1}
-            tabName={<Usdc fontSize="32px" color="#000000" />}
-          ></Tab>
         </TabList>
       </div>
       <div className="flex flex-row m-2">

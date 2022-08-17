@@ -182,12 +182,39 @@
 .indexDescribeSubtitle {
   padding: 60px;
   font-size: 1.5rem;
-
 }
 
 @media (max-width: 600px) {
   .grid {
     width: 100%;
     flex-direction: column;
+  }
+
+  .nav {
+    flex-direction: column;
+    margin-left: 0px;
+  }
+
+  .headerLogo {
+    display: none;
+  }
+
+  .nav li {
+    margin: 10px;
+  }
+
+  .indexDescribe {
+    padding: 0;
+  }
+
+  .indexDescribeTitle {
+    font-size: x-large;
+    padding: 0;
+  }
+
+  .indexDescribeSubtitle {
+    padding: 0;
+    margin-top: 64px;
+    font-size: large;
   }
 }

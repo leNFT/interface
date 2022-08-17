@@ -94,7 +94,7 @@ export default function Home() {
             <div className={styles.indexDescribeSubtitle}>
               <Link href="https://lenft.gitbook.io/lenft-docs/readme/supported-collections">
                 <a target="_blank" className="text-sky-600">
-                  Supported Collections
+                  Supported NFT Collections
                 </a>
               </Link>
             </div>

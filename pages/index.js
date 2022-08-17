@@ -55,7 +55,7 @@ export default function Home() {
                   Docs
                 </a>
               </li>
-              <li>
+              <li className="px-8">
                 <Link href="/app">
                   <a>
                     <Button

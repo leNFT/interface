@@ -87,6 +87,13 @@ export default function Home() {
             <li>Borrow money using your NFTs</li>
             <li>Gain interest on your ETH</li>
           </div>
+          <div className={styles.indexDescribeSubtitle}>
+            <Link href="https://lenft.gitbook.io/lenft-docs/readme/supported-collections">
+              <a target="_blank" className="text-sky-600">
+                Supported Collections
+              </a>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

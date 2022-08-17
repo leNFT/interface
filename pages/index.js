@@ -61,7 +61,7 @@ export default function Home() {
                     <Button
                       primary
                       size="medium"
-                      color="silver"
+                      color="black"
                       label={
                         <Box
                           sx={{

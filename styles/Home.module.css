@@ -195,6 +195,11 @@
   font-weight: 600;
   font-size: 1.5rem;
 }
+@media (max-width: 1080px) {
+  .nav li {
+    margin-left: 20px;
+  }
+}
 
 @media (max-width: 600px) {
   .grid {

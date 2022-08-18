@@ -270,7 +270,7 @@ export default function LoanSearch() {
             )}
           />
         </div>
-        <div className="flex flex-col border-2 rounded-3xl m-2 md:ml-8 p-1">
+        <div className="flex flex-col border-2 rounded-3xl my-8 md:my-0 md:ml-8 p-1">
           <div className="flex flex-row">
             <div className="flex flex-col m-4">
               <div className="flex flex-row">

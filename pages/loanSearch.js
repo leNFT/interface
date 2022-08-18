@@ -241,6 +241,12 @@ export default function LoanSearch() {
         <div className="flex flex-col items-center justify-center">
           <Autocomplete
             disablePortal
+            ListboxProps={{
+              style: {
+                backgroundColor: "rgb(253, 241, 244)",
+                fontFamily: "Monospace",
+              },
+            }}
             options={collections}
             sx={{ minWidth: 380 }}
             isOptionEqualToValue={(option, value) =>

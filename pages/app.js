@@ -370,7 +370,7 @@ export default function App() {
                   <div className="text-xl md:text-4xl">NFT Wallet</div>
                 </Box>
               </div>
-              <div className="flex flex-row my-4">
+              <div className="flex mb-0 flex-row my-4">
                 <Box
                   sx={{
                     fontFamily: "Monospace",

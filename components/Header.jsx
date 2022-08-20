@@ -31,7 +31,7 @@ export default function Header() {
         </div>
       )}
       <div className="p-4 mb-2 border-b-2 flex flex-col md:flex-row justify-between items-center">
-        <div className="flex flex-col items-center justify-content lg:pr-20">
+        <div className="hidden lg:flex flex-col items-center justify-content lg:pr-20">
           <Link href="/">
             <a target="_blank" rel="noopener noreferrer">
               <div className="mx-5 mt-2 flex flex-row items-center">
@@ -76,18 +76,24 @@ export default function Header() {
                   size="medium"
                   color="#eae5ea"
                   label={
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "subtitle2.fontSize",
-                        fontWeight: "bold",
-                        letterSpacing: 4,
-                      }}
-                    >
-                      Home
-                    </Box>
+                    <div className="flex md:hidden lg:flex">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle2.fontSize",
+                          fontWeight: "bold",
+                          letterSpacing: 4,
+                        }}
+                      >
+                        Home
+                      </Box>
+                    </div>
                   }
-                  icon={<Home fontSize="20px" color="#000000" />}
+                  icon={
+                    <div className="pl-[10px]">
+                      <Home fontSize="20px" color="#000000" />
+                    </div>
+                  }
                 />
               </Link>
             </div>
@@ -98,18 +104,24 @@ export default function Header() {
                   size="medium"
                   color="#eae5ea"
                   label={
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "subtitle2.fontSize",
-                        fontWeight: "bold",
-                        letterSpacing: 4,
-                      }}
-                    >
-                      Loan Search
-                    </Box>
+                    <div className="flex md:hidden lg:flex">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle2.fontSize",
+                          fontWeight: "bold",
+                          letterSpacing: 4,
+                        }}
+                      >
+                        Loan Search
+                      </Box>
+                    </div>
                   }
-                  icon={<Search fontSize="20px" color="#000000" />}
+                  icon={
+                    <div className="pl-[10px]">
+                      <Search fontSize="20px" color="#000000" />
+                    </div>
+                  }
                 />
               </Link>
             </div>
@@ -120,18 +132,24 @@ export default function Header() {
                   size="medium"
                   color="#eae5ea"
                   label={
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "subtitle2.fontSize",
-                        fontWeight: "bold",
-                        letterSpacing: 4,
-                      }}
-                    >
-                      Supply
-                    </Box>
+                    <div className="flex md:hidden lg:flex">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle2.fontSize",
+                          fontWeight: "bold",
+                          letterSpacing: 4,
+                        }}
+                      >
+                        Supply
+                      </Box>
+                    </div>
                   }
-                  icon={<Plus fontSize="16px" color="#000000" />}
+                  icon={
+                    <div className="pl-[10px]">
+                      <Plus fontSize="16px" color="#000000" />
+                    </div>
+                  }
                 />
               </Link>
             </div>
@@ -144,19 +162,25 @@ export default function Header() {
                       size="medium"
                       color="#eae5ea"
                       label={
-                        <Box
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "subtitle2.fontSize",
-                            fontWeight: "bold",
-                            letterSpacing: 4,
-                          }}
-                        >
-                          Stake
-                        </Box>
+                        <div className="flex md:hidden lg:flex">
+                          <Box
+                            sx={{
+                              fontFamily: "Monospace",
+                              fontSize: "subtitle2.fontSize",
+                              fontWeight: "bold",
+                              letterSpacing: 4,
+                            }}
+                          >
+                            Stake
+                          </Box>
+                        </div>
                       }
                       disabled={true}
-                      icon={<LockClosed fontSize="20px" color="#000000" />}
+                      icon={
+                        <div className="pl-[10px]">
+                          <LockClosed fontSize="20px" color="#000000" />
+                        </div>
+                      }
                     />
                   </Tooltip>
                 </Link>

@@ -317,10 +317,12 @@ export default function Borrow(props) {
             </div>
           ) : (
             <Typography variant="body16">
-              {formatUnits(tokenPrice, 18) +
-                " WETH @ " +
-                tokenMaxCollateralization / 100 +
-                "% Max LTV"}
+              {tokenPrice != "0"
+                ? formatUnits(tokenPrice, 18) +
+                  " WETH @ " +
+                  tokenMaxCollateralization / 100 +
+                  "% Max LTV"
+                : "Token Price Appraisal Error"}
             </Typography>
           )}
         </div>

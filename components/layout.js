@@ -2,12 +2,13 @@ import Header from "./Header";
 import Footer from "./Footer";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
-import { useMoralis } from "react-moralis";
 import { Typography } from "@web3uikit/core";
+import { useAccount, useNetwork } from "wagmi";
 
 export default function Layout({ children }) {
-  const { isWeb3Enabled, chainId } = useMoralis();
-  const supportedChains = ["0x1", "0x5"];
+  const { isConnected } = useAccount();
+  const { chain } = useNetwork();
+  const supportedChains = [1, 5];
 
   return (
     <>
@@ -18,8 +19,8 @@ export default function Layout({ children }) {
       </Head>
       <Header />
       <main>
-        {isWeb3Enabled ? (
-          supportedChains.includes(chainId) ? (
+        {isConnected ? (
+          supportedChains.includes(chain.id) ? (
             <div className={styles.container}>
               <div className={styles.main}>{children}</div>
             </div>

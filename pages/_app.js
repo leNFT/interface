@@ -3,26 +3,57 @@ import Layout from "../components/layout";
 import SplashLayout from "../components/splashLayout";
 import { useRouter } from "next/router";
 import React from "react";
-import { MoralisProvider } from "react-moralis";
 import { NotificationProvider } from "@web3uikit/core";
+import "@rainbow-me/rainbowkit/styles.css";
+import {
+  getDefaultWallets,
+  RainbowKitProvider,
+  lightTheme,
+} from "@rainbow-me/rainbowkit";
+import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
+import { publicProvider } from "wagmi/providers/public";
+import { alchemyProvider } from "wagmi/providers/alchemy";
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
   const isIndex = router.pathname == "/";
   console.log("path", router.pathname);
   const LayoutComponent = isIndex ? SplashLayout : Layout;
+  const { chains, provider } = configureChains(
+    [chain.mainnet, chain.goerli],
+    [publicProvider(), alchemyProvider({ apiKey: process.env.ALCHEMY_API_KEY })]
+  );
+
+  const { connectors } = getDefaultWallets({
+    appName: "leNFT App",
+    chains,
+  });
+
+  const wagmiClient = createClient({
+    autoConnect: true,
+    connectors,
+    provider,
+  });
 
   return (
-    <MoralisProvider
-      serverUrl="https://mrmnjfhprkn8.usemoralis.com:2053/server"
-      appId="SHMhOUhuFQ7rN4QvfItwiFG3qwaz4TEHz4hE78eP"
-    >
-      <NotificationProvider>
-        <LayoutComponent>
-          <Component {...pageProps} />
-        </LayoutComponent>
-      </NotificationProvider>
-    </MoralisProvider>
+    <NotificationProvider>
+      <WagmiConfig client={wagmiClient}>
+        <RainbowKitProvider
+          chains={chains}
+          theme={lightTheme({
+            accentColor: "#7b3fe4",
+            accentColorForeground: "white",
+            borderRadius: "large",
+            fontStack: "system",
+            overlayBlur: "small",
+          })}
+        >
+          <LayoutComponent>
+            <Component {...pageProps} />
+          </LayoutComponent>
+        </RainbowKitProvider>
+      </WagmiConfig>
+    </NotificationProvider>
   );
 }
 

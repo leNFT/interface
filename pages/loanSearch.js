@@ -1,10 +1,11 @@
 import styles from "../styles/Home.module.css";
-import { getTokenPrice } from "../helpers/getTokenPrice.js";
+import { getAssetPrice } from "../helpers/getAssetPrice.js";
 import { getNFTImage } from "../helpers/getNFTImage.js";
+import { getNFTs } from "../helpers/getNFTs.js";
 import {
   getNewRequestID,
-  getTokenPriceSig,
-} from "../helpers/getTokenPriceSig.js";
+  getAssetPriceSig,
+} from "../helpers/getAssetPriceSig.js";
 import contractAddresses from "../contractAddresses.json";
 import { formatUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
@@ -13,8 +14,8 @@ import TextField from "@mui/material/TextField";
 import loanCenterContract from "../contracts/LoanCenter.json";
 import marketContract from "../contracts/Market.json";
 import nftOracleContract from "../contracts/NFTOracle.json";
-import { useMoralisWeb3Api, useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
+import { useAccount, useNetwork } from "wagmi";
 import { calculateHealthLevel } from "../helpers/healthLevel";
 import {
   useNotification,
@@ -32,6 +33,7 @@ import Image from "next/image";
 import erc20 from "../contracts/erc20.json";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 import Divider from "@mui/material/Divider";
+import { useContract, useProvider, useSigner } from "wagmi";
 
 function isLoanLiquidatable(debt, maxCollateralization, price) {
   return BigNumber.from(debt).lt(
@@ -44,22 +46,46 @@ export default function LoanSearch() {
   const [allowance, setAllowance] = useState("0");
   const [maxCollateralization, setMaxCollateralization] = useState("0");
   const [loadingCollectionLoans, setLoadingCollectionLoans] = useState(true);
-  const { isWeb3Enabled, chainId, account } = useMoralis();
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
+  const provider = useProvider();
+  const { data: signer } = useSigner();
   const dispatch = useNotification();
   const addresses =
-    chainId in contractAddresses
-      ? contractAddresses[chainId]
-      : contractAddresses["0x1"];
+    chain && chain.id in contractAddresses
+      ? contractAddresses[chain.id]
+      : contractAddresses["1"];
   const [collections, setCollections] = useState([]);
-  const Web3Api = useMoralisWeb3Api();
 
-  const { runContractFunction: getLoanDebt } = useWeb3Contract();
-  const { runContractFunction: getNFTLoanId } = useWeb3Contract();
-  const { runContractFunction: getCollectionMaxCollateralization } =
-    useWeb3Contract();
-  const { runContractFunction: liquidate } = useWeb3Contract();
-  const { runContractFunction: getAllowance } = useWeb3Contract();
-  const { runContractFunction: approve } = useWeb3Contract();
+  const loanCenter = useContract({
+    contractInterface: loanCenterContract.abi,
+    addressOrName: addresses.LoanCenter,
+    signerOrProvider: provider,
+  });
+
+  const nftOracle = useContract({
+    contractInterface: nftOracleContract.abi,
+    addressOrName: addresses.NFTOracle,
+    signerOrProvider: provider,
+  });
+
+  const marketSigner = useContract({
+    contractInterface: marketContract.abi,
+    addressOrName: addresses.Market,
+    signerOrProvider: signer,
+  });
+
+  const wethSigner = useContract({
+    contractInterface: erc20,
+    addressOrName: addresses["WETH"].address,
+    signerOrProvider: signer,
+  });
+
+  const wethProvider = useContract({
+    contractInterface: erc20,
+    addressOrName: addresses["WETH"].address,
+    signerOrProvider: provider,
+  });
 
   // Get active loans for the selected collection
   async function getCollectionLoans(selectedCollection) {
@@ -68,67 +94,31 @@ export default function LoanSearch() {
     var updatedCollectionLoans = [];
 
     //Get the max collaterization for the collection
-    const getMaxCollateralizationOptions = {
-      abi: nftOracleContract.abi,
-      contractAddress: addresses.NFTOracle,
-      functionName: "getCollectionMaxCollaterization",
-      params: {
-        collection: selectedCollection,
-      },
-    };
-    const updatedMaxCollateralization = await getCollectionMaxCollateralization(
-      {
-        onError: (error) => console.log(error),
-        params: getMaxCollateralizationOptions,
-      }
-    );
+    const updatedMaxCollateralization =
+      await nftOracle.getCollectionMaxCollaterization(selectedCollection);
     setMaxCollateralization(updatedMaxCollateralization.toString());
     console.log("maxCollateralization", updatedMaxCollateralization.toString());
 
     // Get the token ids for the selected collection
-    const options = {
-      chain: chainId,
-      address: addresses.LoanCenter,
-      token_address: selectedCollection,
-      limit: 10,
-    };
-    const collectionNFTsResponse = await Web3Api.account.getNFTsForContract(
-      options
+    const collectionNFTsResponse = await getNFTs(
+      address,
+      selectedCollection,
+      chain.id
     );
     collectionNFTs = collectionNFTsResponse.result;
 
     for (let i = 0; i < collectionNFTs.length; i++) {
       // Get the loan ID of each NFT
-      const getLoanIdOptions = {
-        abi: loanCenterContract.abi,
-        contractAddress: addresses.LoanCenter,
-        functionName: "getNFTLoanId",
-        params: {
-          nftAddress: collectionNFTs[i].token_address,
-          nftTokenID: collectionNFTs[i].token_id,
-        },
-      };
-      const loanId = await getNFTLoanId({
-        onError: (error) => console.log(error),
-        params: getLoanIdOptions,
-      });
+      const loanId = await loanCenter.getNFTLoanId(
+        collectionNFTs[i].token_address,
+        collectionNFTs[i].token_id
+      );
 
-      const getLoanDebtOptions = {
-        abi: loanCenterContract.abi,
-        contractAddress: addresses.LoanCenter,
-        functionName: "getLoanDebt",
-        params: {
-          loanId: loanId,
-        },
-      };
-      const debt = await getLoanDebt({
-        onError: (error) => console.log(error),
-        params: getLoanDebtOptions,
-      });
+      const debt = await loanCenter.getLoanDebt(loanId);
 
-      const tokenPrice = await getTokenPrice(
+      const tokenPrice = await getAssetPrice(
         // Get checksumed token adress
-        contractAddresses[chainId].SupportedAssets.find(
+        contractAddresses[chain.id].SupportedAssets.find(
           (collection) =>
             collection.address.toLowerCase() == collectionNFTs[i].token_address
         ).address,
@@ -139,7 +129,7 @@ export default function LoanSearch() {
       const tokenURI = await getNFTImage(
         collectionNFTs[i].token_address,
         collectionNFTs[i].token_id,
-        chainId
+        chain.id
       );
 
       // Add new loan to update array
@@ -158,20 +148,7 @@ export default function LoanSearch() {
   }
 
   async function getWETHAllowance() {
-    const getAllowanceOptions = {
-      abi: erc20,
-      contractAddress: addresses["WETH"].address,
-      functionName: "allowance",
-      params: {
-        _owner: account,
-        _spender: addresses.Market,
-      },
-    };
-
-    const allowance = await getAllowance({
-      onError: (error) => console.log(error),
-      params: getAllowanceOptions,
-    });
+    const allowance = await wethProvider.allowance(address, addresses.Market);
 
     console.log("Got allowance:", allowance);
 
@@ -180,7 +157,7 @@ export default function LoanSearch() {
 
   // Runs once
   useEffect(() => {
-    if (isWeb3Enabled) {
+    if (isConnected) {
       getWETHAllowance();
       //Fill the collections with the supported assets
       var updatedCollections = [];
@@ -202,7 +179,7 @@ export default function LoanSearch() {
         setLoadingCollectionLoans(false);
       }
     }
-  }, [isWeb3Enabled, account, chainId]);
+  }, [isConnected, address, chain]);
 
   function handleCollectionChange(_event, value) {
     const collectionAddress = collections.find(
@@ -337,10 +314,7 @@ export default function LoanSearch() {
           <div className="flex flex-col rounded-3xl m-2 p-2 bg-black/5 shadow-lg">
             <div className="flex flex-row grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {collectionLoans.map((collectionLoan) => (
-                <div
-                  key={collectionLoan.loanId}
-                  className="flex m-4 items-center justify-center"
-                >
+                <div className="flex m-4 items-center justify-center">
                   <Card
                     sx={{
                       borderRadius: 4,
@@ -434,28 +408,23 @@ export default function LoanSearch() {
                               radius="5"
                               onClick={async function () {
                                 const requestId = getNewRequestID();
-                                const priceSig = await getTokenPriceSig(
+                                const priceSig = await getAssetPriceSig(
                                   requestId,
                                   collectionLoan.tokenAddress,
                                   collectionLoan.tokenId,
-                                  chainId
+                                  chain.id
                                 );
-                                const getLiquidateOptions = {
-                                  abi: marketContract.abi,
-                                  contractAddress: addresses.Market,
-                                  functionName: "liquidate",
-                                  params: {
-                                    loanId: collectionLoan.loanId,
-                                    request: requestId,
-                                    packet: priceSig,
-                                  },
-                                };
                                 console.log("Liquidation loan", collectionLoan);
-                                await liquidate({
-                                  onError: (error) => console.log(error),
-                                  onSuccess: handleLiquidateSuccess,
-                                  params: getLiquidateOptions,
-                                });
+                                try {
+                                  await marketSigner.liquidate(
+                                    collectionLoan.loanId,
+                                    requestId,
+                                    priceSig
+                                  );
+                                  handleLiquidateSuccess();
+                                } catch (error) {
+                                  console.log(error);
+                                }
                               }}
                             />
                           ) : (
@@ -476,21 +445,15 @@ export default function LoanSearch() {
                               }}
                               loadingText="Confirming Approval"
                               onClick={async function () {
-                                const approveOptions = {
-                                  abi: erc20,
-                                  contractAddress: addresses["WETH"].address,
-                                  functionName: "approve",
-                                  params: {
-                                    _spender: addresses.Market,
-                                    _value: collectionLoan.price,
-                                  },
-                                };
-
-                                await approve({
-                                  onSuccess: handleApprovalSuccess,
-                                  onError: (error) => console.log(error),
-                                  params: approveOptions,
-                                });
+                                try {
+                                  await wethSigner.approve(
+                                    addresses.Market,
+                                    collectionLoan.price
+                                  );
+                                  handleApprovalSuccess;
+                                } catch (error) {
+                                  console.log(error);
+                                }
                               }}
                             ></Button>
                           )}

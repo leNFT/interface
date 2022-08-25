@@ -1,9 +1,9 @@
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
-import { getTokenPrice } from "../helpers/getTokenPrice.js";
+import { getAssetPrice } from "../helpers/getAssetPrice.js";
 import { getNFTImage } from "../helpers/getNFTImage.js";
+import { getNFTs } from "../helpers/getNFTs.js";
 import { formatUnits } from "@ethersproject/units";
-import { useMoralisWeb3Api, useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
 import {
   useNotification,
@@ -18,7 +18,7 @@ import RepayLoan from "../components/RepayLoan";
 import Image from "next/image";
 import nftOracleContract from "../contracts/NFTOracle.json";
 import loanCenterContract from "../contracts/LoanCenter.json";
-import { calculateHealthLevel } from "../helpers/healthLevel";
+import { calculateHealthLevel } from "../helpers/healthLevel.js";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 import StyledModal from "../components/StyledModal";
 import { Divider } from "@mui/material";
@@ -27,6 +27,7 @@ import CardContent from "@mui/material/CardContent";
 import { CardActionArea } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 
 export default function App() {
   const [loadingUI, setLoadingUI] = useState(true);
@@ -38,88 +39,70 @@ export default function App() {
   const [selectedAsset, setSelectedAsset] = useState();
   const [selectedLoan, setSelectedLoan] = useState();
   const [walletMaxBorrowable, setWalletMaxBorrowable] = useState("0");
-  const { isWeb3Enabled, chainId, account } = useMoralis();
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
+
+  const provider = useProvider();
   const dispatch = useNotification();
   const addresses =
-    chainId in contractAddresses
-      ? contractAddresses[chainId]
-      : contractAddresses["0x1"];
-  const Web3Api = useMoralisWeb3Api();
+    chain && chain.id in contractAddresses
+      ? contractAddresses[chain.id]
+      : contractAddresses["1"];
 
-  const { runContractFunction: getLoanDebt } = useWeb3Contract();
-  const { runContractFunction: getLoan } = useWeb3Contract();
-  const { runContractFunction: getCollectionMaxCollateralization } =
-    useWeb3Contract();
+  const loanCenter = useContract({
+    contractInterface: loanCenterContract.abi,
+    addressOrName: addresses.LoanCenter,
+    signerOrProvider: provider,
+  });
+
+  const nftOracle = useContract({
+    contractInterface: nftOracleContract.abi,
+    addressOrName: addresses.NFTOracle,
+    signerOrProvider: provider,
+  });
 
   async function setupUI() {
     console.log("Setting up UI");
 
     // Get user NFT assets, special case for testnet goerli
-    const options = { chain: chainId, address: account };
-    const userNFTsResponse = await Web3Api.account.getNFTs(options);
+    const userNFTsResponse = await getNFTs(address, "", chain.id);
     const userNFTs = userNFTsResponse.result;
-    console.log("supportedAssets:", contractAddresses[chainId].SupportedAssets);
+    console.log(
+      "supportedAssets:",
+      contractAddresses[chain.id].SupportedAssets
+    );
     var updatedLoans = [];
     var updatedSupportedAssets = [];
     var updatedUnsupportedAssets = [];
 
     // Loop through all of tthe user NFTs
-    console.log("Found " + userNFTs.length + " NFTs for user " + account);
+    console.log("Found " + userNFTs.length + " NFTs for user " + address);
     for (let i = 0; i < userNFTs.length; i++) {
       if (
         userNFTs[i].token_address ==
-        contractAddresses[chainId].DebtToken.toLowerCase()
+        contractAddresses[chain.id].DebtToken.toLowerCase()
       ) {
         // Get loan details
-        const getLoanOptions = {
-          abi: loanCenterContract.abi,
-          contractAddress: addresses.LoanCenter,
-          functionName: "getLoan",
-          params: {
-            loanId: userNFTs[i].token_id,
-          },
-        };
-        const loan = await getLoan({
-          onError: (error) => console.log(error),
-          params: getLoanOptions,
-        });
+        const loan = await loanCenter.getLoan(userNFTs[i].token_id);
+        console.log("loan", loan);
 
-        // Get loan debt
-        const getLoanDebtOptions = {
-          abi: loanCenterContract.abi,
-          contractAddress: addresses.LoanCenter,
-          functionName: "getLoanDebt",
-          params: {
-            loanId: userNFTs[i].token_id,
-          },
-        };
-        const debt = await getLoanDebt({
-          onError: (error) => console.log(error),
-          params: getLoanDebtOptions,
-        });
+        const debt = await loanCenter.getLoanDebt(userNFTs[i].token_id);
+
+        console.log("debt", debt);
 
         // Get token price
-        const tokenPrice = await getTokenPrice(loan.nftAsset, loan.nftTokenId);
+        const tokenPrice = await getAssetPrice(loan.nftAsset, loan.nftTokenId);
 
         // Get max LTV of collection
-        const getCollectionMaxCollateralizationOptions = {
-          abi: nftOracleContract.abi,
-          contractAddress: addresses.NFTOracle,
-          functionName: "getCollectionMaxCollaterization",
-          params: {
-            collection: loan.nftAsset,
-          },
-        };
-
-        const maxLTV = await getCollectionMaxCollateralization({
-          onError: (error) => console.log(error),
-          params: getCollectionMaxCollateralizationOptions,
-        });
+        const maxLTV = await nftOracle.getCollectionMaxCollaterization(
+          loan.nftAsset
+        );
+        console.log("maxLTV", maxLTV);
 
         const tokenURI = await getNFTImage(
           loan.nftAsset,
           loan.nftTokenId,
-          chainId
+          chain.id
         );
 
         //Find token name
@@ -140,14 +123,14 @@ export default function App() {
           maxLTV: maxLTV,
         });
       } else if (
-        contractAddresses[chainId].SupportedAssets.find(
+        contractAddresses[chain.id].SupportedAssets.find(
           (collection) =>
             collection.address.toLowerCase() == userNFTs[i].token_address
         )
       ) {
         // Get token price
-        const tokenPrice = await getTokenPrice(
-          contractAddresses[chainId].SupportedAssets.find(
+        const tokenPrice = await getAssetPrice(
+          contractAddresses[chain.id].SupportedAssets.find(
             (collection) =>
               collection.address.toLowerCase() == userNFTs[i].token_address
           ).address,
@@ -155,19 +138,11 @@ export default function App() {
         );
 
         // Get max LTV of collection
-        const getCollectionMaxCollateralizationOptions = {
-          abi: nftOracleContract.abi,
-          contractAddress: addresses.NFTOracle,
-          functionName: "getCollectionMaxCollaterization",
-          params: {
-            collection: userNFTs[i].token_address,
-          },
-        };
-
-        const maxLTV = await getCollectionMaxCollateralization({
-          onError: (error) => console.log(error),
-          params: getCollectionMaxCollateralizationOptions,
-        });
+        console.log(userNFTs[i].token_address);
+        const maxLTV = await nftOracle.getCollectionMaxCollaterization(
+          userNFTs[i].token_address
+        );
+        console.log("maxLTV", maxLTV);
 
         //Update wallet max borrowable
         const assetMaxCollateral = BigNumber.from(maxLTV)
@@ -182,7 +157,7 @@ export default function App() {
         userNFTs[i].token_uri = await getNFTImage(
           userNFTs[i].token_address,
           userNFTs[i].token_id,
-          chainId
+          chain.id
         );
 
         // Add asset to supported assets
@@ -194,7 +169,7 @@ export default function App() {
           userNFTs[i].token_uri = await getNFTImage(
             userNFTs[i].token_address,
             userNFTs[i].token_id,
-            chainId
+            chain.id
           );
           updatedUnsupportedAssets.push(userNFTs[i]);
         }
@@ -214,13 +189,13 @@ export default function App() {
 
   // Runs once
   useEffect(() => {
-    if (isWeb3Enabled) {
+    if (isConnected) {
       setLoadingUI(true);
-      console.log("Web3 Enabled, ChainId:", chainId);
+      console.log("Web3 Enabled, ChainId:", chain.id);
       setupUI();
     }
     console.log("useEffect called");
-  }, [isWeb3Enabled, account, chainId]);
+  }, [isConnected, address, chain]);
 
   const handleUnsupportedAssetClick = async function (assetName) {
     dispatch({
@@ -463,7 +438,7 @@ export default function App() {
                   setVisibility={setVisibleAssetModal}
                   token_address={
                     // Get checksumed token adress
-                    contractAddresses[chainId].SupportedAssets.find(
+                    contractAddresses[chain.id].SupportedAssets.find(
                       (collection) =>
                         collection.address.toLowerCase() ==
                         selectedAsset.token_address
@@ -518,6 +493,7 @@ export default function App() {
                                   src={unsupportedAsset.token_uri}
                                   height="120"
                                   width="120"
+                                  unoptimized={true}
                                   className="rounded-2xl"
                                 />
                               </div>
@@ -549,7 +525,7 @@ export default function App() {
             )}
           </div>
         </div>
-      )}{" "}
+      )}
     </div>
   );
 }

@@ -4,16 +4,18 @@ import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import nativeTokenContract from "../contracts/NativeToken.json";
 import { useState } from "react";
-import { useWeb3Contract, useMoralis } from "react-moralis";
+import { useWeb3Contract } from "react-moralis";
+import { useAccount, useNetwork } from "wagmi";
 
 export default function Test() {
   const [mintingLoading, setMintingLoading] = useState(false);
   const [nativeTokenLoading, setNativeTokenLoading] = useState(false);
-  const { chainId, account } = useMoralis();
+  const { address } = useAccount();
+  const { chain } = useNetwork();
 
   const addresses =
-    chainId in contractAddresses
-      ? contractAddresses[chainId]
+    chain && chain.id in contractAddresses
+      ? contractAddresses[chain.id]
       : contractAddresses["0x1"];
 
   const { runContractFunction: mintNFT } = useWeb3Contract({
@@ -21,7 +23,7 @@ export default function Test() {
     contractAddress: addresses.SupportedAssets[0].address,
     functionName: "mint",
     params: {
-      owner: account,
+      owner: address,
     },
   });
 
@@ -30,7 +32,7 @@ export default function Test() {
     contractAddress: addresses.NativeToken,
     functionName: "testMint",
     params: {
-      account: account,
+      account: address,
       amount: "10000000000000000000",
     },
   });

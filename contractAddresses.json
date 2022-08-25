@@ -1,5 +1,5 @@
 {
-  "0x1": {
+  "1": {
     "Name": "eth",
     "WETH": {
       "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
@@ -34,14 +34,7 @@
       }
     ]
   },
-  "0x539": {
-    "Name": "hardhat",
-    "Market": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-    "LoanCenter": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
-    "DebtToken": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-    "SupportedAssets": ["0x5FC8d32690cc91D4c39d9d3abcBD16989F875707"]
-  },
-  "0x5": {
+  "5": {
     "Name": "goerli",
     "WETH": {
       "address": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",

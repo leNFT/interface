@@ -1,12 +1,11 @@
 import contractAddresses from "../contractAddresses.json";
 import {
-  getTokenPriceSig,
+  getAssetPriceSig,
   getNewRequestID,
-} from "../helpers/getTokenPriceSig.js";
-import { getTokenPrice } from "../helpers/getTokenPrice.js";
+} from "../helpers/getAssetPriceSig.js";
+import { getAssetPrice } from "../helpers/getAssetPrice.js";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits, parseUnits } from "@ethersproject/units";
-import { useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
 import styles from "../styles/Home.module.css";
 import { Eth, Usdc } from "@web3uikit/icons";
@@ -22,11 +21,17 @@ import marketContract from "../contracts/Market.json";
 import nftOracleContract from "../contracts/NFTOracle.json";
 import tokenOracleContract from "../contracts/TokenOracle.json";
 import reserveContract from "../contracts/Reserve.json";
-import "bignumber.js";
 import erc721 from "../contracts/erc721.json";
 import Image from "next/image";
 import { TabList, Tab } from "@web3uikit/core";
 import { Divider } from "@mui/material";
+import {
+  useAccount,
+  useNetwork,
+  useContract,
+  useProvider,
+  useSigner,
+} from "wagmi";
 
 export default function Borrow(props) {
   const PRICE_PRECISION = "1000000000000000000";
@@ -40,98 +45,76 @@ export default function Borrow(props) {
   const [loadingBorrowRate, setLoadingBorrowRate] = useState(false);
   const [reserveAddress, setReserveAddress] = useState("");
   const [borrowLoading, setBorrowLoading] = useState(false);
-  const { isWeb3Enabled, chainId } = useMoralis();
   const [borrowRate, setBorrowRate] = useState(0);
+  const { isConnected } = useAccount();
+  const { data: signer } = useSigner();
+  const { chain } = useNetwork();
+  const provider = useProvider();
   const addresses =
-    chainId in contractAddresses
-      ? contractAddresses[chainId]
-      : contractAddresses["0x1"];
+    chain && chain.id in contractAddresses
+      ? contractAddresses[chain.id]
+      : contractAddresses["1"];
 
   const dispatch = useNotification();
   const [borrowAsset, setBorrowAsset] = useState("WETH");
 
-  const { runContractFunction: getApproval } = useWeb3Contract();
-  const { runContractFunction: approve } = useWeb3Contract();
-  const { runContractFunction: borrow } = useWeb3Contract();
-  const { runContractFunction: getBorrowRate } = useWeb3Contract();
-
-  const { runContractFunction: getTokenETHPrice } = useWeb3Contract({
-    abi: tokenOracleContract.abi,
-    contractAddress: addresses.TokenOracle,
-    functionName: "getTokenETHPrice",
-    params: {
-      token: addresses[borrowAsset].address,
-    },
+  const assetCollectionSigner = useContract({
+    contractInterface: erc721,
+    addressOrName: props.token_address,
+    signerOrProvider: signer,
   });
 
-  const { runContractFunction: getCollectionMaxCollateralization } =
-    useWeb3Contract({
-      abi: nftOracleContract.abi,
-      contractAddress: addresses.NFTOracle,
-      functionName: "getCollectionMaxCollaterization",
-      params: {
-        collection: props.token_address,
-      },
-    });
-
-  const { runContractFunction: getReserveAddress } = useWeb3Contract({
-    abi: marketContract.abi,
-    contractAddress: addresses.Market,
-    functionName: "getReserveAddress",
-    params: {
-      asset: addresses[borrowAsset].address,
-    },
+  const assetCollectionProvider = useContract({
+    contractInterface: erc721,
+    addressOrName: props.token_address,
+    signerOrProvider: provider,
   });
 
-  const { runContractFunction: getUnderlyingBalance } = useWeb3Contract({
-    abi: reserveContract.abi,
-    contractAddress: reserveAddress,
-    functionName: "getUnderlyingBalance",
-    params: {},
+  const tokenOracle = useContract({
+    contractInterface: tokenOracleContract.abi,
+    addressOrName: addresses.TokenOracle,
+    signerOrProvider: provider,
+  });
+
+  const nftOracle = useContract({
+    contractInterface: nftOracleContract.abi,
+    addressOrName: addresses.NFTOracle,
+    signerOrProvider: provider,
+  });
+
+  const marketSigner = useContract({
+    contractInterface: marketContract.abi,
+    addressOrName: addresses.Market,
+    signerOrProvider: signer,
+  });
+
+  const marketProvider = useContract({
+    contractInterface: marketContract.abi,
+    addressOrName: addresses.Market,
+    signerOrProvider: provider,
+  });
+
+  const reserve = useContract({
+    contractInterface: reserveContract.abi,
+    addressOrName: reserveAddress,
+    signerOrProvider: provider,
   });
 
   async function getReserve() {
-    const updatedReserveAddress = (
-      await getReserveAddress({
-        onError: (error) => console.log(error),
-      })
-    ).toString();
+    const updatedReserveAddress = await marketProvider.getReserveAddress(
+      addresses[borrowAsset].address
+    );
     setReserveAddress(updatedReserveAddress);
     console.log("updatedReserveAddress", updatedReserveAddress);
   }
 
   async function getTokenApproval() {
-    const getApprovalOptions = {
-      abi: erc721,
-      contractAddress: props.token_address,
-      functionName: "getApproved",
-      params: {
-        tokenId: props.token_id,
-      },
-    };
-
-    const approval = await getApproval({
-      onError: (error) => console.log(error),
-      params: getApprovalOptions,
-    });
-
+    const approval = await assetCollectionProvider.getApproved(props.token_id);
     setApproved(approval == addresses.Market);
   }
 
   async function updateReserveBorrowRate() {
-    const getBorrowRateOptions = {
-      abi: reserveContract.abi,
-      contractAddress: reserveAddress,
-      functionName: "getBorrowRate",
-      params: {},
-    };
-
-    const updatedBorrowRate = (
-      await getBorrowRate({
-        onError: (error) => console.log(error),
-        params: getBorrowRateOptions,
-      })
-    ).toNumber();
+    const updatedBorrowRate = (await reserve.getBorrowRate()).toNumber();
 
     setBorrowRate(updatedBorrowRate);
     setLoadingBorrowRate(false);
@@ -139,18 +122,19 @@ export default function Borrow(props) {
 
   async function updateMaxBorrowAmount() {
     // Get token price
-    const price = await getTokenPrice(props.token_address, props.token_id);
+    const price = await getAssetPrice(props.token_address, props.token_id);
     setTokenPrice(price);
 
     //Get token max collateralization
-    const maxCollateralization = (
-      await getCollectionMaxCollateralization()
-    ).toString();
+    const maxCollateralization =
+      await nftOracle.getCollectionMaxCollaterization(props.token_address);
     console.log("maxCollateralization updated", maxCollateralization);
     setTokenMaxCollateralization(maxCollateralization);
 
     // Get max amount borrowable
-    const tokenETHPrice = (await getTokenETHPrice()).toString();
+    const tokenETHPrice = (
+      await tokenOracle.getTokenETHPrice(addresses[borrowAsset].address)
+    ).toString();
     console.log("tokenETHPrice", tokenETHPrice);
 
     const maxETHCollateral = BigNumber.from(price)
@@ -164,7 +148,7 @@ export default function Borrow(props) {
       .div(PRICE_PRECISION)
       .toString();
     console.log("maxCollateral", maxCollateral);
-    const reserveUnderlying = (await getUnderlyingBalance()).toString();
+    const reserveUnderlying = (await reserve.getUnderlyingBalance()).toString();
     console.log("reserveUnderlying", reserveUnderlying);
     const updatedMaxAmount = BigNumber.from(maxCollateral).gt(
       BigNumber.from(reserveUnderlying)
@@ -185,13 +169,13 @@ export default function Borrow(props) {
   }, [reserveAddress, props.token_id]);
 
   useEffect(() => {
-    if (isWeb3Enabled) {
+    if (isConnected) {
       setLoadingMaxAmount(true);
       setLoadingBorrowRate(true);
       console.log("Getting reserve", addresses[borrowAsset].address);
       getReserve();
     }
-  }, [isWeb3Enabled, borrowAsset]);
+  }, [isConnected, borrowAsset]);
 
   const handleBorrowSuccess = async function () {
     props.setVisibility(false);
@@ -362,32 +346,27 @@ export default function Borrow(props) {
                 setBorrowLoading(true);
                 // Get updated price trusted server signature from server
                 const requestID = getNewRequestID();
-                const priceSig = await getTokenPriceSig(
+                const priceSig = await getAssetPriceSig(
                   requestID,
                   props.token_address,
                   props.token_id,
-                  chainId
+                  chain.id
                 );
                 console.log("Got price sig", priceSig);
-                const borrowOptions = {
-                  abi: marketContract.abi,
-                  contractAddress: addresses.Market,
-                  functionName: "borrow",
-                  params: {
-                    asset: addresses[borrowAsset].address,
-                    amount: amount,
-                    nftAddress: props.token_address,
-                    nftTokenID: props.token_id,
-                    request: requestID,
-                    packet: priceSig,
-                  },
-                };
-                await borrow({
-                  onComplete: () => setBorrowLoading(false),
-                  onSuccess: handleBorrowSuccess,
-                  onError: (error) => console.log(error),
-                  params: borrowOptions,
-                });
+                try {
+                  await marketSigner.borrow(
+                    addresses[borrowAsset].address,
+                    amount,
+                    props.token_address,
+                    props.token_id,
+                    requestID,
+                    priceSig
+                  );
+                  handleBorrowSuccess();
+                } catch (error) {
+                } finally {
+                  setBorrowLoading(false);
+                }
               } else {
                 dispatch({
                   type: "error",
@@ -416,21 +395,15 @@ export default function Borrow(props) {
             isLoading={approvalLoading}
             onClick={async function () {
               setApprovalLoading(true);
-              const approveOptions = {
-                abi: erc721,
-                contractAddress: props.token_address,
-                functionName: "approve",
-                params: {
-                  to: addresses.Market,
-                  tokenId: props.token_id,
-                },
-              };
-
-              await approve({
-                onSuccess: handleApprovalSuccess,
-                onError: (error) => console.log(error),
-                params: approveOptions,
-              });
+              try {
+                await assetCollectionSigner.approve(
+                  addresses.Market,
+                  props.token_id
+                );
+                handleApprovalSuccess();
+              } catch (error) {
+                console.log(error);
+              }
             }}
           />
         </div>

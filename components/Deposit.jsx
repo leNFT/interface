@@ -1,16 +1,21 @@
+import {
+  useAccount,
+  useNetwork,
+  useContract,
+  useProvider,
+  useSigner,
+} from "wagmi";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useNotification, Button, Input, Typography } from "@web3uikit/core";
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
-import { useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import marketContract from "../contracts/Market.json";
 import erc20 from "../contracts/erc20.json";
 
 export default function Deposit(props) {
-  const { isWeb3Enabled, chainId, account } = useMoralis();
   const [amount, setAmount] = useState("0");
   const [balance, setBalance] = useState("0");
   const [approved, setApproved] = useState(false);
@@ -18,66 +23,47 @@ export default function Deposit(props) {
   const [depositLoading, setDepositLoading] = useState(false);
   const [reserveAddress, setReserveAddress] = useState("");
   const dispatch = useNotification();
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
+  const { data: signer } = useSigner();
+  const provider = useProvider();
   const addresses =
-    chainId in contractAddresses
-      ? contractAddresses[chainId]
-      : contractAddresses["0x1"];
+    chain && chain.id in contractAddresses
+      ? contractAddresses[chain.id]
+      : contractAddresses["1"];
 
-  const { runContractFunction: getReserveAddress } = useWeb3Contract({
-    abi: marketContract.abi,
-    contractAddress: addresses.Market,
-    functionName: "getReserveAddress",
-    params: {
-      asset: addresses[props.asset].address,
-    },
+  const marketSigner = useContract({
+    contractInterface: marketContract.abi,
+    addressOrName: addresses.Market,
+    signerOrProvider: signer,
   });
 
-  const { runContractFunction: deposit } = useWeb3Contract({
-    abi: marketContract.abi,
-    contractAddress: addresses.Market,
-    functionName: "deposit",
-    params: {
-      asset: addresses[props.asset].address,
-      amount: amount,
-    },
+  const marketProvider = useContract({
+    contractInterface: marketContract.abi,
+    addressOrName: addresses.Market,
+    signerOrProvider: provider,
   });
 
-  const { runContractFunction: getBalance } = useWeb3Contract({
-    abi: erc20,
-    contractAddress: addresses[props.asset].address,
-    functionName: "balanceOf",
-    params: {
-      _owner: account,
-    },
+  const tokenSigner = useContract({
+    contractInterface: erc20,
+    addressOrName: addresses[props.asset].address,
+    signerOrProvider: signer,
   });
 
-  const { runContractFunction: getAllowance } = useWeb3Contract();
-
-  const { runContractFunction: approve } = useWeb3Contract();
+  const tokenProvider = useContract({
+    contractInterface: erc20,
+    addressOrName: addresses[props.asset].address,
+    signerOrProvider: provider,
+  });
 
   async function updateTokenBalance() {
-    const updatedBalance = await getBalance({
-      onError: (error) => console.log(error),
-    });
+    const updatedBalance = await tokenProvider.balanceOf(address);
     console.log("Updated Balance:", updatedBalance);
     setBalance(updatedBalance.toString());
   }
 
   async function getTokenAllowance() {
-    const getAllowanceOptions = {
-      abi: erc20,
-      contractAddress: addresses[props.asset].address,
-      functionName: "allowance",
-      params: {
-        _owner: account,
-        _spender: reserveAddress,
-      },
-    };
-
-    const allowance = await getAllowance({
-      onError: (error) => console.log(error),
-      params: getAllowanceOptions,
-    });
+    const allowance = await tokenProvider.allowance(address, reserveAddress);
 
     console.log("Got allowance:", allowance);
 
@@ -89,20 +75,19 @@ export default function Deposit(props) {
   }
 
   async function getReserve() {
-    const updatedReserveAddress = (
-      await getReserveAddress({
-        onError: (error) => console.log(error),
-      })
-    ).toString();
+    const updatedReserveAddress = await marketProvider.getReserveAddress(
+      addresses[props.asset].address
+    );
+
     setReserveAddress(updatedReserveAddress);
     console.log("updatedReserveAddress", updatedReserveAddress);
   }
 
   useEffect(() => {
-    if (isWeb3Enabled && props.asset) {
+    if (isConnected && props.asset) {
       getReserve();
     }
-  }, [isWeb3Enabled, props.asset]);
+  }, [isConnected, props.asset]);
 
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
@@ -212,11 +197,17 @@ export default function Deposit(props) {
               if (BigNumber.from(amount).lte(BigNumber.from(balance))) {
                 setDepositLoading(true);
                 console.log("Depositing", amount);
-                await deposit({
-                  onComplete: () => setDepositLoading(false),
-                  onSuccess: handleDepositSuccess,
-                  onError: (error) => console.log(error),
-                });
+                try {
+                  await marketSigner.deposit(
+                    addresses[props.asset].address,
+                    amount
+                  );
+                  handleDepositSuccess();
+                } catch (error) {
+                  console.log(error);
+                } finally {
+                  setDepositLoading(false);
+                }
               } else {
                 dispatch({
                   type: "error",
@@ -244,22 +235,15 @@ export default function Deposit(props) {
             isLoading={approvalLoading}
             onClick={async function () {
               setApprovalLoading(true);
-              const approveOptions = {
-                abi: erc20,
-                contractAddress: addresses[props.asset].address,
-                functionName: "approve",
-                params: {
-                  _spender: reserveAddress,
-                  _value:
-                    "115792089237316195423570985008687907853269984665640564039457584007913129639935",
-                },
-              };
-
-              await approve({
-                onSuccess: handleApprovalSuccess,
-                onError: (error) => console.log(error),
-                params: approveOptions,
-              });
+              try {
+                await tokenSigner.approve(
+                  reserveAddress,
+                  "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+                );
+                handleApprovalSuccess();
+              } catch (error) {
+                console.log(error);
+              }
             }}
           ></Button>
         </div>

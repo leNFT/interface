@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 
-export async function getTokenPrice(collection, tokenId) {
+export async function getAssetPrice(collection, tokenId) {
   const serverAddress = "https://lenft-api-w27ha.ondigitalocean.app";
   const options = {
     method: "GET",

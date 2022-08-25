@@ -1,11 +1,10 @@
+import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 import { Button, Tooltip, Loading } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
-import styles from "../styles/Home.module.css";
 import StyledModal from "../components/StyledModal";
 import { formatUnits } from "@ethersproject/units";
 import contractAddresses from "../contractAddresses.json";
 import { useState, useEffect } from "react";
-import { useMoralis, useWeb3Contract } from "react-moralis";
 import marketContract from "../contracts/Market.json";
 import tokenOracleContract from "../contracts/TokenOracle.json";
 import reserveContract from "../contracts/Reserve.json";
@@ -15,7 +14,6 @@ import Withdraw from "./Withdraw";
 import Box from "@mui/material/Box";
 
 export default function ReserveInfo(props) {
-  const { isWeb3Enabled, chainId, account } = useMoralis();
   const [debt, setDebt] = useState("0");
   const [visibleDepositModal, setVisibleDepositModal] = useState(false);
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
@@ -28,82 +26,36 @@ export default function ReserveInfo(props) {
   const [ethPrice, setETHPrice] = useState("0");
   const [loadingPrice, setLoadingPrice] = useState(false);
   const [loadingReserve, setLoadingReserve] = useState(false);
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
+  const provider = useProvider();
 
   const addresses =
-    chainId in contractAddresses
-      ? contractAddresses[chainId]
-      : contractAddresses["0x1"];
+    chain && chain.id in contractAddresses
+      ? contractAddresses[chain.id]
+      : contractAddresses["1"];
 
-  const { runContractFunction: getReserveAddress } = useWeb3Contract({
-    abi: marketContract.abi,
-    contractAddress: addresses.Market,
-    functionName: "getReserveAddress",
-    params: {
-      asset: addresses[props.asset].address,
-    },
+  const market = useContract({
+    contractInterface: marketContract.abi,
+    addressOrName: addresses.Market,
+    signerOrProvider: provider,
   });
 
-  const { runContractFunction: getUnderlyingBalance } = useWeb3Contract({
-    abi: reserveContract.abi,
-    contractAddress: reserveAddress,
-    functionName: "getUnderlyingBalance",
-    params: {},
+  const reserve = useContract({
+    contractInterface: reserveContract.abi,
+    addressOrName: reserveAddress,
+    signerOrProvider: provider,
   });
 
-  const { runContractFunction: getDebt } = useWeb3Contract({
-    abi: reserveContract.abi,
-    contractAddress: reserveAddress,
-    functionName: "getDebt",
-    params: {},
+  const tokenOracle = useContract({
+    contractInterface: tokenOracleContract.abi,
+    addressOrName: addresses.TokenOracle,
+    signerOrProvider: provider,
   });
-
-  const { runContractFunction: getUtilizationRate } = useWeb3Contract({
-    abi: reserveContract.abi,
-    contractAddress: reserveAddress,
-    functionName: "getUtilizationRate",
-    params: {},
-  });
-
-  const { runContractFunction: getSupplyRate } = useWeb3Contract({
-    abi: reserveContract.abi,
-    contractAddress: reserveAddress,
-    functionName: "getSupplyRate",
-    params: {},
-  });
-
-  const { runContractFunction: getBorrowRate } = useWeb3Contract({
-    abi: reserveContract.abi,
-    contractAddress: reserveAddress,
-    functionName: "getBorrowRate",
-    params: {},
-  });
-
-  const { runContractFunction: getMaximumWithdrawalAmount } = useWeb3Contract({
-    abi: reserveContract.abi,
-    contractAddress: reserveAddress,
-    functionName: "getMaximumWithdrawalAmount",
-    params: {
-      to: account,
-    },
-  });
-
-  const { runContractFunction: getTokenETHPrice } = useWeb3Contract();
 
   async function updateAssetETHPrice() {
-    const updatedAssetETHPriceOptions = {
-      abi: tokenOracleContract.abi,
-      contractAddress: addresses.TokenOracle,
-      functionName: "getTokenETHPrice",
-      params: {
-        token: addresses[props.asset].address,
-      },
-    };
-
     const updatedAssetETHPrice = (
-      await getTokenETHPrice({
-        onError: (error) => console.log(error),
-        params: updatedAssetETHPriceOptions,
-      })
+      await tokenOracle.getTokenETHPrice(addresses[props.asset].address)
     ).toString();
     setETHPrice(updatedAssetETHPrice);
     console.log("updatedAssetETHPrice", updatedAssetETHPrice);
@@ -114,48 +66,34 @@ export default function ReserveInfo(props) {
 
   async function getReserve() {
     const updatedReserveAddress = (
-      await getReserveAddress({
-        onError: (error) => console.log(error),
-      })
+      await market.getReserveAddress(addresses[props.asset].address)
     ).toString();
     setReserveAddress(updatedReserveAddress);
     console.log("updatedReserveAddress", updatedReserveAddress);
   }
 
   async function getReserveDetails() {
-    const updatedDebt = await getDebt({
-      onError: (error) => console.log(error),
-    });
+    const updatedDebt = await reserve.getDebt();
     console.log("Updated Debt:", updatedDebt);
     setDebt(updatedDebt.toString());
 
-    const updatedUnderlyingBalance = await getUnderlyingBalance({
-      onError: (error) => console.log(error),
-    });
+    const updatedUnderlyingBalance = await reserve.getUnderlyingBalance();
     console.log("Updated Underlying Balance:", updatedUnderlyingBalance);
     setUnderlyingBalance(updatedUnderlyingBalance.toString());
 
-    const updatedUtilizationRate = await getUtilizationRate({
-      onError: (error) => console.log(error),
-    });
+    const updatedUtilizationRate = await reserve.getUtilizationRate();
     console.log("Updated Utilization Rate:", updatedUtilizationRate);
     setUtilizationRate(updatedUtilizationRate.toNumber());
 
-    const updatedSupplyRate = await getSupplyRate({
-      onError: (error) => console.log(error),
-    });
+    const updatedSupplyRate = await reserve.getSupplyRate();
     console.log("Updated Supply Rate:", updatedSupplyRate);
     setSupplyRate(updatedSupplyRate.toNumber());
 
-    const updatedBorrowRate = await getBorrowRate({
-      onError: (error) => console.log(error),
-    });
+    const updatedBorrowRate = await reserve.getBorrowRate();
     console.log("Updated Borrow Rate:", updatedBorrowRate);
     setBorrowRate(updatedBorrowRate.toNumber());
 
-    const updatedMaxAmount = await getMaximumWithdrawalAmount({
-      onError: (error) => console.log(error),
-    });
+    const updatedMaxAmount = await reserve.getMaximumWithdrawalAmount(address);
     console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
     setMaxAmount(updatedMaxAmount.toString());
 
@@ -164,14 +102,14 @@ export default function ReserveInfo(props) {
   }
 
   useEffect(() => {
-    if (isWeb3Enabled && props.asset) {
+    if (isConnected && props.asset) {
       console.log("props.asset", props.asset);
       setLoadingPrice(true);
       setLoadingReserve(true);
       getReserve();
       updateAssetETHPrice();
     }
-  }, [isWeb3Enabled, account, props.asset]);
+  }, [isConnected, address, props.asset]);
 
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
@@ -179,7 +117,7 @@ export default function ReserveInfo(props) {
       console.log("Got reserve address, setting the rest...", reserveAddress);
       getReserveDetails();
     }
-  }, [reserveAddress, account]);
+  }, [reserveAddress, address]);
 
   return (
     <div>

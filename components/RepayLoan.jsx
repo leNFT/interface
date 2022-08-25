@@ -2,7 +2,6 @@ import contractAddresses from "../contractAddresses.json";
 import { useNotification, Illustration } from "@web3uikit/core";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits } from "@ethersproject/units";
-import { useWeb3Contract, useMoralis } from "react-moralis";
 import { Button, Typography } from "@web3uikit/core";
 import styles from "../styles/Home.module.css";
 import nftOracleContract from "../contracts/NFTOracle.json";
@@ -12,7 +11,15 @@ import loanCenterContract from "../contracts/LoanCenter.json";
 import reserveContract from "../contracts/Reserve.json";
 import erc20 from "../contracts/erc20.json";
 import Image from "next/image";
-import { getTokenPrice } from "../helpers/getTokenPrice.js";
+import { ethers } from "ethers";
+import { getAssetPrice } from "../helpers/getAssetPrice.js";
+import {
+  useAccount,
+  useNetwork,
+  useContract,
+  useProvider,
+  useSigner,
+} from "wagmi";
 
 export default function RepayLoan(props) {
   const [loan, setLoan] = useState();
@@ -20,102 +27,66 @@ export default function RepayLoan(props) {
   const [tokenPrice, setTokenPrice] = useState("0");
   const [tokenMaxCollateralization, setTokenMaxCollateralization] = useState(0);
   const [balance, setBalance] = useState("0");
-  const { isWeb3Enabled, chainId, account } = useMoralis();
+  const { isConnected, address } = useAccount();
+  const { chain } = useNetwork();
+  const provider = useProvider();
+  const { data: signer } = useSigner();
   const [repayLoading, setRepayLoading] = useState(false);
   const addresses =
-    chainId in contractAddresses
-      ? contractAddresses[chainId]
-      : contractAddresses["0x1"];
+    chain && chain.id in contractAddresses
+      ? contractAddresses[chain.id]
+      : contractAddresses["1"];
 
   const [asset, setAsset] = useState(addresses["WETH"].address);
   const [symbol, setSymbol] = useState("WETH");
 
   const dispatch = useNotification();
 
-  const { runContractFunction: getCollectionMaxCollateralization } =
-    useWeb3Contract({
-      abi: nftOracleContract.abi,
-      contractAddress: addresses.NFTOracle,
-      functionName: "getCollectionMaxCollaterization",
-      params: {
-        collection: props.token_address,
-      },
-    });
-
-  const { runContractFunction: repayLoan } = useWeb3Contract({
-    abi: marketContract.abi,
-    contractAddress: addresses.Market,
-    functionName: "repay",
-    params: {
-      loanId: props.loan_id,
-    },
+  const nftOracle = useContract({
+    contractInterface: nftOracleContract.abi,
+    addressOrName: addresses.NFTOracle,
+    signerOrProvider: provider,
   });
 
-  const { runContractFunction: getBalance } = useWeb3Contract({
-    abi: erc20,
-    contractAddress: asset,
-    functionName: "balanceOf",
-    params: {
-      _owner: account,
-    },
+  const market = useContract({
+    contractInterface: marketContract.abi,
+    addressOrName: addresses.Market,
+    signerOrProvider: signer,
   });
 
-  const { runContractFunction: getLoan } = useWeb3Contract({
-    abi: loanCenterContract.abi,
-    contractAddress: addresses.LoanCenter,
-    functionName: "getLoan",
-    params: {
-      loanId: props.loan_id,
-    },
+  const token = useContract({
+    contractInterface: erc20,
+    addressOrName: asset,
+    signerOrProvider: provider,
   });
 
-  const { runContractFunction: getReserveAsset } = useWeb3Contract();
-  const { runContractFunction: getSymbol } = useWeb3Contract();
-
-  const { runContractFunction: getDebt } = useWeb3Contract({
-    abi: loanCenterContract.abi,
-    contractAddress: addresses.LoanCenter,
-    functionName: "getLoanDebt",
-    params: {
-      loanId: props.loan_id,
-    },
+  const loanCenter = useContract({
+    contractInterface: loanCenterContract.abi,
+    addressOrName: addresses.LoanCenter,
+    signerOrProvider: provider,
   });
 
   async function updateReserveAsset() {
-    const updatedAsset = await getReserveAsset({
-      params: {
-        abi: reserveContract.abi,
-        contractAddress: loan.reserve,
-        functionName: "getAsset",
-        params: {},
-      },
-      onError: (error) => console.log(error),
-    });
+    const reserve = new ethers.Contract(
+      loan.reserve,
+      reserveContract.abi,
+      provider
+    );
+
+    const updatedAsset = await reserve.getAsset();
     setAsset(updatedAsset);
 
-    const updatedAssetSymbol = await getSymbol({
-      params: {
-        abi: erc20,
-        contractAddress: updatedAsset,
-        functionName: "symbol",
-        params: {},
-      },
-      onError: (error) => console.log(error),
-    });
+    const updatedAssetSymbol = await token.symbol();
     setSymbol(updatedAssetSymbol);
   }
 
   async function updateTokenBalance() {
-    const updatedBalance = await getBalance({
-      onError: (error) => console.log(error),
-    });
+    const updatedBalance = await token.balanceOf(address);
     setBalance(updatedBalance.toString());
   }
 
   async function getLoanToRepay() {
-    const updatedLoan = await getLoan({
-      onError: (error) => console.log(error),
-    });
+    const updatedLoan = await loanCenter.getLoan(props.loan_id);
     console.log("Updated Loan:", {
       loanId: updatedLoan.loanId.toString(),
       reserve: updatedLoan.reserve,
@@ -128,33 +99,31 @@ export default function RepayLoan(props) {
   }
 
   async function getLoanDebt() {
-    const updatedDebt = await getDebt({
-      onError: (error) => console.log(error),
-    });
+    const updatedDebt = await loanCenter.getLoanDebt(props.loan_id);
     setDebt(updatedDebt.toString());
   }
 
   async function getAssetPricing() {
     // Get token price
-    const price = await getTokenPrice(props.token_address, props.token_id);
+    const price = await getAssetPrice(props.token_address, props.token_id);
     setTokenPrice(price);
     console.log("price", price);
 
     //Get token max collateralization
     const maxCollateralization = (
-      await getCollectionMaxCollateralization()
+      await nftOracle.getCollectionMaxCollaterization(props.token_address)
     ).toString();
     console.log("maxCollateralization updated", maxCollateralization);
     setTokenMaxCollateralization(maxCollateralization);
   }
 
   useEffect(() => {
-    if (isWeb3Enabled) {
+    if (isConnected) {
       getLoanToRepay();
       getLoanDebt();
       getAssetPricing();
     }
-  }, [isWeb3Enabled, props.loan_id]);
+  }, [isConnected, props.loan_id]);
 
   useEffect(() => {
     if (loan) {
@@ -255,11 +224,14 @@ export default function RepayLoan(props) {
           onClick={async function () {
             if (BigNumber.from(debt).lte(BigNumber.from(balance))) {
               setRepayLoading(true);
-              await repayLoan({
-                onComplete: () => setRepayLoading(false),
-                onSuccess: handleRepaySuccess,
-                onError: (error) => console.log(error),
-              });
+              try {
+                await market.repay(props.loan_id);
+                handleRepaySuccess();
+              } catch (error) {
+                console.log(error);
+              } finally {
+                setRepayLoading(false);
+              }
             } else {
               dispatch({
                 type: "error",

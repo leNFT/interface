@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import fetch from "node-fetch";
 
-export async function getTokenPriceSig(
+export async function getAssetPriceSig(
   requestId,
   collection,
   tokenId,

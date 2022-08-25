@@ -3,73 +3,68 @@ import { BigNumber } from "@ethersproject/bignumber";
 import styles from "../styles/Home.module.css";
 import { Button, Input, Typography } from "@web3uikit/core";
 import { formatUnits, parseUnits } from "@ethersproject/units";
+import { ethers } from "ethers";
+import reserveContract from "../contracts/Reserve.json";
 import contractAddresses from "../contractAddresses.json";
-import { useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
 import marketContract from "../contracts/Market.json";
-import reserveContract from "../contracts/Reserve.json";
+import {
+  useAccount,
+  useNetwork,
+  useContract,
+  useProvider,
+  useSigner,
+} from "wagmi";
 
 export default function Withdraw(props) {
-  const { isWeb3Enabled, chainId, account } = useMoralis();
   const [withdrawalLoading, setWithdrawalLoading] = useState(false);
   const [amount, setAmount] = useState("");
   const [maxAmount, setMaxAmount] = useState("0");
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
+  const { data: signer } = useSigner();
+  const provider = useProvider();
   const addresses =
-    chainId in contractAddresses
-      ? contractAddresses[chainId]
-      : contractAddresses["0x1"];
+    chain && chain.id in contractAddresses
+      ? contractAddresses[chain.id]
+      : contractAddresses["1"];
 
   const dispatch = useNotification();
 
-  const { runContractFunction: withdraw } = useWeb3Contract({
-    abi: marketContract.abi,
-    contractAddress: addresses.Market,
-    functionName: "withdraw",
-    params: {
-      asset: addresses[props.asset].address,
-      amount: amount,
-    },
+  const marketSigner = useContract({
+    contractInterface: marketContract.abi,
+    addressOrName: addresses.Market,
+    signerOrProvider: signer,
   });
 
-  const { runContractFunction: getReserveAddress } = useWeb3Contract({
-    abi: marketContract.abi,
-    contractAddress: addresses.Market,
-    functionName: "getReserveAddress",
-    params: {
-      asset: addresses[props.asset].address,
-    },
+  const marketProvider = useContract({
+    contractInterface: marketContract.abi,
+    addressOrName: addresses.Market,
+    signerOrProvider: provider,
   });
-
-  const { runContractFunction: getMaximumWithdrawalAmount } = useWeb3Contract();
 
   async function updateMaxAmount() {
-    const reserveAddress = (await getReserveAddress()).toString();
+    const reserveAddress = await marketProvider.getReserveAddress(
+      addresses[props.asset].address
+    );
 
-    const maxWithdrawalOptions = {
-      abi: reserveContract.abi,
-      contractAddress: reserveAddress,
-      functionName: "getMaximumWithdrawalAmount",
-      params: {
-        to: account,
-      },
-    };
+    const reserve = new ethers.Contract(
+      reserveAddress,
+      reserveContract.abi,
+      provider
+    );
 
-    const updatedMaxAmount = (
-      await getMaximumWithdrawalAmount({
-        params: maxWithdrawalOptions,
-      })
-    ).toString();
+    const updatedMaxAmount = await reserve.getMaximumWithdrawalAmount(address);
 
     console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
     setMaxAmount(updatedMaxAmount);
   }
 
-  //Run once
   useEffect(() => {
-    if (isWeb3Enabled && props.asset) {
+    if (isConnected && props.asset) {
       updateMaxAmount();
     }
-  }, [isWeb3Enabled, props.asset]);
+  }, [isConnected, props.asset]);
 
   const handleWithdrawalSuccess = async function () {
     props.setVisibility(false);
@@ -171,11 +166,17 @@ export default function Withdraw(props) {
           onClick={async function () {
             if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
               setWithdrawalLoading(true);
-              await withdraw({
-                onComplete: () => setWithdrawalLoading(false),
-                onSuccess: handleWithdrawalSuccess,
-                onError: (error) => console.log(error),
-              });
+              try {
+                await marketSigner.withdraw(
+                  addresses[props.asset].address,
+                  amount
+                );
+                handleWithdrawalSuccess();
+              } catch (error) {
+                console.log(error);
+              } finally {
+                setWithdrawalLoading(false);
+              }
             } else {
               dispatch({
                 type: "error",

@@ -1,24 +1,26 @@
-import { useMoralis, useChain } from "react-moralis";
 import Link from "next/link";
-import { ConnectButton } from "@web3uikit/web3";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Tooltip, BannerStrip } from "@web3uikit/core";
 import { Button } from "grommet";
 import { Home, Search, Reload, Plus, LockClosed } from "@web3uikit/icons";
 import Box from "@mui/material/Box";
+import { useAccount, useNetwork } from "wagmi";
+import { useSwitchNetwork } from "wagmi";
 
 export default function Header() {
-  const { isWeb3Enabled, chainId } = useMoralis();
-  const { switchNetwork } = useChain();
+  const { isConnected } = useAccount();
+  const { chain } = useNetwork();
+  const { switchNetwork } = useSwitchNetwork();
 
   return (
     <div>
-      {chainId != "0x1" && isWeb3Enabled && (
+      {chain && chain.id != 1 && isConnected && (
         <div className="mb-6">
           <BannerStrip
             buttonDisplayed
             buttonConfig={{
               onClick: function noRefCheck() {
-                switchNetwork("0x1");
+                switchNetwork(1);
               },
               iconLayout: "icon-only",
               icon: (
@@ -31,10 +33,10 @@ export default function Header() {
         </div>
       )}
       <div className="p-4 mb-2 border-b-2 flex flex-col md:flex-row justify-between items-center">
-        <div className="hidden lg:flex flex-col items-center justify-content lg:pr-20">
+        <div className="hidden lg:flex flex-col items-center justify-content lg:pr-8">
           <Link href="/">
             <a target="_blank" rel="noopener noreferrer">
-              <div className="mx-5 mt-2 flex flex-row items-center">
+              <div className="px-4 mt-2 flex flex-row items-center">
                 <div className="flex flex-col items-center">
                   <Box
                     sx={{
@@ -188,8 +190,12 @@ export default function Header() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col items-center mt-2">
-          <ConnectButton moralisAuth={false} />
+        <div className="flex flex-col items-center px-8">
+          <ConnectButton
+            showBalance={false}
+            chainStatus="icon"
+            accountStatus="address"
+          />
         </div>
       </div>
     </div>

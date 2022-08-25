@@ -109,7 +109,7 @@ export default function ReserveInfo(props) {
       getReserve();
       updateAssetETHPrice();
     }
-  }, [isConnected, address, props.asset]);
+  }, [isConnected, address, props.asset, chain]);
 
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {

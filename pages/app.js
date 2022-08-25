@@ -438,7 +438,9 @@ export default function App() {
                   setVisibility={setVisibleAssetModal}
                   token_address={
                     // Get checksumed token adress
-                    contractAddresses[chain.id].SupportedAssets.find(
+                    contractAddresses[
+                      chain ? chain.id : "1"
+                    ].SupportedAssets.find(
                       (collection) =>
                         collection.address.toLowerCase() ==
                         selectedAsset.token_address

@@ -101,7 +101,7 @@ export default function LoanSearch() {
 
     // Get the token ids for the selected collection
     const collectionNFTsResponse = await getNFTs(
-      address,
+      addresses.LoanCenter,
       selectedCollection,
       chain.id
     );
@@ -113,8 +113,6 @@ export default function LoanSearch() {
         collectionNFTs[i].token_address,
         collectionNFTs[i].token_id
       );
-
-      console.log("loanId", loanId);
 
       const debt = await loanCenter.getLoanDebt(loanId);
 
@@ -161,6 +159,7 @@ export default function LoanSearch() {
   // Runs once
   useEffect(() => {
     if (isConnected) {
+      setLoadingCollectionLoans(true);
       getWETHAllowance();
       //Fill the collections with the supported assets
       var updatedCollections = [];

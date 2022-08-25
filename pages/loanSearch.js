@@ -114,6 +114,8 @@ export default function LoanSearch() {
         collectionNFTs[i].token_id
       );
 
+      console.log("loanId", loanId);
+
       const debt = await loanCenter.getLoanDebt(loanId);
 
       const tokenPrice = await getAssetPrice(
@@ -143,6 +145,7 @@ export default function LoanSearch() {
       });
     }
     // Update active loans state array
+    console.log("updatedCollectionLoans", updatedCollectionLoans);
     setCollectionLoans(updatedCollectionLoans);
     setLoadingCollectionLoans(false);
   }
@@ -314,7 +317,10 @@ export default function LoanSearch() {
           <div className="flex flex-col rounded-3xl m-2 p-2 bg-black/5 shadow-lg">
             <div className="flex flex-row grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {collectionLoans.map((collectionLoan) => (
-                <div className="flex m-4 items-center justify-center">
+                <div
+                  key={collectionLoan.loanId}
+                  className="flex m-4 items-center justify-center"
+                >
                   <Card
                     sx={{
                       borderRadius: 4,

@@ -1,6 +1,7 @@
 import fetch from "node-fetch";
 
 export async function getNFTs(address, collection, chainId) {
+  const serverAddress = "https://lenft-api-w27ha.ondigitalocean.app";
   const options = {
     method: "GET",
     headers: {
@@ -14,7 +15,8 @@ export async function getNFTs(address, collection, chainId) {
   }
 
   const nftseResponse = await fetch(
-    "/api/userNFTs?address=" +
+    serverAddress +
+      "/api/userNFTs?address=" +
       address +
       "&chainId=" +
       chainId +

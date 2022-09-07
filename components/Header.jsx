@@ -157,34 +157,32 @@ export default function Header() {
             </div>
             <div className="flex flex-col m-2">
               <div className="flex justify-center">
-                <Link href="">
-                  <Tooltip content={"soon :)"} position="bottom" minWidth={70}>
-                    <Button
-                      primary
-                      size="medium"
-                      color="#eae5ea"
-                      label={
-                        <div className="flex md:hidden lg:flex">
-                          <Box
-                            sx={{
-                              fontFamily: "Monospace",
-                              fontSize: "subtitle2.fontSize",
-                              fontWeight: "bold",
-                              letterSpacing: 4,
-                            }}
-                          >
-                            Stake
-                          </Box>
-                        </div>
-                      }
-                      disabled={true}
-                      icon={
-                        <div className="pl-[10px]">
-                          <LockClosed fontSize="20px" color="#000000" />
-                        </div>
-                      }
-                    />
-                  </Tooltip>
+                <Link href="/stake">
+                  <Button
+                    primary
+                    size="medium"
+                    color="#eae5ea"
+                    label={
+                      <div className="flex md:hidden lg:flex">
+                        <Box
+                          sx={{
+                            fontFamily: "Monospace",
+                            fontSize: "subtitle2.fontSize",
+                            fontWeight: "bold",
+                            letterSpacing: 4,
+                          }}
+                        >
+                          Stake
+                        </Box>
+                      </div>
+                    }
+                    disabled={true}
+                    icon={
+                      <div className="pl-[10px]">
+                        <LockClosed fontSize="20px" color="#000000" />
+                      </div>
+                    }
+                  />
                 </Link>
               </div>
             </div>

@@ -8,15 +8,18 @@ import TextField from "@mui/material/TextField";
 import { Button, Typography } from "@web3uikit/core";
 import StyledModal from "../components/StyledModal";
 import { useState, useEffect } from "react";
-import { useMoralis, useWeb3Contract } from "react-moralis";
+import { useAccount, useNetwork } from "wagmi";
 import erc20 from "../contracts/erc20.json";
 import RemoveVote from "../components/RemoveVote";
 import Vote from "../components/Vote";
 import DepositNativeToken from "../components/DepositNativeToken";
 import WithdrawNativeToken from "../components/WithdrawNativeToken";
+import { useContract, useProvider, useSigner } from "wagmi";
 
 export default function Stake() {
-  const { isWeb3Enabled, chainId, account } = useMoralis();
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
+  const provider = useProvider();
   const [nativeTokenBalance, setNativeTokenBalance] = useState("0");
   const [voteTokenBalance, setVoteTokenBalance] = useState("0");
   const [freeVotes, setFreeVotes] = useState("0");
@@ -29,9 +32,9 @@ export default function Stake() {
   const [collectionBoost, setCollectionBoost] = useState(0);
 
   const addresses =
-    chainId in contractAddresses
-      ? contractAddresses[chainId]
-      : contractAddresses["0x1"];
+    chain && chain.id in contractAddresses
+      ? contractAddresses[chain.id]
+      : contractAddresses["1"];
   const [selectedCollection, setSelectedCollection] = useState({
     label: addresses.SupportedAssets[0].name,
     address: addresses.SupportedAssets[0].address,
@@ -43,80 +46,41 @@ export default function Stake() {
     },
   ]);
 
-  const { runContractFunction: getNativeTokenBalance } = useWeb3Contract();
-  const { runContractFunction: getVoteTokenBalance } = useWeb3Contract();
-  const { runContractFunction: getFreeVotes } = useWeb3Contract();
-  const { runContractFunction: getCollectionVotes } = useWeb3Contract();
-  const { runContractFunction: getMaximumWithdrawalAmount } = useWeb3Contract();
-  const { runContractFunction: getCollectionBoost } = useWeb3Contract();
+  const nativeTokenVault = useContract({
+    contractInterface: nativeTokenVaultContract.abi,
+    addressOrName: addresses.NativeTokenVault,
+    signerOrProvider: provider,
+  });
+
+  const nativeToken = useContract({
+    contractInterface: erc20,
+    addressOrName: addresses.NativeToken,
+    signerOrProvider: provider,
+  });
 
   async function updateUI() {
     // Get the native token balance
-    const getNativeTokenBalanceOptions = {
-      abi: erc20,
-      contractAddress: addresses.NativeToken,
-      functionName: "balanceOf",
-      params: {
-        _owner: account,
-      },
-    };
-    const nativeTokenBalance = await getNativeTokenBalance({
-      onError: (error) => console.log(error),
-      params: getNativeTokenBalanceOptions,
-    });
+    const nativeTokenBalance = await nativeToken.balanceOf(address);
     setNativeTokenBalance(nativeTokenBalance.toString());
 
     //Get the vote token Balance
-    const getVoteTokenBalanceOptions = {
-      abi: erc20,
-      contractAddress: addresses.NativeTokenVault,
-      functionName: "balanceOf",
-      params: {
-        _owner: account,
-      },
-    };
-    const voteTokenBalance = await getVoteTokenBalance({
-      onError: (error) => console.log(error),
-      params: getVoteTokenBalanceOptions,
-    });
+    const voteTokenBalance = await nativeTokenVault.balanceOf(address);
     setVoteTokenBalance(voteTokenBalance.toString());
 
     //Get the vote token Balance
-    const getFreeVotesOptions = {
-      abi: nativeTokenVaultContract.abi,
-      contractAddress: addresses.NativeTokenVault,
-      functionName: "getUserFreeVotes",
-      params: {
-        user: account,
-      },
-    };
-    const freeVotes = await getFreeVotes({
-      onError: (error) => console.log(error),
-      params: getFreeVotesOptions,
-    });
+    const freeVotes = await nativeTokenVault.getUserFreeVotes(address);
     setFreeVotes(freeVotes.toString());
 
-    const maxWithdrawalOptions = {
-      abi: nativeTokenVaultContract.abi,
-      contractAddress: addresses.NativeTokenVault,
-      functionName: "getMaximumWithdrawalAmount",
-      params: {
-        user: account,
-      },
-    };
-
-    const updatedMaxAmount = (
-      await getMaximumWithdrawalAmount({
-        params: maxWithdrawalOptions,
-      })
-    ).toString();
+    const updatedMaxAmount = nativeTokenVault
+      .getMaximumWithdrawalAmount(address)
+      .toString();
 
     console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
     setMaxAmount(updatedMaxAmount);
   }
 
   useEffect(() => {
-    if (isWeb3Enabled) {
+    if (isConnected) {
       updateUI();
 
       //Fill the collections with the supported assets
@@ -133,40 +97,18 @@ export default function Stake() {
       console.log("updatedCollections", updatedCollections);
       setCollections(updatedCollections);
     }
-  }, [isWeb3Enabled]);
+  }, [isConnected]);
 
   async function updateCollectionDetails(collection) {
     // Get the collection votes
-    const getCollectionVotesOptions = {
-      abi: nativeTokenVaultContract.abi,
-      contractAddress: addresses.NativeTokenVault,
-      functionName: "getUserCollectionVotes",
-      params: {
-        user: account,
-        collection: collection,
-      },
-    };
-    const updatedCollectionVotes = await getCollectionVotes({
-      onError: (error) => console.log(error),
-      params: getCollectionVotesOptions,
-    });
+    const updatedCollectionVotes =
+      await nativeTokenVault.getUserCollectionVotes(address, collection);
     console.log("collectionVotes", updatedCollectionVotes);
     setCollectionVotes(updatedCollectionVotes.toString());
 
     // Get the collection collateralization boost
-    const getCollectionBoostOptions = {
-      abi: nativeTokenVaultContract.abi,
-      contractAddress: addresses.NativeTokenVault,
-      functionName: "getVoteCollateralizationBoost",
-      params: {
-        user: account,
-        collection: collection,
-      },
-    };
-    const updatedCollectionBoost = await getCollectionBoost({
-      onError: (error) => console.log(error),
-      params: getCollectionBoostOptions,
-    });
+    const updatedCollectionBoost =
+      await nativeTokenVault.getVoteCollateralizationBoost(address, collection);
     console.log("collectionBoost", updatedCollectionBoost);
     setCollectionBoost(updatedCollectionBoost.toString());
   }

@@ -30,26 +30,19 @@ import Box from "@mui/material/Box";
 import CardContent from "@mui/material/CardContent";
 import { HelpCircle } from "@web3uikit/icons";
 import Image from "next/image";
-import erc20 from "../contracts/erc20.json";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 import Divider from "@mui/material/Divider";
+import Liquidate from "../components/Liquidate";
 import { useContract, useProvider, useSigner } from "wagmi";
-
-function isLoanLiquidatable(debt, maxCollateralization, price) {
-  return BigNumber.from(debt).lt(
-    BigNumber.from(maxCollateralization).mul(price).div(10000)
-  );
-}
 
 export default function LoanSearch() {
   const [collectionLoans, setCollectionLoans] = useState([]);
-  const [allowance, setAllowance] = useState("0");
   const [maxCollateralization, setMaxCollateralization] = useState("0");
   const [loadingCollectionLoans, setLoadingCollectionLoans] = useState(true);
+  const [selectedLoan, setSelectedLoan] = useState();
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const provider = useProvider();
-  const { data: signer } = useSigner();
   const dispatch = useNotification();
   const addresses =
     chain && chain.id in contractAddresses
@@ -66,24 +59,6 @@ export default function LoanSearch() {
   const nftOracle = useContract({
     contractInterface: nftOracleContract.abi,
     addressOrName: addresses.NFTOracle,
-    signerOrProvider: provider,
-  });
-
-  const marketSigner = useContract({
-    contractInterface: marketContract.abi,
-    addressOrName: addresses.Market,
-    signerOrProvider: signer,
-  });
-
-  const wethSigner = useContract({
-    contractInterface: erc20,
-    addressOrName: addresses["WETH"].address,
-    signerOrProvider: signer,
-  });
-
-  const wethProvider = useContract({
-    contractInterface: erc20,
-    addressOrName: addresses["WETH"].address,
     signerOrProvider: provider,
   });
 
@@ -148,19 +123,10 @@ export default function LoanSearch() {
     setLoadingCollectionLoans(false);
   }
 
-  async function getWETHAllowance() {
-    const allowance = await wethProvider.allowance(address, addresses.Market);
-
-    console.log("Got allowance:", allowance);
-
-    setAllowance(allowance.toString());
-  }
-
   // Runs once
   useEffect(() => {
     if (isConnected) {
       setLoadingCollectionLoans(true);
-      getWETHAllowance();
       //Fill the collections with the supported assets
       var updatedCollections = [];
       console.log("SupportedAssets", addresses.SupportedAssets);
@@ -216,6 +182,20 @@ export default function LoanSearch() {
 
   return (
     <div className={styles.container}>
+      <StyledModal
+        hasFooter={false}
+        title={"Liquidate"}
+        isVisible={visibleDepositModal}
+        width="50%"
+        onCloseButtonPressed={function () {
+          setVisibleLiquidateModal(false);
+        }}
+      >
+        <Liquidate
+          setVisibility={setVisibleLiquidateModal}
+          loan={selectedLoan}
+        />
+      </StyledModal>
       <div className="flex flex-col md:flex-row items-center justify-center">
         <div className="flex flex-col items-center justify-center">
           <Autocomplete
@@ -327,155 +307,80 @@ export default function LoanSearch() {
                         "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                     }}
                   >
-                    <CardContent>
-                      {collectionLoan.tokenURI ? (
-                        <div className="flex flex-col items-center">
-                          <Image
-                            loader={() => collectionLoan.tokenURI}
-                            src={collectionLoan.tokenURI}
-                            height="200"
-                            width="200"
-                            unoptimized={true}
-                            className="rounded-3xl"
-                          />
+                    <CardActionArea
+                      onClick={function () {
+                        setSelectedLoan(loan);
+                        setVisibleLiquidateModal(true);
+                      }}
+                    >
+                      <CardContent>
+                        {collectionLoan.tokenURI ? (
+                          <div className="flex flex-col items-center">
+                            <Image
+                              loader={() => collectionLoan.tokenURI}
+                              src={collectionLoan.tokenURI}
+                              height="200"
+                              width="200"
+                              unoptimized={true}
+                              className="rounded-3xl"
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center justify-center">
+                            <Illustration
+                              height="140px"
+                              logo="chest"
+                              width="100%"
+                            />
+                            Loading...
+                          </div>
+                        )}
+                        <div className="flex flex-row mt-8">
+                          <Typography variant="caption14">Asset ID</Typography>
                         </div>
-                      ) : (
-                        <div className="flex flex-col items-center justify-center">
-                          <Illustration
-                            height="140px"
-                            logo="chest"
-                            width="100%"
-                          />
-                          Loading...
-                        </div>
-                      )}
-                      <div className="flex flex-row mt-8">
-                        <Typography variant="caption14">Asset ID</Typography>
-                      </div>
-                      <div className="flex flex-row  items-center">
-                        <Typography variant="caption16">
-                          {collectionLoan.tokenId}
-                        </Typography>
-                      </div>
-                      <div className="flex flex-row mt-2">
-                        <Typography variant="caption14">Debt</Typography>
-                      </div>
-                      <div className="flex flex-row  items-center">
-                        <Typography variant="caption16">
-                          {formatUnits(collectionLoan.debt, 18)} WETH
-                        </Typography>
-                      </div>
-                      <div className="flex flex-row mt-6">
-                        <div className="flex flex-col">
-                          <Typography variant="caption14">
-                            Health Level
+                        <div className="flex flex-row  items-center">
+                          <Typography variant="caption16">
+                            {collectionLoan.tokenId}
                           </Typography>
                         </div>
-                        <div className="flex flex-col ml-1">
-                          <Tooltip
-                            content="Represents the relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
-                            position="top"
-                            minWidth={300}
-                          >
-                            <HelpCircle fontSize="14px" color="#000000" />
-                          </Tooltip>
+                        <div className="flex flex-row mt-2">
+                          <Typography variant="caption14">Debt</Typography>
                         </div>
-                      </div>
-                      <div>
-                        <LinearProgressWithLabel
-                          color="success"
-                          value={calculateHealthLevel(
-                            collectionLoan.debt,
-                            BigNumber.from(maxCollateralization)
-                              .mul(collectionLoan.price)
-                              .div(10000)
-                              .toString()
-                          )}
-                        />
-                      </div>
-                      <div className="flex flex-row m-4 items-center justify-center">
-                        <div className="flex flex-col">
-                          {BigNumber.from(collectionLoan.price)
-                            .mul(BigNumber.from(82))
-                            .div(BigNumber.from(100))
-                            .lt(BigNumber.from(allowance)) ? (
-                            <Button
-                              disabled={isLoanLiquidatable(
-                                collectionLoan.debt,
-                                maxCollateralization,
-                                collectionLoan.price
-                              )}
-                              text="Liquidate"
-                              theme="colored"
-                              type="button"
-                              size="small"
-                              color="red"
-                              radius="5"
-                              onClick={async function () {
-                                const requestId = getNewRequestID();
-                                const priceSig = await getAssetPriceSig(
-                                  requestId,
-                                  collectionLoan.tokenAddress,
-                                  collectionLoan.tokenId,
-                                  chain.id
-                                );
-                                console.log("Liquidation loan", collectionLoan);
-                                try {
-                                  await marketSigner.liquidate(
-                                    collectionLoan.loanId,
-                                    requestId,
-                                    priceSig
-                                  );
-                                  handleLiquidateSuccess();
-                                } catch (error) {
-                                  console.log(error);
-                                }
-                              }}
-                            />
-                          ) : (
-                            <Button
-                              text="Approve WETH for Liquidation"
-                              theme="colored"
-                              type="button"
-                              size="small"
-                              color="red"
-                              radius="5"
-                              disabled={isLoanLiquidatable(
-                                collectionLoan.debt,
-                                maxCollateralization,
-                                collectionLoan.price
-                              )}
-                              loadingProps={{
-                                spinnerColor: "#000000",
-                              }}
-                              loadingText="Confirming Approval"
-                              onClick={async function () {
-                                try {
-                                  await wethSigner.approve(
-                                    addresses.Market,
-                                    collectionLoan.price
-                                  );
-                                  handleApprovalSuccess;
-                                } catch (error) {
-                                  console.log(error);
-                                }
-                              }}
-                            ></Button>
-                          )}
-                          {isLoanLiquidatable(
-                            collectionLoan.debt,
-                            maxCollateralization,
-                            collectionLoan.price
-                          ) && (
-                            <div className="flex justify-center">
-                              <Typography variant="caption14">
-                                Liquidation condtitions not met
-                              </Typography>
-                            </div>
-                          )}
+                        <div className="flex flex-row  items-center">
+                          <Typography variant="caption16">
+                            {formatUnits(collectionLoan.debt, 18)} WETH
+                          </Typography>
                         </div>
-                      </div>
-                    </CardContent>
+                        <div className="flex flex-row mt-6">
+                          <div className="flex flex-col">
+                            <Typography variant="caption14">
+                              Health Level
+                            </Typography>
+                          </div>
+                          <div className="flex flex-col ml-1">
+                            <Tooltip
+                              content="Represents the relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
+                              position="top"
+                              minWidth={300}
+                            >
+                              <HelpCircle fontSize="14px" color="#000000" />
+                            </Tooltip>
+                          </div>
+                        </div>
+                        <div>
+                          <LinearProgressWithLabel
+                            color="success"
+                            value={calculateHealthLevel(
+                              collectionLoan.debt,
+                              BigNumber.from(maxCollateralization)
+                                .mul(collectionLoan.price)
+                                .div(10000)
+                                .toString()
+                            )}
+                          />
+                        </div>
+                      </CardContent>
+                    </CardActionArea>
                   </Card>
                 </div>
               ))}

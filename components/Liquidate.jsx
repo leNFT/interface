@@ -5,6 +5,10 @@ import {
   useProvider,
   useSigner,
 } from "wagmi";
+import {
+  getNewRequestID,
+  getAssetPriceSig,
+} from "../helpers/getAssetPriceSig.js";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useNotification, Button, Input, Typography } from "@web3uikit/core";
@@ -12,6 +16,7 @@ import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { useState, useEffect } from "react";
 import marketContract from "../contracts/Market.json";
+import loanCenterContract from "../contracts/LoanCenter.json";
 import erc20 from "../contracts/erc20.json";
 
 function isLoanLiquidatable(debt, maxCollateralization, price) {
@@ -23,12 +28,14 @@ function isLoanLiquidatable(debt, maxCollateralization, price) {
 export default function Liquidate(props) {
   const [allowance, setAllowance] = useState("0");
   const [approvalLoading, setApprovalLoading] = useState(false);
-  const [depositLoading, setDepositLoading] = useState(false);
-  const dispatch = useNotification();
   const { address, isConnected } = useAccount();
+  const { loanDetails, setLoanDetails } = useState();
+  const { liquidationPrice, setLiquidationPrice } = useState();
+  const { liquidationReward, setLiquidationReward } = useState();
   const { chain } = useNetwork();
   const { data: signer } = useSigner();
   const provider = useProvider();
+  const dispatch = useNotification();
   const addresses =
     chain && chain.id in contractAddresses
       ? contractAddresses[chain.id]
@@ -38,6 +45,18 @@ export default function Liquidate(props) {
     contractInterface: marketContract.abi,
     addressOrName: addresses.Market,
     signerOrProvider: signer,
+  });
+
+  const marketProvider = useContract({
+    contractInterface: marketContract.abi,
+    addressOrName: addresses.Market,
+    signerOrProvider: provider,
+  });
+
+  const loanCenter = useContract({
+    contractInterface: loanCenterContract.abi,
+    addressOrName: addresses.LoanCenter,
+    signerOrProvider: provider,
   });
 
   const wethSigner = useContract({
@@ -54,31 +73,52 @@ export default function Liquidate(props) {
 
   async function getWETHAllowance() {
     const allowance = await wethProvider.allowance(address, addresses.Market);
-
     console.log("Got allowance:", allowance);
-
     setAllowance(allowance.toString());
   }
 
+  async function getLoanDetails() {
+    // Get extra loan details
+    const newloanDetails = await loanCenter.getLoan(props.loan.loanId);
+    console.log("Got loan details:", newloanDetails);
+    setLoanDetails(newloanDetails);
+
+    // Get liquidation price for the loan
+    const requestId = getNewRequestID();
+    const priceSig = await getAssetPriceSig(
+      requestId,
+      props.loan.tokenAddress,
+      props.loan.tokenId,
+      chain.id
+    );
+    (newLiquidationPrice, newLiquidationReward) = await marketProvider.getLoanLiquidationPrice(
+      props.loan.loanId,
+      requestId,
+      priceSig
+    );
+
+    setLiquidationPrice(newLiquidationPrice);
+    setLiquidationReward(newLiquidationReward);
+  }
+
   useEffect(() => {
-    if (isConnected && props.asset) {
+    if ((isConnected, props.loan)) {
       getWETHAllowance();
+      getLoanDetails();
     }
-  }, [isConnected, props.asset]);
+  }, [isConnected, props.loan]);
 
   const handleLiquidateSuccess = async function () {
     props.setVisibility(false);
-    updateTokenBalance();
     dispatch({
       type: "success",
       message: "Please wait for transaction confirmation.",
-      title: "Deposit Successful!",
+      title: "Liquidation Successful!",
       position: "topR",
     });
   };
 
   const handleApprovalSuccess = async function () {
-    setApproved(true);
     setApprovalLoading(false);
     dispatch({
       type: "success",
@@ -93,10 +133,10 @@ export default function Liquidate(props) {
       {props.loan.tokenURI ? (
         <div className="flex flex-col items-center">
           <Image
-            loader={() => collectionLoan.tokenURI}
-            src={collectionLoan.tokenURI}
-            height="200"
-            width="200"
+            loader={() => props.loan.tokenURI}
+            src={props.loan.tokenURI}
+            height="300"
+            width="300"
             unoptimized={true}
             className="rounded-3xl"
           />
@@ -111,14 +151,30 @@ export default function Liquidate(props) {
         <Typography variant="caption14">Asset ID</Typography>
       </div>
       <div className="flex flex-row  items-center">
-        <Typography variant="caption16">{collectionLoan.tokenId}</Typography>
+        <Typography variant="caption16">{props.loan.tokenId}</Typography>
       </div>
       <div className="flex flex-row mt-2">
         <Typography variant="caption14">Debt</Typography>
       </div>
       <div className="flex flex-row  items-center">
         <Typography variant="caption16">
-          {formatUnits(collectionLoan.debt, 18)} WETH
+          {formatUnits(props.loan.debt, 18)} WETH
+        </Typography>
+      </div>
+            <div className="flex flex-row mt-2">
+        <Typography variant="caption14">Liquidation Price</Typography>
+      </div>
+      <div className="flex flex-row  items-center">
+        <Typography variant="caption16">
+          {formatUnits(liquidationPrice, 18)} WETH
+        </Typography>
+      </div>
+      <div className="flex flex-row mt-2">
+        <Typography variant="caption14">Liquidation Reward</Typography>
+      </div>
+      <div className="flex flex-row  items-center">
+        <Typography variant="caption16">
+          {formatUnits(liquidationReward, 18)} LE
         </Typography>
       </div>
       <div className="flex flex-row mt-6">
@@ -139,9 +195,9 @@ export default function Liquidate(props) {
         <LinearProgressWithLabel
           color="success"
           value={calculateHealthLevel(
-            collectionLoan.debt,
+            props.loan.debt,
             BigNumber.from(maxCollateralization)
-              .mul(collectionLoan.price)
+              .mul(props.loan.price)
               .div(10000)
               .toString()
           )}
@@ -149,15 +205,13 @@ export default function Liquidate(props) {
       </div>
       <div className="flex flex-row m-4 items-center justify-center">
         <div className="flex flex-col">
-          {BigNumber.from(collectionLoan.price)
-            .mul(BigNumber.from(82))
-            .div(BigNumber.from(100))
+          {BigNumber.from(liquidationPrice)
             .lt(BigNumber.from(allowance)) ? (
             <Button
               disabled={isLoanLiquidatable(
-                collectionLoan.debt,
+                props.loan.debt,
                 maxCollateralization,
-                collectionLoan.price
+                props.loan.price
               )}
               text="Liquidate"
               theme="colored"
@@ -169,14 +223,14 @@ export default function Liquidate(props) {
                 const requestId = getNewRequestID();
                 const priceSig = await getAssetPriceSig(
                   requestId,
-                  collectionLoan.tokenAddress,
-                  collectionLoan.tokenId,
+                  props.loan.tokenAddress,
+                  props.loan.tokenId,
                   chain.id
                 );
-                console.log("Liquidation loan", collectionLoan);
+                console.log("Liquidation loan", props.loan);
                 try {
                   await marketSigner.liquidate(
-                    collectionLoan.loanId,
+                    props.loan.loanId,
                     requestId,
                     priceSig
                   );
@@ -194,10 +248,11 @@ export default function Liquidate(props) {
               size="small"
               color="red"
               radius="5"
+              isLoading={approvalLoading}
               disabled={isLoanLiquidatable(
-                collectionLoan.debt,
+                props.loan.debt,
                 maxCollateralization,
-                collectionLoan.price
+                props.loan.price
               )}
               loadingProps={{
                 spinnerColor: "#000000",
@@ -205,11 +260,9 @@ export default function Liquidate(props) {
               loadingText="Confirming Approval"
               onClick={async function () {
                 try {
-                  await wethSigner.approve(
-                    addresses.Market,
-                    collectionLoan.price
-                  );
-                  handleApprovalSuccess;
+                  setApprovalLoading(true);
+                  await wethSigner.approve(addresses.Market, liquidationPrice);
+                  handleApprovalSuccess();
                 } catch (error) {
                   console.log(error);
                 }
@@ -217,9 +270,9 @@ export default function Liquidate(props) {
             ></Button>
           )}
           {isLoanLiquidatable(
-            collectionLoan.debt,
+            props.loan.debt,
             maxCollateralization,
-            collectionLoan.price
+            props.loan.price
           ) && (
             <div className="flex justify-center">
               <Typography variant="caption14">

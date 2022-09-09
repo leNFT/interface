@@ -2,23 +2,16 @@ import styles from "../styles/Home.module.css";
 import { getAssetPrice } from "../helpers/getAssetPrice.js";
 import { getNFTImage } from "../helpers/getNFTImage.js";
 import { getNFTs } from "../helpers/getNFTs.js";
-import {
-  getNewRequestID,
-  getAssetPriceSig,
-} from "../helpers/getAssetPriceSig.js";
 import contractAddresses from "../contractAddresses.json";
-import { formatUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import loanCenterContract from "../contracts/LoanCenter.json";
-import marketContract from "../contracts/Market.json";
 import nftOracleContract from "../contracts/NFTOracle.json";
 import { useState, useEffect } from "react";
 import { useAccount, useNetwork } from "wagmi";
 import { calculateHealthLevel } from "../helpers/healthLevel";
 import {
-  useNotification,
   Illustration,
   Loading,
   Typography,
@@ -40,10 +33,10 @@ export default function LoanSearch() {
   const [maxCollateralization, setMaxCollateralization] = useState("0");
   const [loadingCollectionLoans, setLoadingCollectionLoans] = useState(true);
   const [selectedLoan, setSelectedLoan] = useState();
+  const [visibleLiquidateModal, setVisibleLiquidateModal] = useState(false);
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const provider = useProvider();
-  const dispatch = useNotification();
   const addresses =
     chain && chain.id in contractAddresses
       ? contractAddresses[chain.id]
@@ -89,8 +82,10 @@ export default function LoanSearch() {
         collectionNFTs[i].token_id
       );
 
+      // Get the debt associated with this loan
       const debt = await loanCenter.getLoanDebt(loanId);
 
+      // Find the valuation given by the protocol to this token
       const tokenPrice = await getAssetPrice(
         // Get checksumed token adress
         contractAddresses[chain.id].SupportedAssets.find(
@@ -111,11 +106,13 @@ export default function LoanSearch() {
       updatedCollectionLoans.push({
         loanId: loanId,
         debt: debt.toString(),
-        tokenAddress: collectionNFTs[i].token_address,
-        tokenId: collectionNFTs[i].token_id,
+        tokenAddress: loan.nftAsset,
+        tokenId: loan.nftTokenId,
         tokenURI: tokenURI,
         price: tokenPrice,
       });
+
+      console.log("Push new loan", loan);
     }
     // Update active loans state array
     console.log("updatedCollectionLoans", updatedCollectionLoans);
@@ -162,30 +159,12 @@ export default function LoanSearch() {
     }
   }
 
-  const handleLiquidateSuccess = async function () {
-    dispatch({
-      type: "success",
-      message: "Please wait for transaction confirmation.",
-      title: "Liquidation Successful",
-      position: "topR",
-    });
-  };
-
-  const handleApprovalSuccess = async function () {
-    dispatch({
-      type: "success",
-      message: "Please wait for transaction confirmation.",
-      title: "Approval Successful!",
-      position: "topR",
-    });
-  };
-
   return (
     <div className={styles.container}>
       <StyledModal
         hasFooter={false}
         title={"Liquidate"}
-        isVisible={visibleDepositModal}
+        isVisible={visibleLiquidateModal}
         width="50%"
         onCloseButtonPressed={function () {
           setVisibleLiquidateModal(false);
@@ -309,7 +288,7 @@ export default function LoanSearch() {
                   >
                     <CardActionArea
                       onClick={function () {
-                        setSelectedLoan(loan);
+                        setSelectedLoan(collectionLoan);
                         setVisibleLiquidateModal(true);
                       }}
                     >
@@ -341,14 +320,6 @@ export default function LoanSearch() {
                         <div className="flex flex-row  items-center">
                           <Typography variant="caption16">
                             {collectionLoan.tokenId}
-                          </Typography>
-                        </div>
-                        <div className="flex flex-row mt-2">
-                          <Typography variant="caption14">Debt</Typography>
-                        </div>
-                        <div className="flex flex-row  items-center">
-                          <Typography variant="caption16">
-                            {formatUnits(collectionLoan.debt, 18)} WETH
                           </Typography>
                         </div>
                         <div className="flex flex-row mt-6">

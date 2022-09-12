@@ -10,8 +10,8 @@ import {
   getAssetPriceSig,
 } from "../helpers/getAssetPriceSig.js";
 import { BigNumber } from "@ethersproject/bignumber";
-import { formatUnits, parseUnits } from "@ethersproject/units";
-import { useNotification, Button, Input, Typography } from "@web3uikit/core";
+import { formatUnits } from "@ethersproject/units";
+import { useNotification, Button, Typography } from "@web3uikit/core";
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { useState, useEffect } from "react";
@@ -123,7 +123,7 @@ export default function Liquidate(props) {
     dispatch({
       type: "success",
       message: "Please wait for transaction confirmation.",
-      title: "Approval Successful!",
+      title: "Liquidation Approval Successful!",
       position: "topR",
     });
   };
@@ -151,7 +151,7 @@ export default function Liquidate(props) {
         <Typography variant="caption14">Asset ID</Typography>
       </div>
       <div className="flex flex-row  items-center">
-        <Typography variant="caption16">{props.loan.tokenId}</Typography>
+        <Typography variant="caption16"># {props.loan.tokenId}</Typography>
       </div>
       <div className="flex flex-row mt-2">
         <Typography variant="caption14">Debt</Typography>
@@ -196,7 +196,7 @@ export default function Liquidate(props) {
           color="success"
           value={calculateHealthLevel(
             props.loan.debt,
-            BigNumber.from(maxCollateralization)
+            BigNumber.from(props.maxCollateralization)
               .mul(props.loan.price)
               .div(10000)
               .toString()
@@ -210,7 +210,7 @@ export default function Liquidate(props) {
             <Button
               disabled={isLoanLiquidatable(
                 props.loan.debt,
-                maxCollateralization,
+                props.maxCollateralization,
                 props.loan.price
               )}
               text="Liquidate"
@@ -251,7 +251,7 @@ export default function Liquidate(props) {
               isLoading={approvalLoading}
               disabled={isLoanLiquidatable(
                 props.loan.debt,
-                maxCollateralization,
+                props.maxCollateralization,
                 props.loan.price
               )}
               loadingProps={{
@@ -271,7 +271,7 @@ export default function Liquidate(props) {
           )}
           {isLoanLiquidatable(
             props.loan.debt,
-            maxCollateralization,
+            props.maxCollateralization,
             props.loan.price
           ) && (
             <div className="flex justify-center">

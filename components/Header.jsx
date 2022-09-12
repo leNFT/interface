@@ -176,7 +176,6 @@ export default function Header() {
                         </Box>
                       </div>
                     }
-                    disabled={true}
                     icon={
                       <div className="pl-[10px]">
                         <LockClosed fontSize="20px" color="#000000" />

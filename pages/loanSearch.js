@@ -11,13 +11,7 @@ import nftOracleContract from "../contracts/NFTOracle.json";
 import { useState, useEffect } from "react";
 import { useAccount, useNetwork } from "wagmi";
 import { calculateHealthLevel } from "../helpers/healthLevel";
-import {
-  Illustration,
-  Loading,
-  Typography,
-  Button,
-  Tooltip,
-} from "@web3uikit/core";
+import { Illustration, Loading, Typography, Tooltip } from "@web3uikit/core";
 import Card from "@mui/material/Card";
 import Box from "@mui/material/Box";
 import CardContent from "@mui/material/CardContent";
@@ -26,7 +20,7 @@ import Image from "next/image";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 import Divider from "@mui/material/Divider";
 import Liquidate from "../components/Liquidate";
-import { useContract, useProvider, useSigner } from "wagmi";
+import { useContract, useProvider } from "wagmi";
 
 export default function LoanSearch() {
   const [collectionLoans, setCollectionLoans] = useState([]);
@@ -85,8 +79,8 @@ export default function LoanSearch() {
       // Get the debt associated with this loan
       const debt = await loanCenter.getLoanDebt(loanId);
 
-      // Find the valuation given by the protocol to this token
-      const tokenPrice = await getAssetPrice(
+      // Find the valuation given by the protocol to this specific asset
+      const assetPrice = await getAssetPrice(
         // Get checksumed token adress
         contractAddresses[chain.id].SupportedAssets.find(
           (collection) =>
@@ -109,10 +103,10 @@ export default function LoanSearch() {
         tokenAddress: loan.nftAsset,
         tokenId: loan.nftTokenId,
         tokenURI: tokenURI,
-        price: tokenPrice,
+        price: assetPrice,
       });
 
-      console.log("Push new loan", loan);
+      console.log("Found new loan", loan);
     }
     // Update active loans state array
     console.log("updatedCollectionLoans", updatedCollectionLoans);
@@ -173,6 +167,7 @@ export default function LoanSearch() {
         <Liquidate
           setVisibility={setVisibleLiquidateModal}
           loan={selectedLoan}
+          maxCollateralization={maxCollateralization}
         />
       </StyledModal>
       <div className="flex flex-col md:flex-row items-center justify-center">

@@ -15,12 +15,14 @@ import { Illustration, Loading, Typography, Tooltip } from "@web3uikit/core";
 import Card from "@mui/material/Card";
 import Box from "@mui/material/Box";
 import CardContent from "@mui/material/CardContent";
+import { CardActionArea } from "@mui/material";
 import { HelpCircle } from "@web3uikit/icons";
 import Image from "next/image";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 import Divider from "@mui/material/Divider";
 import Liquidate from "../components/Liquidate";
 import { useContract, useProvider } from "wagmi";
+import StyledModal from "../components/StyledModal";
 
 export default function LoanSearch() {
   const [collectionLoans, setCollectionLoans] = useState([]);
@@ -52,7 +54,6 @@ export default function LoanSearch() {
   // Get active loans for the selected collection
   async function getCollectionLoans(selectedCollection) {
     console.log("Getting collection loans...", selectedCollection);
-    var collectionNFTs;
     var updatedCollectionLoans = [];
 
     //Get the max collaterization for the collection
@@ -67,7 +68,9 @@ export default function LoanSearch() {
       selectedCollection,
       chain.id
     );
-    collectionNFTs = collectionNFTsResponse.result;
+    const collectionNFTs = collectionNFTsResponse.result
+      ? collectionNFTsResponse.result
+      : [];
 
     for (let i = 0; i < collectionNFTs.length; i++) {
       // Get the loan ID of each NFT
@@ -100,13 +103,11 @@ export default function LoanSearch() {
       updatedCollectionLoans.push({
         loanId: loanId,
         debt: debt.toString(),
-        tokenAddress: loan.nftAsset,
-        tokenId: loan.nftTokenId,
+        tokenAddress: collectionNFTs[i].token_address,
+        tokenId: collectionNFTs[i].token_id,
         tokenURI: tokenURI,
         price: assetPrice,
       });
-
-      console.log("Found new loan", loan);
     }
     // Update active loans state array
     console.log("updatedCollectionLoans", updatedCollectionLoans);

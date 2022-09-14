@@ -3,25 +3,47 @@ import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useNotification, Button, Input, Typography } from "@web3uikit/core";
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
-import { useWeb3Contract, useMoralis } from "react-moralis";
+import {
+  useAccount,
+  useNetwork,
+  useContract,
+  useProvider,
+  useSigner,
+} from "wagmi";
 import { useState, useEffect } from "react";
+import nativeTokenVaultContract from "../contracts/NativeTokenVault.json";
 
 export default function RemoveVote(props) {
-  const { isWeb3Enabled, chainId, account } = useMoralis();
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
+  const provider = useProvider();
+  const { data: signer } = useSigner();
   const [amount, setAmount] = useState("0");
   const [removeVotingLoading, setRemoveVotingLoading] = useState(false);
   const [maxAmount, setMaxAmount] = useState("0");
 
-  const dispatch = useNotification();
   const addresses =
-    chainId in contractAddresses
-      ? contractAddresses[chainId]
-      : contractAddresses["0x1"];
+    chain && chain.id in contractAddresses
+      ? contractAddresses[chain.id]
+      : contractAddresses["1"];
+  const dispatch = useNotification();
+
+  const nativeTokenVaultSigner = useContract({
+    contractInterface: nativeTokenVaultContract.abi,
+    addressOrName: addresses.NativeTokenVault,
+    signerOrProvider: signer,
+  });
+
+  const nativeTokenVaultProvider = useContract({
+    contractInterface: nativeTokenVaultContract.abi,
+    addressOrName: addresses.NativeTokenVault,
+    signerOrProvider: provider,
+  });
 
   const { runContractFunction: removeVote } = useWeb3Contract({
     abi: nativeTokenVaultContract.abi,
     contractAddress: addresses.NativeTokenVault,
-    functionName: "vote",
+    functionName: "removeVote",
     params: {
       amount: amount,
       collection: props.address,
@@ -37,26 +59,13 @@ export default function RemoveVote(props) {
     },
   });
 
-  const { runContractFunction: getVoteTokenBalance } = useWeb3Contract({
-    abi: nativeTokenVaultContract.abi,
-    contractAddress: addresses.NativeTokenVault,
-    functionName: "balanceOf",
-    params: {
-      account: account,
-    },
-  });
-
   async function updateMaxAmount() {
     const voteTokenBalance = (
-      await getVoteTokenBalance({
-        onError: (error) => console.log(error),
-      })
+      await nativeTokenVaultProvider.balanceOf(address)
     ).toString();
 
     const freeVotes = (
-      await getFreeVotes({
-        onError: (error) => console.log(error),
-      })
+      await nativeTokenVaultProvider.getUserFreeVotes(address)
     ).toString();
 
     const updatedMaxAmount = BigNumber.from(voteTokenBalance).sub(freeVotes);
@@ -67,10 +76,10 @@ export default function RemoveVote(props) {
 
   //Run once
   useEffect(() => {
-    if (isWeb3Enabled) {
+    if (isConnected) {
       updateMaxAmount();
     }
-  }, [isWeb3Enabled]);
+  }, [isConnected]);
 
   function handleInputChange(e) {
     if (e.target.value != "") {
@@ -130,11 +139,14 @@ export default function RemoveVote(props) {
           onClick={async function () {
             if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
               setRemoveVotingLoading(true);
-              await removeVote({
-                onComplete: () => setRemoveVotingLoading(false),
-                onSuccess: handleRemoveVoteSuccess,
-                onError: (error) => console.log(error),
-              });
+              try {
+                await nativeTokenVaultSigner.removeVote(amount, props.address);
+                handleRemoveVoteSuccess();
+              } catch (error) {
+                console.log(error);
+              } finally {
+                setRemoveVotingLoading(false);
+              }
             } else {
               dispatch({
                 type: "error",

@@ -1,16 +1,24 @@
 import { BigNumber } from "@ethersproject/bignumber";
+import {
+  useAccount,
+  useNetwork,
+  useContract,
+  useProvider,
+  useSigner,
+} from "wagmi";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useNotification, Button, Input, Typography } from "@web3uikit/core";
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
-import { useWeb3Contract, useMoralis } from "react-moralis";
 import { useState, useEffect } from "react";
 import nativeTokenVaultContract from "../contracts/NativeTokenVault.json";
 import nativeTokenContract from "../contracts/NativeToken.json";
-import erc20 from "../contracts/erc20.json";
 
 export default function DepositNativeToken(props) {
-  const { isWeb3Enabled, chainId, account } = useMoralis();
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
+  const provider = useProvider();
+  const { data: signer } = useSigner();
   const [amount, setAmount] = useState("0");
   const [balance, setBalance] = useState("0");
   const [approved, setApproved] = useState(false);
@@ -19,56 +27,39 @@ export default function DepositNativeToken(props) {
 
   const dispatch = useNotification();
   const addresses =
-    chainId in contractAddresses
-      ? contractAddresses[chainId]
-      : contractAddresses["0x1"];
+    chain && chain.id in contractAddresses
+      ? contractAddresses[chain.id]
+      : contractAddresses["1"];
 
-  const { runContractFunction: deposit } = useWeb3Contract({
-    abi: nativeTokenVaultContract.abi,
-    contractAddress: addresses.NativeTokenVault,
-    functionName: "deposit",
-    params: {
-      amount: amount,
-    },
+  const nativeTokenVaultSigner = useContract({
+    contractInterface: nativeTokenVaultContract.abi,
+    addressOrName: addresses.NativeTokenVault,
+    signerOrProvider: signer,
   });
 
-  const { runContractFunction: getBalance } = useWeb3Contract({
-    abi: nativeTokenContract.abi,
-    contractAddress: addresses.NativeToken,
-    functionName: "balanceOf",
-    params: {
-      account: account,
-    },
+  const nativeTokenProvider = useContract({
+    contractInterface: nativeTokenContract.abi,
+    addressOrName: addresses.NativeToken,
+    signerOrProvider: provider,
   });
 
-  const { runContractFunction: getAllowance } = useWeb3Contract();
-
-  const { runContractFunction: approve } = useWeb3Contract();
+  const nativeTokenSigner = useContract({
+    contractInterface: nativeTokenContract.abi,
+    addressOrName: addresses.NativeToken,
+    signerOrProvider: signer,
+  });
 
   async function updateTokenBalance() {
-    const updatedBalance = await getBalance({
-      onError: (error) => console.log(error),
-    });
+    const updatedBalance = await nativeTokenProvider.balanceOf(address);
     console.log("Updated Balance:", updatedBalance);
     setBalance(updatedBalance.toString());
   }
 
   async function getTokenAllowance() {
-    const getAllowanceOptions = {
-      abi: erc20,
-      contractAddress: addresses.NativeToken,
-      functionName: "allowance",
-      params: {
-        _owner: account,
-        _spender: addresses.NativeTokenVault,
-      },
-    };
-
-    const allowance = await getAllowance({
-      onError: (error) => console.log(error),
-      params: getAllowanceOptions,
-    });
-
+    const allowance = await nativeTokenProvider.allowance(
+      account,
+      addresses.NativeTokenVault
+    );
     console.log("Got allowance:", allowance);
 
     if (!allowance.eq(BigNumber.from(0))) {
@@ -77,11 +68,11 @@ export default function DepositNativeToken(props) {
   }
 
   useEffect(() => {
-    if (isWeb3Enabled) {
+    if (isConnected) {
       getTokenAllowance();
       updateTokenBalance();
     }
-  }, [isWeb3Enabled]);
+  }, [isConnected]);
 
   const handleDepositSuccess = async function () {
     console.log("Deposited", amount);
@@ -154,11 +145,14 @@ export default function DepositNativeToken(props) {
             onClick={async function () {
               if (BigNumber.from(amount).lte(BigNumber.from(balance))) {
                 setDepositLoading(true);
-                await deposit({
-                  onComplete: () => setDepositLoading(false),
-                  onSuccess: handleDepositSuccess,
-                  onError: (error) => console.log(error),
-                });
+                try {
+                  await nativeTokenVaultSigner.deposit(amount);
+                  handleDepositSuccess();
+                } catch (error) {
+                  console.log(error);
+                } finally {
+                  setDepositLoading(false);
+                }
               } else {
                 dispatch({
                   type: "error",
@@ -186,23 +180,17 @@ export default function DepositNativeToken(props) {
             isLoading={approvalLoading}
             onClick={async function () {
               setApprovalLoading(true);
-              const approveOptions = {
-                abi: erc20,
-                contractAddress: addresses.NativeToken,
-                functionName: "approve",
-                params: {
-                  _spender: addresses.NativeTokenVault,
-                  _value:
-                    "115792089237316195423570985008687907853269984665640564039457584007913129639935",
-                },
-              };
-
-              await approve({
-                onComplete: () => setApprovalLoading(false),
-                onSuccess: handleApprovalSuccess,
-                onError: (error) => console.log(error),
-                params: approveOptions,
-              });
+              try {
+                await nativeTokenSigner.approve(
+                  addresses.NativeTokenVault,
+                  "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+                );
+                handleApprovalSuccess();
+              } catch (error) {
+                console.log(error);
+              } finally {
+                setApprovalLoading(false);
+              }
             }}
           ></Button>
         </div>

@@ -3,54 +3,56 @@ import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useNotification, Button, Input, Typography } from "@web3uikit/core";
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
-import { useWeb3Contract, useMoralis } from "react-moralis";
+import {
+  useAccount,
+  useNetwork,
+  useContract,
+  useProvider,
+  useSigner,
+} from "wagmi";
 import { useState, useEffect } from "react";
 import nativeTokenVaultContract from "../contracts/NativeTokenVault.json";
 
 export default function Vote(props) {
-  const { isWeb3Enabled, chainId, account } = useMoralis();
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
+  const provider = useProvider();
+  const { data: signer } = useSigner();
   const [freeVotes, setFreeVotes] = useState("0");
   const [amount, setAmount] = useState("0");
   const [votingLoading, setVotingLoading] = useState(false);
 
-  const dispatch = useNotification();
   const addresses =
-    chainId in contractAddresses
-      ? contractAddresses[chainId]
-      : contractAddresses["0x1"];
+    chain && chain.id in contractAddresses
+      ? contractAddresses[chain.id]
+      : contractAddresses["1"];
+  const dispatch = useNotification();
 
-  const { runContractFunction: vote } = useWeb3Contract({
-    abi: nativeTokenVaultContract.abi,
-    contractAddress: addresses.NativeTokenVault,
-    functionName: "vote",
-    params: {
-      amount: amount,
-      collection: props.address,
-    },
+  const nativeTokenVaultSigner = useContract({
+    contractInterface: nativeTokenVaultContract.abi,
+    addressOrName: addresses.NativeTokenVault,
+    signerOrProvider: signer,
   });
 
-  const { runContractFunction: getFreeVotes } = useWeb3Contract({
-    abi: nativeTokenVaultContract.abi,
-    contractAddress: addresses.NativeTokenVault,
-    functionName: "getUserFreeVotes",
-    params: {
-      user: account,
-    },
+  const nativeTokenVaultProvider = useContract({
+    contractInterface: nativeTokenVaultContract.abi,
+    addressOrName: addresses.NativeTokenVault,
+    signerOrProvider: provider,
   });
 
   async function updateFreeVotes() {
-    const updatedFreeVotes = await getFreeVotes({
-      onError: (error) => console.log(error),
-    });
+    const updatedFreeVotes = await nativeTokenVaultProvider.getUserFreeVotes(
+      address
+    );
     console.log("Updated Free Votes:", updatedFreeVotes);
     setFreeVotes(updatedFreeVotes.toString());
   }
 
   useEffect(() => {
-    if (isWeb3Enabled) {
+    if (isConnected) {
       updateFreeVotes();
     }
-  }, [isWeb3Enabled]);
+  }, [isConnected]);
 
   const handleVoteSuccess = async function () {
     console.log("Voted", amount);
@@ -111,11 +113,14 @@ export default function Vote(props) {
           onClick={async function () {
             if (BigNumber.from(amount).lte(BigNumber.from(freeVotes))) {
               setVotingLoading(true);
-              await vote({
-                onComplete: () => setVotingLoading(false),
-                onSuccess: handleVoteSuccess,
-                onError: (error) => console.log(error),
-              });
+              try {
+                await nativeTokenVaultSigner.vote(amount, props.address);
+                handleVoteSuccess();
+              } catch (error) {
+                console.log(error);
+              } finally {
+                setVotingLoading(false);
+              }
             } else {
               dispatch({
                 type: "error",

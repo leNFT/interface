@@ -174,167 +174,169 @@ export default function Stake() {
           setVisibility={setVisibleRemoveVoteModal}
         />
       </StyledModal>
-      <div className="flex flex-col-reverse lg:flex-row items-center justify-center border-4 m-2 md:m-8 ">
-        <div className="flex flex-col md:flex-row lg:flex-col items-center m-4 lg:m-16">
-          <div className="flex flex-row m-2">
-            <Button
-              text="Deposit"
-              theme="colored"
-              type="button"
-              size="large"
-              color="blue"
-              radius="5"
-              onClick={async function () {
-                setVisibleDepositModal(true);
-              }}
-            ></Button>
-          </div>
-          <div className="flex flex-row m-2">
-            <Button
-              text="Withdraw"
-              theme="colored"
-              type="button"
-              size="large"
-              color="blue"
-              radius="5"
-              onClick={async function () {
-                setVisibleWithdrawalModal(true);
-              }}
-            ></Button>
-          </div>
-        </div>
-        <div className="flex flex-col m-8 lg:m-16">
-          <div className="flex flex-col m-2">
-            <div className="flex flex-row">
-              <Typography variant="h2">Balance</Typography>
+      <div className="flex flex-col items-center">
+        <div className="flex flex-col-reverse lg:flex-row items-center justify-center min-w-[75%] border-4 m-2 md:m-8 ">
+          <div className="flex flex-col md:flex-row lg:flex-col items-center m-4 lg:m-16">
+            <div className="flex flex-row m-2">
+              <Button
+                text="Deposit"
+                theme="colored"
+                type="button"
+                size="large"
+                color="blue"
+                radius="5"
+                onClick={async function () {
+                  setVisibleDepositModal(true);
+                }}
+              ></Button>
             </div>
-            <div className="flex flex-row">
-              <Typography variant="body16">
-                {formatUnits(nativeTokenBalance, 18)} LE
-              </Typography>
+            <div className="flex flex-row m-2">
+              <Button
+                text="Withdraw"
+                theme="colored"
+                type="button"
+                size="large"
+                color="blue"
+                radius="5"
+                onClick={async function () {
+                  setVisibleWithdrawalModal(true);
+                }}
+              ></Button>
             </div>
           </div>
-          <div className="flex flex-col m-2">
-            <div className="flex flex-row">
-              <Typography variant="h2">Vault Balance</Typography>
-            </div>
-            <div className="flex flex-row">
-              <Typography variant="body16">
-                {formatUnits(voteTokenBalance, 18) +
-                  " veLE (" +
-                  formatUnits(maxAmount, 18) +
-                  " LE)"}
-              </Typography>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-col items-center justify-center border-4 m-2 md:m-8">
-        <div className="flex flex-col md:flex-row min-w-[75%] items-center m-4 justify-center">
-          <div className="flex flex-col m-4">
+          <div className="flex flex-col m-8 lg:m-16">
             <div className="flex flex-col m-2">
               <div className="flex flex-row">
-                <Typography variant="subtitle2">Free Votes</Typography>
+                <Typography variant="h2">Balance</Typography>
               </div>
               <div className="flex flex-row">
                 <Typography variant="body16">
-                  {formatUnits(freeVotes, 18)} veLE
+                  {formatUnits(nativeTokenBalance, 18)} LE
                 </Typography>
               </div>
             </div>
             <div className="flex flex-col m-2">
               <div className="flex flex-row">
-                <Typography variant="subtitle2">Used Votes</Typography>
+                <Typography variant="h2">Vault Balance</Typography>
               </div>
               <div className="flex flex-row">
                 <Typography variant="body16">
-                  {formatUnits(
-                    BigNumber.from(voteTokenBalance).sub(freeVotes),
-                    18
-                  )}{" "}
-                  veLE
+                  {formatUnits(voteTokenBalance, 18) +
+                    " veLE (" +
+                    formatUnits(maxAmount, 18) +
+                    " LE)"}
                 </Typography>
               </div>
             </div>
           </div>
-          <div className="flex flex-col min-w-full md:min-w-0 grow m-4">
-            <Autocomplete
-              disablePortal
-              options={collections}
-              defaultValue={collections[0]}
-              isOptionEqualToValue={(option, value) =>
-                option.address === value.address
-              }
-              sx={{ width: "auto" }}
-              onInputChange={handleCollectionChange}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Supported Collections"
-                  sx={{
-                    "& label": { paddingLeft: (theme) => theme.spacing(2) },
-                    "& input": { paddingLeft: (theme) => theme.spacing(3.5) },
-                    "& fieldset": {
-                      paddingLeft: (theme) => theme.spacing(2.5),
-                      borderRadius: "25px",
-                    },
+        </div>
+        <div className="flex flex-col items-center justify-center min-w-[75%] border-4 m-2 md:m-8">
+          <div className="flex flex-col md:flex-row min-w-[85%] items-center m-4 justify-center">
+            <div className="flex flex-col m-4">
+              <div className="flex flex-col m-2">
+                <div className="flex flex-row">
+                  <Typography variant="subtitle2">Free Votes</Typography>
+                </div>
+                <div className="flex flex-row">
+                  <Typography variant="body16">
+                    {formatUnits(freeVotes, 18)} veLE
+                  </Typography>
+                </div>
+              </div>
+              <div className="flex flex-col m-2">
+                <div className="flex flex-row">
+                  <Typography variant="subtitle2">Used Votes</Typography>
+                </div>
+                <div className="flex flex-row">
+                  <Typography variant="body16">
+                    {formatUnits(
+                      BigNumber.from(voteTokenBalance).sub(freeVotes),
+                      18
+                    )}{" "}
+                    veLE
+                  </Typography>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col min-w-full md:min-w-0 grow m-4">
+              <Autocomplete
+                disablePortal
+                options={collections}
+                defaultValue={collections[0]}
+                isOptionEqualToValue={(option, value) =>
+                  option.address === value.address
+                }
+                sx={{ width: "auto" }}
+                onInputChange={handleCollectionChange}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Supported Collections"
+                    sx={{
+                      "& label": { paddingLeft: (theme) => theme.spacing(2) },
+                      "& input": { paddingLeft: (theme) => theme.spacing(3.5) },
+                      "& fieldset": {
+                        paddingLeft: (theme) => theme.spacing(2.5),
+                        borderRadius: "25px",
+                      },
+                    }}
+                  />
+                )}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col-reverse md:flex-row justify-center items-center m-4">
+            <div className="flex flex-col m-4">
+              <div className="flex flex-row justify-center items-center m-2">
+                <Button
+                  text="Vote"
+                  theme="colored"
+                  type="button"
+                  size="large"
+                  color="blue"
+                  radius="5"
+                  onClick={async function () {
+                    setVisibleVoteModal(true);
                   }}
-                />
-              )}
-            />
-          </div>
-        </div>
-        <div className="flex flex-col-reverse md:flex-row justify-center items-center m-4">
-          <div className="flex flex-col m-4">
-            <div className="flex flex-row justify-center items-center m-2">
-              <Button
-                text="Vote"
-                theme="colored"
-                type="button"
-                size="large"
-                color="blue"
-                radius="5"
-                onClick={async function () {
-                  setVisibleVoteModal(true);
-                }}
-              ></Button>
-            </div>
-            <div className="flex flex-row justify-center items-center m-2">
-              <Button
-                text="Remove Vote"
-                theme="colored"
-                type="button"
-                size="large"
-                color="blue"
-                radius="5"
-                onClick={async function () {
-                  setVisibleRemoveVoteModal(true);
-                }}
-              ></Button>
-            </div>
-          </div>
-          <div className="flex flex-col m-4">
-            <div className="flex flex-row m-2">
-              <div className="flex flex-col">
-                <div className="flex flex-row">
-                  <Typography variant="subtitle1"> My Votes</Typography>
-                </div>
-                <div className="flex flex-row">
-                  <Typography variant="body16">
-                    {formatUnits(collectionVotes, 18)} veLE
-                  </Typography>
-                </div>
+                ></Button>
+              </div>
+              <div className="flex flex-row justify-center items-center m-2">
+                <Button
+                  text="Remove Vote"
+                  theme="colored"
+                  type="button"
+                  size="large"
+                  color="blue"
+                  radius="5"
+                  onClick={async function () {
+                    setVisibleRemoveVoteModal(true);
+                  }}
+                ></Button>
               </div>
             </div>
-            <div className="flex flex-row m-2">
-              <div className="flex flex-col">
-                <div className="flex flex-row">
-                  <Typography variant="subtitle1"> LTV Boost</Typography>
+            <div className="flex flex-col m-4">
+              <div className="flex flex-row m-2">
+                <div className="flex flex-col">
+                  <div className="flex flex-row">
+                    <Typography variant="subtitle1"> My Votes</Typography>
+                  </div>
+                  <div className="flex flex-row">
+                    <Typography variant="body16">
+                      {formatUnits(collectionVotes, 18)} veLE
+                    </Typography>
+                  </div>
                 </div>
-                <div className="flex flex-row">
-                  <Typography variant="body16">
-                    {collectionBoost / 100}%
-                  </Typography>
+              </div>
+              <div className="flex flex-row m-2">
+                <div className="flex flex-col">
+                  <div className="flex flex-row">
+                    <Typography variant="subtitle1"> LTV Boost</Typography>
+                  </div>
+                  <div className="flex flex-row">
+                    <Typography variant="body16">
+                      {collectionBoost / 100}%
+                    </Typography>
+                  </div>
                 </div>
               </div>
             </div>

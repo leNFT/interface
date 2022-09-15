@@ -156,34 +156,32 @@ export default function Header() {
               </Link>
             </div>
             <div className="flex flex-col m-2">
-              <div className="flex justify-center">
-                <Link href="/stake">
-                  <Button
-                    primary
-                    size="medium"
-                    color="#eae5ea"
-                    label={
-                      <div className="flex md:hidden lg:flex">
-                        <Box
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "subtitle2.fontSize",
-                            fontWeight: "bold",
-                            letterSpacing: 4,
-                          }}
-                        >
-                          Stake
-                        </Box>
-                      </div>
-                    }
-                    icon={
-                      <div className="pl-[10px]">
-                        <LockClosed fontSize="20px" color="#000000" />
-                      </div>
-                    }
-                  />
-                </Link>
-              </div>
+              <Link href="/stake">
+                <Button
+                  primary
+                  size="medium"
+                  color="#eae5ea"
+                  label={
+                    <div className="flex md:hidden lg:flex">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle2.fontSize",
+                          fontWeight: "bold",
+                          letterSpacing: 4,
+                        }}
+                      >
+                        Stake
+                      </Box>
+                    </div>
+                  }
+                  icon={
+                    <div className="pl-[10px]">
+                      <LockClosed fontSize="20px" color="#000000" />
+                    </div>
+                  }
+                />
+              </Link>
             </div>
           </div>
         </div>

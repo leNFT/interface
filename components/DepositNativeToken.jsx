@@ -57,7 +57,7 @@ export default function DepositNativeToken(props) {
 
   async function getTokenAllowance() {
     const allowance = await nativeTokenProvider.allowance(
-      account,
+      address,
       addresses.NativeTokenVault
     );
     console.log("Got allowance:", allowance);

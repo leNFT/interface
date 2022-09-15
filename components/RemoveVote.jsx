@@ -40,25 +40,6 @@ export default function RemoveVote(props) {
     signerOrProvider: provider,
   });
 
-  const { runContractFunction: removeVote } = useWeb3Contract({
-    abi: nativeTokenVaultContract.abi,
-    contractAddress: addresses.NativeTokenVault,
-    functionName: "removeVote",
-    params: {
-      amount: amount,
-      collection: props.address,
-    },
-  });
-
-  const { runContractFunction: getFreeVotes } = useWeb3Contract({
-    abi: nativeTokenVaultContract.abi,
-    contractAddress: addresses.NativeTokenVault,
-    functionName: "getUserFreeVotes",
-    params: {
-      user: account,
-    },
-  });
-
   async function updateMaxAmount() {
     const voteTokenBalance = (
       await nativeTokenVaultProvider.balanceOf(address)

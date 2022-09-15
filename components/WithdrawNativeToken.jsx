@@ -58,9 +58,14 @@ export default function WithdrawNativeToken(props) {
   }
 
   async function getLastWithdrawRequest() {
-    const withdrawRequest = await nativeTokenVaultProvider.getWithdrawRequest(
-      address
-    );
+    var withdrawRequest;
+    try {
+      withdrawRequest = await nativeTokenVaultProvider.getWithdrawRequest(
+        address
+      );
+    } catch (error) {
+      console.log(error);
+    }
 
     // Withdraw might be undefined if no request was made before
     if (withdrawRequest) {

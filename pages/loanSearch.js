@@ -158,7 +158,6 @@ export default function LoanSearch() {
     <div className={styles.container}>
       <StyledModal
         hasFooter={false}
-        title={"Liquidate"}
         isVisible={visibleLiquidateModal}
         width="50%"
         onCloseButtonPressed={function () {

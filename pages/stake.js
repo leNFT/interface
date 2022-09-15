@@ -71,9 +71,9 @@ export default function Stake() {
     const freeVotes = await nativeTokenVault.getUserFreeVotes(address);
     setFreeVotes(freeVotes.toString());
 
-    const updatedMaxAmount = nativeTokenVault
-      .getMaximumWithdrawalAmount(address)
-      .toString();
+    const updatedMaxAmount = (
+      await nativeTokenVault.getMaximumWithdrawalAmount(address)
+    ).toString();
 
     console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
     setMaxAmount(updatedMaxAmount);
@@ -174,8 +174,8 @@ export default function Stake() {
           setVisibility={setVisibleRemoveVoteModal}
         />
       </StyledModal>
-      <div className="flex flex-row items-center justify-center border-4 m-8">
-        <div className="flex flex-col items-center m-8">
+      <div className="flex flex-col-reverse lg:flex-row items-center justify-center border-4 m-2 md:m-8 ">
+        <div className="flex flex-col md:flex-row lg:flex-col items-center m-4 lg:m-16">
           <div className="flex flex-row m-2">
             <Button
               text="Deposit"
@@ -203,7 +203,7 @@ export default function Stake() {
             ></Button>
           </div>
         </div>
-        <div className="flex flex-col m-16">
+        <div className="flex flex-col m-8 lg:m-16">
           <div className="flex flex-col m-2">
             <div className="flex flex-row">
               <Typography variant="h2">Balance</Typography>
@@ -229,114 +229,112 @@ export default function Stake() {
           </div>
         </div>
       </div>
-      <div className="flex flex-row items-center justify-center border-4 m-8">
-        <div className="flex flex-col">
-          <div className="flex flex-row items-center mt-8 justify-center">
-            <div className="flex flex-col">
-              <div className="flex flex-col m-2">
-                <div className="flex flex-row">
-                  <Typography variant="subtitle2">Free Votes</Typography>
-                </div>
-                <div className="flex flex-row">
-                  <Typography variant="body16">
-                    {formatUnits(freeVotes, 18)} veLE
-                  </Typography>
-                </div>
+      <div className="flex flex-col items-center justify-center border-4 m-2 md:m-8">
+        <div className="flex flex-col md:flex-row min-w-[75%] items-center m-4 justify-center">
+          <div className="flex flex-col m-4">
+            <div className="flex flex-col m-2">
+              <div className="flex flex-row">
+                <Typography variant="subtitle2">Free Votes</Typography>
               </div>
-              <div className="flex flex-col m-2">
-                <div className="flex flex-row">
-                  <Typography variant="subtitle2">Used Votes</Typography>
-                </div>
-                <div className="flex flex-row">
-                  <Typography variant="body16">
-                    {formatUnits(
-                      BigNumber.from(voteTokenBalance).sub(freeVotes),
-                      18
-                    )}{" "}
-                    veLE
-                  </Typography>
-                </div>
+              <div className="flex flex-row">
+                <Typography variant="body16">
+                  {formatUnits(freeVotes, 18)} veLE
+                </Typography>
               </div>
             </div>
-            <div className="flex flex-col ml-16">
-              <Autocomplete
-                disablePortal
-                options={collections}
-                defaultValue={collections[0]}
-                sx={{ width: 300 }}
-                isOptionEqualToValue={(option, value) =>
-                  option.address === value.address
-                }
-                onInputChange={handleCollectionChange}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Supported Collections"
-                    sx={{
-                      "& label": { paddingLeft: (theme) => theme.spacing(2) },
-                      "& input": { paddingLeft: (theme) => theme.spacing(3.5) },
-                      "& fieldset": {
-                        paddingLeft: (theme) => theme.spacing(2.5),
-                        borderRadius: "25px",
-                      },
-                    }}
-                  />
-                )}
-              />
+            <div className="flex flex-col m-2">
+              <div className="flex flex-row">
+                <Typography variant="subtitle2">Used Votes</Typography>
+              </div>
+              <div className="flex flex-row">
+                <Typography variant="body16">
+                  {formatUnits(
+                    BigNumber.from(voteTokenBalance).sub(freeVotes),
+                    18
+                  )}{" "}
+                  veLE
+                </Typography>
+              </div>
             </div>
           </div>
-          <div className="flex flex-row rounded justify-center items-center mt-16 mb-8">
-            <div className="flex flex-col">
-              <div className="flex flex-row justify-center items-center  m-2">
-                <Button
-                  text="Vote"
-                  theme="colored"
-                  type="button"
-                  size="large"
-                  color="blue"
-                  radius="5"
-                  onClick={async function () {
-                    setVisibleVoteModal(true);
+          <div className="flex flex-col min-w-full md:min-w-0 grow m-4">
+            <Autocomplete
+              disablePortal
+              options={collections}
+              defaultValue={collections[0]}
+              isOptionEqualToValue={(option, value) =>
+                option.address === value.address
+              }
+              sx={{ width: "auto" }}
+              onInputChange={handleCollectionChange}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Supported Collections"
+                  sx={{
+                    "& label": { paddingLeft: (theme) => theme.spacing(2) },
+                    "& input": { paddingLeft: (theme) => theme.spacing(3.5) },
+                    "& fieldset": {
+                      paddingLeft: (theme) => theme.spacing(2.5),
+                      borderRadius: "25px",
+                    },
                   }}
-                ></Button>
-              </div>
-              <div className="flex flex-row justify-center items-center  m-2">
-                <Button
-                  text="Remove Vote"
-                  theme="colored"
-                  type="button"
-                  size="large"
-                  color="blue"
-                  radius="5"
-                  onClick={async function () {
-                    setVisibleRemoveVoteModal(true);
-                  }}
-                ></Button>
-              </div>
+                />
+              )}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col-reverse md:flex-row justify-center items-center m-4">
+          <div className="flex flex-col m-4">
+            <div className="flex flex-row justify-center items-center m-2">
+              <Button
+                text="Vote"
+                theme="colored"
+                type="button"
+                size="large"
+                color="blue"
+                radius="5"
+                onClick={async function () {
+                  setVisibleVoteModal(true);
+                }}
+              ></Button>
             </div>
-            <div className="flex flex-col mx-16">
-              <div className="flex flex-row m-2">
-                <div className="flex flex-col">
-                  <div className="flex flex-row">
-                    <Typography variant="subtitle1"> My Votes</Typography>
-                  </div>
-                  <div className="flex flex-row">
-                    <Typography variant="body16">
-                      {formatUnits(collectionVotes, 18)} veLE
-                    </Typography>
-                  </div>
+            <div className="flex flex-row justify-center items-center m-2">
+              <Button
+                text="Remove Vote"
+                theme="colored"
+                type="button"
+                size="large"
+                color="blue"
+                radius="5"
+                onClick={async function () {
+                  setVisibleRemoveVoteModal(true);
+                }}
+              ></Button>
+            </div>
+          </div>
+          <div className="flex flex-col m-4">
+            <div className="flex flex-row m-2">
+              <div className="flex flex-col">
+                <div className="flex flex-row">
+                  <Typography variant="subtitle1"> My Votes</Typography>
+                </div>
+                <div className="flex flex-row">
+                  <Typography variant="body16">
+                    {formatUnits(collectionVotes, 18)} veLE
+                  </Typography>
                 </div>
               </div>
-              <div className="flex flex-row m-2">
-                <div className="flex flex-col">
-                  <div className="flex flex-row">
-                    <Typography variant="subtitle1"> LTV Boost</Typography>
-                  </div>
-                  <div className="flex flex-row">
-                    <Typography variant="body16">
-                      {collectionBoost / 100}%
-                    </Typography>
-                  </div>
+            </div>
+            <div className="flex flex-row m-2">
+              <div className="flex flex-col">
+                <div className="flex flex-row">
+                  <Typography variant="subtitle1"> LTV Boost</Typography>
+                </div>
+                <div className="flex flex-row">
+                  <Typography variant="body16">
+                    {collectionBoost / 100}%
+                  </Typography>
                 </div>
               </div>
             </div>

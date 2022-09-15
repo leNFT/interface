@@ -1,7 +1,7 @@
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import nativeTokenVaultContract from "../contracts/NativeTokenVault.json";
-import { formatUnits, parseUnits } from "@ethersproject/units";
+import { formatUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
@@ -14,7 +14,7 @@ import RemoveVote from "../components/RemoveVote";
 import Vote from "../components/Vote";
 import DepositNativeToken from "../components/DepositNativeToken";
 import WithdrawNativeToken from "../components/WithdrawNativeToken";
-import { useContract, useProvider, useSigner } from "wagmi";
+import { useContract, useProvider } from "wagmi";
 
 export default function Stake() {
   const { address, isConnected } = useAccount();
@@ -179,29 +179,35 @@ export default function Stake() {
           <div className="flex flex-col md:flex-row lg:flex-col items-center m-4 lg:m-16">
             <div className="flex flex-row m-2">
               <Button
+                customize={{
+                  backgroundColor: "grey",
+                  fontSize: 16,
+                  textColor: "white",
+                }}
                 text="Deposit"
-                theme="colored"
-                type="button"
+                theme="custom"
                 size="large"
-                color="blue"
-                radius="5"
+                radius="12"
                 onClick={async function () {
                   setVisibleDepositModal(true);
                 }}
-              ></Button>
+              />
             </div>
             <div className="flex flex-row m-2">
               <Button
+                customize={{
+                  backgroundColor: "grey",
+                  fontSize: 16,
+                  textColor: "white",
+                }}
                 text="Withdraw"
-                theme="colored"
-                type="button"
+                theme="custom"
                 size="large"
-                color="blue"
-                radius="5"
+                radius="12"
                 onClick={async function () {
                   setVisibleWithdrawalModal(true);
                 }}
-              ></Button>
+              />
             </div>
           </div>
           <div className="flex flex-col m-8 lg:m-16">
@@ -289,29 +295,35 @@ export default function Stake() {
             <div className="flex flex-col m-4">
               <div className="flex flex-row justify-center items-center m-2">
                 <Button
+                  customize={{
+                    backgroundColor: "grey",
+                    fontSize: 16,
+                    textColor: "white",
+                  }}
                   text="Vote"
-                  theme="colored"
-                  type="button"
+                  theme="custom"
                   size="large"
-                  color="blue"
-                  radius="5"
+                  radius="12"
                   onClick={async function () {
                     setVisibleVoteModal(true);
                   }}
-                ></Button>
+                />
               </div>
               <div className="flex flex-row justify-center items-center m-2">
                 <Button
+                  customize={{
+                    backgroundColor: "grey",
+                    fontSize: 16,
+                    textColor: "white",
+                  }}
                   text="Remove Vote"
-                  theme="colored"
-                  type="button"
+                  theme="custom"
                   size="large"
-                  color="blue"
-                  radius="5"
+                  radius="12"
                   onClick={async function () {
                     setVisibleRemoveVoteModal(true);
                   }}
-                ></Button>
+                />
               </div>
             </div>
             <div className="flex flex-col m-4">

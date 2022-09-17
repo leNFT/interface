@@ -314,7 +314,7 @@ export default function LoanSearch() {
                         </div>
                         <div className="flex flex-row  items-center">
                           <Typography variant="caption16">
-                            {collectionLoan.tokenId}
+                            # {collectionLoan.tokenId}
                           </Typography>
                         </div>
                         <div className="flex flex-row mt-6">

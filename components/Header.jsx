@@ -63,7 +63,7 @@ export default function Header() {
                     fontSize: "subtitle2.fontSize",
                   }}
                 >
-                  <div className="text-red-700">[ ALPHA ]</div>
+                  <div className="text-red-700">[ BETA ]</div>
                 </Box>
               </div>
             </a>

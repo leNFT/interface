@@ -4,6 +4,7 @@ import { getNFTImage } from "../helpers/getNFTImage.js";
 import { getNFTs } from "../helpers/getNFTs.js";
 import contractAddresses from "../contractAddresses.json";
 import { BigNumber } from "@ethersproject/bignumber";
+import { getAddress } from "@ethersproject/address";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import loanCenterContract from "../contracts/LoanCenter.json";
@@ -82,12 +83,15 @@ export default function LoanSearch() {
       // Get the debt associated with this loan
       const debt = await loanCenter.getLoanDebt(loanId);
 
+      // Get checksumed token address
+      collectionNFTs[i].token_address = getAddress(
+        collectionNFTs[i].token_address
+      );
+
       // Find the valuation given by the protocol to this specific asset
       const assetPrice = await getAssetPrice(
-        // Get checksumed token adress
         contractAddresses[chain.id].SupportedAssets.find(
-          (collection) =>
-            collection.address.toLowerCase() == collectionNFTs[i].token_address
+          (collection) => collection.address == collectionNFTs[i].token_address
         ).address,
         collectionNFTs[i].token_id
       );

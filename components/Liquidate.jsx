@@ -132,6 +132,7 @@ export default function Liquidate(props) {
       props.loan.tokenId
     );
     setTokenPrice(price);
+    console.log("price:", price);
 
     //Get token max collateralization
     const maxCollateralization = (
@@ -146,6 +147,7 @@ export default function Liquidate(props) {
       getWETHAllowance();
       getLoanDetails();
       getAssetPricing();
+      console.log("debt", props.loan.debt);
     }
   }, [isConnected, props.loan]);
 
@@ -190,11 +192,11 @@ export default function Liquidate(props) {
               Loading...
             </div>
           )}
-          <div className="flex flex-row mt-8">
-            <Typography variant="caption14">Asset ID</Typography>
-          </div>
-          <div className="flex flex-row  items-center">
-            <Typography variant="caption16"># {props.loan.tokenId}</Typography>
+          <div className="flex flex-row items-center mt-8 m-2">
+            <div className="flex flex-col">
+              <Typography variant="subtitle2">Asset ID</Typography>
+              <Typography variant="body16"># {props.loan.tokenId}</Typography>
+            </div>
           </div>
           <div className="flex flex-row items-center m-2">
             <div className="flex flex-col">
@@ -207,29 +209,30 @@ export default function Liquidate(props) {
               </Typography>
             </div>
           </div>
-          <div className="flex flex-row mt-2">
-            <Typography variant="caption14">Debt</Typography>
+          <div className="flex flex-row items-center m-2">
+            <div className="flex flex-col">
+              <Typography variant="subtitle2">Debt</Typography>
+              <Typography variant="caption16">
+                {formatUnits(props.loan.debt, 18)} WETH
+              </Typography>
+            </div>
           </div>
-          <div className="flex flex-row  items-center">
-            <Typography variant="caption16">
-              {formatUnits(props.loan.debt, 18)} WETH
-            </Typography>
+          <div className="flex flex-row items-center m-2">
+            <div className="flex flex-col">
+              <Typography variant="subtitle2">Liquidation Price</Typography>
+
+              <Typography variant="caption16">
+                {formatUnits(liquidationPrice, 18)} WETH
+              </Typography>
+            </div>
           </div>
-          <div className="flex flex-row mt-2">
-            <Typography variant="caption14">Liquidation Price</Typography>
-          </div>
-          <div className="flex flex-row  items-center">
-            <Typography variant="caption16">
-              {formatUnits(liquidationPrice, 18)} WETH
-            </Typography>
-          </div>
-          <div className="flex flex-row mt-2">
-            <Typography variant="caption14">Liquidation Reward</Typography>
-          </div>
-          <div className="flex flex-row  items-center">
-            <Typography variant="caption16">
-              {formatUnits(liquidationReward, 18)} LE
-            </Typography>
+          <div className="flex flex-row items-center m-2">
+            <div className="flex flex-col">
+              <Typography variant="subtitle2">Liquidation Reward</Typography>
+              <Typography variant="caption16">
+                {formatUnits(liquidationReward, 18)} LE
+              </Typography>
+            </div>
           </div>
           <div className="flex flex-row mt-6">
             <div className="flex flex-col">

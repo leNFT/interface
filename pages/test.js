@@ -47,10 +47,12 @@ export default function Test() {
         onClick={async function () {
           try {
             setMintingLoading(true);
-            await testNFTSigner.mint(address);
-            setMintingLoading(false);
+            const tx = await testNFTSigner.mint(address);
+            await tx.wait(1);
           } catch (error) {
             console.log(error);
+          } finally {
+            setMintingLoading(false);
           }
         }}
       />
@@ -64,10 +66,15 @@ export default function Test() {
         onClick={async function () {
           try {
             setNativeTokenLoading(true);
-            await nativeTokenSigner.testMint(address, "10000000000000000000");
-            setNativeTokenLoading(false);
+            const tx = await nativeTokenSigner.mint(
+              address,
+              "10000000000000000000"
+            );
+            await tx.wait(1);
           } catch (error) {
             console.log(error);
+          } finally {
+            setNativeTokenLoading(false);
           }
         }}
       />

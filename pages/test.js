@@ -4,38 +4,37 @@ import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import nativeTokenContract from "../contracts/NativeToken.json";
 import { useState } from "react";
-import { useWeb3Contract } from "react-moralis";
-import { useAccount, useNetwork } from "wagmi";
-
+import {
+  useAccount,
+  useNetwork,
+  useContract,
+  useProvider,
+  useSigner,
+} from "wagmi";
 export default function Test() {
   const [mintingLoading, setMintingLoading] = useState(false);
   const [nativeTokenLoading, setNativeTokenLoading] = useState(false);
   const { address } = useAccount();
   const { chain } = useNetwork();
+  const { data: signer } = useSigner();
 
   const addresses =
     chain && chain.id in contractAddresses
       ? contractAddresses[chain.id]
-      : contractAddresses["0x1"];
+      : contractAddresses["1"];
 
-  const { runContractFunction: mintNFT } = useWeb3Contract({
-    abi: testNFTContract.abi,
-    contractAddress: addresses.SupportedAssets[0].address,
-    functionName: "mint",
-    params: {
-      owner: address,
-    },
+  const testNFTSigner = useContract({
+    contractInterface: testNFTContract.abi,
+    addressOrName: addresses.SupportedAssets[0].address,
+    signerOrProvider: signer,
   });
 
-  const { runContractFunction: mint10NativeToken } = useWeb3Contract({
-    abi: nativeTokenContract.abi,
-    contractAddress: addresses.NativeToken,
-    functionName: "testMint",
-    params: {
-      account: address,
-      amount: "10000000000000000000",
-    },
+  const nativeTokenSigner = useContract({
+    contractInterface: nativeTokenContract.abi,
+    addressOrName: addresses.NativeToken,
+    signerOrProvider: signer,
   });
+
   return (
     <div className={styles.container}>
       <Button
@@ -46,11 +45,13 @@ export default function Test() {
           spinnerColor: "#000000",
         }}
         onClick={async function () {
-          setMintingLoading(true);
-          await mintNFT({
-            onComplete: () => setMintingLoading(false),
-            onError: (error) => console.log(error),
-          });
+          try {
+            setMintingLoading(true);
+            await testNFTSigner.mint(address);
+            setMintingLoading(false);
+          } catch (error) {
+            console.log(error);
+          }
         }}
       />
       <Button
@@ -61,11 +62,13 @@ export default function Test() {
           spinnerColor: "#000000",
         }}
         onClick={async function () {
-          setNativeTokenLoading(true);
-          await mint10NativeToken({
-            onComplete: () => setNativeTokenLoading(false),
-            onError: (error) => console.log(error),
-          });
+          try {
+            setNativeTokenLoading(true);
+            await nativeTokenSigner.testMint(address, "10000000000000000000");
+            setNativeTokenLoading(false);
+          } catch (error) {
+            console.log(error);
+          }
         }}
       />
     </div>

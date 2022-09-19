@@ -9,6 +9,7 @@ import {
   getNewRequestID,
   getAssetPriceSig,
 } from "../helpers/getAssetPriceSig.js";
+import { getAssetPrice } from "../helpers/getAssetPrice.js";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits } from "@ethersproject/units";
 import { HelpCircle } from "@web3uikit/icons";
@@ -24,6 +25,7 @@ import contractAddresses from "../contractAddresses.json";
 import { calculateHealthLevel } from "../helpers/healthLevel.js";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import nftOracleContract from "../contracts/NFTOracle.json";
 import marketContract from "../contracts/Market.json";
 import LinearProgressWithLabel from "./LinearProgressWithLabel";
 import loanCenterContract from "../contracts/LoanCenter.json";
@@ -40,6 +42,8 @@ export default function Liquidate(props) {
   const [approvalLoading, setApprovalLoading] = useState(false);
   const { address, isConnected } = useAccount();
   const [loanDetails, setLoanDetails] = useState();
+  const [tokenPrice, setTokenPrice] = useState("0");
+  const [tokenMaxCollateralization, setTokenMaxCollateralization] = useState(0);
   const [liquidationPrice, setLiquidationPrice] = useState("0");
   const [liquidationReward, setLiquidationReward] = useState("0");
   const { chain } = useNetwork();
@@ -50,6 +54,12 @@ export default function Liquidate(props) {
     chain && chain.id in contractAddresses
       ? contractAddresses[chain.id]
       : contractAddresses["1"];
+
+  const nftOracle = useContract({
+    contractInterface: nftOracleContract.abi,
+    addressOrName: addresses.NFTOracle,
+    signerOrProvider: provider,
+  });
 
   const marketSigner = useContract({
     contractInterface: marketContract.abi,
@@ -115,10 +125,27 @@ export default function Liquidate(props) {
     setLiquidationReward(newLiquidationPrice[1].toString());
   }
 
+  async function getAssetPricing() {
+    // Get token price
+    const price = await getAssetPrice(
+      props.loan.tokenAddress,
+      props.loan.tokenId
+    );
+    setTokenPrice(price);
+
+    //Get token max collateralization
+    const maxCollateralization = (
+      await nftOracle.getCollectionMaxCollaterization(props.loan.tokenAddress)
+    ).toString();
+    console.log("maxCollateralization updated", maxCollateralization);
+    setTokenMaxCollateralization(maxCollateralization);
+  }
+
   useEffect(() => {
     if ((isConnected, props.loan)) {
       getWETHAllowance();
       getLoanDetails();
+      getAssetPricing();
     }
   }, [isConnected, props.loan]);
 
@@ -168,6 +195,17 @@ export default function Liquidate(props) {
           </div>
           <div className="flex flex-row  items-center">
             <Typography variant="caption16"># {props.loan.tokenId}</Typography>
+          </div>
+          <div className="flex flex-row items-center m-2">
+            <div className="flex flex-col">
+              <Typography variant="subtitle2">Asset Pricing</Typography>
+              <Typography variant="body16">
+                {formatUnits(tokenPrice, 18) +
+                  " WETH @ " +
+                  tokenMaxCollateralization / 100 +
+                  "% Max LTV"}
+              </Typography>
+            </div>
           </div>
           <div className="flex flex-row mt-2">
             <Typography variant="caption14">Debt</Typography>

@@ -104,7 +104,7 @@ export default function Deposit(props) {
     updateTokenBalance();
     dispatch({
       type: "success",
-      message: "Please wait for transaction confirmation.",
+      message: "Your tokens were deposited into the reserve.",
       title: "Deposit Successful!",
       position: "topR",
     });
@@ -114,7 +114,7 @@ export default function Deposit(props) {
     setApproved(true);
     dispatch({
       type: "success",
-      message: "Please wait for transaction confirmation.",
+      message: "You can now deposit.",
       title: "Approval Successful!",
       position: "topR",
     });

@@ -155,7 +155,7 @@ export default function Liquidate(props) {
     props.setVisibility(false);
     dispatch({
       type: "success",
-      message: "Please wait for transaction confirmation.",
+      message: "The loan was liquidated.",
       title: "Liquidation Successful!",
       position: "topR",
     });
@@ -164,7 +164,7 @@ export default function Liquidate(props) {
   const handleApprovalSuccess = async function () {
     dispatch({
       type: "success",
-      message: "Please wait for transaction confirmation.",
+      message: "You can now liquidate the loan.",
       title: "Liquidation Approval Successful!",
       position: "topR",
     });

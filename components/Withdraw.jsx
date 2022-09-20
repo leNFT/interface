@@ -70,7 +70,7 @@ export default function Withdraw(props) {
     props.setVisibility(false);
     dispatch({
       type: "success",
-      message: "Please wait for transaction confirmation.",
+      message: "Tokens are now back in your wallet.",
       title: "Withdrawal Successful! ",
       position: "topR",
     });

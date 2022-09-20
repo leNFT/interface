@@ -74,7 +74,7 @@ export default function RemoveVote(props) {
     props.setVisibility(false);
     dispatch({
       type: "success",
-      message: "Please wait for transaction confirmation.",
+      message: "You can now vote for other collection.",
       title: "Vote Removal Successful!",
       position: "topR",
     });

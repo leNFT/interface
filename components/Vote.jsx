@@ -60,8 +60,8 @@ export default function Vote(props) {
     updateFreeVotes();
     dispatch({
       type: "success",
-      message: "Please wait for transaction confirmation.",
-      title: "Deposit Successful!",
+      message: "You have voted.",
+      title: "Vote Successful!",
       position: "topR",
     });
   };

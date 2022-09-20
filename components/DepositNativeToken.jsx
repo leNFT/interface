@@ -80,7 +80,7 @@ export default function DepositNativeToken(props) {
     updateTokenBalance();
     dispatch({
       type: "success",
-      message: "Please wait for transaction confirmation.",
+      message: "Your LE tokens were deposited into the vault.",
       title: "Deposit Successful!",
       position: "topR",
     });
@@ -90,7 +90,7 @@ export default function DepositNativeToken(props) {
     setApproved(true);
     dispatch({
       type: "success",
-      message: "Please wait for transaction confirmation.",
+      message: "You can now deposit into the vault.",
       title: "Approval Successful!",
       position: "topR",
     });

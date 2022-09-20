@@ -175,7 +175,7 @@ export default function Stake() {
         />
       </StyledModal>
       <div className="flex flex-col items-center">
-        <div className="flex flex-col-reverse md:flex-row items-center justify-center min-w-[75%] border-4 m-2 md:m-8 ">
+        <div className="flex flex-col-reverse md:flex-row items-center justify-center min-w-[75%] border-4 m-2 md:m-8 rounded-3xl bg-black/5 shadow-lg">
           <div className="flex flex-col items-center m-4 lg:m-8">
             <div className="flex flex-row m-2">
               <Button
@@ -236,7 +236,7 @@ export default function Stake() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center min-w-[75%] border-4 m-2 md:m-8">
+        <div className="flex flex-col items-center justify-center min-w-[75%] border-4 m-2 md:m-8 rounded-3xl bg-black/5 shadow-lg">
           <div className="flex flex-col md:flex-row min-w-[85%] items-center m-4 justify-center">
             <div className="flex flex-col m-4">
               <div className="flex flex-col m-2">

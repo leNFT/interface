@@ -500,7 +500,7 @@ export default function App() {
                                 />
                               </div>
                             ) : (
-                              <div className="flex flex-col items-center justify-center">
+                              <div className="flex flex-col h-28 text-center items-center justify-center">
                                 <Typography variant="subtitle3" italic="true">
                                   Image Unavailable.
                                 </Typography>

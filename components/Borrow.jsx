@@ -360,6 +360,7 @@ export default function Borrow(props) {
                     requestID,
                     priceSig
                   );
+                  console.log(tx);
                   await tx.wait(1);
                   handleBorrowSuccess();
                 } catch (error) {

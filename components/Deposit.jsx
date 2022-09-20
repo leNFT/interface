@@ -112,7 +112,6 @@ export default function Deposit(props) {
 
   const handleApprovalSuccess = async function () {
     setApproved(true);
-    setApprovalLoading(false);
     dispatch({
       type: "success",
       message: "Please wait for transaction confirmation.",
@@ -195,13 +194,13 @@ export default function Deposit(props) {
             isLoading={depositLoading}
             onClick={async function () {
               if (BigNumber.from(amount).lte(BigNumber.from(balance))) {
-                setDepositLoading(true);
-                console.log("Depositing", amount);
                 try {
-                  await marketSigner.deposit(
+                  setDepositLoading(true);
+                  const tx = await marketSigner.deposit(
                     addresses[props.asset].address,
                     amount
                   );
+                  await tx.wait(1);
                   handleDepositSuccess();
                 } catch (error) {
                   console.log(error);
@@ -234,15 +233,18 @@ export default function Deposit(props) {
             loadingText=""
             isLoading={approvalLoading}
             onClick={async function () {
-              setApprovalLoading(true);
               try {
-                await tokenSigner.approve(
+                setApprovalLoading(true);
+                const tx = await tokenSigner.approve(
                   reserveAddress,
                   "115792089237316195423570985008687907853269984665640564039457584007913129639935"
                 );
+                await tx.wait(1);
                 handleApprovalSuccess();
               } catch (error) {
                 console.log(error);
+              } finally {
+                setApprovalLoading(false);
               }
             }}
           ></Button>

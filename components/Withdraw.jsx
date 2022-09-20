@@ -165,12 +165,13 @@ export default function Withdraw(props) {
           isLoading={withdrawalLoading}
           onClick={async function () {
             if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
-              setWithdrawalLoading(true);
               try {
-                await marketSigner.withdraw(
+                setWithdrawalLoading(true);
+                const tx = await marketSigner.withdraw(
                   addresses[props.asset].address,
                   amount
                 );
+                await tx.wait(1);
                 handleWithdrawalSuccess();
               } catch (error) {
                 console.log(error);

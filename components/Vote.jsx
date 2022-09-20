@@ -112,9 +112,10 @@ export default function Vote(props) {
           isLoading={votingLoading}
           onClick={async function () {
             if (BigNumber.from(amount).lte(BigNumber.from(freeVotes))) {
-              setVotingLoading(true);
               try {
-                await nativeTokenVaultSigner.vote(amount, props.address);
+                setVotingLoading(true);
+                const tx = nativeTokenVaultSigner.vote(amount, props.address);
+                await tx.wait(1);
                 handleVoteSuccess();
               } catch (error) {
                 console.log(error);

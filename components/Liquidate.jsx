@@ -162,7 +162,6 @@ export default function Liquidate(props) {
   };
 
   const handleApprovalSuccess = async function () {
-    setApprovalLoading(false);
     dispatch({
       type: "success",
       message: "Please wait for transaction confirmation.",
@@ -287,11 +286,12 @@ export default function Liquidate(props) {
                     );
                     console.log("Liquidation loan", props.loan);
                     try {
-                      await marketSigner.liquidate(
+                      const tx = await marketSigner.liquidate(
                         props.loan.loanId,
                         requestId,
                         priceSig
                       );
+                      await tx.wait(1);
                       handleLiquidateSuccess();
                     } catch (error) {
                       console.log(error);
@@ -327,13 +327,16 @@ export default function Liquidate(props) {
                   onClick={async function () {
                     try {
                       setApprovalLoading(true);
-                      await wethSigner.approve(
+                      const tx = await wethSigner.approve(
                         addresses.Market,
                         liquidationPrice
                       );
+                      await tx.wait(1);
                       handleApprovalSuccess();
                     } catch (error) {
                       console.log(error);
+                    } finally {
+                      setApprovalLoading(false);
                     }
                   }}
                 ></Button>

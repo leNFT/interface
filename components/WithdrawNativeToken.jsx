@@ -199,9 +199,10 @@ export default function WithdrawNativeToken(props) {
                 isLoading={withdrawalLoading}
                 onClick={async function () {
                   if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
-                    setWithdrawalLoading(true);
                     try {
-                      await nativeTokenVaultSigner.withdraw(amount);
+                      setWithdrawalLoading(true);
+                      const tx = await nativeTokenVaultSigner.withdraw(amount);
+                      await tx.wait(1);
                       handleWithdrawalSuccess();
                     } catch (error) {
                       console.log(error);
@@ -230,17 +231,20 @@ export default function WithdrawNativeToken(props) {
                 loadingText="Confirming Approval"
                 isLoading={requestLoading}
                 onClick={async function () {
-                  setRequestLoading(true);
                   try {
-                    await nativeTokenVaultProvider.createWithdrawRequest(
-                      balance
-                    );
+                    setRequestLoading(true);
+                    const tx =
+                      await nativeTokenVaultProvider.createWithdrawRequest(
+                        balance
+                      );
+                    await tx.wait(1);
                     handleRequestSuccess();
                   } catch (error) {
                     console.log(error);
                   } finally {
                     setRequestLoading(false);
                   }
+                  setRequestLoading(true);
                 }}
               ></Button>
             </div>

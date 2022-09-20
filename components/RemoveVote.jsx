@@ -119,15 +119,20 @@ export default function RemoveVote(props) {
           isLoading={removeVotingLoading}
           onClick={async function () {
             if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
-              setRemoveVotingLoading(true);
               try {
-                await nativeTokenVaultSigner.removeVote(amount, props.address);
+                setRemoveVotingLoading(true);
+                const tx = await nativeTokenVaultSigner.removeVote(
+                  amount,
+                  props.address
+                );
+                await tx.wait(1);
                 handleRemoveVoteSuccess();
               } catch (error) {
                 console.log(error);
               } finally {
                 setRemoveVotingLoading(false);
               }
+              setRemoveVotingLoading(true);
             } else {
               dispatch({
                 type: "error",

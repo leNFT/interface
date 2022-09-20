@@ -223,9 +223,10 @@ export default function RepayLoan(props) {
           isLoading={repayLoading}
           onClick={async function () {
             if (BigNumber.from(debt).lte(BigNumber.from(balance))) {
-              setRepayLoading(true);
               try {
-                await market.repay(props.loan_id);
+                setRepayLoading(true);
+                const tx = await market.repay(props.loan_id);
+                await tx.wait(1);
                 handleRepaySuccess();
               } catch (error) {
                 console.log(error);

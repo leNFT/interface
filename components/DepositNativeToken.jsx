@@ -144,9 +144,10 @@ export default function DepositNativeToken(props) {
             isLoading={depositLoading}
             onClick={async function () {
               if (BigNumber.from(amount).lte(BigNumber.from(balance))) {
-                setDepositLoading(true);
                 try {
-                  await nativeTokenVaultSigner.deposit(amount);
+                  setDepositLoading(true);
+                  const tx = await nativeTokenVaultSigner.deposit(amount);
+                  await tx.wait(1);
                   handleDepositSuccess();
                 } catch (error) {
                   console.log(error);
@@ -179,12 +180,13 @@ export default function DepositNativeToken(props) {
             loadingText=""
             isLoading={approvalLoading}
             onClick={async function () {
-              setApprovalLoading(true);
               try {
-                await nativeTokenSigner.approve(
+                setApprovalLoading(true);
+                const tx = await nativeTokenSigner.approve(
                   addresses.NativeTokenVault,
                   "115792089237316195423570985008687907853269984665640564039457584007913129639935"
                 );
+                await tx.wait(1);
                 handleApprovalSuccess();
               } catch (error) {
                 console.log(error);

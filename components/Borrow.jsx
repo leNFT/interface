@@ -181,7 +181,7 @@ export default function Borrow(props) {
     props.setVisibility(false);
     dispatch({
       type: "success",
-      message: "Please wait for transaction confirmation.",
+      message: "Please follow its health level closely.",
       title: "Loan Created!",
       position: "topR",
     });
@@ -189,10 +189,9 @@ export default function Borrow(props) {
 
   const handleApprovalSuccess = async function () {
     setApproved(true);
-    setApprovalLoading(false);
     dispatch({
       type: "success",
-      message: "Please wait for tx confirmation to borrow.",
+      message: "You can now borrow using this asset.",
       title: "Approval Successful!",
       position: "topR",
     });
@@ -343,7 +342,6 @@ export default function Borrow(props) {
             isLoading={borrowLoading}
             onClick={async function () {
               if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
-                setBorrowLoading(true);
                 // Get updated price trusted server signature from server
                 const requestID = getNewRequestID();
                 const priceSig = await getAssetPriceSig(
@@ -352,9 +350,9 @@ export default function Borrow(props) {
                   props.token_id,
                   chain.id
                 );
-                console.log("Got price sig", priceSig);
                 try {
-                  await marketSigner.borrow(
+                  setBorrowLoading(true);
+                  const tx = await marketSigner.borrow(
                     addresses[borrowAsset].address,
                     amount,
                     props.token_address,
@@ -362,8 +360,10 @@ export default function Borrow(props) {
                     requestID,
                     priceSig
                   );
+                  await tx.wait(1);
                   handleBorrowSuccess();
                 } catch (error) {
+                  console.log(error);
                 } finally {
                   setBorrowLoading(false);
                 }
@@ -394,15 +394,18 @@ export default function Borrow(props) {
             loadingText=""
             isLoading={approvalLoading}
             onClick={async function () {
-              setApprovalLoading(true);
               try {
-                await assetCollectionSigner.approve(
+                setApprovalLoading(true);
+                const tx = await assetCollectionSigner.approve(
                   addresses.Market,
                   props.token_id
                 );
+                await tx.wait(1);
                 handleApprovalSuccess();
               } catch (error) {
                 console.log(error);
+              } finally {
+                setApprovalLoading(false);
               }
             }}
           />

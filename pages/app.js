@@ -231,7 +231,7 @@ export default function App() {
               </Box>
             </Typography>
           </div>
-          <div className="flex flex-row m-4 mt-32">
+          <div className="flex flex-row m-32">
             <Loading size={48} spinnerColor="#2E7DAF" spinnerType="loader" />
           </div>
         </div>

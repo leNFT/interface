@@ -25,15 +25,21 @@ import contractAddresses from "../contractAddresses.json";
 import { calculateHealthLevel } from "../helpers/healthLevel.js";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import nftOracleContract from "../contracts/NFTOracle.json";
 import marketContract from "../contracts/Market.json";
 import LinearProgressWithLabel from "./LinearProgressWithLabel";
 import loanCenterContract from "../contracts/LoanCenter.json";
 import erc20 from "../contracts/erc20.json";
 
-function isLoanLiquidatable(debt, maxCollateralization, price) {
+function isLoanLiquidatable(
+  debt,
+  maxCollateralization,
+  collaterizationBoost,
+  price
+) {
   return BigNumber.from(debt).lt(
-    BigNumber.from(maxCollateralization).mul(price).div(10000)
+    BigNumber.from(maxCollateralization + collaterizationBoost)
+      .mul(price)
+      .div(10000)
   );
 }
 
@@ -41,9 +47,7 @@ export default function Liquidate(props) {
   const [allowance, setAllowance] = useState("0");
   const [approvalLoading, setApprovalLoading] = useState(false);
   const { address, isConnected } = useAccount();
-  const [loanDetails, setLoanDetails] = useState();
   const [tokenPrice, setTokenPrice] = useState("0");
-  const [tokenMaxCollateralization, setTokenMaxCollateralization] = useState(0);
   const [liquidationPrice, setLiquidationPrice] = useState("0");
   const [liquidationReward, setLiquidationReward] = useState("0");
   const { chain } = useNetwork();
@@ -54,12 +58,6 @@ export default function Liquidate(props) {
     chain && chain.id in contractAddresses
       ? contractAddresses[chain.id]
       : contractAddresses["1"];
-
-  const nftOracle = useContract({
-    contractInterface: nftOracleContract.abi,
-    addressOrName: addresses.NFTOracle,
-    signerOrProvider: provider,
-  });
 
   const marketSigner = useContract({
     contractInterface: marketContract.abi,
@@ -133,13 +131,6 @@ export default function Liquidate(props) {
     );
     setTokenPrice(price);
     console.log("price:", price);
-
-    //Get token max collateralization
-    const maxCollateralization = (
-      await nftOracle.getCollectionMaxCollaterization(props.loan.tokenAddress)
-    ).toString();
-    console.log("maxCollateralization updated", maxCollateralization);
-    setTokenMaxCollateralization(maxCollateralization);
   }
 
   useEffect(() => {
@@ -201,10 +192,7 @@ export default function Liquidate(props) {
             <div className="flex flex-col">
               <Typography variant="subtitle2">Asset Pricing</Typography>
               <Typography variant="body16">
-                {formatUnits(tokenPrice, 18) +
-                  " WETH @ " +
-                  tokenMaxCollateralization / 100 +
-                  "% Max LTV"}
+                {formatUnits(tokenPrice, 18) + " WETH"}
               </Typography>
             </div>
           </div>
@@ -253,6 +241,7 @@ export default function Liquidate(props) {
               value={calculateHealthLevel(
                 props.loan.debt,
                 BigNumber.from(props.maxCollateralization)
+                  .add(props.loan.boost)
                   .mul(props.loan.price)
                   .div(10000)
                   .toString()

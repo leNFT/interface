@@ -25,7 +25,6 @@ export default function RepayLoan(props) {
   const [loan, setLoan] = useState();
   const [debt, setDebt] = useState(0);
   const [tokenPrice, setTokenPrice] = useState("0");
-  const [tokenMaxCollateralization, setTokenMaxCollateralization] = useState(0);
   const [balance, setBalance] = useState("0");
   const { isConnected, address } = useAccount();
   const { chain } = useNetwork();
@@ -41,12 +40,6 @@ export default function RepayLoan(props) {
   const [symbol, setSymbol] = useState("WETH");
 
   const dispatch = useNotification();
-
-  const nftOracle = useContract({
-    contractInterface: nftOracleContract.abi,
-    addressOrName: addresses.NFTOracle,
-    signerOrProvider: provider,
-  });
 
   const market = useContract({
     contractInterface: marketContract.abi,
@@ -108,13 +101,6 @@ export default function RepayLoan(props) {
     const price = await getAssetPrice(props.token_address, props.token_id);
     setTokenPrice(price);
     console.log("price", price);
-
-    //Get token max collateralization
-    const maxCollateralization = (
-      await nftOracle.getCollectionMaxCollaterization(props.token_address)
-    ).toString();
-    console.log("maxCollateralization updated", maxCollateralization);
-    setTokenMaxCollateralization(maxCollateralization);
   }
 
   useEffect(() => {
@@ -193,10 +179,7 @@ export default function RepayLoan(props) {
         <div className="flex flex-col">
           <Typography variant="subtitle2">Asset Pricing</Typography>
           <Typography variant="body16">
-            {formatUnits(tokenPrice, 18) +
-              " WETH @ " +
-              tokenMaxCollateralization / 100 +
-              "% Max LTV"}
+            {formatUnits(tokenPrice, 18) + " WETH"}
           </Typography>
         </div>
       </div>

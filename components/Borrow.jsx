@@ -32,13 +32,15 @@ import {
   useProvider,
   useSigner,
 } from "wagmi";
+import nativeTokenVaultContract from "../contracts/NativeTokenVault.json";
 
 export default function Borrow(props) {
   const PRICE_PRECISION = "1000000000000000000";
   const [amount, setAmount] = useState("0");
   const [maxAmount, setMaxAmount] = useState("0");
   const [tokenPrice, setTokenPrice] = useState("0");
-  const [tokenMaxCollateralization, setTokenMaxCollateralization] = useState(0);
+  const [maxCollateralization, setMaxCollateralization] = useState(0);
+  const [collateralizationBoost, setCollateralizationBoost] = useState(0);
   const [approved, setApproved] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [loadingMaxAmount, setLoadingMaxAmount] = useState(false);
@@ -46,7 +48,7 @@ export default function Borrow(props) {
   const [reserveAddress, setReserveAddress] = useState("");
   const [borrowLoading, setBorrowLoading] = useState(false);
   const [borrowRate, setBorrowRate] = useState(0);
-  const { isConnected } = useAccount();
+  const { address, isConnected } = useAccount();
   const { data: signer } = useSigner();
   const { chain } = useNetwork();
   const provider = useProvider();
@@ -57,6 +59,12 @@ export default function Borrow(props) {
 
   const dispatch = useNotification();
   const [borrowAsset, setBorrowAsset] = useState("WETH");
+
+  const nativeTokenVaultProvider = useContract({
+    contractInterface: nativeTokenVaultContract.abi,
+    addressOrName: addresses.NativeTokenVault,
+    signerOrProvider: provider,
+  });
 
   const assetCollectionSigner = useContract({
     contractInterface: erc721,
@@ -126,10 +134,20 @@ export default function Borrow(props) {
     setTokenPrice(price);
 
     //Get token max collateralization
-    const maxCollateralization =
+    const updatedMaxCollateralization =
       await nftOracle.getCollectionMaxCollaterization(props.token_address);
-    console.log("maxCollateralization updated", maxCollateralization);
-    setTokenMaxCollateralization(maxCollateralization);
+    console.log("maxCollateralization updated", updatedMaxCollateralization);
+    setMaxCollateralization(updatedMaxCollateralization);
+
+    //Get collaterization boost
+
+    const updatedCollaterizationBoost =
+      await nativeTokenVaultProvider.getVoteCollateralizationBoost(
+        address,
+        props.token_address
+      );
+    console.log("updatedCollaterizationBoost", updatedCollaterizationBoost);
+    setCollateralizationBoost(updatedCollaterizationBoost);
 
     // Get max amount borrowable
     const tokenETHPrice = (
@@ -138,7 +156,7 @@ export default function Borrow(props) {
     console.log("tokenETHPrice", tokenETHPrice);
 
     const maxETHCollateral = BigNumber.from(price)
-      .mul(maxCollateralization)
+      .mul(maxCollateralization + collateralizationBoost)
       .div(10000)
       .div(2)
       .toString();
@@ -282,7 +300,7 @@ export default function Borrow(props) {
       <div className="flex flex-row m-2">
         <div className="flex flex-col">
           <Typography variant="subtitle2">Address</Typography>
-          <Typography variant="body16">{props.token_address}</Typography>
+          <Typography variant="caption14">{props.token_address}</Typography>
         </div>
       </div>
       <div className="flex flex-row m-2">
@@ -301,10 +319,30 @@ export default function Borrow(props) {
           ) : (
             <Typography variant="body16">
               {tokenPrice != "0"
-                ? formatUnits(tokenPrice, 18) +
-                  " WETH @ " +
-                  tokenMaxCollateralization / 100 +
-                  "% Max LTV"
+                ? formatUnits(tokenPrice, 18) + " WETH"
+                : "Token Price Appraisal Error"}
+            </Typography>
+          )}
+        </div>
+      </div>
+      <div className="flex flex-row m-2">
+        <div className="flex flex-col">
+          <Typography variant="subtitle2">Max LTV</Typography>
+          {loadingMaxAmount ? (
+            <div className="m-2">
+              <Loading size={14} spinnerColor="#000000" />
+            </div>
+          ) : (
+            <Typography variant="body16">
+              {tokenPrice != "0"
+                ? maxCollateralization / 100 +
+                  "% + " +
+                  collateralizationBoost / 100 +
+                  "% Boost = " +
+                  (parseInt(maxCollateralization) +
+                    parseInt(collateralizationBoost)) /
+                    100 +
+                  "%"
                 : "Token Price Appraisal Error"}
             </Typography>
           )}

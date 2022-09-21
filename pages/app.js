@@ -118,6 +118,7 @@ export default function App() {
           tokenId: loan.nftTokenId.toString(),
           tokenURI: tokenURI,
           amount: loan.amount,
+          boost: loan.boost,
           debt: debt,
           tokenPrice: tokenPrice,
           maxLTV: maxLTV,
@@ -300,6 +301,7 @@ export default function App() {
                               value={calculateHealthLevel(
                                 loan.debt,
                                 BigNumber.from(loan.maxLTV)
+                                  .add(loan.boost)
                                   .mul(loan.tokenPrice)
                                   .div(10000)
                                   .toString()

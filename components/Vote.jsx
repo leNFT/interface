@@ -114,7 +114,10 @@ export default function Vote(props) {
             if (BigNumber.from(amount).lte(BigNumber.from(freeVotes))) {
               try {
                 setVotingLoading(true);
-                const tx = nativeTokenVaultSigner.vote(amount, props.address);
+                const tx = await nativeTokenVaultSigner.vote(
+                  amount,
+                  props.address
+                );
                 await tx.wait(1);
                 handleVoteSuccess();
               } catch (error) {

@@ -81,7 +81,10 @@ export default function LoanSearch() {
       );
 
       // Get the debt associated with this loan
-      const debt = await loanCenter.getLoanDebt(loanId);
+      const loanDebt = (await loanCenter.getLoanDebt(loanId)).toString();
+
+      // Get the vote boost associated with this loan
+      const loanBoost = (await loanCenter.getLoanBoost(loanId)).toString();
 
       // Get checksumed token address
       collectionNFTs[i].token_address = getAddress(
@@ -106,7 +109,8 @@ export default function LoanSearch() {
       // Add new loan to update array
       updatedCollectionLoans.push({
         loanId: loanId,
-        debt: debt.toString(),
+        debt: loanDebt,
+        boost: loanBoost,
         tokenAddress: collectionNFTs[i].token_address,
         tokenId: collectionNFTs[i].token_id,
         tokenURI: tokenURI,
@@ -343,6 +347,7 @@ export default function LoanSearch() {
                             value={calculateHealthLevel(
                               collectionLoan.debt,
                               BigNumber.from(maxCollateralization)
+                                .add(collectionLoan.boost)
                                 .mul(collectionLoan.price)
                                 .div(10000)
                                 .toString()

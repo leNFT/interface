@@ -224,7 +224,7 @@ export default function Borrow(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-col lg:flex-row">
+      <div className="flex flex-col m-2 lg:m-8 lg:flex-row justify-center">
         <div className="flex flex-col items-center justify-center m-4">
           {props.token_uri ? (
             <Image

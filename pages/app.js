@@ -232,7 +232,7 @@ export default function App() {
             </Typography>
           </div>
           <div className="flex flex-row m-4 mt-32">
-            <Loading size={16} spinnerColor="#2E7DAF" spinnerType="loader" />
+            <Loading size={48} spinnerColor="#2E7DAF" spinnerType="loader" />
           </div>
         </div>
       ) : (

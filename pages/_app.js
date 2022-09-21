@@ -17,7 +17,6 @@ import { alchemyProvider } from "wagmi/providers/alchemy";
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
   const isIndex = router.pathname == "/";
-  console.log("path", router.pathname);
   const LayoutComponent = isIndex ? SplashLayout : Layout;
   const { chains, provider } = configureChains(
     [chain.mainnet, chain.goerli],

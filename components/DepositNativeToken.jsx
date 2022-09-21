@@ -114,6 +114,11 @@ export default function DepositNativeToken(props) {
           </Typography>
         </div>
       </div>
+      <div className="flex flex-row items-center text-center justify-center m-2">
+        <Typography variant="caption14">
+          Deposits are subject to a 7-day withdrawal period.
+        </Typography>
+      </div>
       <div className="flex flex-row items-center justify-center m-8">
         <Input
           labelBgColor="rgb(241, 242, 251)"

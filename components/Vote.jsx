@@ -80,7 +80,7 @@ export default function Vote(props) {
         <div className="flex flex-col">
           <Typography variant="subtitle2">Free Votes</Typography>
           <Typography variant="body16">
-            {formatUnits(freeVotes, 18)} LE
+            {formatUnits(freeVotes, 18)} veLE
           </Typography>
         </div>
       </div>

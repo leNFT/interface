@@ -263,10 +263,7 @@ export default function Stake() {
               </div>
               <div className="flex flex-row">
                 <Typography variant="body16">
-                  {formatUnits(voteTokenBalance, 18) +
-                    " veLE (" +
-                    formatUnits(maxAmount, 18) +
-                    " LE)"}
+                  {formatUnits(voteTokenBalance, 18) + " veLE"}
                 </Typography>
               </div>
             </div>

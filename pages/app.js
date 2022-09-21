@@ -67,8 +67,7 @@ export default function App() {
     console.log("Setting up UI");
 
     // Get user NFT assets, special case for testnet goerli
-    const userNFTsResponse = await getNFTs(address, "", chain.id);
-    const userNFTs = userNFTsResponse.result;
+    const userNFTs = await getNFTs(address, "", chain.id);
     console.log(
       "supportedAssets:",
       contractAddresses[chain.id].SupportedAssets
@@ -76,6 +75,8 @@ export default function App() {
     var updatedLoans = [];
     var updatedSupportedAssets = [];
     var updatedUnsupportedAssets = [];
+
+    console.log("userNFTs", userNFTs);
 
     // Loop through all of tthe user NFTs
     console.log("Found " + userNFTs.length + " NFTs for user " + address);
@@ -87,10 +88,14 @@ export default function App() {
         contractAddresses[chain.id].DebtToken.toLowerCase()
       ) {
         // Get loan details
-        const loan = await loanCenter.getLoan(userNFTs[i].token_id);
+        const loan = await loanCenter.getLoan(
+          BigNumber.from(userNFTs[i].id.tokenId).toNumber()
+        );
         console.log("loan", loan);
 
-        const debt = await loanCenter.getLoanDebt(userNFTs[i].token_id);
+        const debt = await loanCenter.getLoanDebt(
+          BigNumber.from(userNFTs[i].id.tokenId).toNumber()
+        );
 
         console.log("debt", debt);
 
@@ -116,7 +121,7 @@ export default function App() {
 
         // Save relevant loan info
         updatedLoans.push({
-          loanId: userNFTs[i].token_id,
+          loanId: BigNumber.from(userNFTs[i].id.tokenId).toNumber(),
           tokenName: tokenName,
           tokenAddress: loan.nftAsset,
           tokenId: loan.nftTokenId.toString(),
@@ -130,22 +135,22 @@ export default function App() {
       } else if (
         contractAddresses[chain.id].SupportedAssets.find(
           (collection) =>
-            collection.address.toLowerCase() == userNFTs[i].token_address
+            collection.address.toLowerCase() == userNFTs[i].contract.address
         )
       ) {
         // Get token price
         const tokenPrice = await getAssetPrice(
           contractAddresses[chain.id].SupportedAssets.find(
             (collection) =>
-              collection.address.toLowerCase() == userNFTs[i].token_address
+              collection.address.toLowerCase() == userNFTs[i].contract.address
           ).address,
-          userNFTs[i].token_id
+          BigNumber.from(userNFTs[i].id.tokenId).toNumber()
         );
 
         // Get max LTV of collection
         console.log(userNFTs[i].token_address);
         const maxLTV = await nftOracle.getCollectionMaxCollaterization(
-          userNFTs[i].token_address
+          userNFTs[i].contract.address
         );
         console.log("maxLTV", maxLTV);
 
@@ -160,8 +165,8 @@ export default function App() {
 
         //Replace token URI
         userNFTs[i].token_uri = await getNFTImage(
-          userNFTs[i].token_address,
-          userNFTs[i].token_id,
+          userNFTs[i].contract.address,
+          BigNumber.from(userNFTs[i].id.tokenId).toNumber(),
           chain.id
         );
 
@@ -172,8 +177,8 @@ export default function App() {
         if (updatedUnsupportedAssets.length < 5) {
           //Replace token URI
           userNFTs[i].token_uri = await getNFTImage(
-            userNFTs[i].token_address,
-            userNFTs[i].token_id,
+            userNFTs[i].contract.address,
+            BigNumber.from(userNFTs[i].id.tokenId).toNumber(),
             chain.id
           );
           updatedUnsupportedAssets.push(userNFTs[i]);
@@ -392,7 +397,7 @@ export default function App() {
               <div className="flex flex-row grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
                 {supportedAssets.map((supportedAsset) => (
                   <div
-                    key={supportedAsset.token_hash}
+                    key={supportedAsset.id.tokenId}
                     className="flex m-4 items-center justify-center max-w-[300px]"
                   >
                     <Card
@@ -438,8 +443,13 @@ export default function App() {
                             }}
                           >
                             <div className="flex flex-col mt-4 items-center text-center">
-                              <div>{supportedAsset.name}</div>
-                              <div>{"#" + supportedAsset.token_id}</div>
+                              <div>{supportedAsset.contractMetadata.name}</div>
+                              <div>
+                                {"#" +
+                                  BigNumber.from(
+                                    supportedAsset.id.tokenId
+                                  ).toNumber()}
+                              </div>
                             </div>
                           </Box>
                         </CardContent>
@@ -467,10 +477,10 @@ export default function App() {
                     ].SupportedAssets.find(
                       (collection) =>
                         collection.address.toLowerCase() ==
-                        selectedAsset.token_address
+                        selectedAsset.contract.address
                     ).address
                   }
-                  token_id={selectedAsset.token_id}
+                  token_id={BigNumber.from(selectedAsset.id.tokenId).toNumber()}
                   token_uri={selectedAsset.token_uri}
                 />
               </StyledModal>
@@ -484,7 +494,7 @@ export default function App() {
               <div className="flex flex-row grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2">
                 {unsupportedAssets.map((unsupportedAsset, index) => (
                   <div
-                    key={unsupportedAsset.token_hash}
+                    key={unsupportedAsset.id.tokenId}
                     className="flex m-4 items-center justify-center max-w-[220px]"
                   >
                     {index == 4 && unsupportedAssets.length == 5 ? (
@@ -508,7 +518,9 @@ export default function App() {
                       >
                         <CardActionArea
                           onClick={() =>
-                            handleUnsupportedAssetClick(unsupportedAsset.name)
+                            handleUnsupportedAssetClick(
+                              unsupportedAsset.contractMetadata.name
+                            )
                           }
                         >
                           <CardContent>
@@ -537,8 +549,15 @@ export default function App() {
                               }}
                             >
                               <div className="flex flex-col mt-4 items-center text-center">
-                                <div>{unsupportedAsset.name}</div>
-                                <div>{"#" + unsupportedAsset.token_id}</div>
+                                <div>
+                                  {unsupportedAsset.contractMetadata.name}
+                                </div>
+                                <div>
+                                  {"#" +
+                                    BigNumber.from(
+                                      unsupportedAsset.id.tokenId
+                                    ).toNumber()}
+                                </div>
                               </div>
                             </Box>
                           </CardContent>

@@ -225,7 +225,7 @@ export default function App() {
                   letterSpacing: 24,
                 }}
               >
-                <div className="text-md md:text-2xl justify-center">
+                <div className="text-md md:text-2xl justify-center text-center">
                   {"Got " + processedCount + "/" + count + " assets"}
                 </div>
               </Box>

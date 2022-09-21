@@ -399,7 +399,7 @@ export default function App() {
                   <div
                     key={
                       supportedAsset.id.tokenId +
-                      supportedAsset.collection.address
+                      supportedAsset.contract.address
                     }
                     className="flex m-4 items-center justify-center max-w-[300px]"
                   >

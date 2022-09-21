@@ -66,6 +66,8 @@ export default function WithdrawNativeToken(props) {
       console.log(error);
     }
 
+    console.log("withdrawRequest", withdrawRequest);
+
     // Withdraw might be undefined if no request was made before
     if (withdrawRequest) {
       setLastWithdrawRequest({
@@ -98,6 +100,7 @@ export default function WithdrawNativeToken(props) {
 
   function getWithdrawalMessage(requestTimestamp) {
     let now = Date.now() / 1000; // Unix timestamp in seconds
+    console.log("requestTimestamp", requestTimestamp);
 
     if (now < requestTimestamp + ONE_WEEK) {
       let hoursToWithdraw = (requestTimestamp + ONE_WEEK - now) / 3600;
@@ -122,7 +125,7 @@ export default function WithdrawNativeToken(props) {
     }
 
     if (now > requestTimestamp + ONE_WEEK + UNVOTE_WINDOW) {
-      return "Please submit an withdrawal request to be able to withdraw. 7 days cooldown period.";
+      return "Please submit an withdrawal request to be able to withdraw. 7-day cooldown period.";
     }
 
     return "";
@@ -166,88 +169,92 @@ export default function WithdrawNativeToken(props) {
           </Typography>
         </div>
       </div>
-      {!BigNumber.from(maxAmount).isZero() && (
-        <div>
-          <div className="flex flex-row items-center justify-center m-6">
-            <Input
-              labelBgColor="rgb(241, 242, 251)"
-              label="Amount"
-              type="number"
-              step="any"
-              validation={{
-                numberMax: Number(formatUnits(maxAmount, 18)),
-                numberMin: 0,
-              }}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="flex flex-row items-center text-center justify-center m-2">
-            <Typography variant="caption14">
-              {getWithdrawalMessage(lastWithdrawRequest.timestamp)}
-            </Typography>
-          </div>
-          {canWithdraw(lastWithdrawRequest.timestamp) ? (
-            <div className="mt-16 mb-8">
-              <Button
-                text="Withdraw"
-                isFullWidth
-                loadingProps={{
-                  spinnerColor: "#000000",
-                }}
-                loadingText="Confirming Withdrawal"
-                isLoading={withdrawalLoading}
-                onClick={async function () {
-                  if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
-                    try {
-                      setWithdrawalLoading(true);
-                      const tx = await nativeTokenVaultSigner.withdraw(amount);
-                      await tx.wait(1);
-                      handleWithdrawalSuccess();
-                    } catch (error) {
-                      console.log(error);
-                    } finally {
-                      setWithdrawalLoading(false);
-                    }
-                  } else {
-                    dispatch({
-                      type: "error",
-                      message: "Amount is bigger than max permited withdrawal",
-                      title: "Error",
-                      position: "topR",
-                    });
-                  }
-                }}
-              />
-            </div>
-          ) : (
-            <div className="mt-16 mb-8">
-              <Button
-                text="Request Withdrawal"
-                isFullWidth
-                loadingProps={{
-                  spinnerColor: "#000000",
-                }}
-                loadingText="Confirming Approval"
-                isLoading={requestLoading}
-                onClick={async function () {
-                  try {
-                    setRequestLoading(true);
-                    const tx =
-                      await nativeTokenVaultProvider.createWithdrawRequest(
-                        balance
-                      );
-                    await tx.wait(1);
-                    handleRequestSuccess();
-                  } catch (error) {
-                    console.log(error);
-                  } finally {
-                    setRequestLoading(false);
-                  }
-                  setRequestLoading(true);
-                }}
-              ></Button>
-            </div>
-          )}
+      <div className="flex flex-row items-center justify-center m-6">
+        <Input
+          labelBgColor="rgb(241, 242, 251)"
+          label="Amount"
+          type="number"
+          step="any"
+          validation={{
+            numberMax: Number(formatUnits(maxAmount, 18)),
+            numberMin: 0,
+          }}
+          onChange={handleInputChange}
+        />
+      </div>
+      <div className="flex flex-row items-center text-center justify-center m-2">
+        <Typography variant="caption14">
+          {getWithdrawalMessage(lastWithdrawRequest.timestamp)}
+        </Typography>
+      </div>
+      {canWithdraw(lastWithdrawRequest.timestamp) ? (
+        <div className="mt-16 mb-8">
+          <Button
+            text="Withdraw"
+            theme="secondary"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
+            }}
+            loadingText=""
+            isLoading={withdrawalLoading}
+            disabled={BigNumber.from(maxAmount).isZero()}
+            onClick={async function () {
+              if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
+                try {
+                  setWithdrawalLoading(true);
+                  const tx = await nativeTokenVaultSigner.withdraw(amount);
+                  await tx.wait(1);
+                  handleWithdrawalSuccess();
+                } catch (error) {
+                  console.log(error);
+                } finally {
+                  setWithdrawalLoading(false);
+                }
+              } else {
+                dispatch({
+                  type: "error",
+                  message: "Amount is bigger than max permited withdrawal",
+                  title: "Error",
+                  position: "topR",
+                });
+              }
+            }}
+          />
+        </div>
+      ) : (
+        <div className="mt-16 mb-8">
+          <Button
+            text="Create Withdraw Request"
+            theme="secondary"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
+            }}
+            loadingText=""
+            disabled={BigNumber.from(maxAmount).isZero()}
+            isLoading={requestLoading}
+            onClick={async function () {
+              try {
+                setRequestLoading(true);
+                const tx = await nativeTokenVaultProvider.createWithdrawRequest(
+                  amount
+                );
+                await tx.wait(1);
+                handleRequestSuccess();
+              } catch (error) {
+                console.log(error);
+              } finally {
+                setRequestLoading(false);
+              }
+            }}
+          ></Button>
         </div>
       )}
     </div>

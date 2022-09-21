@@ -8,7 +8,6 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useState, useEffect } from "react";
 import styles from "../styles/Home.module.css";
-import { Eth, Usdc } from "@web3uikit/icons";
 import {
   useNotification,
   Button,
@@ -23,7 +22,6 @@ import tokenOracleContract from "../contracts/TokenOracle.json";
 import reserveContract from "../contracts/Reserve.json";
 import erc721 from "../contracts/erc721.json";
 import Image from "next/image";
-import { TabList, Tab } from "@web3uikit/core";
 import { Divider } from "@mui/material";
 import {
   useAccount,
@@ -224,14 +222,6 @@ export default function Borrow(props) {
     }
   }
 
-  const onTabChange = (selectedKey) => {
-    if (selectedKey == "0") {
-      setBorrowAsset("WETH");
-    } else if (selectedKey == "1") {
-      setBorrowAsset("USDC");
-    }
-  };
-
   return (
     <div className={styles.container}>
       <div className="flex flex-col lg:flex-row">
@@ -255,7 +245,9 @@ export default function Borrow(props) {
           <div className="flex flex-row m-2">
             <div className="flex flex-col">
               <Typography variant="subtitle2">Address</Typography>
-              <Typography variant="caption14">{props.token_address}</Typography>
+              <Typography variant="caption14">
+                <p class="break-all">{props.token_address}</p>
+              </Typography>
             </div>
           </div>
           <div className="flex flex-row m-2">

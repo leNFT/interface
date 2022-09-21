@@ -64,20 +64,19 @@ export default function LoanSearch() {
     console.log("maxCollateralization", updatedMaxCollateralization.toString());
 
     // Get the token ids for the selected collection
-    const collectionNFTsResponse = await getNFTs(
+    const collectionNFTs = await getNFTs(
       addresses.LoanCenter,
       selectedCollection,
       chain.id
     );
-    const collectionNFTs = collectionNFTsResponse.result
-      ? collectionNFTsResponse.result
-      : [];
+
+    console.log("collectionNFTs", collectionNFTs);
 
     for (let i = 0; i < collectionNFTs.length; i++) {
       // Get the loan ID of each NFT
       const loanId = await loanCenter.getNFTLoanId(
-        collectionNFTs[i].token_address,
-        collectionNFTs[i].token_id
+        collectionNFTs[i].contract.address,
+        BigNumber.from(collectionNFTs[i].id.tokenId).toNumber()
       );
 
       // Get the debt associated with this loan
@@ -87,22 +86,23 @@ export default function LoanSearch() {
       const loanBoost = (await loanCenter.getLoanBoost(loanId)).toString();
 
       // Get checksumed token address
-      collectionNFTs[i].token_address = getAddress(
-        collectionNFTs[i].token_address
+      collectionNFTs[i].contract.address = getAddress(
+        collectionNFTs[i].contract.address
       );
 
       // Find the valuation given by the protocol to this specific asset
       const assetPrice = await getAssetPrice(
         contractAddresses[chain.id].SupportedAssets.find(
-          (collection) => collection.address == collectionNFTs[i].token_address
+          (collection) =>
+            collection.address == collectionNFTs[i].contract.address
         ).address,
-        collectionNFTs[i].token_id
+        BigNumber.from(collectionNFTs[i].id.tokenId).toNumber()
       );
 
       //Get token URI for image
       const tokenURI = await getNFTImage(
-        collectionNFTs[i].token_address,
-        collectionNFTs[i].token_id,
+        collectionNFTs[i].contract.address,
+        BigNumber.from(collectionNFTs[i].id.tokenId).toNumber(),
         chain.id
       );
 
@@ -111,8 +111,8 @@ export default function LoanSearch() {
         loanId: loanId,
         debt: loanDebt,
         boost: loanBoost,
-        tokenAddress: collectionNFTs[i].token_address,
-        tokenId: collectionNFTs[i].token_id,
+        tokenAddress: collectionNFTs[i].contract.address,
+        tokenId: BigNumber.from(collectionNFTs[i].id.tokenId).toNumber(),
         tokenURI: tokenURI,
         price: assetPrice,
       });

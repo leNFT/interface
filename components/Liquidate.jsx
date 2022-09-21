@@ -96,11 +96,6 @@ export default function Liquidate(props) {
   }
 
   async function getLoanDetails() {
-    // Get extra loan details
-    const newloanDetails = await loanCenter.getLoan(props.loan.loanId);
-    console.log("Got loan details:", newloanDetails);
-    setLoanDetails(newloanDetails);
-
     // Get liquidation price for the loan
     const requestId = getNewRequestID();
     const priceSig = await getAssetPriceSig(
@@ -138,7 +133,7 @@ export default function Liquidate(props) {
       getWETHAllowance();
       getLoanDetails();
       getAssetPricing();
-      console.log("debt", props.loan.debt);
+      console.log("loan", props.loan);
     }
   }, [isConnected, props.loan]);
 
@@ -293,6 +288,7 @@ export default function Liquidate(props) {
                     isLoanLiquidatable(
                       props.loan.debt,
                       props.maxCollateralization,
+                      props.loan.boost,
                       props.loan.price
                     )
                       ? "Liquidation conditions are not met"
@@ -307,6 +303,7 @@ export default function Liquidate(props) {
                   disabled={isLoanLiquidatable(
                     props.loan.debt,
                     props.maxCollateralization,
+                    props.loan.boost,
                     props.loan.price
                   )}
                   loadingProps={{

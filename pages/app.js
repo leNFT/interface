@@ -84,7 +84,7 @@ export default function App() {
 
     for (let i = 0; i < userNFTs.length; i++) {
       if (
-        userNFTs[i].token_address ==
+        userNFTs[i].contract.address ==
         contractAddresses[chain.id].DebtToken.toLowerCase()
       ) {
         // Get loan details
@@ -397,7 +397,10 @@ export default function App() {
               <div className="flex flex-row grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
                 {supportedAssets.map((supportedAsset) => (
                   <div
-                    key={supportedAsset.id.tokenId}
+                    key={
+                      supportedAsset.id.tokenId +
+                      supportedAsset.collection.address
+                    }
                     className="flex m-4 items-center justify-center max-w-[300px]"
                   >
                     <Card
@@ -494,7 +497,10 @@ export default function App() {
               <div className="flex flex-row grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2">
                 {unsupportedAssets.map((unsupportedAsset, index) => (
                   <div
-                    key={unsupportedAsset.id.tokenId}
+                    key={
+                      unsupportedAsset.id.tokenId +
+                      unsupportedAsset.contract.address
+                    }
                     className="flex m-4 items-center justify-center max-w-[220px]"
                   >
                     {index == 4 && unsupportedAssets.length == 5 ? (

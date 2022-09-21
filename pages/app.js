@@ -219,11 +219,20 @@ export default function App() {
         <div className="flex flex-col items-center justify-center m-16">
           <div className="flex flex-row m-2">
             <Typography variant="subtitle3" italic="true">
-              {"Got " + processedCount + "/" + count + " assets"}
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  letterSpacing: 24,
+                }}
+              >
+                <div className="text-md md:text-2xl justify-center">
+                  {"Got " + processedCount + "/" + count + " assets"}
+                </div>
+              </Box>
             </Typography>
           </div>
-          <div className="flex flex-row m-2">
-            <Loading size={16} spinnerColor="#2E7DAF" spinnerType="wave" />
+          <div className="flex flex-row m-4 mt-32">
+            <Loading size={16} spinnerColor="#2E7DAF" spinnerType="loader" />
           </div>
         </div>
       ) : (

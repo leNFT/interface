@@ -246,7 +246,7 @@ export default function Borrow(props) {
             <div className="flex flex-col">
               <Typography variant="subtitle2">Address</Typography>
               <Typography variant="caption14">
-                <p class="break-all">{props.token_address}</p>
+                <p className="break-all">{props.token_address}</p>
               </Typography>
             </div>
           </div>

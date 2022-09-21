@@ -31,6 +31,8 @@ import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 
 export default function App() {
   const [loadingUI, setLoadingUI] = useState(true);
+  const [count, setCount] = useState(0);
+  const [processedCount, setProcessedCount] = useState(0);
   const [loans, setLoans] = useState([]);
   const [supportedAssets, setSupportedAssets] = useState([]);
   const [unsupportedAssets, setUnsupportedAssets] = useState([]);
@@ -77,6 +79,8 @@ export default function App() {
 
     // Loop through all of tthe user NFTs
     console.log("Found " + userNFTs.length + " NFTs for user " + address);
+    setCount(userNFTs.length);
+
     for (let i = 0; i < userNFTs.length; i++) {
       if (
         userNFTs[i].token_address ==
@@ -175,6 +179,8 @@ export default function App() {
           updatedUnsupportedAssets.push(userNFTs[i]);
         }
       }
+
+      setProcessedCount(i);
     }
 
     console.log("updatedLoans:", updatedLoans);
@@ -210,8 +216,15 @@ export default function App() {
   return (
     <div className={styles.container}>
       {loadingUI ? (
-        <div className="flex justify-center m-16">
-          <Loading size={16} spinnerColor="#2E7DAF" spinnerType="wave" />
+        <div className="flex flex-col items-center justify-center m-16">
+          <div className="flex flex-row m-2">
+            <Typography variant="subtitle3" italic="true">
+              {"Got " + processedCount + "/" + count + " assets"}
+            </Typography>
+          </div>
+          <div className="flex flex-row m-2">
+            <Loading size={16} spinnerColor="#2E7DAF" spinnerType="wave" />
+          </div>
         </div>
       ) : (
         <div>

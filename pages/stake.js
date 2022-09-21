@@ -6,7 +6,7 @@ import { formatUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import { Button, Typography } from "@web3uikit/core";
+import { Button, Typography, Loading } from "@web3uikit/core";
 import StyledModal from "../components/StyledModal";
 import { useState, useEffect } from "react";
 import { useAccount, useNetwork } from "wagmi";
@@ -16,6 +16,7 @@ import Vote from "../components/Vote";
 import DepositNativeToken from "../components/DepositNativeToken";
 import WithdrawNativeToken from "../components/WithdrawNativeToken";
 import { useContract, useProvider } from "wagmi";
+import Box from "@mui/material/Box";
 
 export default function Stake() {
   const { address, isConnected } = useAccount();
@@ -31,7 +32,7 @@ export default function Stake() {
   const [visibleRemoveVoteModal, setVisibleRemoveVoteModal] = useState(false);
   const [maxAmount, setMaxAmount] = useState("0");
   const [collectionBoost, setCollectionBoost] = useState(0);
-  const [loadingPrice, setLoadingPrice] = useState(false);
+  const [loadingPrice, setLoadingPrice] = useState(true);
   const [ethPrice, setETHPrice] = useState("0");
 
   const addresses =
@@ -198,24 +199,16 @@ export default function Stake() {
       <div className="flex flex-col items-center">
         <div className="flex flex-row justify-center">
           {loadingPrice ? (
-            <div className="flex m-4">
-              <Loading size={12} spinnerColor="#000000" />
-            </div>
+            <Loading size={12} spinnerColor="#000000" />
           ) : (
-            <div className="my-2">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "body2.fontSize",
-                }}
-              >
-                {"1 " +
-                  props.asset +
-                  " = " +
-                  formatUnits(ethPrice, 18) +
-                  " ETH"}
-              </Box>
-            </div>
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "body2.fontSize",
+              }}
+            >
+              {"1 LE = " + formatUnits(ethPrice, 18) + " ETH"}
+            </Box>
           )}
         </div>
         <div className="flex flex-col-reverse md:flex-row items-center justify-center min-w-[75%] border-4 m-2 md:m-8 rounded-3xl bg-black/5 shadow-lg">

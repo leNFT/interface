@@ -1,6 +1,7 @@
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import nativeTokenVaultContract from "../contracts/NativeTokenVault.json";
+import tokenOracleContract from "../contracts/TokenOracle.json";
 import { formatUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -30,6 +31,8 @@ export default function Stake() {
   const [visibleRemoveVoteModal, setVisibleRemoveVoteModal] = useState(false);
   const [maxAmount, setMaxAmount] = useState("0");
   const [collectionBoost, setCollectionBoost] = useState(0);
+  const [loadingPrice, setLoadingPrice] = useState(false);
+  const [ethPrice, setETHPrice] = useState("0");
 
   const addresses =
     chain && chain.id in contractAddresses
@@ -58,6 +61,23 @@ export default function Stake() {
     signerOrProvider: provider,
   });
 
+  const tokenOracle = useContract({
+    contractInterface: tokenOracleContract.abi,
+    addressOrName: addresses.TokenOracle,
+    signerOrProvider: provider,
+  });
+
+  async function updateAssetETHPrice() {
+    const updatedAssetETHPrice = (
+      await tokenOracle.getTokenETHPrice(addresses.NativeToken)
+    ).toString();
+    setETHPrice(updatedAssetETHPrice);
+    console.log("updatedAssetETHPrice", updatedAssetETHPrice);
+
+    //Stop loading
+    setLoadingPrice(false);
+  }
+
   async function updateUI() {
     // Get the native token balance
     const nativeTokenBalance = await nativeToken.balanceOf(address);
@@ -82,6 +102,7 @@ export default function Stake() {
   useEffect(() => {
     if (isConnected) {
       updateUI();
+      updateAssetETHPrice();
 
       //Fill the collections with the supported assets
       var updatedCollections = [];
@@ -175,6 +196,28 @@ export default function Stake() {
         />
       </StyledModal>
       <div className="flex flex-col items-center">
+        <div className="flex flex-row justify-center">
+          {loadingPrice ? (
+            <div className="flex m-4">
+              <Loading size={12} spinnerColor="#000000" />
+            </div>
+          ) : (
+            <div className="my-2">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "body2.fontSize",
+                }}
+              >
+                {"1 " +
+                  props.asset +
+                  " = " +
+                  formatUnits(ethPrice, 18) +
+                  " ETH"}
+              </Box>
+            </div>
+          )}
+        </div>
         <div className="flex flex-col-reverse md:flex-row items-center justify-center min-w-[75%] border-4 m-2 md:m-8 rounded-3xl bg-black/5 shadow-lg">
           <div className="flex flex-col items-center m-4 lg:m-8">
             <div className="flex flex-row m-2">

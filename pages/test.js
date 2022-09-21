@@ -57,7 +57,7 @@ export default function Test() {
         }}
       />
       <Button
-        text="Mint 10 LE"
+        text="Mint 100 LE"
         isFullWidth
         isLoading={nativeTokenLoading}
         loadingProps={{
@@ -68,7 +68,7 @@ export default function Test() {
             setNativeTokenLoading(true);
             const tx = await nativeTokenSigner.mint(
               address,
-              "10000000000000000000"
+              "100000000000000000000"
             );
             await tx.wait(1);
           } catch (error) {

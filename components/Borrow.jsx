@@ -132,6 +132,7 @@ export default function Borrow(props) {
     // Get token price
     const price = await getAssetPrice(props.token_address, props.token_id);
     setTokenPrice(price);
+    console.log("price", price);
 
     //Get token max collateralization
     const updatedMaxCollateralization =
@@ -140,7 +141,6 @@ export default function Borrow(props) {
     setMaxCollateralization(updatedMaxCollateralization);
 
     //Get collaterization boost
-
     const updatedCollaterizationBoost =
       await nativeTokenVaultProvider.getVoteCollateralizationBoost(
         address,
@@ -154,9 +154,8 @@ export default function Borrow(props) {
       await tokenOracle.getTokenETHPrice(addresses[borrowAsset].address)
     ).toString();
     console.log("tokenETHPrice", tokenETHPrice);
-
     const maxETHCollateral = BigNumber.from(price)
-      .mul(maxCollateralization + collateralizationBoost)
+      .mul(updatedMaxCollateralization + updatedCollaterizationBoost)
       .div(10000)
       .div(2)
       .toString();
@@ -235,117 +234,110 @@ export default function Borrow(props) {
 
   return (
     <div className={styles.container}>
-      {props.token_uri ? (
-        <div className="flex flex-col items-center">
-          <Image
-            loader={() => props.token_uri}
-            src={props.token_uri}
-            height="200"
-            width="200"
-            unoptimized={true}
-          />
-        </div>
-      ) : (
-        <div className="flex flex-col items-center gap-1">
-          <Illustration height="180px" logo="token" width="100%" />
-          Loading...
-        </div>
-      )}
-      <div className="flex flex-row m-8 items-center justify-center">
-        <TabList
-          isWidthAuto
-          defaultActiveKey={0}
-          onChange={onTabChange}
-          tabStyle="bulbSeperate"
-        >
-          <Tab
-            lineHeight={0}
-            tabKey={0}
-            tabName={<Eth fontSize="32px" color="#000000" />}
-          ></Tab>
-        </TabList>
-      </div>
-      <div className="flex flex-row m-2">
-        <div className="flex flex-col">
-          <Typography variant="subtitle1">Maximum borrowable amount</Typography>
-          {loadingMaxAmount ? (
-            <div className="m-2">
-              <Loading size={16} spinnerColor="#000000" />
-            </div>
+      <div className="flex flex-col lg:flex-row">
+        <div className="flex flex-col items-center justify-center m-4">
+          {props.token_uri ? (
+            <Image
+              loader={() => props.token_uri}
+              src={props.token_uri}
+              height="200"
+              width="200"
+              unoptimized={true}
+            />
           ) : (
-            <Typography variant="body18">
-              {formatUnits(maxAmount, addresses[borrowAsset].decimals) +
-                " " +
-                borrowAsset}
-            </Typography>
+            <div>
+              <Illustration height="180px" logo="token" width="100%" />
+              Loading...
+            </div>
           )}
         </div>
-      </div>
-      <div className="flex flex-row m-2">
         <div className="flex flex-col">
-          <Typography variant="subtitle1">Interest Rate</Typography>
-          {loadingBorrowRate ? (
-            <div className="m-2">
-              <Loading size={16} spinnerColor="#000000" />
+          <div className="flex flex-row m-2">
+            <div className="flex flex-col">
+              <Typography variant="subtitle2">Address</Typography>
+              <Typography variant="caption14">{props.token_address}</Typography>
             </div>
-          ) : (
-            <Typography variant="body18">{borrowRate / 100}%</Typography>
-          )}
+          </div>
+          <div className="flex flex-row m-2">
+            <div className="flex flex-col">
+              <Typography variant="subtitle2">Asset ID</Typography>
+              <Typography variant="body16">{props.token_id}</Typography>
+            </div>
+          </div>
+          <div className="flex flex-row m-2">
+            <div className="flex flex-col">
+              <Typography variant="subtitle2">Asset Pricing</Typography>
+              {loadingMaxAmount ? (
+                <div className="m-2">
+                  <Loading size={14} spinnerColor="#000000" />
+                </div>
+              ) : (
+                <Typography variant="body16">
+                  {tokenPrice != "0"
+                    ? formatUnits(tokenPrice, 18) + " WETH"
+                    : "Token Price Appraisal Error"}
+                </Typography>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-row m-2">
+            <div className="flex flex-col">
+              <Typography variant="subtitle2">Max LTV</Typography>
+              {loadingMaxAmount ? (
+                <div className="m-2">
+                  <Loading size={14} spinnerColor="#000000" />
+                </div>
+              ) : (
+                <Typography variant="body16">
+                  {tokenPrice != "0"
+                    ? maxCollateralization / 100 +
+                      "% + " +
+                      collateralizationBoost / 100 +
+                      "% Boost = " +
+                      (parseInt(maxCollateralization) +
+                        parseInt(collateralizationBoost)) /
+                        100 +
+                      "%"
+                    : "Token Price Appraisal Error"}
+                </Typography>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-      <div className="m-8">
+      <div className="m-8 lg:hidden">
         <Divider />
       </div>
-
-      <div className="flex flex-row m-2">
-        <div className="flex flex-col">
-          <Typography variant="subtitle2">Address</Typography>
-          <Typography variant="caption14">{props.token_address}</Typography>
-        </div>
-      </div>
-      <div className="flex flex-row m-2">
-        <div className="flex flex-col">
-          <Typography variant="subtitle2">Asset ID</Typography>
-          <Typography variant="body16">{props.token_id}</Typography>
-        </div>
-      </div>
-      <div className="flex flex-row m-2">
-        <div className="flex flex-col">
-          <Typography variant="subtitle2">Asset Pricing</Typography>
-          {loadingMaxAmount ? (
-            <div className="m-2">
-              <Loading size={14} spinnerColor="#000000" />
-            </div>
-          ) : (
-            <Typography variant="body16">
-              {tokenPrice != "0"
-                ? formatUnits(tokenPrice, 18) + " WETH"
-                : "Token Price Appraisal Error"}
+      <div className="flex flex-col items-center m-2 border-4 rounded-lg p-2">
+        <div className="flex flex-row m-2">
+          <div className="flex flex-col items-center">
+            <Typography variant="subtitle1">
+              Maximum borrowable amount
             </Typography>
-          )}
+            {loadingMaxAmount ? (
+              <div className="m-2">
+                <Loading size={16} spinnerColor="#000000" />
+              </div>
+            ) : (
+              <Typography variant="body18">
+                {formatUnits(maxAmount, addresses[borrowAsset].decimals) +
+                  " " +
+                  borrowAsset}
+              </Typography>
+            )}
+          </div>
         </div>
-      </div>
-      <div className="flex flex-row m-2">
-        <div className="flex flex-col">
-          <Typography variant="subtitle2">Max LTV</Typography>
-          {loadingMaxAmount ? (
-            <div className="m-2">
-              <Loading size={14} spinnerColor="#000000" />
-            </div>
-          ) : (
-            <Typography variant="body16">
-              {tokenPrice != "0"
-                ? maxCollateralization / 100 +
-                  "% + " +
-                  collateralizationBoost / 100 +
-                  "% Boost = " +
-                  (parseInt(maxCollateralization) +
-                    parseInt(collateralizationBoost)) /
-                    100 +
-                  "%"
-                : "Token Price Appraisal Error"}
-            </Typography>
-          )}
+        <div className="flex flex-row m-2">
+          <div className="flex flex-col items-center">
+            <Typography variant="subtitle1">Interest Rate</Typography>
+            {loadingBorrowRate ? (
+              <div className="m-2">
+                <Loading size={16} spinnerColor="#000000" />
+              </div>
+            ) : (
+              <Typography variant="body18">{borrowRate / 100}%</Typography>
+            )}
+          </div>
         </div>
       </div>
       <div className="flex flex-row items-center justify-center m-8">
@@ -390,6 +382,7 @@ export default function Borrow(props) {
                 );
                 try {
                   setBorrowLoading(true);
+                  console.log("props.token_address", props.token_address);
                   const tx = await marketSigner.borrow(
                     addresses[borrowAsset].address,
                     amount,

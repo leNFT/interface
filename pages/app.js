@@ -417,7 +417,7 @@ export default function App() {
                           >
                             <div className="flex flex-col mt-4 items-center text-center">
                               <div>{supportedAsset.name}</div>
-                              <div>{"# " + supportedAsset.token_id}</div>
+                              <div>{"#" + supportedAsset.token_id}</div>
                             </div>
                           </Box>
                         </CardContent>

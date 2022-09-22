@@ -28,6 +28,8 @@ import StyledModal from "../components/StyledModal";
 export default function LoanSearch() {
   const [collectionLoans, setCollectionLoans] = useState([]);
   const [maxCollateralization, setMaxCollateralization] = useState("0");
+  const [count, setCount] = useState(0);
+  const [processedCount, setProcessedCount] = useState(0);
   const [loadingCollectionLoans, setLoadingCollectionLoans] = useState(true);
   const [selectedLoan, setSelectedLoan] = useState();
   const [visibleLiquidateModal, setVisibleLiquidateModal] = useState(false);
@@ -71,6 +73,7 @@ export default function LoanSearch() {
     );
 
     console.log("collectionNFTs", collectionNFTs);
+    setCount(collectionNFTs.length);
 
     for (let i = 0; i < collectionNFTs.length; i++) {
       // Get the loan ID of each NFT
@@ -118,6 +121,8 @@ export default function LoanSearch() {
         tokenURI: tokenURI,
         price: assetPrice,
       });
+
+      setProcessedCount(i);
     }
     // Update active loans state array
     console.log("updatedCollectionLoans", updatedCollectionLoans);
@@ -273,8 +278,24 @@ export default function LoanSearch() {
       </div>
       <div className="flex items-center justify-center">
         {loadingCollectionLoans ? (
-          <div className="flex m-36">
-            <Loading size={42} spinnerColor="#2E7DAF" spinnerType="loader" />
+          <div className="flex flex-col justify-center">
+            <div className="flex flex-row m-16">
+              <Typography variant="subtitle3">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    letterSpacing: 24,
+                  }}
+                >
+                  <div className="text-md md:text-2xl justify-center text-center">
+                    {"Got " + processedCount + "/" + count + " assets"}
+                  </div>
+                </Box>
+              </Typography>
+            </div>
+            <div className="flex fex-row justify-center m-32">
+              <Loading size={42} spinnerColor="#2E7DAF" spinnerType="loader" />
+            </div>
           </div>
         ) : collectionLoans.length != 0 ? (
           <div className="flex flex-col rounded-3xl m-2 p-2 bg-black/5 shadow-lg">

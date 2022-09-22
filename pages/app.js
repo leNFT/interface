@@ -217,7 +217,7 @@ export default function App() {
       {loadingUI ? (
         <div className="flex flex-col items-center justify-center m-16">
           <div className="flex flex-row m-2">
-            <Typography variant="subtitle3" italic="true">
+            <Typography variant="subtitle3">
               <Box
                 sx={{
                   fontFamily: "Monospace",
@@ -230,7 +230,7 @@ export default function App() {
               </Box>
             </Typography>
           </div>
-          <div className="flex flex-row m-32">
+          <div className="flex flex-row m-24">
             <Loading size={48} spinnerColor="#2E7DAF" spinnerType="loader" />
           </div>
         </div>

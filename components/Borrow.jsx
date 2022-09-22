@@ -225,13 +225,13 @@ export default function Borrow(props) {
   return (
     <div className={styles.container}>
       <div className="flex flex-col m-2 lg:m-8 lg:flex-row justify-center">
-        <div className="flex flex-col items-center justify-center m-4">
+        <div className="flex flex-col items-center justify-center m-4 lg:m-8">
           {props.token_uri ? (
             <Image
               loader={() => props.token_uri}
               src={props.token_uri}
-              height="200"
-              width="200"
+              height="250"
+              width="250"
               unoptimized={true}
             />
           ) : (

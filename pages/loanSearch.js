@@ -83,9 +83,7 @@ export default function LoanSearch() {
       const loanDebt = (await loanCenter.getLoanDebt(loanId)).toString();
 
       // Get loan details
-      const loan = await loanCenter.getLoan(
-        BigNumber.from(userNFTs[i].id.tokenId).toNumber()
-      );
+      const loan = await loanCenter.getLoan(loanId);
       console.log("loan", loan);
 
       // Get checksumed token address
@@ -275,8 +273,8 @@ export default function LoanSearch() {
       </div>
       <div className="flex items-center justify-center">
         {loadingCollectionLoans ? (
-          <div className="flex m-8">
-            <Loading size={16} spinnerColor="#2E7DAF" spinnerType="wave" />
+          <div className="flex m-36">
+            <Loading size={42} spinnerColor="#2E7DAF" spinnerType="loader" />
           </div>
         ) : collectionLoans.length != 0 ? (
           <div className="flex flex-col rounded-3xl m-2 p-2 bg-black/5 shadow-lg">
@@ -326,7 +324,7 @@ export default function LoanSearch() {
                         </div>
                         <div className="flex flex-row  items-center">
                           <Typography variant="caption16">
-                            # {collectionLoan.tokenId}
+                            #{collectionLoan.tokenId}
                           </Typography>
                         </div>
                         <div className="flex flex-row mt-6">

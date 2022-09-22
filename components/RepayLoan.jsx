@@ -2,9 +2,11 @@ import contractAddresses from "../contractAddresses.json";
 import { useNotification, Illustration } from "@web3uikit/core";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits } from "@ethersproject/units";
-import { Button, Typography } from "@web3uikit/core";
+import { Button, Typography, Tooltip } from "@web3uikit/core";
+import { HelpCircle } from "@web3uikit/icons";
+import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 import styles from "../styles/Home.module.css";
-import nftOracleContract from "../contracts/NFTOracle.json";
+import { calculateHealthLevel } from "../helpers/healthLevel.js";
 import { useState, useEffect } from "react";
 import marketContract from "../contracts/Market.json";
 import loanCenterContract from "../contracts/LoanCenter.json";
@@ -20,6 +22,7 @@ import {
   useProvider,
   useSigner,
 } from "wagmi";
+import Box from "@mui/material/Box";
 
 export default function RepayLoan(props) {
   const [loan, setLoan] = useState();
@@ -80,15 +83,8 @@ export default function RepayLoan(props) {
 
   async function getLoanToRepay() {
     const updatedLoan = await loanCenter.getLoan(props.loan_id);
-    console.log("Updated Loan:", {
-      loanId: updatedLoan.loanId.toString(),
-      reserve: updatedLoan.reserve,
-    });
-    setLoan({
-      loanId: updatedLoan.loanId.toString(),
-      borrowRate: updatedLoan.borrowRate,
-      reserve: updatedLoan.reserve,
-    });
+    console.log("Updated Loan:", updatedLoan);
+    setLoan(updatedLoan);
   }
 
   async function getLoanDebt() {
@@ -135,55 +131,113 @@ export default function RepayLoan(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-row justify-center mb-2">
-        {props.token_uri ? (
-          <Image
-            loader={() => props.token_uri}
-            src={props.token_uri}
-            height="200"
-            width="200"
-            unoptimized={true}
-          />
-        ) : (
-          <Illustration height="180px" logo="chest" width="100%" />
-        )}
-      </div>
-      <div className="flex flex-row justify-center mb-8">
-        <Typography variant="caption18">
-          {props.token_name + " #" + props.token_id}
-        </Typography>
-      </div>
-      <div className="flex flex-row m-2">
-        <div className="flex flex-col">
-          <Typography variant="subtitle2">Loan ID</Typography>
-          <Typography variant="body16">{props.loan_id}</Typography>
-        </div>
-      </div>
-      <div className="flex flex-row items-center m-2">
-        <div className="flex flex-col">
-          <Typography variant="subtitle2">Debt</Typography>
-          <Typography variant="body16">
-            {formatUnits(debt, addresses[symbol].decimals) + " " + symbol}
-          </Typography>
-        </div>
-      </div>
-      <div className="flex flex-row items-center m-2">
-        {loan && (
-          <div className="flex flex-col">
-            <Typography variant="subtitle2">Interest Rate</Typography>
-            <Typography variant="body16">{loan.borrowRate / 100}%</Typography>
+      <div className="flex flex-col lg:flex-row lg:m-8 justify-center">
+        <div className="flex flex-col lg:m-8 justify-center">
+          <div className="flex flex-row justify-center mb-2">
+            {props.token_uri ? (
+              <Image
+                loader={() => props.token_uri}
+                src={props.token_uri}
+                height="250"
+                width="250"
+                unoptimized={true}
+              />
+            ) : (
+              <Illustration height="180px" logo="chest" width="100%" />
+            )}
           </div>
-        )}
-      </div>
-      <div className="flex flex-row items-center m-2">
-        <div className="flex flex-col">
-          <Typography variant="subtitle2">Asset Pricing</Typography>
-          <Typography variant="body16">
-            {formatUnits(tokenPrice, 18) + " WETH"}
-          </Typography>
+          <div className="flex flex-row justify-center mb-8 lg:mb-0">
+            <Typography variant="caption18">
+              {props.token_name + " #" + props.token_id}
+            </Typography>
+          </div>
+        </div>
+        <div className="flex flex-col lg:m-2">
+          <div className="flex flex-row m-2">
+            <div className="flex flex-col">
+              <Typography variant="subtitle2">Loan ID</Typography>
+              <Typography variant="body16">{props.loan_id}</Typography>
+            </div>
+          </div>
+          <div className="flex flex-row items-center m-2">
+            <div className="flex flex-col">
+              <Typography variant="subtitle2">Debt</Typography>
+              <Typography variant="body16">
+                {formatUnits(debt, addresses[symbol].decimals) + " " + symbol}
+              </Typography>
+            </div>
+          </div>
+          <div className="flex flex-row items-center m-2">
+            {loan && (
+              <div className="flex flex-col">
+                <Typography variant="subtitle2">Interest Rate</Typography>
+                <Typography variant="body16">
+                  {loan.borrowRate.toNumber() / 100}%
+                </Typography>
+              </div>
+            )}
+          </div>
+          <div className="flex flex-row items-center m-2">
+            <div className="flex flex-col">
+              <Typography variant="subtitle2">Asset Pricing</Typography>
+              <Typography variant="body16">
+                {formatUnits(tokenPrice, 18) + " WETH"}
+              </Typography>
+            </div>
+          </div>
+          <div className="flex flex-row m-2">
+            <div className="flex flex-col">
+              <Typography variant="subtitle2">Max LTV</Typography>
+              {loan && (
+                <Typography variant="body16">
+                  {tokenPrice != "0"
+                    ? loan.maxLTV.toNumber() / 100 +
+                      "% + " +
+                      loan.boost.toNumber() / 100 +
+                      "% (Boost) = " +
+                      loan.maxLTV.add(loan.boost).div(100).toNumber() +
+                      "%"
+                    : "Token Price Appraisal Error"}
+                </Typography>
+              )}
+            </div>
+          </div>
+          {loan && (
+            <div className="flex flex-row m-2">
+              <div className="flex flex-col">
+                <div className="flex flex-row">
+                  <div className="flex flex-col">
+                    <Typography variant="subtitle2">Health Level</Typography>
+                  </div>
+                  <div className="flex flex-col ml-1">
+                    <Tooltip
+                      content="Represents the relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
+                      position="top"
+                      minWidth={200}
+                    >
+                      <HelpCircle fontSize="14px" color="#000000" />
+                    </Tooltip>
+                  </div>
+                </div>
+                <div>
+                  <LinearProgressWithLabel
+                    color="success"
+                    value={calculateHealthLevel(
+                      debt,
+                      BigNumber.from(loan.maxLTV)
+                        .add(loan.boost)
+                        .mul(tokenPrice)
+                        .div(10000)
+                        .toString()
+                    )}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
-      <div className="flex flex-row items-center m-2">
+      <div className="flex flex-row items-center m-4 justify-center">
         <div className="flex flex-col">
           <Typography variant="subtitle2">Your {symbol} balance</Typography>
           <Typography variant="body16">

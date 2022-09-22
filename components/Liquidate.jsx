@@ -154,90 +154,102 @@ export default function Liquidate(props) {
     <div>
       {props.loan && (
         <div className={styles.container}>
-          {props.loan.tokenURI ? (
-            <div className="flex flex-col items-center">
-              <Image
-                loader={() => props.loan.tokenURI}
-                src={props.loan.tokenURI}
-                height="300"
-                width="300"
-                unoptimized={true}
-                className="rounded-3xl"
-              />
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center">
-              <Illustration height="140px" logo="chest" width="100%" />
-              Loading...
-            </div>
-          )}
-          <div className="flex flex-row items-center mt-8 m-2">
+          <div className="flex flex-col lg:flex-row justify-center lg:mb-8">
+            {props.loan.tokenURI ? (
+              <div className="flex flex-col items-center justify-center lg:m-8">
+                <Image
+                  loader={() => props.loan.tokenURI}
+                  src={props.loan.tokenURI}
+                  height="300"
+                  width="300"
+                  unoptimized={true}
+                  className="rounded-3xl"
+                />
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center">
+                <Illustration height="140px" logo="chest" width="100%" />
+                Loading...
+              </div>
+            )}
             <div className="flex flex-col">
-              <Typography variant="subtitle2">Asset ID</Typography>
-              <Typography variant="body16">#{props.loan.tokenId}</Typography>
-            </div>
-          </div>
-          <div className="flex flex-row items-center m-2">
-            <div className="flex flex-col">
-              <Typography variant="subtitle2">Asset Pricing</Typography>
-              <Typography variant="body16">
-                {formatUnits(tokenPrice, 18) + " WETH"}
-              </Typography>
-            </div>
-          </div>
-          <div className="flex flex-row items-center m-2">
-            <div className="flex flex-col">
-              <Typography variant="subtitle2">Debt</Typography>
-              <Typography variant="caption16">
-                {formatUnits(props.loan.debt, 18)} WETH
-              </Typography>
-            </div>
-          </div>
-          <div className="flex flex-row items-center m-2">
-            <div className="flex flex-col">
-              <Typography variant="subtitle2">Liquidation Price</Typography>
+              <div className="flex flex-row items-center mt-8 m-2">
+                <div className="flex flex-col">
+                  <Typography variant="subtitle2">Asset ID</Typography>
+                  <Typography variant="body16">
+                    #{props.loan.tokenId}
+                  </Typography>
+                </div>
+              </div>
+              <div className="flex flex-row items-center m-2">
+                <div className="flex flex-col">
+                  <Typography variant="subtitle2">Asset Pricing</Typography>
+                  <Typography variant="body16">
+                    {formatUnits(tokenPrice, 18) + " WETH"}
+                  </Typography>
+                </div>
+              </div>
+              <div className="flex flex-row items-center m-2">
+                <div className="flex flex-col">
+                  <Typography variant="subtitle2">Debt</Typography>
+                  <Typography variant="caption16">
+                    {formatUnits(props.loan.debt, 18)} WETH
+                  </Typography>
+                </div>
+              </div>
+              <div className="flex flex-row items-center m-2">
+                <div className="flex flex-col">
+                  <Typography variant="subtitle2">Liquidation Price</Typography>
 
-              <Typography variant="caption16">
-                {formatUnits(liquidationPrice, 18)} WETH
-              </Typography>
+                  <Typography variant="caption16">
+                    {formatUnits(liquidationPrice, 18)} WETH
+                  </Typography>
+                </div>
+              </div>
+              <div className="flex flex-row items-center m-2">
+                <div className="flex flex-col">
+                  <Typography variant="subtitle2">
+                    Liquidation Reward
+                  </Typography>
+                  <Typography variant="caption16">
+                    {formatUnits(liquidationReward, 18)} LE
+                  </Typography>
+                </div>
+              </div>
+              <div className="flex flex-row m-2">
+                <div className="flex flex-col">
+                  <div className="flex flex-row">
+                    <div className="flex flex-col">
+                      <Typography variant="subtitle2">Health Level</Typography>
+                    </div>
+                    <div className="flex flex-col ml-1">
+                      <Tooltip
+                        content="Represents the relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
+                        position="top"
+                        minWidth={300}
+                      >
+                        <HelpCircle fontSize="14px" color="#000000" />
+                      </Tooltip>
+                    </div>
+                  </div>
+                  <div>
+                    <LinearProgressWithLabel
+                      color="success"
+                      value={calculateHealthLevel(
+                        props.loan.debt,
+                        BigNumber.from(props.maxCollateralization)
+                          .add(props.loan.boost)
+                          .mul(props.loan.price)
+                          .div(10000)
+                          .toString()
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="flex flex-row items-center m-2">
-            <div className="flex flex-col">
-              <Typography variant="subtitle2">Liquidation Reward</Typography>
-              <Typography variant="caption16">
-                {formatUnits(liquidationReward, 18)} LE
-              </Typography>
-            </div>
-          </div>
-          <div className="flex flex-row mt-6">
-            <div className="flex flex-col">
-              <Typography variant="caption14">Health Level</Typography>
-            </div>
-            <div className="flex flex-col ml-1">
-              <Tooltip
-                content="Represents the relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
-                position="top"
-                minWidth={300}
-              >
-                <HelpCircle fontSize="14px" color="#000000" />
-              </Tooltip>
-            </div>
-          </div>
-          <div>
-            <LinearProgressWithLabel
-              color="success"
-              value={calculateHealthLevel(
-                props.loan.debt,
-                BigNumber.from(props.maxCollateralization)
-                  .add(props.loan.boost)
-                  .mul(props.loan.price)
-                  .div(10000)
-                  .toString()
-              )}
-            />
-          </div>
-          <div className="flex flex-row m-4 items-center justify-center">
+          <div className="flex flex-row m-8 items-center justify-center">
             <div className="flex flex-col">
               {BigNumber.from(liquidationPrice).lt(
                 BigNumber.from(allowance)

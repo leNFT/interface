@@ -71,12 +71,6 @@ export default function Liquidate(props) {
     signerOrProvider: provider,
   });
 
-  const loanCenter = useContract({
-    contractInterface: loanCenterContract.abi,
-    addressOrName: addresses.LoanCenter,
-    signerOrProvider: provider,
-  });
-
   const wethSigner = useContract({
     contractInterface: erc20,
     addressOrName: addresses["WETH"].address,
@@ -180,7 +174,7 @@ export default function Liquidate(props) {
           <div className="flex flex-row items-center mt-8 m-2">
             <div className="flex flex-col">
               <Typography variant="subtitle2">Asset ID</Typography>
-              <Typography variant="body16"># {props.loan.tokenId}</Typography>
+              <Typography variant="body16">#{props.loan.tokenId}</Typography>
             </div>
           </div>
           <div className="flex flex-row items-center m-2">

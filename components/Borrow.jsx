@@ -285,7 +285,7 @@ export default function Borrow(props) {
                     ? maxCollateralization / 100 +
                       "% + " +
                       collateralizationBoost / 100 +
-                      "% Boost = " +
+                      "% (Boost) = " +
                       (parseInt(maxCollateralization) +
                         parseInt(collateralizationBoost)) /
                         100 +

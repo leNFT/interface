@@ -27,7 +27,7 @@ export default function Header() {
                 <Reload fontSize="26px" color="#000000" title="Reload Icon" />
               ),
             }}
-            text="Please switch chain to Ethereum mainnet."
+            text="Switch to the Ethereum mainnet."
             type="warning"
           />
         </div>

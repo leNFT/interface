@@ -298,7 +298,7 @@ export default function LoanSearch() {
             </div>
           </div>
         ) : collectionLoans.length != 0 ? (
-          <div className="flex flex-col rounded-3xl m-2 p-2 bg-black/5 shadow-lg">
+          <div className="flex flex-col rounded-3xl m-4 p-2 bg-black/5 shadow-lg">
             <div className="flex flex-row grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {collectionLoans.map((collectionLoan) => (
                 <div

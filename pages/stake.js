@@ -30,7 +30,6 @@ export default function Stake() {
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
   const [visibleVoteModal, setVisibleVoteModal] = useState(false);
   const [visibleRemoveVoteModal, setVisibleRemoveVoteModal] = useState(false);
-  const [maxAmount, setMaxAmount] = useState("0");
   const [collectionBoost, setCollectionBoost] = useState(0);
   const [loadingPrice, setLoadingPrice] = useState(true);
   const [ethPrice, setETHPrice] = useState("0");
@@ -297,26 +296,39 @@ export default function Stake() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col min-w-full md:min-w-0 grow m-4">
+            <div className="flex flex-col m-4">
               <Autocomplete
                 disablePortal
+                ListboxProps={{
+                  style: {
+                    backgroundColor: "rgb(253, 241, 244)",
+                    fontFamily: "Monospace",
+                  },
+                }}
                 options={collections}
                 defaultValue={collections[0]}
                 isOptionEqualToValue={(option, value) =>
                   option.address === value.address
                 }
-                sx={{ width: "auto" }}
+                sx={{ minWidth: 320 }}
                 onInputChange={handleCollectionChange}
                 renderInput={(params) => (
                   <TextField
                     {...params}
                     label="Supported Collections"
                     sx={{
-                      "& label": { paddingLeft: (theme) => theme.spacing(2) },
-                      "& input": { paddingLeft: (theme) => theme.spacing(3.5) },
+                      "& label": {
+                        paddingLeft: (theme) => theme.spacing(2),
+                        fontFamily: "Monospace",
+                      },
+                      "& input": {
+                        paddingLeft: (theme) => theme.spacing(3.5),
+                        fontFamily: "Monospace",
+                      },
                       "& fieldset": {
                         paddingLeft: (theme) => theme.spacing(2.5),
                         borderRadius: "25px",
+                        fontFamily: "Monospace",
                       },
                     }}
                   />

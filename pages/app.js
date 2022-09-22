@@ -102,12 +102,6 @@ export default function App() {
         // Get token price
         const tokenPrice = await getAssetPrice(loan.nftAsset, loan.nftTokenId);
 
-        // Get max LTV of collection
-        const maxLTV = await nftOracle.getCollectionMaxCollaterization(
-          loan.nftAsset
-        );
-        console.log("maxLTV", maxLTV);
-
         const tokenURI = await getNFTImage(
           loan.nftAsset,
           loan.nftTokenId,
@@ -130,7 +124,7 @@ export default function App() {
           boost: loan.boost,
           debt: debt,
           tokenPrice: tokenPrice,
-          maxLTV: maxLTV,
+          maxLTV: loan.maxLTV,
         });
       } else if (
         contractAddresses[chain.id].SupportedAssets.find(

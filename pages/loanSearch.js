@@ -82,8 +82,11 @@ export default function LoanSearch() {
       // Get the debt associated with this loan
       const loanDebt = (await loanCenter.getLoanDebt(loanId)).toString();
 
-      // Get the vote boost associated with this loan
-      const loanBoost = (await loanCenter.getLoanBoost(loanId)).toString();
+      // Get loan details
+      const loan = await loanCenter.getLoan(
+        BigNumber.from(userNFTs[i].id.tokenId).toNumber()
+      );
+      console.log("loan", loan);
 
       // Get checksumed token address
       collectionNFTs[i].contract.address = getAddress(
@@ -110,7 +113,8 @@ export default function LoanSearch() {
       updatedCollectionLoans.push({
         loanId: loanId,
         debt: loanDebt,
-        boost: loanBoost,
+        maxLTV: loan.maxLTV,
+        boost: loan.boost,
         tokenAddress: collectionNFTs[i].contract.address,
         tokenId: BigNumber.from(collectionNFTs[i].id.tokenId).toNumber(),
         tokenURI: tokenURI,
@@ -346,7 +350,7 @@ export default function LoanSearch() {
                             color="success"
                             value={calculateHealthLevel(
                               collectionLoan.debt,
-                              BigNumber.from(maxCollateralization)
+                              BigNumber.from(collectionLoan.maxLTV)
                                 .add(collectionLoan.boost)
                                 .mul(collectionLoan.price)
                                 .div(10000)

@@ -90,13 +90,6 @@ export default function Stake() {
     //Get the vote token Balance
     const freeVotes = await nativeTokenVault.getUserFreeVotes(address);
     setFreeVotes(freeVotes.toString());
-
-    const updatedMaxAmount = (
-      await nativeTokenVault.getMaximumWithdrawalAmount(address)
-    ).toString();
-
-    console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
-    setMaxAmount(updatedMaxAmount);
   }
 
   useEffect(() => {
@@ -248,22 +241,48 @@ export default function Stake() {
           <div className="flex flex-col m-4 lg:m-8">
             <div className="flex flex-col m-2">
               <div className="flex flex-row">
-                <Typography variant="h2">Balance</Typography>
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "h5.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Balance
+                </Box>
               </div>
               <div className="flex flex-row">
-                <Typography variant="body16">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                  }}
+                >
                   {formatUnits(nativeTokenBalance, 18)} LE
-                </Typography>
+                </Box>
               </div>
             </div>
             <div className="flex flex-col m-2">
               <div className="flex flex-row">
-                <Typography variant="h2">Vault Balance</Typography>
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "h5.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Vault Balance
+                </Box>
               </div>
               <div className="flex flex-row">
-                <Typography variant="body16">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                  }}
+                >
                   {formatUnits(voteTokenBalance, 18) + " veLE"}
-                </Typography>
+                </Box>
               </div>
             </div>
           </div>
@@ -273,26 +292,48 @@ export default function Stake() {
             <div className="flex flex-col m-4">
               <div className="flex flex-col m-2">
                 <div className="flex flex-row">
-                  <Typography variant="subtitle2">Free Votes</Typography>
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "h6.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Free Votes
+                  </Box>
                 </div>
                 <div className="flex flex-row">
-                  <Typography variant="body16">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle1.fontSize",
+                    }}
+                  >
                     {formatUnits(freeVotes, 18)} veLE
-                  </Typography>
+                  </Box>
                 </div>
               </div>
               <div className="flex flex-col m-2">
                 <div className="flex flex-row">
-                  <Typography variant="subtitle2">Used Votes</Typography>
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "h6.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Used Votes
+                  </Box>
                 </div>
                 <div className="flex flex-row">
-                  <Typography variant="body16">
-                    {formatUnits(
-                      BigNumber.from(voteTokenBalance).sub(freeVotes),
-                      18
-                    )}{" "}
-                    veLE
-                  </Typography>
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle1.fontSize",
+                    }}
+                  >
+                    {formatUnits(freeVotes, 18)} veLE
+                  </Box>
                 </div>
               </div>
             </div>
@@ -375,24 +416,50 @@ export default function Stake() {
               <div className="flex flex-row m-2">
                 <div className="flex flex-col">
                   <div className="flex flex-row">
-                    <Typography variant="subtitle1"> My Votes</Typography>
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "h6.fontSize",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      My Votes
+                    </Box>
                   </div>
                   <div className="flex flex-row">
-                    <Typography variant="body16">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                      }}
+                    >
                       {formatUnits(collectionVotes, 18)} veLE
-                    </Typography>
+                    </Box>
                   </div>
                 </div>
               </div>
               <div className="flex flex-row m-2">
                 <div className="flex flex-col">
                   <div className="flex flex-row">
-                    <Typography variant="subtitle1"> LTV Boost</Typography>
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "h6.fontSize",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      LTV Boost
+                    </Box>
                   </div>
                   <div className="flex flex-row">
-                    <Typography variant="body16">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                      }}
+                    >
                       {collectionBoost / 100}%
-                    </Typography>
+                    </Box>
                   </div>
                 </div>
               </div>

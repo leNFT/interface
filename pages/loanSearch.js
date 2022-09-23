@@ -288,7 +288,7 @@ export default function LoanSearch() {
                   }}
                 >
                   <div className="text-md md:text-2xl justify-center text-center">
-                    {"Got " + processedCount + "/" + count + " assets"}
+                    {"Got " + processedCount + "/" + count + " loans"}
                   </div>
                 </Box>
               </Typography>

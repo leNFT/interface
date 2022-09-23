@@ -28,7 +28,6 @@ export default function WithdrawNativeToken(props) {
     amount: "0",
     timestamp: 0,
   });
-  const [maxAmount, setMaxAmount] = useState("0");
   const addresses =
     chain && chain.id in contractAddresses
       ? contractAddresses[chain.id]
@@ -46,15 +45,6 @@ export default function WithdrawNativeToken(props) {
     addressOrName: addresses.NativeTokenVault,
     signerOrProvider: provider,
   });
-
-  async function updateMaxAmount() {
-    const updatedMaxAmount = (
-      await nativeTokenVaultProvider.getMaximumWithdrawalAmount(address)
-    ).toString();
-
-    console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
-    setMaxAmount(updatedMaxAmount);
-  }
 
   async function getLastWithdrawRequest() {
     var withdrawRequest;
@@ -80,7 +70,6 @@ export default function WithdrawNativeToken(props) {
   //Run once
   useEffect(() => {
     if (isConnected) {
-      updateMaxAmount();
       getLastWithdrawRequest();
     }
   }, [isConnected]);
@@ -165,7 +154,7 @@ export default function WithdrawNativeToken(props) {
         <div className="flex flex-col">
           <Typography variant="subtitle2">Maximum withdrawal amount</Typography>
           <Typography variant="body16">
-            {formatUnits(maxAmount, 18)} veLE
+            {formatUnits(props.maxAmount, 18)} LE
           </Typography>
         </div>
       </div>
@@ -176,7 +165,7 @@ export default function WithdrawNativeToken(props) {
           type="number"
           step="any"
           validation={{
-            numberMax: Number(formatUnits(maxAmount, 18)),
+            numberMax: Number(formatUnits(props.maxAmount, 18)),
             numberMin: 0,
           }}
           onChange={handleInputChange}
@@ -201,9 +190,9 @@ export default function WithdrawNativeToken(props) {
             }}
             loadingText=""
             isLoading={withdrawalLoading}
-            disabled={BigNumber.from(maxAmount).isZero()}
+            disabled={BigNumber.from(props.maxAmount).isZero()}
             onClick={async function () {
-              if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
+              if (BigNumber.from(amount).lte(BigNumber.from(props.maxAmount))) {
                 try {
                   setWithdrawalLoading(true);
                   const tx = await nativeTokenVaultSigner.withdraw(amount);
@@ -238,7 +227,7 @@ export default function WithdrawNativeToken(props) {
               size: "24",
             }}
             loadingText=""
-            disabled={BigNumber.from(maxAmount).isZero()}
+            disabled={BigNumber.from(props.maxAmount).isZero()}
             isLoading={requestLoading}
             onClick={async function () {
               try {

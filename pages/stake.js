@@ -25,6 +25,7 @@ export default function Stake() {
   const [nativeTokenBalance, setNativeTokenBalance] = useState("0");
   const [voteTokenBalance, setVoteTokenBalance] = useState("0");
   const [freeVotes, setFreeVotes] = useState("0");
+  const [maxAmount, setMaxAmount] = useState("0");
   const [collectionVotes, setCollectionVotes] = useState("0");
   const [visibleDepositModal, setVisibleDepositModal] = useState(false);
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
@@ -90,6 +91,13 @@ export default function Stake() {
     //Get the vote token Balance
     const freeVotes = await nativeTokenVault.getUserFreeVotes(address);
     setFreeVotes(freeVotes.toString());
+
+    const updatedMaxAmount = (
+      await nativeTokenVault.getMaximumWithdrawalAmount(address)
+    ).toString();
+
+    console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
+    setMaxAmount(updatedMaxAmount);
   }
 
   useEffect(() => {
@@ -161,7 +169,10 @@ export default function Stake() {
           setVisibleWithdrawalModal(false);
         }}
       >
-        <WithdrawNativeToken setVisibility={setVisibleWithdrawalModal} />
+        <WithdrawNativeToken
+          setVisibility={setVisibleWithdrawalModal}
+          maxAmount={maxAmount}
+        />
       </StyledModal>
       <StyledModal
         hasFooter={false}
@@ -281,7 +292,10 @@ export default function Stake() {
                     fontSize: "subtitle1.fontSize",
                   }}
                 >
-                  {formatUnits(voteTokenBalance, 18) + " veLE"}
+                  {formatUnits(voteTokenBalance, 18) +
+                    " veLE = " +
+                    Number(formatUnits(maxAmount, 18)).toFixed(2) +
+                    " LE"}
                 </Box>
               </div>
             </div>

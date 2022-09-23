@@ -153,7 +153,8 @@ export default function Borrow(props) {
     ).toString();
     console.log("tokenETHPrice", tokenETHPrice);
     const maxETHCollateral = BigNumber.from(price)
-      .mul(updatedMaxCollateralization + updatedCollaterizationBoost)
+      .mul(updatedMaxCollateralization)
+      .add(updatedCollaterizationBoost)
       .div(10000)
       .div(2)
       .toString();

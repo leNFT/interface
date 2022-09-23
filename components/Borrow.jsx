@@ -196,7 +196,7 @@ export default function Borrow(props) {
     props.setVisibility(false);
     dispatch({
       type: "success",
-      message: "Please follow its health level closely.",
+      message: "Newly created loans can take up to 5 minutes to appear.",
       title: "Loan Created!",
       position: "topR",
     });

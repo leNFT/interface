@@ -210,7 +210,7 @@ export default function Liquidate(props) {
                     Liquidation Reward
                   </Typography>
                   <Typography variant="caption16">
-                    {formatUnits(liquidationReward, 18)} LE
+                    {Number(formatUnits(liquidationReward, 18)).toFixed(2)} LE
                   </Typography>
                 </div>
               </div>

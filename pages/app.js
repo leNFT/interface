@@ -75,6 +75,7 @@ export default function App() {
     var updatedLoans = [];
     var updatedSupportedAssets = [];
     var updatedUnsupportedAssets = [];
+    var maxBorrowSum = BigNumber.from(0);
 
     console.log("userNFTs", userNFTs);
 
@@ -152,10 +153,7 @@ export default function App() {
         const assetMaxCollateral = BigNumber.from(maxLTV)
           .mul(tokenPrice)
           .div(10000);
-        const updatedWalletMaxBorrowable =
-          BigNumber.from(walletMaxBorrowable).add(assetMaxCollateral);
-        setWalletMaxBorrowable(updatedWalletMaxBorrowable.toString());
-        console.log("updated wallet max borrow", updatedWalletMaxBorrowable);
+        maxBorrowSum = maxBorrowSum.add(assetMaxCollateral);
 
         //Replace token URI
         userNFTs[i].token_uri = await getNFTImage(
@@ -181,14 +179,15 @@ export default function App() {
 
       setProcessedCount(i);
     }
-
     console.log("updatedLoans:", updatedLoans);
     console.log("updatedSupportedAssets:", updatedSupportedAssets);
     console.log("updatedUnsupportedAssets:", updatedUnsupportedAssets);
+    console.log("walletMaxBorrowable:", maxBorrowSum);
 
     setLoans(updatedLoans);
     setSupportedAssets(updatedSupportedAssets);
     setUnsupportedAssets(updatedUnsupportedAssets);
+    setWalletMaxBorrowable(maxBorrowSum);
 
     setLoadingUI(false);
   }
@@ -438,7 +437,7 @@ export default function App() {
                               fontSize: "subtitle1.fontSize",
                             }}
                           >
-                            <div className="flex flex-col mt-4 items-center text-center">
+                            <div className="flex flex-col mt-2 items-center text-center">
                               <div>{supportedAsset.contractMetadata.name}</div>
                               <div>
                                 {"#" +

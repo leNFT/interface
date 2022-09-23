@@ -123,7 +123,7 @@ export default function RepayLoan(props) {
     props.setVisibility(false);
     dispatch({
       type: "success",
-      message: "Please wait for transaction confirmation.",
+      message: "Your NFT will be available shortly.",
       title: "Repay Successful!",
       position: "topR",
     });

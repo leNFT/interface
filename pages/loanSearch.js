@@ -341,18 +341,36 @@ export default function LoanSearch() {
                           </div>
                         )}
                         <div className="flex flex-row mt-4">
-                          <Typography variant="caption14">Loan ID</Typography>
+                          <Box
+                            sx={{
+                              fontFamily: "Monospace",
+                              fontSize: "subtitle2.fontSize",
+                            }}
+                          >
+                            Loan ID
+                          </Box>
+                          <Typography variant="caption14"></Typography>
                         </div>
                         <div className="flex flex-row items-center">
-                          <Typography variant="caption16">
+                          <Box
+                            sx={{
+                              fontFamily: "Monospace",
+                              fontSize: "subtitle1.fontSize",
+                            }}
+                          >
                             {collectionLoan.loanId.toNumber()}
-                          </Typography>
+                          </Box>
                         </div>
                         <div className="flex flex-row mt-4">
                           <div className="flex flex-col">
-                            <Typography variant="caption14">
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "caption",
+                              }}
+                            >
                               Health Level
-                            </Typography>
+                            </Box>
                           </div>
                           <div className="flex flex-col ml-1">
                             <Tooltip

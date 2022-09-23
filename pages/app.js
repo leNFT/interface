@@ -432,7 +432,6 @@ export default function App() {
                               Loading...
                             </div>
                           )}
-
                           <Box
                             sx={{
                               fontFamily: "Monospace",

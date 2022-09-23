@@ -176,9 +176,7 @@ export default function Liquidate(props) {
               <div className="flex flex-row items-center m-2">
                 <div className="flex flex-col">
                   <Typography variant="subtitle2">Asset ID</Typography>
-                  <Typography variant="body16">
-                    #{props.loan.tokenId}
-                  </Typography>
+                  <Typography variant="body16">{props.loan.tokenId}</Typography>
                 </div>
               </div>
               <div className="flex flex-row items-center m-2">
@@ -217,7 +215,7 @@ export default function Liquidate(props) {
                 </div>
               </div>
               <div className="flex flex-row m-2">
-                <div className="flex flex-col">
+                <div className="flex flex-col min-w-[80%]">
                   <div className="flex flex-row">
                     <div className="flex flex-col">
                       <Typography variant="subtitle2">Health Level</Typography>
@@ -232,19 +230,17 @@ export default function Liquidate(props) {
                       </Tooltip>
                     </div>
                   </div>
-                  <div>
-                    <LinearProgressWithLabel
-                      color="success"
-                      value={calculateHealthLevel(
-                        props.loan.debt,
-                        BigNumber.from(props.maxCollateralization)
-                          .add(props.loan.boost)
-                          .mul(props.loan.price)
-                          .div(10000)
-                          .toString()
-                      )}
-                    />
-                  </div>
+                  <LinearProgressWithLabel
+                    color="success"
+                    value={calculateHealthLevel(
+                      props.loan.debt,
+                      BigNumber.from(props.maxCollateralization)
+                        .add(props.loan.boost)
+                        .mul(props.loan.price)
+                        .div(10000)
+                        .toString()
+                    )}
+                  />
                 </div>
               </div>
             </div>

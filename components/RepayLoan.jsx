@@ -205,7 +205,7 @@ export default function RepayLoan(props) {
           </div>
           {loan && (
             <div className="flex flex-row m-2">
-              <div className="flex flex-col">
+              <div className="flex flex-col min-w-[80%]">
                 <div className="flex flex-row">
                   <div className="flex flex-col">
                     <Typography variant="subtitle2">Health Level</Typography>
@@ -220,19 +220,17 @@ export default function RepayLoan(props) {
                     </Tooltip>
                   </div>
                 </div>
-                <div>
-                  <LinearProgressWithLabel
-                    color="success"
-                    value={calculateHealthLevel(
-                      debt,
-                      BigNumber.from(loan.maxLTV)
-                        .add(loan.boost)
-                        .mul(tokenPrice)
-                        .div(10000)
-                        .toString()
-                    )}
-                  />
-                </div>
+                <LinearProgressWithLabel
+                  color="success"
+                  value={calculateHealthLevel(
+                    debt,
+                    BigNumber.from(loan.maxLTV)
+                      .add(loan.boost)
+                      .mul(tokenPrice)
+                      .div(10000)
+                      .toString()
+                  )}
+                />
               </div>
             </div>
           )}

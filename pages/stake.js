@@ -332,7 +332,11 @@ export default function Stake() {
                       fontSize: "subtitle1.fontSize",
                     }}
                   >
-                    {formatUnits(freeVotes, 18)} veLE
+                    {formatUnits(
+                      BigNumber.from(voteTokenBalance).sub(freeVotes),
+                      18
+                    )}{" "}
+                    veLE
                   </Box>
                 </div>
               </div>
@@ -377,7 +381,7 @@ export default function Stake() {
               />
             </div>
           </div>
-          <div className="flex flex-col-reverse md:flex-row justify-center items-center m-4">
+          <div className="flex flex-col-reverse md:flex-row justify-center items-center m-4 p-2 rounded-3xl bg-black/5 shadow-lg">
             <div className="flex flex-col m-4">
               <div className="flex flex-row justify-center items-center m-2">
                 <Button

@@ -182,7 +182,6 @@ export default function LoanSearch() {
         <Liquidate
           setVisibility={setVisibleLiquidateModal}
           loan={selectedLoan}
-          maxCollateralization={maxCollateralization}
         />
       </StyledModal>
       <div className="flex flex-col md:flex-row items-center justify-center">

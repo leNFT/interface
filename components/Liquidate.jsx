@@ -27,7 +27,6 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import marketContract from "../contracts/Market.json";
 import LinearProgressWithLabel from "./LinearProgressWithLabel";
-import loanCenterContract from "../contracts/LoanCenter.json";
 import erc20 from "../contracts/erc20.json";
 
 function isLoanLiquidatable(
@@ -36,8 +35,9 @@ function isLoanLiquidatable(
   collaterizationBoost,
   price
 ) {
-  return BigNumber.from(debt).lt(
-    BigNumber.from(maxCollateralization + collaterizationBoost)
+  return BigNumber.from(debt).gt(
+    BigNumber.from(maxCollateralization)
+      .add(collaterizationBoost)
       .mul(price)
       .div(10000)
   );
@@ -234,7 +234,7 @@ export default function Liquidate(props) {
                     color="success"
                     value={calculateHealthLevel(
                       props.loan.debt,
-                      BigNumber.from(props.maxCollateralization)
+                      BigNumber.from(props.loan.maxLTV)
                         .add(props.loan.boost)
                         .mul(props.loan.price)
                         .div(10000)
@@ -247,21 +247,24 @@ export default function Liquidate(props) {
           </div>
           <div className="flex flex-row m-8 items-center justify-center">
             <div className="flex flex-col">
-              {BigNumber.from(liquidationPrice).lt(
+              {BigNumber.from(liquidationPrice).lte(
                 BigNumber.from(allowance)
               ) ? (
                 <Button
-                  disabled={isLoanLiquidatable(
-                    props.loan.debt,
-                    props.maxCollateralization,
-                    props.loan.price
-                  )}
+                  disabled={
+                    !isLoanLiquidatable(
+                      props.loan.debt,
+                      props.loan.maxLTV,
+                      props.loan.boost,
+                      props.loan.price
+                    )
+                  }
                   text="Liquidate"
                   theme="colored"
                   type="button"
                   size="small"
                   color="red"
-                  radius="5"
+                  radius="4"
                   onClick={async function () {
                     const requestId = getNewRequestID();
                     const priceSig = await getAssetPriceSig(
@@ -289,29 +292,33 @@ export default function Liquidate(props) {
                   text={
                     isLoanLiquidatable(
                       props.loan.debt,
-                      props.maxCollateralization,
+                      props.loan.maxLTV,
                       props.loan.boost,
                       props.loan.price
                     )
-                      ? "Liquidation conditions are not met"
-                      : "Approve WETH for liquidation"
+                      ? "Approve WETH for liquidation"
+                      : "Liquidation conditions are not met"
                   }
                   theme="colored"
-                  type="button"
-                  size="small"
+                  isFullWidth
                   color="red"
                   radius="5"
                   isLoading={approvalLoading}
-                  disabled={isLoanLiquidatable(
-                    props.loan.debt,
-                    props.maxCollateralization,
-                    props.loan.boost,
-                    props.loan.price
-                  )}
+                  disabled={
+                    !isLoanLiquidatable(
+                      props.loan.debt,
+                      props.loan.maxLTV,
+                      props.loan.boost,
+                      props.loan.price
+                    )
+                  }
                   loadingProps={{
                     spinnerColor: "#000000",
+                    spinnerType: "loader",
+                    direction: "right",
+                    size: "24",
                   }}
-                  loadingText="Confirming Approval"
+                  loadingText=""
                   onClick={async function () {
                     try {
                       setApprovalLoading(true);

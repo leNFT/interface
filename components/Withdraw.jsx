@@ -67,7 +67,9 @@ export default function Withdraw(props) {
   }, [isConnected, props.asset]);
 
   const handleWithdrawalSuccess = async function () {
+    props.updateUI();
     props.setVisibility(false);
+    updateMaxAmount();
     dispatch({
       type: "success",
       message: "Tokens are now back in your wallet.",

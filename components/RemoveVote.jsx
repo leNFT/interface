@@ -21,6 +21,7 @@ export default function RemoveVote(props) {
   const [amount, setAmount] = useState("0");
   const [removeVotingLoading, setRemoveVotingLoading] = useState(false);
   const [maxAmount, setMaxAmount] = useState("0");
+  const [freeVotes, setFreeVotes] = useState("0");
 
   const addresses =
     chain && chain.id in contractAddresses
@@ -45,11 +46,14 @@ export default function RemoveVote(props) {
       await nativeTokenVaultProvider.balanceOf(address)
     ).toString();
 
-    const freeVotes = (
+    const updatedFreeVotes = (
       await nativeTokenVaultProvider.getUserFreeVotes(address)
     ).toString();
+    console.log("Updated Free Votes:", updatedFreeVotes);
+    setFreeVotes(updatedFreeVotes.toString());
 
-    const updatedMaxAmount = BigNumber.from(voteTokenBalance).sub(freeVotes);
+    const updatedMaxAmount =
+      BigNumber.from(voteTokenBalance).sub(updatedFreeVotes);
 
     console.log("Updated Max Remove Votes:", updatedMaxAmount);
     setMaxAmount(updatedMaxAmount);
@@ -71,7 +75,9 @@ export default function RemoveVote(props) {
   }
 
   const handleRemoveVoteSuccess = async function () {
+    props.updateUI();
     props.setVisibility(false);
+    updateMaxAmount();
     dispatch({
       type: "success",
       message: "You can now vote for other collection.",
@@ -131,7 +137,6 @@ export default function RemoveVote(props) {
               } finally {
                 setRemoveVotingLoading(false);
               }
-              setRemoveVotingLoading(true);
             } else {
               dispatch({
                 type: "error",

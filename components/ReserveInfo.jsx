@@ -130,7 +130,11 @@ export default function ReserveInfo(props) {
           setVisibleDepositModal(false);
         }}
       >
-        <Deposit setVisibility={setVisibleDepositModal} asset={props.asset} />
+        <Deposit
+          setVisibility={setVisibleDepositModal}
+          asset={props.asset}
+          updateUI={getReserveDetails}
+        />
       </StyledModal>
       <StyledModal
         hasFooter={false}
@@ -144,6 +148,7 @@ export default function ReserveInfo(props) {
         <Withdraw
           setVisibility={setVisibleWithdrawalModal}
           asset={props.asset}
+          updateUI={getReserveDetails}
         />
       </StyledModal>
       <div className="flex justify-center">

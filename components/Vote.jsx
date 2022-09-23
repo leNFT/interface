@@ -54,8 +54,9 @@ export default function Vote(props) {
     }
   }, [isConnected]);
 
-  const handleVoteSuccess = async function () {
+  const handleVoteSuccess = async function (amount) {
     console.log("Voted", amount);
+    props.updateUI();
     props.setVisibility(false);
     updateFreeVotes();
     dispatch({
@@ -118,7 +119,7 @@ export default function Vote(props) {
                   props.address
                 );
                 await tx.wait(1);
-                handleVoteSuccess();
+                await handleVoteSuccess(amount);
               } catch (error) {
                 console.log(error);
               } finally {

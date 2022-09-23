@@ -121,6 +121,7 @@ export default function WithdrawNativeToken(props) {
   }
 
   const handleWithdrawalSuccess = async function () {
+    props.updateUI();
     props.setVisibility(false);
     dispatch({
       type: "success",

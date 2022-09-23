@@ -100,6 +100,7 @@ export default function Deposit(props) {
 
   const handleDepositSuccess = async function () {
     console.log("Deposited", amount);
+    props.updateUI();
     props.setVisibility(false);
     updateTokenBalance();
     dispatch({

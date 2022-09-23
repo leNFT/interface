@@ -158,7 +158,10 @@ export default function Stake() {
           setVisibleDepositModal(false);
         }}
       >
-        <DepositNativeToken setVisibility={setVisibleDepositModal} />
+        <DepositNativeToken
+          setVisibility={setVisibleDepositModal}
+          updateUI={updateUI}
+        />
       </StyledModal>
       <StyledModal
         hasFooter={false}
@@ -172,6 +175,7 @@ export default function Stake() {
         <WithdrawNativeToken
           setVisibility={setVisibleWithdrawalModal}
           maxAmount={maxAmount}
+          updateUI={updateUI}
         />
       </StyledModal>
       <StyledModal
@@ -183,7 +187,11 @@ export default function Stake() {
           setVisibleVoteModal(false);
         }}
       >
-        <Vote {...selectedCollection} setVisibility={setVisibleVoteModal} />
+        <Vote
+          {...selectedCollection}
+          setVisibility={setVisibleVoteModal}
+          updateUI={updateUI}
+        />
       </StyledModal>
       <StyledModal
         hasFooter={false}
@@ -197,6 +205,7 @@ export default function Stake() {
         <RemoveVote
           {...selectedCollection}
           setVisibility={setVisibleRemoveVoteModal}
+          updateUI={updateUI}
         />
       </StyledModal>
       <div className="flex flex-col items-center">
@@ -269,7 +278,7 @@ export default function Stake() {
                     fontSize: "subtitle1.fontSize",
                   }}
                 >
-                  {formatUnits(nativeTokenBalance, 18)} LE
+                  {Number(formatUnits(nativeTokenBalance, 18)).toFixed(2)} LE
                 </Box>
               </div>
             </div>
@@ -292,7 +301,7 @@ export default function Stake() {
                     fontSize: "subtitle1.fontSize",
                   }}
                 >
-                  {formatUnits(voteTokenBalance, 18) +
+                  {Number(formatUnits(voteTokenBalance, 18)).toFixed(2) +
                     " veLE = " +
                     Number(formatUnits(maxAmount, 18)).toFixed(2) +
                     " LE"}
@@ -323,7 +332,7 @@ export default function Stake() {
                       fontSize: "subtitle1.fontSize",
                     }}
                   >
-                    {formatUnits(freeVotes, 18)} veLE
+                    {Number(formatUnits(freeVotes, 18)).toFixed(2)} veLE
                   </Box>
                 </div>
               </div>

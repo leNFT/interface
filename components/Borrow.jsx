@@ -336,7 +336,6 @@ export default function Borrow(props) {
       </div>
       <div className="flex flex-row items-center justify-center m-8">
         <Input
-          labelBgColor="rgb(241, 242, 251)"
           label="Amount"
           type="number"
           step="any"

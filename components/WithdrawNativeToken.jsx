@@ -160,7 +160,6 @@ export default function WithdrawNativeToken(props) {
       </div>
       <div className="flex flex-row items-center justify-center m-6">
         <Input
-          labelBgColor="rgb(241, 242, 251)"
           label="Amount"
           type="number"
           step="any"

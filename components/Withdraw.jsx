@@ -100,7 +100,6 @@ export default function Withdraw(props) {
       </div>
       <div className="flex flex-row items-center justify-center mx-8 mt-12 mb-2">
         <Input
-          labelBgColor="rgb(241, 242, 251)"
           label="Amount"
           type="number"
           step="any"

@@ -243,7 +243,7 @@ export default function Borrow(props) {
             </div>
           )}
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col justify-center">
           <div className="flex flex-row m-2">
             <div className="flex flex-col">
               <Typography variant="subtitle2">Address</Typography>

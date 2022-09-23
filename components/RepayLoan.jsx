@@ -132,21 +132,22 @@ export default function RepayLoan(props) {
   return (
     <div className={styles.container}>
       <div className="flex flex-col lg:flex-row lg:m-8 justify-center">
-        <div className="flex flex-col lg:m-8 justify-center">
-          <div className="flex flex-row justify-center mb-2">
+        <div className="flex flex-col mb-4 lg:m-8 justify-center">
+          <div className="flex flex-row justify-center">
             {props.token_uri ? (
               <Image
                 loader={() => props.token_uri}
                 src={props.token_uri}
-                height="250"
-                width="250"
+                height="300"
+                width="300"
                 unoptimized={true}
+                className="rounded-3xl"
               />
             ) : (
               <Illustration height="180px" logo="chest" width="100%" />
             )}
           </div>
-          <div className="flex flex-row justify-center mb-8 lg:mb-0">
+          <div className="flex flex-row justify-center">
             <Typography variant="caption18">
               {props.token_name + " #" + props.token_id}
             </Typography>

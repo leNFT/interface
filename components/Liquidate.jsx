@@ -156,7 +156,7 @@ export default function Liquidate(props) {
         <div className={styles.container}>
           <div className="flex flex-col lg:flex-row justify-center lg:mb-8">
             {props.loan.tokenURI ? (
-              <div className="flex flex-col items-center justify-center lg:m-8">
+              <div className="flex flex-col items-center justify-center mb-4 lg:m-8">
                 <Image
                   loader={() => props.loan.tokenURI}
                   src={props.loan.tokenURI}
@@ -173,7 +173,7 @@ export default function Liquidate(props) {
               </div>
             )}
             <div className="flex flex-col">
-              <div className="flex flex-row items-center mt-8 m-2">
+              <div className="flex flex-row items-center m-2">
                 <div className="flex flex-col">
                   <Typography variant="subtitle2">Asset ID</Typography>
                   <Typography variant="body16">

@@ -46,6 +46,7 @@ function isLoanLiquidatable(
 export default function Liquidate(props) {
   const [allowance, setAllowance] = useState("0");
   const [approvalLoading, setApprovalLoading] = useState(false);
+  const [liquidationLoading, setLiquidationLoading] = useState(false);
   const { address, isConnected } = useAccount();
   const [tokenPrice, setTokenPrice] = useState("0");
   const [liquidationPrice, setLiquidationPrice] = useState("0");
@@ -133,6 +134,7 @@ export default function Liquidate(props) {
 
   const handleLiquidateSuccess = async function () {
     props.setVisibility(false);
+    setLiquidationLoading(false);
     dispatch({
       type: "success",
       message: "The loan was liquidated.",
@@ -142,6 +144,8 @@ export default function Liquidate(props) {
   };
 
   const handleApprovalSuccess = async function () {
+    getWETHAllowance();
+    setApprovalLoading(false);
     dispatch({
       type: "success",
       message: "You can now liquidate the loan.",
@@ -259,10 +263,16 @@ export default function Liquidate(props) {
                       props.loan.price
                     )
                   }
+                  loadingProps={{
+                    spinnerColor: "#000000",
+                    spinnerType: "loader",
+                    direction: "right",
+                    size: "24",
+                  }}
+                  loadingText=""
+                  isLoading={liquidationLoading}
                   text="Liquidate"
                   theme="colored"
-                  type="button"
-                  size="small"
                   color="red"
                   radius="4"
                   onClick={async function () {
@@ -275,6 +285,7 @@ export default function Liquidate(props) {
                     );
                     console.log("Liquidation loan", props.loan);
                     try {
+                      setLiquidationLoading(true);
                       const tx = await marketSigner.liquidate(
                         props.loan.loanId,
                         requestId,
@@ -284,6 +295,8 @@ export default function Liquidate(props) {
                       handleLiquidateSuccess();
                     } catch (error) {
                       console.log(error);
+                    } finally {
+                      setLiquidationLoading(false);
                     }
                   }}
                 />

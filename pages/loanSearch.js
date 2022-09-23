@@ -375,7 +375,7 @@ export default function LoanSearch() {
                             <Tooltip
                               content="Represents the relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
                               position="top"
-                              minWidth={300}
+                              minWidth={200}
                             >
                               <HelpCircle fontSize="14px" color="#000000" />
                             </Tooltip>

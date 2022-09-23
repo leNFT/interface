@@ -340,15 +340,15 @@ export default function LoanSearch() {
                             Loading...
                           </div>
                         )}
-                        <div className="flex flex-row mt-8">
-                          <Typography variant="caption14">Asset ID</Typography>
+                        <div className="flex flex-row mt-4">
+                          <Typography variant="caption14">Loan ID</Typography>
                         </div>
-                        <div className="flex flex-row  items-center">
+                        <div className="flex flex-row items-center">
                           <Typography variant="caption16">
-                            #{collectionLoan.tokenId}
+                            {collectionLoan.loanId.toNumber()}
                           </Typography>
                         </div>
-                        <div className="flex flex-row mt-6">
+                        <div className="flex flex-row mt-4">
                           <div className="flex flex-col">
                             <Typography variant="caption14">
                               Health Level

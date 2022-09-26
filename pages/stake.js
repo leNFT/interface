@@ -366,7 +366,7 @@ export default function Stake() {
             </div>
           </div>
           <div className="flex flex-col justify-center items-center mb-8 p-2 rounded-3xl bg-black/5 shadow-lg">
-            <div className="flex flex-col m-4">
+            <div className="flex flex-row m-8">
               <Autocomplete
                 disablePortal
                 ListboxProps={{

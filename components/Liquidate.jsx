@@ -160,7 +160,7 @@ export default function Liquidate(props) {
     <div>
       {props.loan && (
         <div className={styles.container}>
-          <div className="flex flex-col lg:flex-row justify-center lg:mb-8">
+          <div className="flex flex-col lg:flex-row justify-center mb-2 lg:mb-4">
             {props.loan.tokenURI ? (
               <div className="flex flex-col items-center justify-center mb-4 lg:m-8">
                 <Image
@@ -203,20 +203,19 @@ export default function Liquidate(props) {
               </div>
               <div className="flex flex-row items-center m-2">
                 <div className="flex flex-col">
-                  <Typography variant="subtitle2">Liquidation Price</Typography>
-
-                  <Typography variant="caption16">
-                    {formatUnits(liquidationPrice, 18)} WETH
-                  </Typography>
-                </div>
-              </div>
-              <div className="flex flex-row items-center m-2">
-                <div className="flex flex-col">
                   <Typography variant="subtitle2">
-                    Liquidation Reward
+                    Liquidation Threshold
                   </Typography>
                   <Typography variant="caption16">
-                    {Number(formatUnits(liquidationReward, 18)).toFixed(2)} LE
+                    {formatUnits(
+                      BigNumber.from(props.loan.maxLTV)
+                        .add(props.loan.boost)
+                        .mul(props.loan.price)
+                        .div(10000)
+                        .toString(),
+                      18
+                    )}{" "}
+                    WETH
                   </Typography>
                 </div>
               </div>
@@ -249,6 +248,20 @@ export default function Liquidate(props) {
                   />
                 </div>
               </div>
+            </div>
+          </div>
+          <div className="flex flex-col lg:flex-row justify-center">
+            <div className="flex flex-col m-4">
+              <Typography variant="subtitle2">Liquidation Price</Typography>
+              <Typography variant="caption16">
+                {formatUnits(liquidationPrice, 18)} WETH
+              </Typography>
+            </div>
+            <div className="flex flex-col m-4">
+              <Typography variant="subtitle2">Liquidation Reward</Typography>
+              <Typography variant="caption16">
+                {Number(formatUnits(liquidationReward, 18)).toFixed(2)} LE
+              </Typography>
             </div>
           </div>
           <div className="flex flex-row m-8 items-center justify-center">

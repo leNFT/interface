@@ -10,6 +10,7 @@ import {
   getAssetPriceSig,
 } from "../helpers/getAssetPriceSig.js";
 import { getAssetPrice } from "../helpers/getAssetPrice.js";
+import loanCenterContract from "../contracts/LoanCenter.json";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits } from "@ethersproject/units";
 import { HelpCircle } from "@web3uikit/icons";
@@ -66,9 +67,9 @@ export default function Liquidate(props) {
     signerOrProvider: signer,
   });
 
-  const marketProvider = useContract({
-    contractInterface: marketContract.abi,
-    addressOrName: addresses.Market,
+  const loanCenterProvider = useContract({
+    contractInterface: loanCenterContract.abi,
+    addressOrName: addresses.LoanCenter,
     signerOrProvider: provider,
   });
 
@@ -101,11 +102,12 @@ export default function Liquidate(props) {
     );
     console.log("priceSig", priceSig);
 
-    const newLiquidationPrice = await marketProvider.getLoanLiquidationPrice(
-      props.loan.loanId,
-      requestId,
-      priceSig
-    );
+    const newLiquidationPrice =
+      await loanCenterProvider.getLoanLiquidationPrice(
+        props.loan.loanId,
+        requestId,
+        priceSig
+      );
 
     console.log("newLiquidationPrice", newLiquidationPrice);
 

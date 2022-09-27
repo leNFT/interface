@@ -255,7 +255,7 @@ export default function Liquidate(props) {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col lg:flex-row border-2 rounded-3xl max-w-max items-center justify-center">
+            <div className="flex flex-col lg:flex-row border-2 rounded-3xl max-w-max items-center justify-center m-2 p-2">
               <div className="flex flex-col m-4">
                 <Typography variant="subtitle2">Liquidation Price</Typography>
                 <Typography variant="caption16">

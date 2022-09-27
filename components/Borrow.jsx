@@ -152,25 +152,22 @@ export default function Borrow(props) {
       await tokenOracle.getTokenETHPrice(addresses[borrowAsset].address)
     ).toString();
     console.log("tokenETHPrice", tokenETHPrice);
-    const maxETHCollateral = BigNumber.from(price)
-      .mul(updatedMaxCollateralization)
+    const maxCollateralization = BigNumber.from(updatedMaxCollateralization)
       .add(updatedCollaterizationBoost)
+      .mul(price)
       .div(10000)
-      .div(2)
-      .toString();
-    console.log("maxETHCollateral", maxETHCollateral);
-    const maxCollateral = BigNumber.from(maxETHCollateral)
       .mul(tokenETHPrice)
       .div(PRICE_PRECISION)
+      .div(2)
       .toString();
-    console.log("maxCollateral", maxCollateral);
+    console.log("maxCollateralization", maxCollateralization);
     const reserveUnderlying = (await reserve.getUnderlyingBalance()).toString();
     console.log("reserveUnderlying", reserveUnderlying);
-    const updatedMaxAmount = BigNumber.from(maxCollateral).gt(
+    const updatedMaxAmount = BigNumber.from(maxCollateralization).gt(
       BigNumber.from(reserveUnderlying)
     )
       ? reserveUnderlying
-      : maxCollateral;
+      : maxCollateralization;
     console.log("Updated Max Borrow Amount:", updatedMaxAmount);
     setMaxAmount(updatedMaxAmount);
     setLoadingMaxAmount(false);
@@ -225,216 +222,218 @@ export default function Borrow(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-col lg:m-8 lg:flex-row justify-center">
-        <div className="flex flex-col items-center justify-center mb-4 lg:m-8">
-          {props.token_uri ? (
-            <Image
-              loader={() => props.token_uri}
-              src={props.token_uri}
-              height="300"
-              width="300"
-              unoptimized={true}
-              className="rounded-3xl"
-            />
-          ) : (
-            <div>
-              <Illustration height="180px" logo="token" width="100%" />
-              Loading...
+      <div className="flex flex-col items-center">
+        <div className="flex flex-col lg:m-8 lg:flex-row justify-center">
+          <div className="flex flex-col items-center justify-center mb-4 lg:m-8">
+            {props.token_uri ? (
+              <Image
+                loader={() => props.token_uri}
+                src={props.token_uri}
+                height="300"
+                width="300"
+                unoptimized={true}
+                className="rounded-3xl"
+              />
+            ) : (
+              <div>
+                <Illustration height="180px" logo="token" width="100%" />
+                Loading...
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col justify-center">
+            <div className="flex flex-row m-2">
+              <div className="flex flex-col">
+                <Typography variant="subtitle2">Address</Typography>
+                <Typography variant="caption14">
+                  <p className="break-all">{props.token_address}</p>
+                </Typography>
+              </div>
             </div>
-          )}
+            <div className="flex flex-row m-2">
+              <div className="flex flex-col">
+                <Typography variant="subtitle2">Asset ID</Typography>
+                <Typography variant="body16">{props.token_id}</Typography>
+              </div>
+            </div>
+            <div className="flex flex-row m-2">
+              <div className="flex flex-col">
+                <Typography variant="subtitle2">Asset Pricing</Typography>
+                {loadingMaxAmount ? (
+                  <div className="m-2">
+                    <Loading size={14} spinnerColor="#000000" />
+                  </div>
+                ) : (
+                  <Typography variant="body16">
+                    {tokenPrice != "0"
+                      ? formatUnits(tokenPrice, 18) + " WETH"
+                      : "Token Price Appraisal Error"}
+                  </Typography>
+                )}
+              </div>
+            </div>
+            <div className="flex flex-row m-2">
+              <div className="flex flex-col">
+                <Typography variant="subtitle2">Max LTV</Typography>
+                {loadingMaxAmount ? (
+                  <div className="m-2">
+                    <Loading size={14} spinnerColor="#000000" />
+                  </div>
+                ) : (
+                  <Typography variant="body16">
+                    {tokenPrice != "0"
+                      ? maxCollateralization / 100 +
+                        "% + " +
+                        collateralizationBoost / 100 +
+                        "% (Boost) = " +
+                        (parseInt(maxCollateralization) +
+                          parseInt(collateralizationBoost)) /
+                          100 +
+                        "%"
+                      : "Token Price Appraisal Error"}
+                  </Typography>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col justify-center">
+        <div className="m-8 lg:hidden">
+          <Divider />
+        </div>
+        <div className="flex flex-col items-center m-2 border-2 rounded-3xl max-w-max items-center p-2">
           <div className="flex flex-row m-2">
-            <div className="flex flex-col">
-              <Typography variant="subtitle2">Address</Typography>
-              <Typography variant="caption14">
-                <p className="break-all">{props.token_address}</p>
+            <div className="flex flex-col items-center">
+              <Typography variant="subtitle1">
+                Maximum borrowable amount
               </Typography>
-            </div>
-          </div>
-          <div className="flex flex-row m-2">
-            <div className="flex flex-col">
-              <Typography variant="subtitle2">Asset ID</Typography>
-              <Typography variant="body16">{props.token_id}</Typography>
-            </div>
-          </div>
-          <div className="flex flex-row m-2">
-            <div className="flex flex-col">
-              <Typography variant="subtitle2">Asset Pricing</Typography>
               {loadingMaxAmount ? (
                 <div className="m-2">
-                  <Loading size={14} spinnerColor="#000000" />
+                  <Loading size={16} spinnerColor="#000000" />
                 </div>
               ) : (
-                <Typography variant="body16">
-                  {tokenPrice != "0"
-                    ? formatUnits(tokenPrice, 18) + " WETH"
-                    : "Token Price Appraisal Error"}
+                <Typography variant="body18">
+                  {formatUnits(maxAmount, addresses[borrowAsset].decimals) +
+                    " " +
+                    borrowAsset}
                 </Typography>
               )}
             </div>
           </div>
           <div className="flex flex-row m-2">
-            <div className="flex flex-col">
-              <Typography variant="subtitle2">Max LTV</Typography>
-              {loadingMaxAmount ? (
+            <div className="flex flex-col items-center">
+              <Typography variant="subtitle1">Interest Rate</Typography>
+              {loadingBorrowRate ? (
                 <div className="m-2">
-                  <Loading size={14} spinnerColor="#000000" />
+                  <Loading size={16} spinnerColor="#000000" />
                 </div>
               ) : (
-                <Typography variant="body16">
-                  {tokenPrice != "0"
-                    ? maxCollateralization / 100 +
-                      "% + " +
-                      collateralizationBoost / 100 +
-                      "% (Boost) = " +
-                      (parseInt(maxCollateralization) +
-                        parseInt(collateralizationBoost)) /
-                        100 +
-                      "%"
-                    : "Token Price Appraisal Error"}
-                </Typography>
+                <Typography variant="body18">{borrowRate / 100}%</Typography>
               )}
             </div>
           </div>
         </div>
-      </div>
-      <div className="m-8 lg:hidden">
-        <Divider />
-      </div>
-      <div className="flex flex-col items-center m-2 border-4 rounded-lg p-2">
-        <div className="flex flex-row m-2">
-          <div className="flex flex-col items-center">
-            <Typography variant="subtitle1">
-              Maximum borrowable amount
-            </Typography>
-            {loadingMaxAmount ? (
-              <div className="m-2">
-                <Loading size={16} spinnerColor="#000000" />
-              </div>
-            ) : (
-              <Typography variant="body18">
-                {formatUnits(maxAmount, addresses[borrowAsset].decimals) +
-                  " " +
-                  borrowAsset}
-              </Typography>
-            )}
-          </div>
-        </div>
-        <div className="flex flex-row m-2">
-          <div className="flex flex-col items-center">
-            <Typography variant="subtitle1">Interest Rate</Typography>
-            {loadingBorrowRate ? (
-              <div className="m-2">
-                <Loading size={16} spinnerColor="#000000" />
-              </div>
-            ) : (
-              <Typography variant="body18">{borrowRate / 100}%</Typography>
-            )}
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-row items-center justify-center m-8">
-        <Input
-          label="Amount"
-          type="number"
-          step="any"
-          validation={{
-            numberMax: Number(
-              formatUnits(maxAmount, addresses[borrowAsset].decimals)
-            ),
-            numberMin: 0,
-          }}
-          disabled={!approved}
-          onChange={handleInputChange}
-        />
-      </div>
-      {approved ? (
-        <div className="mt-16 mb-8">
-          <Button
-            text="Create Loan"
-            theme="secondary"
-            isFullWidth
-            loadingProps={{
-              spinnerColor: "#000000",
-              spinnerType: "loader",
-              direction: "right",
-              size: "24",
+        <div className="flex flex-row items-center justify-center m-8">
+          <Input
+            label="Amount"
+            type="number"
+            step="any"
+            validation={{
+              numberMax: Number(
+                formatUnits(maxAmount, addresses[borrowAsset].decimals)
+              ),
+              numberMin: 0,
             }}
-            loadingText=""
-            isLoading={borrowLoading}
-            onClick={async function () {
-              if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
+            disabled={!approved}
+            onChange={handleInputChange}
+          />
+        </div>
+        {approved ? (
+          <div className="mt-16 mb-8">
+            <Button
+              text="Create Loan"
+              theme="secondary"
+              isFullWidth
+              loadingProps={{
+                spinnerColor: "#000000",
+                spinnerType: "loader",
+                direction: "right",
+                size: "24",
+              }}
+              loadingText=""
+              isLoading={borrowLoading}
+              onClick={async function () {
+                if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
+                  try {
+                    setBorrowLoading(true);
+                    // Get updated price trusted server signature from server
+                    const requestID = getNewRequestID();
+                    const priceSig = await getAssetPriceSig(
+                      requestID,
+                      props.token_address,
+                      props.token_id,
+                      chain.id
+                    );
+                    const tx = await marketSigner.borrow(
+                      addresses[borrowAsset].address,
+                      amount,
+                      props.token_address,
+                      props.token_id,
+                      requestID,
+                      priceSig
+                    );
+                    console.log(tx);
+                    await tx.wait(1);
+                    handleBorrowSuccess();
+                  } catch (error) {
+                    console.log(error);
+                  } finally {
+                    setBorrowLoading(false);
+                  }
+                } else {
+                  dispatch({
+                    type: "error",
+                    message: "Amount too big!",
+                    title: "Error",
+                    position: "topR",
+                    icon: "bell",
+                  });
+                }
+              }}
+            />
+          </div>
+        ) : (
+          <div className="flex mt-16 mb-8">
+            <Button
+              text="Approve Asset"
+              theme="secondary"
+              isFullWidth
+              loadingProps={{
+                spinnerColor: "#000000",
+                spinnerType: "loader",
+                direction: "right",
+                size: "24",
+              }}
+              loadingText=""
+              isLoading={approvalLoading}
+              onClick={async function () {
                 try {
-                  setBorrowLoading(true);
-                  // Get updated price trusted server signature from server
-                  const requestID = getNewRequestID();
-                  const priceSig = await getAssetPriceSig(
-                    requestID,
-                    props.token_address,
-                    props.token_id,
-                    chain.id
+                  setApprovalLoading(true);
+                  const tx = await assetCollectionSigner.approve(
+                    addresses.Market,
+                    props.token_id
                   );
-                  const tx = await marketSigner.borrow(
-                    addresses[borrowAsset].address,
-                    amount,
-                    props.token_address,
-                    props.token_id,
-                    requestID,
-                    priceSig
-                  );
-                  console.log(tx);
                   await tx.wait(1);
-                  handleBorrowSuccess();
+                  handleApprovalSuccess();
                 } catch (error) {
                   console.log(error);
                 } finally {
-                  setBorrowLoading(false);
+                  setApprovalLoading(false);
                 }
-              } else {
-                dispatch({
-                  type: "error",
-                  message: "Amount too big!",
-                  title: "Error",
-                  position: "topR",
-                  icon: "bell",
-                });
-              }
-            }}
-          />
-        </div>
-      ) : (
-        <div className="flex mt-16 mb-8">
-          <Button
-            text="Approve Asset"
-            theme="secondary"
-            isFullWidth
-            loadingProps={{
-              spinnerColor: "#000000",
-              spinnerType: "loader",
-              direction: "right",
-              size: "24",
-            }}
-            loadingText=""
-            isLoading={approvalLoading}
-            onClick={async function () {
-              try {
-                setApprovalLoading(true);
-                const tx = await assetCollectionSigner.approve(
-                  addresses.Market,
-                  props.token_id
-                );
-                await tx.wait(1);
-                handleApprovalSuccess();
-              } catch (error) {
-                console.log(error);
-              } finally {
-                setApprovalLoading(false);
-              }
-            }}
-          />
-        </div>
-      )}
+              }}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

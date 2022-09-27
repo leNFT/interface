@@ -160,210 +160,216 @@ export default function Liquidate(props) {
     <div>
       {props.loan && (
         <div className={styles.container}>
-          <div className="flex flex-col lg:flex-row justify-center mb-2 lg:mb-4">
-            {props.loan.tokenURI ? (
-              <div className="flex flex-col items-center justify-center mb-4 lg:m-8">
-                <Image
-                  loader={() => props.loan.tokenURI}
-                  src={props.loan.tokenURI}
-                  height="300"
-                  width="300"
-                  unoptimized={true}
-                  className="rounded-3xl"
-                />
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center">
-                <Illustration height="140px" logo="chest" width="100%" />
-                Loading...
-              </div>
-            )}
-            <div className="flex flex-col">
-              <div className="flex flex-row items-center m-2">
-                <div className="flex flex-col">
-                  <Typography variant="subtitle2">Asset ID</Typography>
-                  <Typography variant="body16">{props.loan.tokenId}</Typography>
-                </div>
-              </div>
-              <div className="flex flex-row items-center m-2">
-                <div className="flex flex-col">
-                  <Typography variant="subtitle2">Asset Pricing</Typography>
-                  <Typography variant="body16">
-                    {formatUnits(tokenPrice, 18) + " WETH"}
-                  </Typography>
-                </div>
-              </div>
-              <div className="flex flex-row items-center m-2">
-                <div className="flex flex-col">
-                  <Typography variant="subtitle2">Debt</Typography>
-                  <Typography variant="caption16">
-                    {formatUnits(props.loan.debt, 18)} WETH
-                  </Typography>
-                </div>
-              </div>
-              <div className="flex flex-row items-center m-2">
-                <div className="flex flex-col">
-                  <Typography variant="subtitle2">
-                    Liquidation Threshold
-                  </Typography>
-                  <Typography variant="caption16">
-                    {formatUnits(
-                      BigNumber.from(props.loan.maxLTV)
-                        .add(props.loan.boost)
-                        .mul(props.loan.price)
-                        .div(10000)
-                        .toString(),
-                      18
-                    )}{" "}
-                    WETH
-                  </Typography>
-                </div>
-              </div>
-              <div className="flex flex-row m-2">
-                <div className="flex flex-col min-w-[80%]">
-                  <div className="flex flex-row">
-                    <div className="flex flex-col">
-                      <Typography variant="subtitle2">Health Level</Typography>
-                    </div>
-                    <div className="flex flex-col ml-1">
-                      <Tooltip
-                        content="Represents the relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
-                        position="top"
-                        minWidth={300}
-                      >
-                        <HelpCircle fontSize="14px" color="#000000" />
-                      </Tooltip>
-                    </div>
-                  </div>
-                  <LinearProgressWithLabel
-                    color="success"
-                    value={calculateHealthLevel(
-                      props.loan.debt,
-                      BigNumber.from(props.loan.maxLTV)
-                        .add(props.loan.boost)
-                        .mul(props.loan.price)
-                        .div(10000)
-                        .toString()
-                    )}
+          <div className="flex flex-col items-center">
+            <div className="flex flex-col lg:flex-row justify-center mb-2 lg:mb-4">
+              {props.loan.tokenURI ? (
+                <div className="flex flex-col items-center justify-center mb-4 lg:m-8">
+                  <Image
+                    loader={() => props.loan.tokenURI}
+                    src={props.loan.tokenURI}
+                    height="300"
+                    width="300"
+                    unoptimized={true}
+                    className="rounded-3xl"
                   />
                 </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center">
+                  <Illustration height="140px" logo="chest" width="100%" />
+                  Loading...
+                </div>
+              )}
+              <div className="flex flex-col">
+                <div className="flex flex-row items-center m-2">
+                  <div className="flex flex-col">
+                    <Typography variant="subtitle2">Asset ID</Typography>
+                    <Typography variant="body16">
+                      {props.loan.tokenId}
+                    </Typography>
+                  </div>
+                </div>
+                <div className="flex flex-row items-center m-2">
+                  <div className="flex flex-col">
+                    <Typography variant="subtitle2">Asset Pricing</Typography>
+                    <Typography variant="body16">
+                      {formatUnits(tokenPrice, 18) + " WETH"}
+                    </Typography>
+                  </div>
+                </div>
+                <div className="flex flex-row items-center m-2">
+                  <div className="flex flex-col">
+                    <Typography variant="subtitle2">Debt</Typography>
+                    <Typography variant="caption16">
+                      {formatUnits(props.loan.debt, 18)} WETH
+                    </Typography>
+                  </div>
+                </div>
+                <div className="flex flex-row items-center m-2">
+                  <div className="flex flex-col">
+                    <Typography variant="subtitle2">
+                      Liquidation Threshold
+                    </Typography>
+                    <Typography variant="caption16">
+                      {formatUnits(
+                        BigNumber.from(props.loan.maxLTV)
+                          .add(props.loan.boost)
+                          .mul(props.loan.price)
+                          .div(10000)
+                          .toString(),
+                        18
+                      )}{" "}
+                      WETH
+                    </Typography>
+                  </div>
+                </div>
+                <div className="flex flex-row m-2">
+                  <div className="flex flex-col min-w-[80%]">
+                    <div className="flex flex-row">
+                      <div className="flex flex-col">
+                        <Typography variant="subtitle2">
+                          Health Level
+                        </Typography>
+                      </div>
+                      <div className="flex flex-col ml-1">
+                        <Tooltip
+                          content="Represents the relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
+                          position="top"
+                          minWidth={300}
+                        >
+                          <HelpCircle fontSize="14px" color="#000000" />
+                        </Tooltip>
+                      </div>
+                    </div>
+                    <LinearProgressWithLabel
+                      color="success"
+                      value={calculateHealthLevel(
+                        props.loan.debt,
+                        BigNumber.from(props.loan.maxLTV)
+                          .add(props.loan.boost)
+                          .mul(props.loan.price)
+                          .div(10000)
+                          .toString()
+                      )}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="flex flex-col lg:flex-row justify-center">
-            <div className="flex flex-col m-4">
-              <Typography variant="subtitle2">Liquidation Price</Typography>
-              <Typography variant="caption16">
-                {formatUnits(liquidationPrice, 18)} WETH
-              </Typography>
+            <div className="flex flex-col lg:flex-row border-2 rounded-3xl max-w-max items-center justify-center">
+              <div className="flex flex-col m-4">
+                <Typography variant="subtitle2">Liquidation Price</Typography>
+                <Typography variant="caption16">
+                  {formatUnits(liquidationPrice, 18)} WETH
+                </Typography>
+              </div>
+              <div className="flex flex-col m-4">
+                <Typography variant="subtitle2">Liquidation Reward</Typography>
+                <Typography variant="caption16">
+                  {Number(formatUnits(liquidationReward, 18)).toFixed(2)} LE
+                </Typography>
+              </div>
             </div>
-            <div className="flex flex-col m-4">
-              <Typography variant="subtitle2">Liquidation Reward</Typography>
-              <Typography variant="caption16">
-                {Number(formatUnits(liquidationReward, 18)).toFixed(2)} LE
-              </Typography>
-            </div>
-          </div>
-          <div className="flex flex-row m-8 items-center justify-center">
-            <div className="flex flex-col">
-              {BigNumber.from(liquidationPrice).lte(
-                BigNumber.from(allowance)
-              ) ? (
-                <Button
-                  disabled={
-                    !isLoanLiquidatable(
-                      props.loan.debt,
-                      props.loan.maxLTV,
-                      props.loan.boost,
-                      props.loan.price
-                    )
-                  }
-                  loadingProps={{
-                    spinnerColor: "#000000",
-                    spinnerType: "loader",
-                    direction: "right",
-                    size: "24",
-                  }}
-                  loadingText=""
-                  isLoading={liquidationLoading}
-                  text="Liquidate"
-                  theme="colored"
-                  color="red"
-                  radius="4"
-                  onClick={async function () {
-                    try {
-                      setLiquidationLoading(true);
-                      const requestId = getNewRequestID();
-                      const priceSig = await getAssetPriceSig(
-                        requestId,
-                        props.loan.tokenAddress,
-                        props.loan.tokenId,
-                        chain.id
-                      );
-                      console.log("Liquidation loan", props.loan);
-                      const tx = await marketSigner.liquidate(
-                        props.loan.loanId,
-                        requestId,
-                        priceSig
-                      );
-                      await tx.wait(1);
-                      handleLiquidateSuccess();
-                    } catch (error) {
-                      console.log(error);
-                    } finally {
-                      setLiquidationLoading(false);
+            <div className="flex flex-row m-8 items-center justify-center">
+              <div className="flex flex-col">
+                {BigNumber.from(liquidationPrice).lte(
+                  BigNumber.from(allowance)
+                ) ? (
+                  <Button
+                    disabled={
+                      !isLoanLiquidatable(
+                        props.loan.debt,
+                        props.loan.maxLTV,
+                        props.loan.boost,
+                        props.loan.price
+                      )
                     }
-                  }}
-                />
-              ) : (
-                <Button
-                  text={
-                    isLoanLiquidatable(
-                      props.loan.debt,
-                      props.loan.maxLTV,
-                      props.loan.boost,
-                      props.loan.price
-                    )
-                      ? "Approve WETH for liquidation"
-                      : "Liquidation conditions are not met"
-                  }
-                  theme="colored"
-                  isFullWidth
-                  color="red"
-                  radius="5"
-                  isLoading={approvalLoading}
-                  disabled={
-                    !isLoanLiquidatable(
-                      props.loan.debt,
-                      props.loan.maxLTV,
-                      props.loan.boost,
-                      props.loan.price
-                    )
-                  }
-                  loadingProps={{
-                    spinnerColor: "#000000",
-                    spinnerType: "loader",
-                    direction: "right",
-                    size: "24",
-                  }}
-                  loadingText=""
-                  onClick={async function () {
-                    try {
-                      setApprovalLoading(true);
-                      const tx = await wethSigner.approve(
-                        addresses.Market,
-                        liquidationPrice
-                      );
-                      await tx.wait(1);
-                      handleApprovalSuccess();
-                    } catch (error) {
-                      console.log(error);
-                    } finally {
-                      setApprovalLoading(false);
+                    loadingProps={{
+                      spinnerColor: "#000000",
+                      spinnerType: "loader",
+                      direction: "right",
+                      size: "24",
+                    }}
+                    loadingText=""
+                    isLoading={liquidationLoading}
+                    text="Liquidate"
+                    theme="colored"
+                    color="red"
+                    radius="4"
+                    onClick={async function () {
+                      try {
+                        setLiquidationLoading(true);
+                        const requestId = getNewRequestID();
+                        const priceSig = await getAssetPriceSig(
+                          requestId,
+                          props.loan.tokenAddress,
+                          props.loan.tokenId,
+                          chain.id
+                        );
+                        console.log("Liquidation loan", props.loan);
+                        const tx = await marketSigner.liquidate(
+                          props.loan.loanId,
+                          requestId,
+                          priceSig
+                        );
+                        await tx.wait(1);
+                        handleLiquidateSuccess();
+                      } catch (error) {
+                        console.log(error);
+                      } finally {
+                        setLiquidationLoading(false);
+                      }
+                    }}
+                  />
+                ) : (
+                  <Button
+                    text={
+                      isLoanLiquidatable(
+                        props.loan.debt,
+                        props.loan.maxLTV,
+                        props.loan.boost,
+                        props.loan.price
+                      )
+                        ? "Approve WETH for liquidation"
+                        : "Liquidation conditions are not met"
                     }
-                  }}
-                ></Button>
-              )}
+                    theme="colored"
+                    isFullWidth
+                    color="red"
+                    radius="5"
+                    isLoading={approvalLoading}
+                    disabled={
+                      !isLoanLiquidatable(
+                        props.loan.debt,
+                        props.loan.maxLTV,
+                        props.loan.boost,
+                        props.loan.price
+                      )
+                    }
+                    loadingProps={{
+                      spinnerColor: "#000000",
+                      spinnerType: "loader",
+                      direction: "right",
+                      size: "24",
+                    }}
+                    loadingText=""
+                    onClick={async function () {
+                      try {
+                        setApprovalLoading(true);
+                        const tx = await wethSigner.approve(
+                          addresses.Market,
+                          liquidationPrice
+                        );
+                        await tx.wait(1);
+                        handleApprovalSuccess();
+                      } catch (error) {
+                        console.log(error);
+                      } finally {
+                        setApprovalLoading(false);
+                      }
+                    }}
+                  ></Button>
+                )}
+              </div>
             </div>
           </div>
         </div>

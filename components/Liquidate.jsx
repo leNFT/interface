@@ -291,16 +291,16 @@ export default function Liquidate(props) {
                   color="red"
                   radius="4"
                   onClick={async function () {
-                    const requestId = getNewRequestID();
-                    const priceSig = await getAssetPriceSig(
-                      requestId,
-                      props.loan.tokenAddress,
-                      props.loan.tokenId,
-                      chain.id
-                    );
-                    console.log("Liquidation loan", props.loan);
                     try {
                       setLiquidationLoading(true);
+                      const requestId = getNewRequestID();
+                      const priceSig = await getAssetPriceSig(
+                        requestId,
+                        props.loan.tokenAddress,
+                        props.loan.tokenId,
+                        chain.id
+                      );
+                      console.log("Liquidation loan", props.loan);
                       const tx = await marketSigner.liquidate(
                         props.loan.loanId,
                         requestId,

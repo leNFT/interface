@@ -365,17 +365,16 @@ export default function Borrow(props) {
             isLoading={borrowLoading}
             onClick={async function () {
               if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
-                // Get updated price trusted server signature from server
-                const requestID = getNewRequestID();
-                const priceSig = await getAssetPriceSig(
-                  requestID,
-                  props.token_address,
-                  props.token_id,
-                  chain.id
-                );
                 try {
                   setBorrowLoading(true);
-                  console.log("props.token_address", props.token_address);
+                  // Get updated price trusted server signature from server
+                  const requestID = getNewRequestID();
+                  const priceSig = await getAssetPriceSig(
+                    requestID,
+                    props.token_address,
+                    props.token_id,
+                    chain.id
+                  );
                   const tx = await marketSigner.borrow(
                     addresses[borrowAsset].address,
                     amount,

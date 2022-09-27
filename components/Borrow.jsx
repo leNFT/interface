@@ -295,6 +295,24 @@ export default function Borrow(props) {
                 )}
               </div>
             </div>
+            <div className="flex flex-row items-center m-2">
+              <div className="flex flex-col">
+                <Typography variant="subtitle2">
+                  Liquidation Threshold
+                </Typography>
+                <Typography variant="caption16">
+                  {formatUnits(
+                    BigNumber.from(maxCollateralization)
+                      .add(collateralizationBoost)
+                      .mul(tokenPrice)
+                      .div(10000)
+                      .toString(),
+                    18
+                  )}{" "}
+                  WETH
+                </Typography>
+              </div>
+            </div>
           </div>
         </div>
         <div className="m-8 lg:hidden">

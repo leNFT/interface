@@ -171,6 +171,26 @@ export default function RepayLoan(props) {
           <div className="flex flex-row items-center m-2">
             {loan && (
               <div className="flex flex-col">
+                <Typography variant="subtitle2">
+                  Liquidation Threshold
+                </Typography>
+                <Typography variant="caption16">
+                  {formatUnits(
+                    BigNumber.from(loan.maxLTV)
+                      .add(loan.boost)
+                      .mul(tokenPrice)
+                      .div(10000)
+                      .toString(),
+                    18
+                  )}{" "}
+                  WETH
+                </Typography>
+              </div>
+            )}
+          </div>
+          <div className="flex flex-row items-center m-2">
+            {loan && (
+              <div className="flex flex-col">
                 <Typography variant="subtitle2">Interest Rate</Typography>
                 <Typography variant="body16">
                   {loan.borrowRate.toNumber() / 100}%

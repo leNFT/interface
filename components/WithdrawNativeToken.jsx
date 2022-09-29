@@ -177,7 +177,7 @@ export default function WithdrawNativeToken(props) {
         </Typography>
       </div>
       {canWithdraw(lastWithdrawRequest.timestamp) ? (
-        <div className="mt-16 mb-8">
+        <div className="m-8 mt-2">
           <Button
             text="Withdraw"
             theme="secondary"
@@ -215,7 +215,7 @@ export default function WithdrawNativeToken(props) {
           />
         </div>
       ) : (
-        <div className="mt-16 mb-8">
+        <div className="m-8 mt-2">
           <Button
             text="Create Withdraw Request"
             theme="secondary"

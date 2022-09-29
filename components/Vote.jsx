@@ -97,7 +97,7 @@ export default function Vote(props) {
           onChange={handleInputChange}
         />
       </div>
-      <div className="flex flex-row items-center justify-center mt-16 mb-8">
+      <div className="flex flex-row items-center justify-center m-8 mt-2">
         <Button
           text="Vote"
           theme="secondary"

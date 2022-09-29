@@ -109,7 +109,7 @@ export default function RemoveVote(props) {
         />
       </div>
 
-      <div className="mt-16 mb-8">
+      <div className="m-8 mt-2">
         <Button
           text="Remove Votes"
           theme="secondary"

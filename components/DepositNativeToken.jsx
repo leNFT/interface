@@ -134,7 +134,7 @@ export default function DepositNativeToken(props) {
         />
       </div>
       {approved ? (
-        <div className="mt-16 mb-8">
+        <div className="m-8 mt-2">
           <Button
             text="Deposit"
             theme="secondary"
@@ -171,7 +171,7 @@ export default function DepositNativeToken(props) {
           ></Button>
         </div>
       ) : (
-        <div className="mt-16 mb-8">
+        <div className="m-8 mt-2">
           <Button
             text="Approve"
             theme="secondary"

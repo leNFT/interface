@@ -366,7 +366,7 @@ export default function Borrow(props) {
           />
         </div>
         {approved ? (
-          <div className="mt-16 mb-8">
+          <div className="flex m-8 mt-2">
             <Button
               text="Create Loan"
               theme="secondary"
@@ -420,7 +420,7 @@ export default function Borrow(props) {
             />
           </div>
         ) : (
-          <div className="flex mt-16 mb-8">
+          <div className="flex m-8 mt-2">
             <Button
               text="Approve Asset"
               theme="secondary"

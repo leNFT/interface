@@ -2,7 +2,14 @@ import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Tooltip, BannerStrip } from "@web3uikit/core";
 import { Button } from "grommet";
-import { Home, Search, Reload, Plus, LockClosed } from "@web3uikit/icons";
+import {
+  Home,
+  Search,
+  Reload,
+  Plus,
+  LockClosed,
+  Rocket,
+} from "@web3uikit/icons";
 import Box from "@mui/material/Box";
 import { useAccount, useNetwork } from "wagmi";
 import { useSwitchNetwork } from "wagmi";
@@ -69,7 +76,7 @@ export default function Header() {
             </a>
           </Link>
         </div>
-        <div className="flex flex-col items-center self-center my-2">
+        <div className="flex flex-col items-center my-2">
           <div className="flex flex-col md:flex-row md:items-center">
             <div className="flex flex-col m-2">
               <Link href="/app">
@@ -94,6 +101,34 @@ export default function Header() {
                   icon={
                     <div className="pl-[10px]">
                       <Home fontSize="20px" color="#000000" />
+                    </div>
+                  }
+                />
+              </Link>
+            </div>
+            <div className="flex flex-col m-2">
+              <Link href="/genesis">
+                <Button
+                  primary
+                  size="medium"
+                  color="#eae5ea"
+                  label={
+                    <div className="flex md:hidden lg:flex">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle2.fontSize",
+                          fontWeight: "bold",
+                          letterSpacing: 4,
+                        }}
+                      >
+                        Genesis Mint
+                      </Box>
+                    </div>
+                  }
+                  icon={
+                    <div className="pl-[10px]">
+                      <Rocket fontSize="20px" color="#000000" />
                     </div>
                   }
                 />

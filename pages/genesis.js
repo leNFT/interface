@@ -6,22 +6,18 @@ import { getNFTs } from "../helpers/getNFTs.js";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
-import {
-  useContract,
-  useProvider,
-  useNetwork,
-  useSigner,
-  useAccount,
-} from "wagmi";
+import GenesisMint from "../components/GenesisMint";
+import StyledModal from "../components/StyledModal";
+import { useContract, useProvider, useNetwork, useAccount } from "wagmi";
 
 export default function Stake() {
   const [supply, setSupply] = useState(0);
   const [cap, setCap] = useState(0);
+  const [visibleMintModal, setVisibleMintModal] = useState(false);
   const [userGenesisNFTs, setUserGenesisNFTs] = useState([]);
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const provider = useProvider();
-  const { data: signer } = useSigner();
 
   const addresses =
     chain && chain.id in contractAddresses
@@ -32,12 +28,6 @@ export default function Stake() {
     contractInterface: genesisNFTContract.abi,
     addressOrName: addresses.GenesisNFT,
     signerOrProvider: provider,
-  });
-
-  const genesisNFTSigner = useContract({
-    contractInterface: genesisNFTContract.abi,
-    addressOrName: addresses.GenesisNFT,
-    signerOrProvider: signer,
   });
 
   async function updateGenesisInfo() {
@@ -69,6 +59,17 @@ export default function Stake() {
 
   return (
     <div className={styles.container}>
+      <StyledModal
+        hasFooter={false}
+        title={"Mint Genesis NFT"}
+        isVisible={visibleMintModal}
+        width="50%"
+        onCloseButtonPressed={function () {
+          setVisibleMintModal(false);
+        }}
+      >
+        <GenesisMint setVisibility={setVisibleMintModal} supply={supply} />
+      </StyledModal>
       <div className="flex flex-col items-center">
         <div className="flex flex-col items-center justify-center border-4 m-2 md:m-8 rounded-3xl bg-black/5 shadow-lg">
           <div className="flex flex-col md:flex-row m-4">
@@ -95,7 +96,7 @@ export default function Stake() {
                 </Box>
               </div>
             </div>
-            <div className="flex flex-col justify-center m-8 rounded-2xl bg-black/5 shadow-lg p-4">
+            <div className="flex flex-col justify-center text-center m-8 rounded-2xl bg-black/5 shadow-lg p-4">
               <Box
                 sx={{
                   fontFamily: "Monospace",
@@ -105,12 +106,12 @@ export default function Stake() {
                 <div>{"Minted " + supply}</div>
                 <div>{"of " + cap}</div>
               </Box>
+              <div className="mt-4">
+                <LinearProgressWithLabel color="primary" value={supply / cap} />
+              </div>
             </div>
           </div>
-          <div className="flex flex-col justify-center m-4 min-w-[80%]">
-            <LinearProgressWithLabel color="success" value={supply / cap} />
-          </div>
-          <div className="flex flex-row justify-center m-4">
+          <div className="flex flex-row justify-center mb-4">
             <Button
               customize={{
                 backgroundColor: "grey",
@@ -121,7 +122,9 @@ export default function Stake() {
               theme="custom"
               size="large"
               radius="12"
-              onClick={async function () {}}
+              onClick={async function () {
+                setVisibleMintModal(true);
+              }}
             />
           </div>
         </div>

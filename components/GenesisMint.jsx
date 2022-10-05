@@ -84,26 +84,28 @@ export default function GenesisMint(props) {
           <Typography variant="body16">{props.supply + 1}</Typography>
         </div>
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center mt-2 text-center">
-        <div className="flex flex-col m-2 md:m-4">
-          <Typography variant="subtitle2">Lock Time</Typography>
-          <Typography variant="body16">{locktimeDays + " days"}</Typography>
+      <div className="flex flex-col p-2 border-4 rounded-3xl">
+        <div className="flex flex-col md:flex-row items-center justify-center mt-2 text-center">
+          <div className="flex flex-col m-2 md:m-4">
+            <Typography variant="subtitle2">Lock Time</Typography>
+            <Typography variant="body16">{locktimeDays + " days"}</Typography>
+          </div>
+          <div className="flex flex-col m-2 md:m-4">
+            <Typography variant="subtitle2">LE Rewards</Typography>
+            <Typography variant="body16">
+              {formatUnits(rewards, 18) + " LE"}
+            </Typography>
+          </div>
         </div>
-        <div className="flex flex-col m-2 md:m-4">
-          <Typography variant="subtitle2">LE Rewards</Typography>
-          <Typography variant="body16">
-            {formatUnits(rewards, 18) + " LE"}
-          </Typography>
+        <div className="flex flex-row items-center justify-center p-4">
+          <Slider
+            valueLabelDisplay="auto"
+            onChange={handleInputChange}
+            min={30}
+            step={1}
+            max={365}
+          />
         </div>
-      </div>
-      <div className="flex flex-row items-center justify-center p-2">
-        <Slider
-          valueLabelDisplay="auto"
-          onChange={handleInputChange}
-          min={30}
-          step={1}
-          max={365}
-        />
       </div>
       <div className="flex flex-row items-center justify-center m-8">
         <Button

@@ -169,7 +169,7 @@ export default function ReserveInfo(props) {
           </div>
         )}
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center py-8">
+      <div className="flex flex-col-reverse md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 bg-black/5 shadow-lg">
         <div className="flex flex-col items-center p-4 rounded-3xl m-8 lg:m-16 bg-black/5 shadow-lg">
           <div className="flex flex-col m-4 rounded-2xl">
             <div className="flex flex-row m-2">
@@ -211,7 +211,7 @@ export default function ReserveInfo(props) {
               )}
             </div>
           </div>
-          <div className="flex flex-row">
+          <div className="flex flex-col md:flex-row items-center ">
             <div className="m-4">
               <Button
                 customize={{

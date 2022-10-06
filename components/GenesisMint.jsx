@@ -84,7 +84,7 @@ export default function GenesisMint(props) {
       <div className="flex flex-row items-center justify-center m-4 text-center">
         <div className="flex flex-col">
           <Typography variant="subtitle2">Token ID</Typography>
-          <Typography variant="body16">{props.supply + 1}</Typography>
+          <Typography variant="body16">{props.mintCount + 1}</Typography>
         </div>
       </div>
       <div className="flex flex-col p-2 border-4 rounded-3xl">

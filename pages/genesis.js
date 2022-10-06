@@ -43,12 +43,13 @@ export default function Stake() {
     // Get supply
     const updatedMintCount = await genesisNFTProvider.getMintCount();
     setMintCount(updatedMintCount.toNumber());
+    console.log("updatedMintCount.toNumber()", updatedMintCount.toNumber());
     // Get cap
     const updatedCap = await genesisNFTProvider.getCap();
     setCap(updatedCap.toNumber());
     // Get price
     const updatedPrice = await genesisNFTProvider.getPrice();
-    console.log();
+    console.log("updatedPrice", updatedPrice);
     setPrice(updatedPrice.toString());
   }
 

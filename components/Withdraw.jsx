@@ -15,13 +15,17 @@ import {
   useProvider,
   useSigner,
 } from "wagmi";
+import erc20 from "../contracts/erc20.json";
 
 export default function Withdraw(props) {
   const [withdrawalLoading, setWithdrawalLoading] = useState(false);
-  const [amount, setAmount] = useState("");
+  const [reserveAddress, setReserveAddress] = useState("");
+  const [amount, setAmount] = useState("0");
   const [maxAmount, setMaxAmount] = useState("0");
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
+  const [approved, setApproved] = useState(false);
+  const [approvalLoading, setApprovalLoading] = useState(false);
   const { data: signer } = useSigner();
   const provider = useProvider();
   const addresses =
@@ -30,6 +34,18 @@ export default function Withdraw(props) {
       : contractAddresses["1"];
 
   const dispatch = useNotification();
+
+  const tokenSigner = useContract({
+    contractInterface: erc20,
+    addressOrName: addresses[props.asset].address,
+    signerOrProvider: signer,
+  });
+
+  const tokenProvider = useContract({
+    contractInterface: erc20,
+    addressOrName: addresses[props.asset].address,
+    signerOrProvider: provider,
+  });
 
   const marketSigner = useContract({
     contractInterface: marketContract.abi,
@@ -43,11 +59,29 @@ export default function Withdraw(props) {
     signerOrProvider: provider,
   });
 
-  async function updateMaxAmount() {
-    const reserveAddress = await marketProvider.getReserveAddress(
+  // WETH needs to give allowance to market contract for wrapping
+  async function getWETHAllowance() {
+    const allowance = await tokenProvider.allowance(address, addresses.Market);
+
+    console.log("Got allowance:", allowance);
+
+    if (!allowance.eq(BigNumber.from(0))) {
+      setApproved(true);
+    } else {
+      setApproved(false);
+    }
+  }
+
+  async function getReserve() {
+    const updatedReserveAddress = await marketProvider.getReserveAddress(
       addresses[props.asset].address
     );
 
+    setReserveAddress(updatedReserveAddress);
+    console.log("updatedReserveAddress", updatedReserveAddress);
+  }
+
+  async function updateMaxAmount() {
     const reserve = new ethers.Contract(
       reserveAddress,
       reserveContract.abi,
@@ -62,9 +96,19 @@ export default function Withdraw(props) {
 
   useEffect(() => {
     if (isConnected && props.asset) {
-      updateMaxAmount();
+      getReserve();
     }
   }, [isConnected, props.asset]);
+
+  useEffect(() => {
+    if (reserveAddress && props.asset) {
+      console.log("Got reserve address, setting the rest...", reserveAddress);
+      updateMaxAmount();
+      if (props.asset == "ETH") {
+        getWETHAllowance();
+      }
+    }
+  }, [reserveAddress, props.asset]);
 
   const handleWithdrawalSuccess = async function () {
     props.updateUI();
@@ -87,6 +131,16 @@ export default function Withdraw(props) {
       setAmount("0");
     }
   }
+
+  const handleApprovalSuccess = async function () {
+    setApproved(true);
+    dispatch({
+      type: "success",
+      message: "You can now deposit.",
+      title: "Approval Successful!",
+      position: "topR",
+    });
+  };
 
   return (
     <div className={styles.container}>
@@ -151,52 +205,83 @@ export default function Withdraw(props) {
           />
         </div>
       </div>
-      <div className="m-8 mt-2">
-        <Button
-          text="Withdraw"
-          theme="secondary"
-          isFullWidth
-          loadingProps={{
-            spinnerColor: "#000000",
-            spinnerType: "loader",
-            direction: "right",
-            size: "24",
-          }}
-          loadingText=""
-          isLoading={withdrawalLoading}
-          onClick={async function () {
-            if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
-              try {
-                setWithdrawalLoading(true);
-                var tx;
-                if (props.asset == "ETH") {
-                  tx = await marketSigner.withdrawETH({
-                    value: amount,
-                  });
-                } else {
-                  tx = tx = await marketSigner.withdraw(
-                    addresses[props.asset].address,
-                    amount
-                  );
+      {approved || props.asset != "ETH" ? (
+        <div className="m-8 mt-2">
+          <Button
+            text="Withdraw"
+            theme="secondary"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
+            }}
+            loadingText=""
+            isLoading={withdrawalLoading}
+            onClick={async function () {
+              if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
+                try {
+                  setWithdrawalLoading(true);
+                  var tx;
+                  if (props.asset == "ETH") {
+                    tx = await marketSigner.withdrawETH(amount);
+                  } else {
+                    tx = await marketSigner.withdraw(
+                      addresses[props.asset].address,
+                      amount
+                    );
+                  }
+                  await tx.wait(1);
+                  handleWithdrawalSuccess();
+                } catch (error) {
+                  console.log(error);
+                } finally {
+                  setWithdrawalLoading(false);
                 }
+              } else {
+                dispatch({
+                  type: "error",
+                  message: "Amount is bigger than max permited withdrawal",
+                  title: "Error",
+                  position: "topR",
+                });
+              }
+            }}
+          />
+        </div>
+      ) : (
+        <div className="m-8 mt-2">
+          <Button
+            text="Approve"
+            theme="secondary"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
+            }}
+            loadingText=""
+            isLoading={approvalLoading}
+            onClick={async function () {
+              try {
+                setApprovalLoading(true);
+                const tx = await tokenSigner.approve(
+                  addresses.Market,
+                  "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+                );
                 await tx.wait(1);
-                handleWithdrawalSuccess();
+                handleApprovalSuccess();
               } catch (error) {
                 console.log(error);
               } finally {
-                setWithdrawalLoading(false);
+                setApprovalLoading(false);
               }
-            } else {
-              dispatch({
-                type: "error",
-                message: "Amount is bigger than max permited withdrawal",
-                title: "Error",
-                position: "topR",
-              });
-            }
-          }}
-        />
-      </div>
+            }}
+          ></Button>
+        </div>
+      )}
     </div>
   );
 }

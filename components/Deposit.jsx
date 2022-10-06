@@ -142,26 +142,6 @@ export default function Deposit(props) {
               props.asset}
           </Typography>
         </div>
-        {BigNumber.from(0).eq(parseUnits(balance)) &&
-          addresses[props.asset].decimals == "WETH" && (
-            <div className="flex flex-col ml-4">
-              <Link
-                href={
-                  "https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=" +
-                  addresses.WETH
-                }
-              >
-                <a target="_blank" rel="noopener noreferrer">
-                  <Button
-                    text="Wrap ETH"
-                    theme="ghost"
-                    type="button"
-                    size="small"
-                  />
-                </a>
-              </Link>
-            </div>
-          )}
       </div>
       <div className="flex flex-row items-center justify-center m-8">
         <Input

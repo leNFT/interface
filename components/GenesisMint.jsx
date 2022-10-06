@@ -15,13 +15,14 @@ import Slider from "@mui/material/Slider";
 import genesisNFTContract from "../contracts/GenesisNFT.json";
 
 export default function GenesisMint(props) {
-  const { address, isConnected } = useAccount();
+  const SECONDS_IN_DAY = 86400;
+  const { isConnected } = useAccount();
   const { chain } = useNetwork();
   const provider = useProvider();
   const { data: signer } = useSigner();
   const [mintingLoading, setMintingLoading] = useState(false);
   const [rewards, setRewards] = useState("0");
-  const [locktimeDays, setLocktimeDays] = useState(30);
+  const [locktimeDays, setLocktimeDays] = useState(14);
 
   const addresses =
     chain && chain.id in contractAddresses
@@ -43,7 +44,7 @@ export default function GenesisMint(props) {
 
   async function updateMintInfo() {
     const updatedRewards = await genesisNFTProvider.getGenesisNativeTokens(
-      locktimeDays * 86400
+      locktimeDays * SECONDS_IN_DAY
     );
     setRewards(updatedRewards.toString());
   }
@@ -59,13 +60,13 @@ export default function GenesisMint(props) {
     props.setVisibility(false);
     dispatch({
       type: "success",
-      message: "You have voted.",
-      title: "Vote Successful!",
+      message: "You have Minted your Genesis NFT.",
+      title: "Mint Successful!",
       position: "topR",
     });
   };
 
-  function handleInputChange(event, newValue) {
+  function handleInputChange(_, newValue) {
     setLocktimeDays(newValue);
     updateMintInfo();
   }
@@ -75,7 +76,9 @@ export default function GenesisMint(props) {
       <div className="flex flex-row items-center justify-center m-4 text-center">
         <div className="flex flex-col">
           <Typography variant="subtitle2">Price</Typography>
-          <Typography variant="body16">0.3 ETH</Typography>
+          <Typography variant="body16">
+            {formatUnits(props.price, 18) + " ETH"}
+          </Typography>
         </div>
       </div>
       <div className="flex flex-row items-center justify-center m-4 text-center">
@@ -101,9 +104,9 @@ export default function GenesisMint(props) {
           <Slider
             valueLabelDisplay="auto"
             onChange={handleInputChange}
-            min={30}
+            min={14}
             step={1}
-            max={365}
+            max={120}
           />
         </div>
       </div>
@@ -123,7 +126,10 @@ export default function GenesisMint(props) {
           onClick={async function () {
             try {
               setMintingLoading(true);
-              const tx = await genesisNFTSigner.mint(locktime);
+              const tx = await genesisNFTSigner.mint(
+                locktimeDays * SECONDS_IN_DAY,
+                { value: props.price }
+              );
               await tx.wait(1);
               await handleMintingSuccess();
             } catch (error) {

@@ -168,10 +168,17 @@ export default function Withdraw(props) {
             if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
               try {
                 setWithdrawalLoading(true);
-                const tx = await marketSigner.withdraw(
-                  addresses[props.asset].address,
-                  amount
-                );
+                var tx;
+                if (props.asset == "ETH") {
+                  tx = await marketSigner.withdrawETH({
+                    value: amount,
+                  });
+                } else {
+                  tx = tx = await marketSigner.withdraw(
+                    addresses[props.asset].address,
+                    amount
+                  );
+                }
                 await tx.wait(1);
                 handleWithdrawalSuccess();
               } catch (error) {

@@ -75,13 +75,13 @@ export default function Liquidate(props) {
 
   const wethSigner = useContract({
     contractInterface: erc20,
-    addressOrName: addresses["WETH"].address,
+    addressOrName: addresses["ETH"].address,
     signerOrProvider: signer,
   });
 
   const wethProvider = useContract({
     contractInterface: erc20,
-    addressOrName: addresses["WETH"].address,
+    addressOrName: addresses["ETH"].address,
     signerOrProvider: provider,
   });
 

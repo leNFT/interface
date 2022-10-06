@@ -196,10 +196,17 @@ export default function Deposit(props) {
               if (BigNumber.from(amount).lte(BigNumber.from(balance))) {
                 try {
                   setDepositLoading(true);
-                  const tx = await marketSigner.deposit(
-                    addresses[props.asset].address,
-                    amount
-                  );
+                  var tx;
+                  if (props.asset == "ETH") {
+                    tx = await marketSigner.depositETH({
+                      value: amount,
+                    });
+                  } else {
+                    tx = await marketSigner.deposit(
+                      addresses[props.asset].address,
+                      amount
+                    );
+                  }
                   await tx.wait(1);
                   handleDepositSuccess();
                 } catch (error) {

@@ -1,5 +1,5 @@
 import styles from "../styles/Home.module.css";
-import { Button } from "@web3uikit/core";
+import { Button, Illustration } from "@web3uikit/core";
 import contractAddresses from "../contractAddresses.json";
 import genesisNFTContract from "../contracts/GenesisNFT.json";
 import { getNFTs } from "../helpers/getNFTs.js";
@@ -7,13 +7,22 @@ import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import GenesisMint from "../components/GenesisMint";
+import GenesisBurn from "../components/GenesisBurn";
 import StyledModal from "../components/StyledModal";
 import { useContract, useProvider, useNetwork, useAccount } from "wagmi";
+import { CardActionArea } from "@mui/material";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import { BigNumber } from "@ethersproject/bignumber";
+import { formatUnits } from "ethers/lib/utils";
 
 export default function Stake() {
-  const [supply, setSupply] = useState(0);
+  const [mintCount, setMintCount] = useState(0);
+  const [selectedToken, setSelectedToken] = useState(0);
   const [cap, setCap] = useState(0);
+  const [price, setPrice] = useState("0");
   const [visibleMintModal, setVisibleMintModal] = useState(false);
+  const [visibleBurnModal, setVisibleBurnModal] = useState(false);
   const [userGenesisNFTs, setUserGenesisNFTs] = useState([]);
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
@@ -32,11 +41,15 @@ export default function Stake() {
 
   async function updateGenesisInfo() {
     // Get supply
-    const updatedSupply = await genesisNFTProvider.getSupply();
-    setSupply(updatedSupply.toNumber());
+    const updatedMintCount = await genesisNFTProvider.getMintCount();
+    setMintCount(updatedMintCount.toNumber());
     // Get cap
     const updatedCap = await genesisNFTProvider.getCap();
     setCap(updatedCap.toNumber());
+    // Get price
+    const updatedPrice = await genesisNFTProvider.getPrice();
+    console.log();
+    setPrice(updatedPrice.toString());
   }
 
   async function updateGenesisWallet() {
@@ -68,7 +81,25 @@ export default function Stake() {
           setVisibleMintModal(false);
         }}
       >
-        <GenesisMint setVisibility={setVisibleMintModal} supply={supply} />
+        <GenesisMint
+          setVisibility={setVisibleMintModal}
+          mintCount={mintCount}
+          price={price}
+        />
+      </StyledModal>
+      <StyledModal
+        hasFooter={false}
+        title={"Burn Genesis NFT"}
+        isVisible={visibleBurnModal}
+        width="50%"
+        onCloseButtonPressed={function () {
+          setVisibleBurnModal(false);
+        }}
+      >
+        <GenesisBurn
+          setVisibility={setVisibleBurnModal}
+          tokenId={selectedToken}
+        />
       </StyledModal>
       <div className="flex flex-col items-center">
         <div className="flex flex-col items-center justify-center border-4 m-2 md:m-8 rounded-3xl bg-black/5 shadow-lg">
@@ -92,7 +123,7 @@ export default function Stake() {
                     fontSize: "h5.fontSize",
                   }}
                 >
-                  0.3 ETH
+                  {formatUnits(price, 18) + " ETH"}
                 </Box>
               </div>
             </div>
@@ -103,11 +134,14 @@ export default function Stake() {
                   fontSize: "h5.fontSize",
                 }}
               >
-                <div>{"Minted " + supply}</div>
+                <div>{"Minted " + mintCount}</div>
                 <div>{"of " + cap}</div>
               </Box>
               <div className="mt-4">
-                <LinearProgressWithLabel color="primary" value={supply / cap} />
+                <LinearProgressWithLabel
+                  color="primary"
+                  value={mintCount / cap}
+                />
               </div>
             </div>
           </div>
@@ -154,42 +188,36 @@ export default function Stake() {
                       "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                   }}
                 >
-                  <CardContent>
-                    {nft.token_uri ? (
-                      <div className="flex flex-col items-center">
-                        <Image
-                          loader={() => nft.token_uri}
-                          src={nft.token_uri}
-                          height="200"
-                          width="200"
-                          unoptimized={true}
-                          className="rounded-2xl"
-                        />
-                      </div>
-                    ) : (
+                  <CardActionArea
+                    onClick={function () {
+                      setSelectedToken(
+                        BigNumber.from(nft.id.tokenId).toNumber()
+                      );
+                      setVisibleBurnModal(true);
+                    }}
+                  >
+                    <CardContent>
                       <div className="flex flex-col items-center justify-center">
                         <Illustration
                           height="180px"
                           logo="token"
                           width="100%"
                         />
-                        Loading...
                       </div>
-                    )}
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "subtitle1.fontSize",
-                      }}
-                    >
-                      <div className="flex flex-col mt-2 items-center text-center">
-                        <div>{nft.contractMetadata.name}</div>
-                        <div>
-                          {"#" + BigNumber.from(nft.id.tokenId).toNumber()}
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle1.fontSize",
+                        }}
+                      >
+                        <div className="flex flex-col mt-2 items-center text-center">
+                          <div>
+                            {"#" + BigNumber.from(nft.id.tokenId).toNumber()}
+                          </div>
                         </div>
-                      </div>
-                    </Box>
-                  </CardContent>
+                      </Box>
+                    </CardContent>
+                  </CardActionArea>
                 </Card>
               </div>
             ))}

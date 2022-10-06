@@ -36,7 +36,7 @@
   },
   "5": {
     "Name": "goerli",
-    "WETH": {
+    "ETH": {
       "address": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
       "decimals": 18
     },
@@ -45,20 +45,20 @@
       "decimals": 6,
       "priceFeed": "0xb4c4a493AB6356497713A78FFA6c60FB53517c63"
     },
-    "ValidationLogicLib": "0x3f4209F10B6D738A48E5ED908Fa72De51c543B46",
-    "SupplyLogicLib": "0x57EA50460615810F3d449647eBF5764457FE002F",
-    "BorrowLogicLib": "0x1cfC7Df5ef2b4b22e0E4168875c5602F540B2772",
-    "LiquidationLogicLib": "0x59Ef2C740069Da8024184f7043b5154E48590A41",
-    "AddressesProvider": "0xf21b437EC1BeE5e338ccCce15708226806ca7536",
-    "Market": "0xDc0deF1ed208dDde86A9eE6e7737c18C693F29BB",
-    "LoanCenter": "0xB36970A429C57930d934De6b62c88C69B57571a5",
-    "DebtToken": "0x49cAE98955396FBf3D353B98EfFf8BdB8C0CE53d",
-    "NativeToken": "0x4Ffa30b75FdC1652769535746EB4341dC39bbAeb",
-    "NativeTokenVault": "0x779bF21ED707Fa250924F51945534320a81B89c4",
-    "GenesisNFT": "0x40103B2112aFb99f7cc7C6F158fA190DE7C656ae",
-    "InterestRate": "0xA2D7d658eE8FD43F4a92Aa22Cf95f081DB40c48f",
-    "NFTOracle": "0x1A18C43334bAd6BCB3b3F2537CcE41fc02F6eFa2",
-    "TokenOracle": "0x4a20057c616c310cb2A6E454b8ec25e20542845f",
+    "ValidationLogicLib": "0x8e216BE5EE7e0353d8d0177686Baae7b58f23925",
+    "SupplyLogicLib": "0x62166042ed189aF3259B349127397DE1dBFE8BD4",
+    "BorrowLogicLib": "0x60bC8dEB0FA4d584a73952C37e4479ed594F6C8A",
+    "LiquidationLogicLib": "0x59FF9c4324Fa816007aB67a37215b67f3B026d49",
+    "AddressesProvider": "0x7239c5fe0Ab205A5B34AA4BAB619cC2f2Bc74bac",
+    "Market": "0x356a788f9f1913CAc3728Fa08a8a5693D5CfdAE1",
+    "LoanCenter": "0x6e48Bae833ee195e1758DBA5Ad1ac5F02aE62e32",
+    "DebtToken": "0xCb82d1393B62A925922e2725E2cBbC32ddfF7Bf0",
+    "NativeToken": "0x212cba8E97b8c3C5Cf137d3a7C0C12F178412087",
+    "NativeTokenVault": "0x1908609200f1be7977B45c748DA3Cc072322EB37",
+    "GenesisNFT": "0xcf759363D25B098aEd74C1B2eb31502FCb4D4BD8",
+    "InterestRate": "0x7d6731D80246fbeCf881835a14C05aB740470140",
+    "NFTOracle": "0xE367C205178c579b6f93F90699fC36bc6018f493",
+    "TokenOracle": "0x0E17CF09e846Dbc491390EECa0D5992e2d4b27E3",
     "SupportedAssets": [
       {
         "name": "leNFT Testing NFT",

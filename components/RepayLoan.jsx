@@ -39,8 +39,8 @@ export default function RepayLoan(props) {
       ? contractAddresses[chain.id]
       : contractAddresses["1"];
 
-  const [asset, setAsset] = useState(addresses["WETH"].address);
-  const [symbol, setSymbol] = useState("WETH");
+  const [asset, setAsset] = useState(addresses["ETH"].address);
+  const [symbol, setSymbol] = useState("ETH");
 
   const dispatch = useNotification();
 
@@ -281,7 +281,14 @@ export default function RepayLoan(props) {
             if (BigNumber.from(debt).lte(BigNumber.from(balance))) {
               try {
                 setRepayLoading(true);
-                const tx = await market.repay(props.loan_id);
+                var tx;
+                if (asset == "ETH") {
+                  tx = await marketSigner.repaytETH(props.loan_id, {
+                    value: debt,
+                  });
+                } else {
+                  tx = await market.repay(props.loan_id);
+                }
                 await tx.wait(1);
                 handleRepaySuccess();
               } catch (error) {

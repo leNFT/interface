@@ -56,7 +56,7 @@ export default function Borrow(props) {
       : contractAddresses["1"];
 
   const dispatch = useNotification();
-  const [borrowAsset, setBorrowAsset] = useState("WETH");
+  const [borrowAsset, setBorrowAsset] = useState("ETH");
 
   const nativeTokenVaultProvider = useContract({
     contractInterface: nativeTokenVaultContract.abi,
@@ -391,14 +391,27 @@ export default function Borrow(props) {
                       props.token_id,
                       chain.id
                     );
-                    const tx = await marketSigner.borrow(
-                      addresses[borrowAsset].address,
-                      amount,
-                      props.token_address,
-                      props.token_id,
-                      requestID,
-                      priceSig
-                    );
+                    if (borrowAsset == "ETH") {
+                      tx = await marketSigner.borrowETH(
+                        addresses[borrowAsset].address,
+                        props.token_address,
+                        props.token_id,
+                        requestID,
+                        priceSig,
+                        {
+                          value: amount,
+                        }
+                      );
+                    } else {
+                      tx = await marketSigner.borrow(
+                        addresses[borrowAsset].address,
+                        amount,
+                        props.token_address,
+                        props.token_id,
+                        requestID,
+                        priceSig
+                      );
+                    }
                     console.log(tx);
                     await tx.wait(1);
                     handleBorrowSuccess();

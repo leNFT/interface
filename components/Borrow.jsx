@@ -227,7 +227,9 @@ export default function Borrow(props) {
   }, [reserveAddress, props.token_id]);
 
   useEffect(() => {
-    updateMaxBorrowAmount();
+    if (reserveAddress) {
+      updateMaxBorrowAmount();
+    }
   }, [genesisBoost]);
 
   useEffect(() => {

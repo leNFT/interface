@@ -18,6 +18,7 @@
     "TokenOracle": "0xebfa34f6Da8CAb51cFaF535E271Cf0AC6CE2ef5f",
     "NativeTokenVault": "",
     "NativeToken": "",
+    "GenesisNFT": "",
     "DebtToken": "0x765F6E28Be958d579056DEAA7A25892F0c82308b",
     "SupportedAssets": [
       {

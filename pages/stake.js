@@ -232,7 +232,7 @@ export default function Stake() {
                   fontSize: 16,
                   textColor: "white",
                 }}
-                text="Deposit"
+                text="Vault Deposit"
                 theme="custom"
                 size="large"
                 radius="12"
@@ -248,7 +248,7 @@ export default function Stake() {
                   fontSize: 16,
                   textColor: "white",
                 }}
-                text="Withdraw"
+                text="Vault Withdraw"
                 theme="custom"
                 size="large"
                 radius="12"

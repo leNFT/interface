@@ -224,9 +224,7 @@ export default function Stake() {
             ))}
           </div>
         ) : (
-          <div className="flex flex-row m-8 p-2">
-            You don't own any Genesis NFTs yet.
-          </div>
+          <div className="flex flex-row m-8 p-2">No Genesis NFTs found.</div>
         )}
       </div>
     </div>

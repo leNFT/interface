@@ -180,7 +180,7 @@ export default function Borrow(props) {
 
     //Get genesis boost
     var genesisBoostAmount = "0";
-    console.log("updatemaxamount genesisBoost", genesisBoost);
+    console.log("updatemaxamountgenesisBoost", genesisBoost);
     if (genesisBoost) {
       genesisBoostAmount = await genesisNFTProvider.getLTVBoost();
     }
@@ -466,16 +466,14 @@ export default function Borrow(props) {
                     );
                     if (borrowAsset == "ETH") {
                       tx = await marketSigner.borrowETH(
-                        addresses[borrowAsset].address,
+                        amount,
                         props.token_address,
                         props.token_id,
                         genesisNFTId,
                         requestID,
-                        priceSig,
-                        {
-                          value: amount,
-                        }
+                        priceSig
                       );
+                      await tx.wait(1);
                     } else {
                       tx = await marketSigner.borrow(
                         addresses[borrowAsset].address,
@@ -486,9 +484,8 @@ export default function Borrow(props) {
                         requestID,
                         priceSig
                       );
+                      await tx.wait(1);
                     }
-                    console.log(tx);
-                    await tx.wait(1);
                     handleBorrowSuccess();
                   } catch (error) {
                     console.log(error);

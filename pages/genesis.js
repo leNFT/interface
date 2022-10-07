@@ -135,8 +135,8 @@ export default function Stake() {
                   fontSize: "h5.fontSize",
                 }}
               >
-                <div>{"Minted " + mintCount}</div>
-                <div>{"of " + cap}</div>
+                <div>{mintCount + " of " + cap}</div>
+                <div>{"minted"}</div>
               </Box>
               <div className="mt-4">
                 <LinearProgressWithLabel

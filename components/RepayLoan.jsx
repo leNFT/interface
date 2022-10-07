@@ -22,11 +22,12 @@ import {
   useProvider,
   useSigner,
 } from "wagmi";
-import Box from "@mui/material/Box";
 
 export default function RepayLoan(props) {
   const [loan, setLoan] = useState();
   const [debt, setDebt] = useState(0);
+  const [approved, setApproved] = useState(false);
+  const [approvalLoading, setApprovalLoading] = useState(false);
   const [tokenPrice, setTokenPrice] = useState("0");
   const [balance, setBalance] = useState("0");
   const { isConnected, address } = useAccount();
@@ -50,10 +51,16 @@ export default function RepayLoan(props) {
     signerOrProvider: signer,
   });
 
-  const token = useContract({
+  const tokenProvider = useContract({
     contractInterface: erc20,
     addressOrName: asset,
     signerOrProvider: provider,
+  });
+
+  const tokenSigner = useContract({
+    contractInterface: erc20,
+    addressOrName: asset,
+    signerOrProvider: signer,
   });
 
   const loanCenter = useContract({
@@ -71,13 +78,22 @@ export default function RepayLoan(props) {
 
     const updatedAsset = await reserve.getAsset();
     setAsset(updatedAsset);
+  }
 
-    const updatedAssetSymbol = await token.symbol();
-    setSymbol(updatedAssetSymbol);
+  async function getTokenAllowance() {
+    const allowance = await tokenProvider.allowance(address, loan.reserve);
+
+    console.log("Got allowance:", allowance);
+
+    if (!allowance.eq(BigNumber.from(0))) {
+      setApproved(true);
+    } else {
+      setApproved(false);
+    }
   }
 
   async function updateTokenBalance() {
-    const updatedBalance = await token.balanceOf(address);
+    const updatedBalance = await tokenProvider.balanceOf(address);
     setBalance(updatedBalance.toString());
   }
 
@@ -114,6 +130,12 @@ export default function RepayLoan(props) {
   }, [loan]);
 
   useEffect(() => {
+    if (loan && asset) {
+      getTokenAllowance();
+    }
+  }, [loan, asset]);
+
+  useEffect(() => {
     if (asset) {
       updateTokenBalance();
     }
@@ -125,6 +147,16 @@ export default function RepayLoan(props) {
       type: "success",
       message: "Your NFT will be available shortly.",
       title: "Repay Successful!",
+      position: "topR",
+    });
+  };
+
+  const handleApprovalSuccess = async function () {
+    setApproved(true);
+    dispatch({
+      type: "success",
+      message: "You can now deposit.",
+      title: "Approval Successful!",
       position: "topR",
     });
   };
@@ -182,8 +214,9 @@ export default function RepayLoan(props) {
                       .div(10000)
                       .toString(),
                     18
-                  )}{" "}
-                  WETH
+                  ) +
+                    " " +
+                    symbol}
                 </Typography>
               </div>
             )}
@@ -202,7 +235,7 @@ export default function RepayLoan(props) {
             <div className="flex flex-col">
               <Typography variant="subtitle2">Asset Pricing</Typography>
               <Typography variant="body16">
-                {formatUnits(tokenPrice, 18) + " WETH"}
+                {formatUnits(tokenPrice, 18) + " ETH"}
               </Typography>
             </div>
           </div>
@@ -265,47 +298,81 @@ export default function RepayLoan(props) {
         </div>
       </div>
       <div className="flex m-8">
-        <Button
-          text="Repay Loan"
-          theme="secondary"
-          isFullWidth
-          loadingProps={{
-            spinnerColor: "#000000",
-            spinnerType: "loader",
-            direction: "right",
-            size: "24",
-          }}
-          loadingText=""
-          isLoading={repayLoading}
-          onClick={async function () {
-            if (BigNumber.from(debt).lte(BigNumber.from(balance))) {
-              try {
-                setRepayLoading(true);
-                var tx;
-                if (asset == "ETH") {
-                  tx = await marketSigner.repaytETH(props.loan_id, {
-                    value: debt,
-                  });
-                } else {
-                  tx = await market.repay(props.loan_id);
+        {approved ? (
+          <Button
+            text="Repay Loan"
+            theme="secondary"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
+            }}
+            loadingText=""
+            isLoading={repayLoading}
+            onClick={async function () {
+              if (BigNumber.from(debt).lte(BigNumber.from(balance))) {
+                try {
+                  setRepayLoading(true);
+                  var tx;
+                  if (symbol == "ETH") {
+                    console.log("Repay ETH");
+                    console.log("debt", debt);
+                    tx = await market.repayETH(props.loan_id, {
+                      value: debt,
+                    });
+                    await tx.wait(1);
+                  } else {
+                    tx = await market.repay(props.loan_id);
+                    await tx.wait(1);
+                  }
+                  handleRepaySuccess();
+                } catch (error) {
+                  console.log(error);
+                } finally {
+                  setRepayLoading(false);
                 }
+              } else {
+                dispatch({
+                  type: "error",
+                  message: "Amount is bigger than balance",
+                  title: "Error",
+                  position: "topR",
+                });
+              }
+            }}
+          />
+        ) : (
+          <Button
+            text="Approve"
+            theme="secondary"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
+            }}
+            loadingText=""
+            isLoading={approvalLoading}
+            onClick={async function () {
+              try {
+                setApprovalLoading(true);
+                const tx = await tokenSigner.approve(
+                  loan.reserve,
+                  "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+                );
                 await tx.wait(1);
-                handleRepaySuccess();
+                handleApprovalSuccess();
               } catch (error) {
                 console.log(error);
               } finally {
-                setRepayLoading(false);
+                setApprovalLoading(false);
               }
-            } else {
-              dispatch({
-                type: "error",
-                message: "Amount is bigger than balance",
-                title: "Error",
-                position: "topR",
-              });
-            }
-          }}
-        />
+            }}
+          ></Button>
+        )}
       </div>
     </div>
   );

@@ -83,9 +83,6 @@ export default function Withdraw(props) {
     if (reserveAddress && props.asset) {
       console.log("Got reserve address, setting the rest...", reserveAddress);
       updateMaxAmount();
-      if (props.asset == "ETH") {
-        getWETHAllowance();
-      }
     }
   }, [reserveAddress, props.asset]);
 

@@ -381,7 +381,7 @@ export default function App() {
                         BigNumber.from(walletMaxBorrowable).div(2),
                         18
                       ) +
-                      " WETH"}
+                      " ETH"}
                   </div>
                 </Box>
               </div>

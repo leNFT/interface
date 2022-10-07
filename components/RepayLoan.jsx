@@ -249,7 +249,7 @@ export default function RepayLoan(props) {
                       "% + " +
                       loan.boost.toNumber() / 100 +
                       "% (Boost) = " +
-                      loan.maxLTV.add(loan.boost).div(100).toNumber() +
+                      loan.maxLTV.add(loan.boost).toNumber() / 100 +
                       "%"
                     : "Token Price Appraisal Error"}
                 </Typography>

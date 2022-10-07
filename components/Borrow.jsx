@@ -465,6 +465,7 @@ export default function Borrow(props) {
                       props.token_id,
                       chain.id
                     );
+                    var tx;
                     if (borrowAsset == "ETH") {
                       tx = await marketSigner.borrowETH(
                         amount,

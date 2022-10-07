@@ -3,6 +3,7 @@ import {
   getAssetPriceSig,
   getNewRequestID,
 } from "../helpers/getAssetPriceSig.js";
+import { getNFTs } from "../helpers/getNFTs.js";
 import { getAssetPrice } from "../helpers/getAssetPrice.js";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits, parseUnits } from "@ethersproject/units";
@@ -20,9 +21,10 @@ import marketContract from "../contracts/Market.json";
 import nftOracleContract from "../contracts/NFTOracle.json";
 import tokenOracleContract from "../contracts/TokenOracle.json";
 import reserveContract from "../contracts/Reserve.json";
+import genesisNFTContract from "../contracts/GenesisNFT.json";
 import erc721 from "../contracts/erc721.json";
 import Image from "next/image";
-import { Divider } from "@mui/material";
+import { Divider, Switch } from "@mui/material";
 import {
   useAccount,
   useNetwork,
@@ -34,6 +36,9 @@ import nativeTokenVaultContract from "../contracts/NativeTokenVault.json";
 
 export default function Borrow(props) {
   const PRICE_PRECISION = "1000000000000000000";
+  const [genesisNFTId, setGenesisNFTId] = useState(0);
+  const [genesisBoost, setGenesisBoost] = useState(false);
+  const [loadingGenesisBoost, setLoadingGenesisBoost] = useState(false);
   const [amount, setAmount] = useState("0");
   const [maxAmount, setMaxAmount] = useState("0");
   const [tokenPrice, setTokenPrice] = useState("0");
@@ -106,12 +111,40 @@ export default function Borrow(props) {
     signerOrProvider: provider,
   });
 
+  const genesisNFTProvider = useContract({
+    contractInterface: genesisNFTContract.abi,
+    addressOrName: addresses.GenesisNFT,
+    signerOrProvider: provider,
+  });
+
   async function getReserve() {
     const updatedReserveAddress = await marketProvider.getReserveAddress(
       addresses[borrowAsset].address
     );
     setReserveAddress(updatedReserveAddress);
     console.log("updatedReserveAddress", updatedReserveAddress);
+  }
+
+  async function getGenesisNFT() {
+    // GEt user genesis NFTs
+    const userGenesisNFTs = await getNFTs(
+      address,
+      addresses.GenesisNFT,
+      chain.id
+    );
+    console.log("Got Genesis NFTs", userGenesisNFTs);
+
+    //Find an NFT that's not being used by a loan
+    for (let i = 0; i < userGenesisNFTs.length; i++) {
+      const id = Number(userGenesisNFTs[i].id.tokenId);
+      const activeState = await genesisNFTProvider.getActiveState(id);
+      console.log("Active state for " + id + " is " + activeState);
+      if (activeState == false) {
+        console.log("Using token ID for boost", id);
+        setGenesisNFTId(id);
+        break;
+      }
+    }
   }
 
   async function getTokenApproval() {
@@ -138,12 +171,23 @@ export default function Borrow(props) {
     console.log("maxCollateralization updated", updatedMaxCollateralization);
     setMaxCollateralization(updatedMaxCollateralization);
 
-    //Get collaterization boost
-    const updatedCollaterizationBoost =
+    //Get vote collaterization boost
+    const voteCollaterizationBoost =
       await nativeTokenVaultProvider.getVoteCollateralizationBoost(
         address,
         props.token_address
       );
+
+    //Get genesis boost
+    var genesisBoostAmount = "0";
+    console.log("updatemaxamount genesisBoost", genesisBoost);
+    if (genesisBoost) {
+      genesisBoostAmount = await genesisNFTProvider.getLTVBoost();
+    }
+
+    // Update boost state variable
+    const updatedCollaterizationBoost =
+      voteCollaterizationBoost.add(genesisBoostAmount);
     console.log("updatedCollaterizationBoost", updatedCollaterizationBoost);
     setCollateralizationBoost(updatedCollaterizationBoost);
 
@@ -171,6 +215,7 @@ export default function Borrow(props) {
     console.log("Updated Max Borrow Amount:", updatedMaxAmount);
     setMaxAmount(updatedMaxAmount);
     setLoadingMaxAmount(false);
+    setLoadingGenesisBoost(false);
   }
 
   useEffect(() => {
@@ -182,11 +227,16 @@ export default function Borrow(props) {
   }, [reserveAddress, props.token_id]);
 
   useEffect(() => {
+    updateMaxBorrowAmount();
+  }, [genesisBoost]);
+
+  useEffect(() => {
     if (isConnected) {
       setLoadingMaxAmount(true);
       setLoadingBorrowRate(true);
       console.log("Getting reserve", addresses[borrowAsset].address);
       getReserve();
+      getGenesisNFT();
     }
   }, [isConnected, borrowAsset]);
 
@@ -220,6 +270,12 @@ export default function Borrow(props) {
     }
   }
 
+  const handleGenesisSwitchChange = (event) => {
+    setLoadingGenesisBoost(true);
+    console.log("Changed Genesis Switch", event.target.checked);
+    setGenesisBoost(event.target.checked);
+  };
+
   return (
     <div className={styles.container}>
       <div className="flex flex-col items-center">
@@ -238,6 +294,21 @@ export default function Borrow(props) {
               <div>
                 <Illustration height="180px" logo="token" width="100%" />
                 Loading...
+              </div>
+            )}
+            {genesisNFTId != 0 && (
+              <div className="flex flex-row justify-center items-center">
+                <Typography variant="caption14">Genesis Boost:</Typography>
+                {loadingGenesisBoost ? (
+                  <div className="m-3">
+                    <Loading size={18} spinnerColor="#000000" />
+                  </div>
+                ) : (
+                  <Switch
+                    checked={genesisBoost}
+                    onChange={handleGenesisSwitchChange}
+                  />
+                )}
               </div>
             )}
           </div>
@@ -396,6 +467,7 @@ export default function Borrow(props) {
                         addresses[borrowAsset].address,
                         props.token_address,
                         props.token_id,
+                        genesisNFTId,
                         requestID,
                         priceSig,
                         {
@@ -408,6 +480,7 @@ export default function Borrow(props) {
                         amount,
                         props.token_address,
                         props.token_id,
+                        genesisNFTId,
                         requestID,
                         priceSig
                       );

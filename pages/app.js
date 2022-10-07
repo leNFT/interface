@@ -66,7 +66,7 @@ export default function App() {
   async function setupUI() {
     console.log("Setting up UI");
 
-    // Get user NFT assets, special case for testnet goerli
+    // Get user NFT assetss
     const userNFTs = await getNFTs(address, "", chain.id);
     console.log(
       "supportedAssets:",

@@ -339,7 +339,7 @@ export default function Borrow(props) {
                 ) : (
                   <Typography variant="body16">
                     {tokenPrice != "0"
-                      ? formatUnits(tokenPrice, 18) + " WETH"
+                      ? formatUnits(tokenPrice, 18) + " " + borrowAsset
                       : "Token Price Appraisal Error"}
                   </Typography>
                 )}
@@ -381,8 +381,9 @@ export default function Borrow(props) {
                       .div(10000)
                       .toString(),
                     18
-                  )}{" "}
-                  WETH
+                  ) +
+                    " " +
+                    borrowAsset}
                 </Typography>
               </div>
             </div>

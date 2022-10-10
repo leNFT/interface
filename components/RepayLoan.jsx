@@ -2,7 +2,7 @@ import contractAddresses from "../contractAddresses.json";
 import { useNotification, Illustration } from "@web3uikit/core";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits } from "@ethersproject/units";
-import { Button, Typography, Tooltip } from "@web3uikit/core";
+import { Button, Typography, Tooltip, Input } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 import styles from "../styles/Home.module.css";
@@ -30,6 +30,7 @@ export default function RepayLoan(props) {
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [tokenPrice, setTokenPrice] = useState("0");
   const [balance, setBalance] = useState("0");
+  const [amount, setAmount] = useState("0");
   const { isConnected, address } = useAccount();
   const { chain } = useNetwork();
   const provider = useProvider();
@@ -160,6 +161,16 @@ export default function RepayLoan(props) {
       position: "topR",
     });
   };
+
+  function handleInputChange(e) {
+    if (e.target.value != "") {
+      setAmount(
+        parseUnits(e.target.value, addresses[symbol].decimals).toString()
+      );
+    } else {
+      setAmount("0");
+    }
+  }
 
   return (
     <div className={styles.container}>
@@ -297,6 +308,45 @@ export default function RepayLoan(props) {
           </Typography>
         </div>
       </div>
+      <div className="flex flex-row items-center justify-center mx-8 mt-12 mb-2">
+        <Input
+          label="Amount"
+          type="number"
+          step="any"
+          value={amount && formatUnits(amount, addresses[symbol].decimals)}
+          validation={{
+            numberMax: Number(formatUnits(debt, addresses[symbol].decimals)),
+            numberMin: 0,
+          }}
+          onChange={handleInputChange}
+        />
+      </div>
+      <div className="flex flex-row justify-center">
+        <div className="flex flex-col">
+          <Button
+            onClick={() => setAmount(BigNumber.from(debt).mul(2500).div(10000))}
+            text="25%"
+            theme="outline"
+          />
+        </div>
+        <div className="flex flex-col">
+          <Button
+            onClick={() => setAmount(BigNumber.from(debt).mul(5000).div(10000))}
+            text="50%"
+            theme="outline"
+          />
+        </div>
+        <div className="flex flex-col">
+          <Button
+            onClick={() => setAmount(BigNumber.from(debt).mul(7500).div(10000))}
+            text="75%"
+            theme="outline"
+          />
+        </div>
+        <div className="flex flex-col">
+          <Button onClick={() => setAmount(debt)} text="100%" theme="outline" />
+        </div>
+      </div>
       <div className="flex m-8">
         {approved ? (
           <Button
@@ -318,13 +368,13 @@ export default function RepayLoan(props) {
                   var tx;
                   if (symbol == "ETH") {
                     console.log("Repay ETH");
-                    console.log("debt", debt);
+                    console.log("amount", amount);
                     tx = await market.repayETH(props.loan_id, {
-                      value: debt,
+                      value: amount,
                     });
                     await tx.wait(1);
                   } else {
-                    tx = await market.repay(props.loan_id);
+                    tx = await market.repay(props.loan_id, amount);
                     await tx.wait(1);
                   }
                   handleRepaySuccess();

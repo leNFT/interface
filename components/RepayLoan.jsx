@@ -152,6 +152,16 @@ export default function RepayLoan(props) {
     });
   };
 
+  const handlePartialRepaySuccess = async function () {
+    props.setVisibility(false);
+    dispatch({
+      type: "success",
+      message: "Your loan was partially repaid.",
+      title: "Repay Successful!",
+      position: "topR",
+    });
+  };
+
   const handleApprovalSuccess = async function () {
     setApproved(true);
     dispatch({
@@ -362,7 +372,7 @@ export default function RepayLoan(props) {
             loadingText=""
             isLoading={repayLoading}
             onClick={async function () {
-              if (BigNumber.from(debt).lte(BigNumber.from(balance))) {
+              if (BigNumber.from(amount).lte(BigNumber.from(balance))) {
                 try {
                   setRepayLoading(true);
                   var tx;
@@ -377,7 +387,11 @@ export default function RepayLoan(props) {
                     tx = await market.repay(props.loan_id, amount);
                     await tx.wait(1);
                   }
-                  handleRepaySuccess();
+                  if (amount == debt) {
+                    handleRepaySuccess();
+                  } else {
+                    handlePartialRepaySuccess();
+                  }
                 } catch (error) {
                   console.log(error);
                 } finally {

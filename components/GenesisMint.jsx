@@ -57,8 +57,8 @@ export default function GenesisMint(props) {
 
   const handleMintingSuccess = async function () {
     console.log("Minted");
-    props.updateUI();
     props.setVisibility(false);
+    props.updateUI();
     dispatch({
       type: "success",
       message: "You have Minted your Genesis NFT.",

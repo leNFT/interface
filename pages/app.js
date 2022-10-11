@@ -5,12 +5,7 @@ import { getNFTImage } from "../helpers/getNFTImage.js";
 import { getNFTs } from "../helpers/getNFTs.js";
 import { formatUnits } from "@ethersproject/units";
 import { useState, useEffect } from "react";
-import {
-  useNotification,
-  Tooltip,
-  Illustration,
-  Loading,
-} from "@web3uikit/core";
+import { useNotification, Tooltip, Loading } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
 import { BigNumber } from "@ethersproject/bignumber";
 import Borrow from "../components/Borrow";
@@ -288,11 +283,14 @@ export default function App() {
                               className="rounded-3xl"
                             />
                           ) : (
-                            <Illustration
-                              height="180px"
-                              logo="chest"
-                              width="100%"
-                            />
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "caption",
+                              }}
+                            >
+                              Can't load image.
+                            </Box>
                           )}
                           <div className="flex flex-row mt-6">
                             <div className="flex flex-col">
@@ -422,14 +420,14 @@ export default function App() {
                               />
                             </div>
                           ) : (
-                            <div className="flex flex-col items-center justify-center">
-                              <Illustration
-                                height="180px"
-                                logo="token"
-                                width="100%"
-                              />
-                              Loading...
-                            </div>
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "caption",
+                              }}
+                            >
+                              Can't load Image.
+                            </Box>
                           )}
                           <Box
                             sx={{

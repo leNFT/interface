@@ -285,7 +285,6 @@ export default function App() {
                               src={loan.tokenURI}
                               height="200"
                               width="200"
-                              unoptimized={true}
                               className="rounded-3xl"
                             />
                           ) : (
@@ -419,7 +418,6 @@ export default function App() {
                                 src={supportedAsset.token_uri}
                                 height="200"
                                 width="200"
-                                unoptimized={true}
                                 className="rounded-2xl"
                               />
                             </div>
@@ -532,7 +530,6 @@ export default function App() {
                                   src={unsupportedAsset.token_uri}
                                   height="120"
                                   width="120"
-                                  unoptimized={true}
                                   className="rounded-2xl"
                                 />
                               </div>

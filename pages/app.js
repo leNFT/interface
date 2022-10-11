@@ -65,6 +65,7 @@ export default function App() {
 
   async function setupUI() {
     console.log("Setting up UI");
+    setLoadingUI(true);
 
     // Get user NFT assetss
     const userNFTs = await getNFTs(address, "", chain.id);
@@ -349,6 +350,7 @@ export default function App() {
                       token_address={selectedLoan.tokenAddress}
                       token_id={selectedLoan.tokenId}
                       token_uri={selectedLoan.tokenURI}
+                      updateUI={setupUI}
                     />
                   </StyledModal>
                 )}
@@ -477,6 +479,7 @@ export default function App() {
                   }
                   token_id={BigNumber.from(selectedAsset.id.tokenId).toNumber()}
                   token_uri={selectedAsset.token_uri}
+                  updateUI={setupUI}
                 />
               </StyledModal>
             )}

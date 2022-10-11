@@ -243,6 +243,7 @@ export default function Borrow(props) {
   }, [isConnected, borrowAsset]);
 
   const handleBorrowSuccess = async function () {
+    props.updateUI();
     props.setVisibility(false);
     dispatch({
       type: "success",

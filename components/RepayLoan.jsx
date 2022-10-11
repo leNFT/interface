@@ -143,6 +143,7 @@ export default function RepayLoan(props) {
   }, [asset]);
 
   const handleRepaySuccess = async function () {
+    props.updateUI();
     props.setVisibility(false);
     dispatch({
       type: "success",
@@ -153,6 +154,7 @@ export default function RepayLoan(props) {
   };
 
   const handlePartialRepaySuccess = async function () {
+    props.updateUI();
     props.setVisibility(false);
     dispatch({
       type: "success",

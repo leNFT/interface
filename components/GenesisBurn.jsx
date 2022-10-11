@@ -56,6 +56,7 @@ export default function GenesisBurn(props) {
 
   const handleBurnSuccess = async function () {
     console.log("Burned");
+    props.updateUI();
     props.setVisibility(false);
     dispatch({
       type: "success",

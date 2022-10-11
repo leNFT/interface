@@ -57,6 +57,7 @@ export default function GenesisMint(props) {
 
   const handleMintingSuccess = async function () {
     console.log("Minted");
+    props.updateUI();
     props.setVisibility(false);
     dispatch({
       type: "success",

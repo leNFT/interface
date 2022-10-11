@@ -64,10 +64,14 @@ export default function Stake() {
     setUserGenesisNFTs(updatedUserGenesisNFTs);
   }
 
+  async function updateUI() {
+    updateGenesisInfo();
+    updateGenesisWallet();
+  }
+
   useEffect(() => {
     if (isConnected) {
-      updateGenesisInfo();
-      updateGenesisWallet();
+      updateUI();
     }
   }, [isConnected]);
 
@@ -86,6 +90,7 @@ export default function Stake() {
           setVisibility={setVisibleMintModal}
           mintCount={mintCount}
           price={price}
+          updateUI={updateUI}
         />
       </StyledModal>
       <StyledModal
@@ -100,6 +105,7 @@ export default function Stake() {
         <GenesisBurn
           setVisibility={setVisibleBurnModal}
           tokenId={selectedToken}
+          updateUI={updateUI}
         />
       </StyledModal>
       <div className="flex flex-col items-center">

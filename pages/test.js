@@ -14,6 +14,7 @@ import {
 export default function Test() {
   const [mintingLoading, setMintingLoading] = useState(false);
   const [nativeTokenLoading, setNativeTokenLoading] = useState(false);
+  const [rewardsLoading, setRewardsLoading] = useState(false);
   const { address } = useAccount();
   const { chain } = useNetwork();
   const { data: signer } = useSigner();
@@ -75,6 +76,25 @@ export default function Test() {
             console.log(error);
           } finally {
             setNativeTokenLoading(false);
+          }
+        }}
+      />
+      <Button
+        text="Distribute Rewards"
+        isFullWidth
+        isLoading={rewardsLoading}
+        loadingProps={{
+          spinnerColor: "#000000",
+        }}
+        onClick={async function () {
+          try {
+            setRewardsLoading(true);
+            const tx = await nativeTokenSigner.distributeRewards();
+            await tx.wait(1);
+          } catch (error) {
+            console.log(error);
+          } finally {
+            setRewardsLoading(false);
           }
         }}
       />

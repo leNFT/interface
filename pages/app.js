@@ -289,7 +289,7 @@ export default function App() {
                                 fontSize: "caption",
                               }}
                             >
-                              Can't load image.
+                              {"Can't load image"}.
                             </Box>
                           )}
                           <div className="flex flex-row mt-6">
@@ -426,7 +426,7 @@ export default function App() {
                                 fontSize: "caption",
                               }}
                             >
-                              Can't load Image.
+                              {"Can't load Image"}.
                             </Box>
                           )}
                           <Box

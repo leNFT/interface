@@ -186,7 +186,7 @@ export default function Stake() {
             {userGenesisNFTs.map((nft) => (
               <div
                 key={nft.id.tokenId}
-                className="flex m-4 items-center justify-center max-w-[300px]"
+                className="flex m-4 items-center justify-center"
               >
                 <Card
                   sx={{
@@ -204,23 +204,14 @@ export default function Stake() {
                     }}
                   >
                     <CardContent>
-                      <div className="flex flex-col items-center justify-center">
-                        <Illustration
-                          height="180px"
-                          logo="token"
-                          width="100%"
-                        />
-                      </div>
                       <Box
                         sx={{
                           fontFamily: "Monospace",
-                          fontSize: "subtitle1.fontSize",
+                          fontSize: "h1.fontSize",
                         }}
                       >
                         <div className="flex flex-col mt-2 items-center text-center">
-                          <div>
-                            {"#" + BigNumber.from(nft.id.tokenId).toNumber()}
-                          </div>
+                          {"#" + BigNumber.from(nft.id.tokenId).toNumber()}
                         </div>
                       </Box>
                     </CardContent>

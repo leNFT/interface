@@ -243,14 +243,14 @@ export default function App() {
               </Box>
             </div>
             {loans.length == 0 ? (
-              <div className="p-8">
+              <div className="m-8">
                 <Box
                   sx={{
                     fontFamily: "Monospace",
                     fontSize: "subtitle1.fontSize",
                   }}
                 >
-                  You have 0 active loans.
+                  No active loans found.
                 </Box>
               </div>
             ) : (
@@ -366,7 +366,7 @@ export default function App() {
                   <div className="text-xl md:text-4xl">NFT Wallet</div>
                 </Box>
               </div>
-              <div className="flex mb-0 flex-row my-4">
+              <div className="flex mb-0 flex-row mt-4">
                 <Box
                   sx={{
                     fontFamily: "Monospace",

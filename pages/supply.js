@@ -20,11 +20,7 @@ export default function Supply() {
     var newTableData = [];
 
     reserves.forEach((reserve) => {
-      newTableData.push([
-        reserve.name,
-        "Moralis Magi",
-        <Tag color="blue" text="Nft Collection" />,
-      ]);
+      newTableData.push([reserve.address, reserve.block, 0]);
     });
 
     setTableData(newTableData);
@@ -53,7 +49,7 @@ export default function Supply() {
         />
       </StyledModal>
       <div className="flex flex-col">
-        <div className="flex flex-row justify-ends">
+        <div className="flex flex-row justify-end">
           <Button
             customize={{
               backgroundColor: "grey",
@@ -74,7 +70,11 @@ export default function Supply() {
             columnsConfig="2fr 2fr 2fr"
             tableBackgroundColor="lightblue"
             data={tableData}
-            header={[<span>Name</span>, <span>Age</span>, <span>TVL</span>]}
+            header={[
+              <span key="0">Address</span>,
+              <span key="1">Block</span>,
+              <span key="2">TVL</span>,
+            ]}
             isColumnSortable={[false, true, true]}
             onPageNumberChanged={function noRefCheck() {}}
             onRowClick={function noRefCheck() {}}

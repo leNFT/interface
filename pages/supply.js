@@ -49,7 +49,7 @@ export default function Supply() {
         />
       </StyledModal>
       <div className="flex flex-col">
-        <div className="flex flex-row justify-end">
+        <div className="flex flex-row justify-end m-2">
           <Button
             customize={{
               backgroundColor: "grey",
@@ -65,9 +65,9 @@ export default function Supply() {
             }}
           />
         </div>
-        <div className="flex flex-row">
+        <div className="m-2">
           <Table
-            columnsConfig="2fr 2fr 2fr"
+            columnsConfig="4fr 2fr 2fr"
             tableBackgroundColor="lightblue"
             data={tableData}
             header={[

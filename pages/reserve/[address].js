@@ -1,20 +1,26 @@
 import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 import { Button, Tooltip, Loading } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
-import StyledModal from "../components/StyledModal";
+import StyledModal from "../../components/StyledModal";
 import { formatUnits } from "@ethersproject/units";
-import contractAddresses from "../contractAddresses.json";
+import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
-import marketContract from "../contracts/Market.json";
-import tokenOracleContract from "../contracts/TokenOracle.json";
-import reserveContract from "../contracts/Reserve.json";
-import LinearProgressWithLabel from "./LinearProgressWithLabel";
-import Deposit from "./Deposit";
-import Withdraw from "./Withdraw";
+import marketContract from "../../contracts/Market.json";
+import tokenOracleContract from "../../contracts/TokenOracle.json";
+import reserveContract from "../../contracts/Reserve.json";
+import LinearProgressWithLabel from "../../components/LinearProgressWithLabel";
+import Deposit from "../../components/Deposit";
+import Withdraw from "../../components/Withdraw";
 import Box from "@mui/material/Box";
+import erc20 from "../../contracts/erc20.json";
+import { ethers } from "ethers";
+import { useRouter } from "next/router";
 
-export default function ReserveInfo(props) {
+export default function Reserve() {
+  const router = useRouter();
   const [debt, setDebt] = useState("0");
+  const [asset, setAsset] = useState("");
+  const [assetSymbol, setAssetSymbol] = useState("");
   const [visibleDepositModal, setVisibleDepositModal] = useState(false);
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
   const [maxAmount, setMaxAmount] = useState("0");
@@ -22,7 +28,6 @@ export default function ReserveInfo(props) {
   const [supplyRate, setSupplyRate] = useState(0);
   const [borrowRate, setBorrowRate] = useState(0);
   const [utilizationRate, setUtilizationRate] = useState(0);
-  const [reserveAddress, setReserveAddress] = useState("");
   const [ethPrice, setETHPrice] = useState("0");
   const [loadingPrice, setLoadingPrice] = useState(false);
   const [loadingReserve, setLoadingReserve] = useState(false);
@@ -41,21 +46,21 @@ export default function ReserveInfo(props) {
     signerOrProvider: provider,
   });
 
-  const reserve = useContract({
-    contractInterface: reserveContract.abi,
-    addressOrName: reserveAddress,
-    signerOrProvider: provider,
-  });
-
   const tokenOracle = useContract({
     contractInterface: tokenOracleContract.abi,
     addressOrName: addresses.TokenOracle,
     signerOrProvider: provider,
   });
 
+  const reserve = useContract({
+    contractInterface: reserveContract.abi,
+    addressOrName: router.query.address,
+    signerOrProvider: provider,
+  });
+
   async function updateAssetETHPrice() {
     const updatedAssetETHPrice = (
-      await tokenOracle.getTokenETHPrice(addresses[props.asset].address)
+      await tokenOracle.getTokenETHPrice(asset)
     ).toString();
     setETHPrice(updatedAssetETHPrice);
     console.log("updatedAssetETHPrice", updatedAssetETHPrice);
@@ -64,18 +69,19 @@ export default function ReserveInfo(props) {
     setLoadingPrice(false);
   }
 
-  async function getReserve() {
-    const updatedReserveAddress = (
-      await market.getReserveAddress(addresses[props.asset].address)
-    ).toString();
-    setReserveAddress(updatedReserveAddress);
-    console.log("updatedReserveAddress", updatedReserveAddress);
-  }
-
   async function getReserveDetails() {
     const updatedDebt = await reserve.getDebt();
     console.log("Updated Debt:", updatedDebt);
     setDebt(updatedDebt.toString());
+
+    const updatedAsset = await reserve.getAsset();
+    console.log("Updated Asset:", updatedAsset);
+    setAsset(updatedAsset.toString());
+
+    const assetContract = new ethers.Contract(updatedAsset, erc20, provider);
+    const updatedAssetSymbol = await assetContract.symbol();
+    console.log("Updated Asset Symbol:", updatedAssetSymbol);
+    setAssetSymbol(updatedAssetSymbol.toString());
 
     const updatedUnderlyingBalance = await reserve.getUnderlyingBalance();
     console.log("Updated Underlying Balance:", updatedUnderlyingBalance);
@@ -102,28 +108,31 @@ export default function ReserveInfo(props) {
   }
 
   useEffect(() => {
-    if (isConnected && props.asset) {
-      console.log("props.asset", props.asset);
+    if (isConnected && asset) {
+      console.log("router.query.address", router.query.address);
       setLoadingPrice(true);
       setLoadingReserve(true);
-      getReserve();
       updateAssetETHPrice();
     }
-  }, [isConnected, address, props.asset, chain]);
+  }, [isConnected, address, chain]);
 
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
-    if (reserveAddress) {
-      console.log("Got reserve address, setting the rest...", reserveAddress);
+    console.log("router", router.query);
+    if (router.query != undefined) {
+      console.log(
+        "Got reserve address, setting the rest...",
+        router.query.address
+      );
       getReserveDetails();
     }
-  }, [reserveAddress, address]);
+  }, [address, router.query.address]);
 
   return (
     <div>
       <StyledModal
         hasFooter={false}
-        title={"Deposit " + props.asset}
+        title={"Deposit " + assetSymbol}
         isVisible={visibleDepositModal}
         width="50%"
         onCloseButtonPressed={function () {
@@ -132,13 +141,15 @@ export default function ReserveInfo(props) {
       >
         <Deposit
           setVisibility={setVisibleDepositModal}
-          asset={props.asset}
+          reserve={router.query.address}
+          assetSymbol={assetSymbol}
+          asset={asset}
           updateUI={getReserveDetails}
         />
       </StyledModal>
       <StyledModal
         hasFooter={false}
-        title={"Withdraw " + props.asset}
+        title={"Withdraw " + assetSymbol}
         width="50%"
         isVisible={visibleWithdrawalModal}
         onCloseButtonPressed={function () {
@@ -147,7 +158,9 @@ export default function ReserveInfo(props) {
       >
         <Withdraw
           setVisibility={setVisibleWithdrawalModal}
-          asset={props.asset}
+          reserve={router.query.address}
+          assetSymbol={assetSymbol}
+          asset={asset}
           updateUI={getReserveDetails}
         />
       </StyledModal>
@@ -164,7 +177,7 @@ export default function ReserveInfo(props) {
                 fontSize: "body2.fontSize",
               }}
             >
-              {"1 " + props.asset + " = " + formatUnits(ethPrice, 18) + " ETH"}
+              {"1 " + assetSymbol + " = " + formatUnits(ethPrice, 18) + " ETH"}
             </Box>
           </div>
         )}
@@ -204,9 +217,7 @@ export default function ReserveInfo(props) {
                     fontSize: "body16.fontSize",
                   }}
                 >
-                  {formatUnits(maxAmount, addresses[props.asset].decimals) +
-                    " " +
-                    props.asset}
+                  {formatUnits(maxAmount, 18) + " " + assetSymbol}
                 </Box>
               )}
             </div>
@@ -294,12 +305,7 @@ export default function ReserveInfo(props) {
                   }}
                 >
                   Underlying:{" "}
-                  {formatUnits(
-                    underlyingBalance,
-                    addresses[props.asset].decimals
-                  ) +
-                    " " +
-                    props.asset}
+                  {formatUnits(underlyingBalance, 18) + " " + assetSymbol}
                 </Box>
               </div>
               <div className="my-2">
@@ -309,10 +315,7 @@ export default function ReserveInfo(props) {
                     fontSize: "body1.fontSize",
                   }}
                 >
-                  Debt:{" "}
-                  {formatUnits(debt, addresses[props.asset].decimals) +
-                    " " +
-                    props.asset}
+                  Debt: {formatUnits(debt, 18) + " " + assetSymbol}
                 </Box>
               </div>
             </div>

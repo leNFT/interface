@@ -46,25 +46,19 @@
       "decimals": 6,
       "priceFeed": "0xb4c4a493AB6356497713A78FFA6c60FB53517c63"
     },
-    "ValidationLogicLib": "0xFF7a03dDE7D638Bde83806f537724D5d904674DB",
-    "SupplyLogicLib": "0xdc8142C78d03B7054c0B11cFd6EC8D633F0F344c",
-    "BorrowLogicLib": "0x1D2174dBFdFbacbF57b703007f4D55E908bb4d2a",
-    "LiquidationLogicLib": "0x29c16bf640E373C29a528E1111E69Df88b8682fa",
-    "AddressesProvider": "0x0208c7188B6c88A8a09ae99374445A0A9C82707b",
-    "Market": "0x9c035a97f390b14A0179E7810100B5BbE9fc78a6",
-    "LoanCenter": "0x27668749e129CFB59f899c953BD7DC0774B9da6e",
-    "DebtToken": "0xAB2e1f8f6AF80d7d2Dc098286A4C8cB4B216fD5a",
-    "NativeToken": "0xc8Ffd3D61aD00F0D69c8AD297A06b88b95B39beE",
-    "NativeTokenVault": "0xe7355E1cC06B8B17706430c364300557bFEa9cAD",
-    "GenesisNFT": "0x1ed4B77a7673a664C7430B6B16e1927C9dB4da09",
-    "InterestRate": "0x56FF50B2e6c2365aaF54A43D93bc00cfb7f19e6e",
-    "NFTOracle": "0x41587B46D9b8aacd7D9F28CdCdBa778c7DdE551a",
-    "TokenOracle": "0x56EE663BDaF7E52c29dB52F79352f6957368E63F",
-    "SupportedAssets": [
-      {
-        "name": "leNFT Testing NFT",
-        "address": "0x0171dB1e3Cc005d2A6E0BA531509D007a5B8C1a8"
-      }
-    ]
+    "ValidationLogicLib": "0xE5a381A3b2F0cd91aA9644Ce5296f4ae03926CB7",
+    "SupplyLogicLib": "0x45FbD690Dad2d3d2aa0bc743B7033EEE3C9a3629",
+    "BorrowLogicLib": "0xa6545248f930cB372a20834A426513662Af3e9Fa",
+    "LiquidationLogicLib": "0xAFbfD810dedE4d0bDd5D24342dF0c3d098543Ce9",
+    "AddressesProvider": "0x3308C60054728B4F19d3FaCeD9D0723Fe96f7872",
+    "Market": "0xA82b82007317765210cDc0b5a1011c153f5b60eF",
+    "LoanCenter": "0x3aFbE52d095B1FD1De9cb0E80A7E5093012bF76f",
+    "DebtToken": "0x0166061791Eb4cEd9fFD55d3395F0Cdd2c1F9db8",
+    "NativeToken": "0x90c3f63E5d4efB2EeD72286dBEFf08Fc03f3ac0d",
+    "NativeTokenVault": "0x4f13F7E1882aBA61a3997b874316787537da5e4e",
+    "GenesisNFT": "0xd5c5Cd45B35E50e5969f06Acb962C02e859Eeb6F",
+    "InterestRate": "0x2F2c11c028578D988DbdFF848Ca3A553505cA33F",
+    "NFTOracle": "0x43d6D90B9725af17dE18A678E3B6F909430466da",
+    "TokenOracle": "0xcc8d63D6A59c9f6E19157640d0C66dD6CB1d55E4"
   }
 }

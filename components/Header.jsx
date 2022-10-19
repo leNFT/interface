@@ -178,7 +178,7 @@ export default function Header() {
                           letterSpacing: 4,
                         }}
                       >
-                        Supply
+                        Reserves
                       </Box>
                     </div>
                   }

@@ -21,7 +21,6 @@ export default function Deposit(props) {
   const [approved, setApproved] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [depositLoading, setDepositLoading] = useState(false);
-  const [reserveAddress, setReserveAddress] = useState("");
   const dispatch = useNotification();
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
@@ -44,15 +43,9 @@ export default function Deposit(props) {
     signerOrProvider: provider,
   });
 
-  const tokenSigner = useContract({
-    contractInterface: erc20,
-    addressOrName: addresses[props.asset].address,
-    signerOrProvider: signer,
-  });
-
   const tokenProvider = useContract({
     contractInterface: erc20,
-    addressOrName: addresses[props.asset].address,
+    addressOrName: props.asset,
     signerOrProvider: provider,
   });
 
@@ -63,7 +56,7 @@ export default function Deposit(props) {
   }
 
   async function getTokenAllowance() {
-    const allowance = await tokenProvider.allowance(address, reserveAddress);
+    const allowance = await tokenProvider.allowance(address, props.reserve);
 
     console.log("Got allowance:", allowance);
 
@@ -74,29 +67,14 @@ export default function Deposit(props) {
     }
   }
 
-  async function getReserve() {
-    const updatedReserveAddress = await marketProvider.getReserveAddress(
-      addresses[props.asset].address
-    );
-
-    setReserveAddress(updatedReserveAddress);
-    console.log("updatedReserveAddress", updatedReserveAddress);
-  }
-
-  useEffect(() => {
-    if (isConnected && props.asset) {
-      getReserve();
-    }
-  }, [isConnected, props.asset]);
-
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
-    if (reserveAddress && props.asset) {
-      console.log("Got reserve address, setting the rest...", reserveAddress);
+    if (props.reserve && props.asset) {
+      console.log("Got reserve address, setting the rest...", props.reserve);
       getTokenAllowance();
       updateTokenBalance();
     }
-  }, [reserveAddress, props.asset]);
+  }, [props.reserve, props.asset]);
 
   const handleDepositSuccess = async function () {
     console.log("Deposited", amount);
@@ -123,9 +101,7 @@ export default function Deposit(props) {
 
   function handleInputChange(e) {
     if (e.target.value != "") {
-      setAmount(
-        parseUnits(e.target.value, addresses[props.asset].decimals).toString()
-      );
+      setAmount(parseUnits(e.target.value, 18).toString());
     } else {
       setAmount("0");
     }
@@ -137,9 +113,7 @@ export default function Deposit(props) {
         <div className="flex flex-col">
           <Typography variant="subtitle2">My Balance</Typography>
           <Typography variant="body16">
-            {formatUnits(balance, addresses[props.asset].decimals) +
-              " " +
-              props.asset}
+            {formatUnits(balance, 18) + " " + props.assetSymbol}
           </Typography>
         </div>
       </div>
@@ -149,9 +123,7 @@ export default function Deposit(props) {
           type="number"
           step="any"
           validation={{
-            numberMax: Number(
-              formatUnits(balance, addresses[props.asset].decimals)
-            ),
+            numberMax: Number(formatUnits(balance, 18)),
             numberMin: 0,
           }}
           disabled={!approved}
@@ -222,8 +194,12 @@ export default function Deposit(props) {
             onClick={async function () {
               try {
                 setApprovalLoading(true);
-                const tx = await tokenSigner.approve(
-                  reserveAddress,
+                const tx = await useContract({
+                  contractInterface: erc20,
+                  addressOrName: props.asset,
+                  signerOrProvider: signer,
+                }).approve(
+                  props.reserve,
                   "115792089237316195423570985008687907853269984665640564039457584007913129639935"
                 );
                 await tx.wait(1);

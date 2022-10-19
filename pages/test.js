@@ -18,6 +18,7 @@ export default function Test() {
   const { address } = useAccount();
   const { chain } = useNetwork();
   const { data: signer } = useSigner();
+  const testNFTAddress = "0x0171dB1e3Cc005d2A6E0BA531509D007a5B8C1a8";
 
   const addresses =
     chain && chain.id in contractAddresses
@@ -26,7 +27,7 @@ export default function Test() {
 
   const testNFTSigner = useContract({
     contractInterface: testNFTContract.abi,
-    addressOrName: addresses.SupportedAssets[0].address,
+    addressOrName: testNFTAddress,
     signerOrProvider: signer,
   });
 

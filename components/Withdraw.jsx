@@ -33,36 +33,15 @@ export default function Withdraw(props) {
 
   const dispatch = useNotification();
 
-  const tokenProvider = useContract({
-    contractInterface: erc20,
-    addressOrName: addresses[props.asset].address,
-    signerOrProvider: provider,
-  });
-
   const marketSigner = useContract({
     contractInterface: marketContract.abi,
     addressOrName: addresses.Market,
     signerOrProvider: signer,
   });
 
-  const marketProvider = useContract({
-    contractInterface: marketContract.abi,
-    addressOrName: addresses.Market,
-    signerOrProvider: provider,
-  });
-
-  async function getReserve() {
-    const updatedReserveAddress = await marketProvider.getReserveAddress(
-      addresses[props.asset].address
-    );
-
-    setReserveAddress(updatedReserveAddress);
-    console.log("updatedReserveAddress", updatedReserveAddress);
-  }
-
   async function updateMaxAmount() {
     const reserve = new ethers.Contract(
-      reserveAddress,
+      props.reserve,
       reserveContract.abi,
       provider
     );
@@ -74,17 +53,11 @@ export default function Withdraw(props) {
   }
 
   useEffect(() => {
-    if (isConnected && props.asset) {
-      getReserve();
-    }
-  }, [isConnected, props.asset]);
-
-  useEffect(() => {
-    if (reserveAddress && props.asset) {
-      console.log("Got reserve address, setting the rest...", reserveAddress);
+    if (props.reserve && props.asset) {
+      console.log("Got reserve address, setting the rest...", props.reserve);
       updateMaxAmount();
     }
-  }, [reserveAddress, props.asset]);
+  }, [props.reserve, props.asset]);
 
   const handleWithdrawalSuccess = async function () {
     props.updateUI();
@@ -100,9 +73,7 @@ export default function Withdraw(props) {
 
   function handleInputChange(e) {
     if (e.target.value != "") {
-      setAmount(
-        parseUnits(e.target.value, addresses[props.asset].decimals).toString()
-      );
+      setAmount(parseUnits(e.target.value, 18).toString());
     } else {
       setAmount("0");
     }
@@ -114,9 +85,7 @@ export default function Withdraw(props) {
         <div className="flex flex-col">
           <Typography variant="subtitle2">Maximum withdrawal amount</Typography>
           <Typography variant="body16">
-            {formatUnits(maxAmount, addresses[props.asset].decimals) +
-              " " +
-              props.asset}
+            {formatUnits(maxAmount, 18) + " " + props.assetSymbol}
           </Typography>
         </div>
       </div>
@@ -125,11 +94,9 @@ export default function Withdraw(props) {
           label="Amount"
           type="number"
           step="any"
-          value={amount && formatUnits(amount, addresses[props.asset].decimals)}
+          value={amount && formatUnits(amount, 18)}
           validation={{
-            numberMax: Number(
-              formatUnits(maxAmount, addresses[props.asset].decimals)
-            ),
+            numberMax: Number(formatUnits(maxAmount, 18)),
             numberMin: 0,
           }}
           onChange={handleInputChange}
@@ -171,7 +138,7 @@ export default function Withdraw(props) {
           />
         </div>
       </div>
-      <div className="m-8 mt-2">
+      <div className="m-8">
         <Button
           text="Withdraw"
           theme="secondary"
@@ -192,10 +159,7 @@ export default function Withdraw(props) {
                 if (props.asset == "ETH") {
                   tx = await marketSigner.withdrawETH(amount);
                 } else {
-                  tx = await marketSigner.withdraw(
-                    addresses[props.asset].address,
-                    amount
-                  );
+                  tx = await marketSigner.withdraw(props.asset, amount);
                 }
                 await tx.wait(1);
                 handleWithdrawalSuccess();

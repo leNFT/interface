@@ -7,6 +7,7 @@ import { getNFTs } from "../helpers/getNFTs.js";
 import { getAssetPrice } from "../helpers/getAssetPrice.js";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits, parseUnits } from "@ethersproject/units";
+import loanCenterContract from "../contracts/LoanCenter.json";
 import { useState, useEffect } from "react";
 import styles from "../styles/Home.module.css";
 import {
@@ -87,9 +88,9 @@ export default function Borrow(props) {
     signerOrProvider: provider,
   });
 
-  const nftOracle = useContract({
-    contractInterface: nftOracleContract.abi,
-    addressOrName: addresses.NFTOracle,
+  const loanCenter = useContract({
+    contractInterface: loanCenterContract.abi,
+    addressOrName: addresses.LoanCenter,
     signerOrProvider: provider,
   });
 
@@ -118,7 +119,8 @@ export default function Borrow(props) {
   });
 
   async function getReserve() {
-    const updatedReserveAddress = await marketProvider.getReserveAddress(
+    const updatedReserveAddress = await marketProvider.getReserve(
+      props.token_address,
       addresses[borrowAsset].address
     );
     setReserveAddress(updatedReserveAddress);
@@ -167,7 +169,7 @@ export default function Borrow(props) {
 
     //Get token max collateralization
     const updatedMaxCollateralization =
-      await nftOracle.getCollectionMaxCollaterization(props.token_address);
+      await loanCenter.getCollectionMaxCollaterization(props.token_address);
     console.log("maxCollateralization updated", updatedMaxCollateralization);
     setMaxCollateralization(updatedMaxCollateralization);
 

@@ -54,16 +54,14 @@ export default function Vote(props) {
       <div className="flex flex-row items-center justify-center m-8">
         <Input
           label="Collection Address"
-          type="number"
-          step="any"
+          type="text"
           onChange={handleCollectionChange}
         />
       </div>
       <div className="flex flex-row items-center justify-center m-8">
         <Input
           label="Underlying Asset"
-          type="number"
-          step="any"
+          type="text"
           onChange={handleAssetChange}
         />
       </div>

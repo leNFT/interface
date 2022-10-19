@@ -6,6 +6,7 @@ import contractAddresses from "../contractAddresses.json";
 import CreateReserve from "../components/CreateReserve";
 import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 import { useState, useEffect } from "react";
+import Router from "next/router";
 
 export default function Supply() {
   const { address, isConnected } = useAccount();
@@ -68,7 +69,7 @@ export default function Supply() {
         <div className="m-2">
           <Table
             columnsConfig="4fr 2fr 2fr"
-            tableBackgroundColor="lightblue"
+            tableBackgroundColor="#2c2424"
             data={tableData}
             header={[
               <span key="0">Address</span>,
@@ -77,7 +78,13 @@ export default function Supply() {
             ]}
             isColumnSortable={[false, true, true]}
             onPageNumberChanged={function noRefCheck() {}}
-            onRowClick={function noRefCheck() {}}
+            onRowClick={function noRefCheck(index) {
+              console.log(index);
+              Router.push({
+                pathname: "/reserve/[address]",
+                query: { address: tableData[index][0] },
+              });
+            }}
             pageSize={5}
           />
         </div>

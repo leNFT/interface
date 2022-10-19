@@ -52,12 +52,6 @@ export default function App() {
     signerOrProvider: provider,
   });
 
-  const nftOracle = useContract({
-    contractInterface: nftOracleContract.abi,
-    addressOrName: addresses.NFTOracle,
-    signerOrProvider: provider,
-  });
-
   async function setupUI() {
     console.log("Setting up UI");
     setLoadingUI(true);
@@ -96,31 +90,23 @@ export default function App() {
 
         console.log("debt", debt);
 
-        // Get token price
-        const tokenPrice = await getAssetPrice(loan.nftAsset, loan.nftTokenId);
-
         const tokenURI = await getNFTImage(
           loan.nftAsset,
           loan.nftTokenId,
           chain.id
         );
 
-        //Find token name
-        const tokenName = addresses.SupportedAssets.find(
-          (collection) => collection.address == loan.nftAsset
-        ).name;
-
         // Save relevant loan info
         updatedLoans.push({
           loanId: BigNumber.from(userNFTs[i].id.tokenId).toNumber(),
-          tokenName: tokenName,
+          tokenName: userNFTs[i].title,
           tokenAddress: loan.nftAsset,
           tokenId: loan.nftTokenId.toString(),
           tokenURI: tokenURI,
           amount: loan.amount,
           boost: loan.boost,
           debt: debt,
-          tokenPrice: tokenPrice,
+          tokenPrice: await getAssetPrice(loan.nftAsset, loan.nftTokenId),
           maxLTV: loan.maxLTV,
         });
       } else if (
@@ -140,7 +126,7 @@ export default function App() {
 
         // Get max LTV of collection
         console.log(userNFTs[i].token_address);
-        const maxLTV = await nftOracle.getCollectionMaxCollaterization(
+        const maxLTV = await loanCenter.getCollectionMaxCollaterization(
           userNFTs[i].contract.address
         );
         console.log("maxLTV", maxLTV);

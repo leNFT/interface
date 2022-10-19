@@ -1,7 +1,9 @@
 import styles from "../styles/Home.module.css";
 import { getAssetPrice } from "../helpers/getAssetPrice.js";
+import { ethers } from "ethers";
 import { getNFTImage } from "../helpers/getNFTImage.js";
-import { getNFTs } from "../helpers/getUserNFTs.js";
+import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
+import { getSupportedNFTs } from "../helpers/getSupportedNFTs.js";
 import contractAddresses from "../contractAddresses.json";
 import { BigNumber } from "@ethersproject/bignumber";
 import { getAddress } from "@ethersproject/address";
@@ -24,6 +26,7 @@ import Divider from "@mui/material/Divider";
 import Liquidate from "../components/Liquidate";
 import { useContract, useProvider } from "wagmi";
 import StyledModal from "../components/StyledModal";
+import erc721 from "../contracts/erc721.json";
 
 export default function LoanSearch() {
   const [collectionLoans, setCollectionLoans] = useState([]);
@@ -61,12 +64,12 @@ export default function LoanSearch() {
 
     //Get the max collaterization for the collection
     const updatedMaxCollateralization =
-      await nftOracle.getCollectionMaxCollaterization(selectedCollection);
+      await loanCenter.getCollectionMaxCollaterization(selectedCollection);
     setMaxCollateralization(updatedMaxCollateralization.toString());
     console.log("maxCollateralization", updatedMaxCollateralization.toString());
 
     // Get the token ids for the selected collection
-    const collectionNFTs = await getNFTs(
+    const collectionNFTs = await getAddressNFTs(
       addresses.LoanCenter,
       selectedCollection,
       chain.id
@@ -130,29 +133,34 @@ export default function LoanSearch() {
     setLoadingCollectionLoans(false);
   }
 
+  async function updateCollections() {
+    setLoadingCollectionLoans(true);
+    //Fill the collections with the supported assets
+    const supportedNFTs = await getSupportedNFTs(chain.id);
+    console.log("supportedNFTs", supportedNFTs);
+    const updatedCollections = [];
+    for (const nftAddress in supportedNFTs) {
+      const nft = new ethers.Contract(nftAddress, erc721, provider);
+      updatedCollections.push({
+        label: await nft.name(),
+        address: nftAddress,
+      });
+    }
+    console.log("updatedCollections", updatedCollections);
+    setCollections(updatedCollections);
+
+    // Get the default collection loans
+    if (collections.length > 0) {
+      getCollectionLoans(updatedCollections[0].address);
+    } else {
+      setLoadingCollectionLoans(false);
+    }
+  }
+
   // Runs once
   useEffect(() => {
     if (isConnected) {
-      setLoadingCollectionLoans(true);
-      //Fill the collections with the supported assets
-      var updatedCollections = [];
-      console.log("SupportedAssets", addresses.SupportedAssets);
-      for (var asset in addresses.SupportedAssets) {
-        updatedCollections.push({
-          label: addresses.SupportedAssets[asset].name,
-          address: addresses.SupportedAssets[asset].address,
-        });
-        console.log("asset", asset);
-      }
-      console.log("updatedCollections", updatedCollections);
-      setCollections(updatedCollections);
-
-      // Get the default collection loans
-      if (collections.length > 0) {
-        getCollectionLoans(updatedCollections[0].address);
-      } else {
-        setLoadingCollectionLoans(false);
-      }
+      updateCollections();
     }
   }, [isConnected, address, chain]);
 

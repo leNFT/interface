@@ -1,5 +1,6 @@
 import {
   useAccount,
+  useBalance,
   useNetwork,
   useContract,
   useProvider,
@@ -12,6 +13,7 @@ import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { ethers } from "ethers";
 import marketContract from "../contracts/Market.json";
 import erc20 from "../contracts/erc20.json";
 
@@ -26,6 +28,9 @@ export default function Deposit(props) {
   const { chain } = useNetwork();
   const { data: signer } = useSigner();
   const provider = useProvider();
+  const { data: ethBalance } = useBalance({
+    addressOrName: address,
+  });
   const addresses =
     chain && chain.id in contractAddresses
       ? contractAddresses[chain.id]
@@ -50,7 +55,14 @@ export default function Deposit(props) {
   });
 
   async function updateTokenBalance() {
-    const updatedBalance = await tokenProvider.balanceOf(address);
+    var updatedBalance;
+
+    if (props.assetSymbol == "ETH") {
+      updatedBalance = ethBalance.value.toString();
+    } else {
+      updatedBalance = await tokenProvider.balanceOf(address);
+    }
+
     console.log("Updated Balance:", updatedBalance);
     setBalance(updatedBalance.toString());
   }
@@ -149,15 +161,13 @@ export default function Deposit(props) {
                 try {
                   setDepositLoading(true);
                   var tx;
-                  if (props.asset == "ETH") {
-                    tx = await marketSigner.depositETH({
+                  if (props.assetSymbol == "ETH") {
+                    console.log("Depositing ETH");
+                    tx = await marketSigner.depositETH(props.reserve, {
                       value: amount,
                     });
                   } else {
-                    tx = await marketSigner.deposit(
-                      addresses[props.asset].address,
-                      amount
-                    );
+                    tx = await marketSigner.deposit(props.asset, amount);
                   }
                   await tx.wait(1);
                   handleDepositSuccess();
@@ -194,11 +204,13 @@ export default function Deposit(props) {
             onClick={async function () {
               try {
                 setApprovalLoading(true);
-                const tx = await useContract({
-                  contractInterface: erc20,
-                  addressOrName: props.asset,
-                  signerOrProvider: signer,
-                }).approve(
+                console.log("signer.", signer);
+                const underlyingAsset = new ethers.Contract(
+                  props.asset,
+                  erc20,
+                  signer
+                );
+                const tx = await underlyingAsset.approve(
                   props.reserve,
                   "115792089237316195423570985008687907853269984665640564039457584007913129639935"
                 );

@@ -8,7 +8,7 @@ import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 import { useState, useEffect } from "react";
 import Router from "next/router";
 
-export default function Supply() {
+export default function Reserves() {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const [tableData, setTableData] = useState([]);
@@ -20,9 +20,32 @@ export default function Supply() {
     console.log("reserves", reserves);
     var newTableData = [];
 
-    reserves.forEach((reserve) => {
-      newTableData.push([reserve.address, reserve.block, 0]);
-    });
+    for (const [key, value] of Object.entries(reserves)) {
+      console.log(key, value);
+      newTableData.push([
+        <div className="m-4 break-all">{key}</div>,
+        <div className="m-4">{value.block}</div>,
+        <div className="m-4">{0}</div>,
+        <Button
+          customize={{
+            backgroundColor: "blue",
+            fontSize: 16,
+            textColor: "white",
+          }}
+          text="Details"
+          theme="custom"
+          size="large"
+          radius="12"
+          onClick={async function () {
+            console.log(key);
+            Router.push({
+              pathname: "/reserve/[address]",
+              query: { address: key },
+            });
+          }}
+        />,
+      ]);
+    }
 
     setTableData(newTableData);
   }
@@ -66,28 +89,21 @@ export default function Supply() {
             }}
           />
         </div>
-        <div className="m-2">
-          <Table
-            columnsConfig="4fr 2fr 2fr"
-            tableBackgroundColor="#2c2424"
-            data={tableData}
-            header={[
-              <span key="0">Address</span>,
-              <span key="1">Block</span>,
-              <span key="2">TVL</span>,
-            ]}
-            isColumnSortable={[false, true, true]}
-            onPageNumberChanged={function noRefCheck() {}}
-            onRowClick={function noRefCheck(index) {
-              console.log(index);
-              Router.push({
-                pathname: "/reserve/[address]",
-                query: { address: tableData[index][0] },
-              });
-            }}
-            pageSize={5}
-          />
-        </div>
+        <Table
+          columnsConfig="1fr 1fr 1fr 1fr"
+          tableBackgroundColor="#2c2424"
+          data={tableData}
+          header={[
+            <span key="0">Address</span>,
+            <span key="1">Block</span>,
+            <span key="2">TVL</span>,
+            "",
+          ]}
+          isColumnSortable={[false, true, true]}
+          onPageNumberChanged={function noRefCheck() {}}
+          onRowClick={function noRefCheck() {}}
+          pageSize={5}
+        />
       </div>
     </div>
   );

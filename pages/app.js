@@ -2,7 +2,8 @@ import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { getAssetPrice } from "../helpers/getAssetPrice.js";
 import { getNFTImage } from "../helpers/getNFTImage.js";
-import { getNFTs } from "../helpers/getUserNFTs.js";
+import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
+import { getSupportedNFTs } from "../helpers/getSupportedNFTs.js";
 import { formatUnits } from "@ethersproject/units";
 import { useState, useEffect } from "react";
 import { useNotification, Tooltip, Loading } from "@web3uikit/core";
@@ -12,6 +13,7 @@ import Borrow from "../components/Borrow";
 import RepayLoan from "../components/RepayLoan";
 import Image from "next/image";
 import nftOracleContract from "../contracts/NFTOracle.json";
+import { getAddress } from "@ethersproject/address";
 import loanCenterContract from "../contracts/LoanCenter.json";
 import { calculateHealthLevel } from "../helpers/healthLevel.js";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
@@ -57,35 +59,33 @@ export default function App() {
     setLoadingUI(true);
 
     // Get user NFT assetss
-    const userNFTs = await getNFTs(address, "", chain.id);
-    console.log(
-      "supportedAssets:",
-      contractAddresses[chain.id].SupportedAssets
-    );
+    const addressNFTs = await getAddressNFTs(address, "", chain.id);
+    const supportedNFTs = await getSupportedNFTs(chain.id);
+    console.log("supportedNFTs:", supportedNFTs);
     var updatedLoans = [];
     var updatedSupportedAssets = [];
     var updatedUnsupportedAssets = [];
     var maxBorrowSum = BigNumber.from(0);
 
-    console.log("userNFTs", userNFTs);
+    console.log("addressNFTs", addressNFTs);
 
     // Loop through all of tthe user NFTs
-    console.log("Found " + userNFTs.length + " NFTs for user " + address);
-    setCount(userNFTs.length);
+    console.log("Found " + addressNFTs.length + " NFTs for user " + address);
+    setCount(addressNFTs.length);
 
-    for (let i = 0; i < userNFTs.length; i++) {
+    for (let i = 0; i < addressNFTs.length; i++) {
       if (
-        userNFTs[i].contract.address ==
-        contractAddresses[chain.id].DebtToken.toLowerCase()
+        getAddress(addressNFTs[i].contract.address) ==
+        contractAddresses[chain.id].DebtToken
       ) {
         // Get loan details
         const loan = await loanCenter.getLoan(
-          BigNumber.from(userNFTs[i].id.tokenId).toNumber()
+          BigNumber.from(addressNFTs[i].id.tokenId).toNumber()
         );
         console.log("loan", loan);
 
         const debt = await loanCenter.getLoanDebt(
-          BigNumber.from(userNFTs[i].id.tokenId).toNumber()
+          BigNumber.from(addressNFTs[i].id.tokenId).toNumber()
         );
 
         console.log("debt", debt);
@@ -98,8 +98,8 @@ export default function App() {
 
         // Save relevant loan info
         updatedLoans.push({
-          loanId: BigNumber.from(userNFTs[i].id.tokenId).toNumber(),
-          tokenName: userNFTs[i].title,
+          loanId: BigNumber.from(addressNFTs[i].id.tokenId).toNumber(),
+          tokenName: addressNFTs[i].title,
           tokenAddress: loan.nftAsset,
           tokenId: loan.nftTokenId.toString(),
           tokenURI: tokenURI,
@@ -110,24 +110,18 @@ export default function App() {
           maxLTV: loan.maxLTV,
         });
       } else if (
-        contractAddresses[chain.id].SupportedAssets.find(
-          (collection) =>
-            collection.address.toLowerCase() == userNFTs[i].contract.address
-        )
+        supportedNFTs[getAddress(addressNFTs[i].contract.address)] != undefined
       ) {
         // Get token price
         const tokenPrice = await getAssetPrice(
-          contractAddresses[chain.id].SupportedAssets.find(
-            (collection) =>
-              collection.address.toLowerCase() == userNFTs[i].contract.address
-          ).address,
-          BigNumber.from(userNFTs[i].id.tokenId).toNumber()
+          getAddress(addressNFTs[i].contract.address),
+          BigNumber.from(addressNFTs[i].id.tokenId).toNumber()
         );
 
         // Get max LTV of collection
-        console.log(userNFTs[i].token_address);
+        console.log(addressNFTs[i].token_address);
         const maxLTV = await loanCenter.getCollectionMaxCollaterization(
-          userNFTs[i].contract.address
+          addressNFTs[i].contract.address
         );
         console.log("maxLTV", maxLTV);
 
@@ -138,24 +132,24 @@ export default function App() {
         maxBorrowSum = maxBorrowSum.add(assetMaxCollateral);
 
         //Replace token URI
-        userNFTs[i].token_uri = await getNFTImage(
-          userNFTs[i].contract.address,
-          BigNumber.from(userNFTs[i].id.tokenId).toNumber(),
+        addressNFTs[i].token_uri = await getNFTImage(
+          addressNFTs[i].contract.address,
+          BigNumber.from(addressNFTs[i].id.tokenId).toNumber(),
           chain.id
         );
 
         // Add asset to supported assets
-        updatedSupportedAssets.push(userNFTs[i]);
+        updatedSupportedAssets.push(addressNFTs[i]);
       } else {
         // Get max 5 unsupported assets
         if (updatedUnsupportedAssets.length < 5) {
           //Replace token URI
-          userNFTs[i].token_uri = await getNFTImage(
-            userNFTs[i].contract.address,
-            BigNumber.from(userNFTs[i].id.tokenId).toNumber(),
+          addressNFTs[i].token_uri = await getNFTImage(
+            addressNFTs[i].contract.address,
+            BigNumber.from(addressNFTs[i].id.tokenId).toNumber(),
             chain.id
           );
-          updatedUnsupportedAssets.push(userNFTs[i]);
+          updatedUnsupportedAssets.push(addressNFTs[i]);
         }
       }
 
@@ -449,16 +443,7 @@ export default function App() {
               >
                 <Borrow
                   setVisibility={setVisibleAssetModal}
-                  token_address={
-                    // Get checksumed token adress
-                    contractAddresses[
-                      chain ? chain.id : "1"
-                    ].SupportedAssets.find(
-                      (collection) =>
-                        collection.address.toLowerCase() ==
-                        selectedAsset.contract.address
-                    ).address
-                  }
+                  token_address={getAddress(selectedAsset.contract.address)}
                   token_id={BigNumber.from(selectedAsset.id.tokenId).toNumber()}
                   token_uri={selectedAsset.token_uri}
                   updateUI={setupUI}

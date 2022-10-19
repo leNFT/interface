@@ -163,7 +163,7 @@ export default function Header() {
               </Link>
             </div>
             <div className="flex flex-col m-2">
-              <Link href="/supply">
+              <Link href="/reserves">
                 <Button
                   primary
                   size="medium"

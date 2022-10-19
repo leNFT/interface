@@ -3,7 +3,7 @@ import {
   getAssetPriceSig,
   getNewRequestID,
 } from "../helpers/getAssetPriceSig.js";
-import { getNFTs } from "../helpers/getUserNFTs.js";
+import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
 import { getAssetPrice } from "../helpers/getAssetPrice.js";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits, parseUnits } from "@ethersproject/units";
@@ -129,7 +129,7 @@ export default function Borrow(props) {
 
   async function getGenesisNFT() {
     // GEt user genesis NFTs
-    const userGenesisNFTs = await getNFTs(
+    const userGenesisNFTs = await getAddressNFTs(
       address,
       addresses.GenesisNFT,
       chain.id

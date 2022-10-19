@@ -2,7 +2,9 @@ import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import nativeTokenVaultContract from "../contracts/NativeTokenVault.json";
 import tokenOracleContract from "../contracts/TokenOracle.json";
+import { getSupportedNFTs } from "../helpers/getSupportedNFTs.js";
 import { formatUnits } from "@ethersproject/units";
+import { ethers } from "ethers";
 import { BigNumber } from "@ethersproject/bignumber";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
@@ -11,6 +13,7 @@ import StyledModal from "../components/StyledModal";
 import { useState, useEffect } from "react";
 import { useAccount, useNetwork } from "wagmi";
 import erc20 from "../contracts/erc20.json";
+import erc721 from "../contracts/erc721.json";
 import RemoveVote from "../components/RemoveVote";
 import Vote from "../components/Vote";
 import DepositNativeToken from "../components/DepositNativeToken";
@@ -40,15 +43,10 @@ export default function Stake() {
       ? contractAddresses[chain.id]
       : contractAddresses["1"];
   const [selectedCollection, setSelectedCollection] = useState({
-    label: addresses.SupportedAssets[0].name,
-    address: addresses.SupportedAssets[0].address,
+    label: "",
+    address: "",
   });
-  const [collections, setCollections] = useState([
-    {
-      label: addresses.SupportedAssets[0].name,
-      address: addresses.SupportedAssets[0].address,
-    },
-  ]);
+  const [collections, setCollections] = useState();
 
   const nativeTokenVault = useContract({
     contractInterface: nativeTokenVaultContract.abi,
@@ -100,24 +98,27 @@ export default function Stake() {
     setMaxAmount(updatedMaxAmount);
   }
 
+  async function updateCollections() {
+    //Fill the collections with the supported assets
+    const supportedNFTs = await getSupportedNFTs(chain.id);
+    console.log("supportedNFTs", supportedNFTs);
+    const updatedCollections = [];
+    for (const nftAddress in supportedNFTs) {
+      const nft = new ethers.Contract(nftAddress, erc721, provider);
+      updatedCollections.push({
+        label: await nft.name(),
+        address: nftAddress,
+      });
+    }
+    console.log("updatedCollections", updatedCollections);
+    setCollections(updatedCollections);
+  }
+
   useEffect(() => {
     if (isConnected) {
       updateUI();
       updateAssetETHPrice();
-
-      //Fill the collections with the supported assets
-      var updatedCollections = [];
-      console.log("SupportedAssets", addresses.SupportedAssets);
-      for (var asset in addresses.SupportedAssets) {
-        updatedCollections.push({
-          label: addresses.SupportedAssets[asset].name,
-          address: addresses.SupportedAssets[asset].address,
-        });
-        console.log("asset", asset);
-      }
-      //setCollections(updatedCollections);
-      console.log("updatedCollections", updatedCollections);
-      setCollections(updatedCollections);
+      updateCollections();
     }
   }, [isConnected]);
 
@@ -376,7 +377,6 @@ export default function Stake() {
                   },
                 }}
                 options={collections}
-                defaultValue={collections[0]}
                 isOptionEqualToValue={(option, value) =>
                   option.address === value.address
                 }

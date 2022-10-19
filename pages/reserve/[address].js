@@ -81,7 +81,11 @@ export default function Reserve() {
     const assetContract = new ethers.Contract(updatedAsset, erc20, provider);
     const updatedAssetSymbol = await assetContract.symbol();
     console.log("Updated Asset Symbol:", updatedAssetSymbol);
-    setAssetSymbol(updatedAssetSymbol.toString());
+    setAssetSymbol(
+      updatedAssetSymbol.toString() == "WETH"
+        ? "ETH"
+        : updatedAssetSymbol.toString()
+    );
 
     const updatedUnderlyingBalance = await reserve.getUnderlyingBalance();
     console.log("Updated Underlying Balance:", updatedUnderlyingBalance);

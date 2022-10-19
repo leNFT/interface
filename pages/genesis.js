@@ -2,7 +2,7 @@ import styles from "../styles/Home.module.css";
 import { Button, Illustration } from "@web3uikit/core";
 import contractAddresses from "../contractAddresses.json";
 import genesisNFTContract from "../contracts/GenesisNFT.json";
-import { getNFTs } from "../helpers/getNFTs.js";
+import { getNFTs } from "../helpers/getUserNFTs.js";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";

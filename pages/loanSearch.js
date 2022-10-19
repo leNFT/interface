@@ -1,7 +1,7 @@
 import styles from "../styles/Home.module.css";
 import { getAssetPrice } from "../helpers/getAssetPrice.js";
 import { getNFTImage } from "../helpers/getNFTImage.js";
-import { getNFTs } from "../helpers/getNFTs.js";
+import { getNFTs } from "../helpers/getUserNFTs.js";
 import contractAddresses from "../contractAddresses.json";
 import { BigNumber } from "@ethersproject/bignumber";
 import { getAddress } from "@ethersproject/address";

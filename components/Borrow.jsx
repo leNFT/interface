@@ -3,7 +3,7 @@ import {
   getAssetPriceSig,
   getNewRequestID,
 } from "../helpers/getAssetPriceSig.js";
-import { getNFTs } from "../helpers/getNFTs.js";
+import { getNFTs } from "../helpers/getUserNFTs.js";
 import { getAssetPrice } from "../helpers/getAssetPrice.js";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits, parseUnits } from "@ethersproject/units";

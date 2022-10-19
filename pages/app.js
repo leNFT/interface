@@ -2,7 +2,7 @@ import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { getAssetPrice } from "../helpers/getAssetPrice.js";
 import { getNFTImage } from "../helpers/getNFTImage.js";
-import { getNFTs } from "../helpers/getNFTs.js";
+import { getNFTs } from "../helpers/getUserNFTs.js";
 import { formatUnits } from "@ethersproject/units";
 import { useState, useEffect } from "react";
 import { useNotification, Tooltip, Loading } from "@web3uikit/core";

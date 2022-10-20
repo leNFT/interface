@@ -57,7 +57,10 @@ export default function Deposit(props) {
   async function updateTokenBalance() {
     var updatedBalance;
 
+    console.log("props.assetSymbol1", props.assetSymbol);
+
     if (props.assetSymbol == "ETH") {
+      console.log("props.assetSymbol", props.assetSymbol);
       updatedBalance = ethBalance.value.toString();
     } else {
       updatedBalance = await tokenProvider.balanceOf(address);
@@ -81,12 +84,12 @@ export default function Deposit(props) {
 
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
-    if (props.reserve && props.asset) {
+    if (props.reserve && props.asset && props.assetSymbol) {
       console.log("Got reserve address, setting the rest...", props.reserve);
       getTokenAllowance();
       updateTokenBalance();
     }
-  }, [props.reserve, props.asset]);
+  }, [props.reserve, props.asset, props.assetSymbol]);
 
   const handleDepositSuccess = async function () {
     console.log("Deposited", amount);

@@ -14,7 +14,9 @@ import Withdraw from "../../components/Withdraw";
 import Box from "@mui/material/Box";
 import erc20 from "../../contracts/erc20.json";
 import { ethers } from "ethers";
+import Router from "next/router";
 import { useRouter } from "next/router";
+import { ChevronLeft } from "@web3uikit/icons";
 
 export default function Reserve() {
   const router = useRouter();
@@ -33,6 +35,7 @@ export default function Reserve() {
   const [loadingReserve, setLoadingReserve] = useState(false);
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
+
   const provider = useProvider();
 
   const addresses =
@@ -168,25 +171,34 @@ export default function Reserve() {
           updateUI={getReserveDetails}
         />
       </StyledModal>
-      <div className="flex justify-center">
+      <div className="flex flex-row justify-left pl-8">
+        <Button
+          size="small"
+          color="#eae5ea"
+          iconLayout="icon-only"
+          icon={<ChevronLeft fontSize="50px" />}
+          onClick={async function () {
+            Router.push({
+              pathname: "/reserves",
+            });
+          }}
+        />
+      </div>
+      <div className="flex flex-row justify-center">
         {loadingPrice ? (
-          <div className="flex m-4">
-            <Loading size={12} spinnerColor="#000000" />
-          </div>
+          <Loading size={12} spinnerColor="#000000" />
         ) : (
-          <div className="my-2">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "body2.fontSize",
-              }}
-            >
-              {"1 " + assetSymbol + " = " + formatUnits(ethPrice, 18) + " ETH"}
-            </Box>
-          </div>
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "body2.fontSize",
+            }}
+          >
+            {"1 " + assetSymbol + " = " + formatUnits(ethPrice, 18) + " ETH"}
+          </Box>
         )}
       </div>
-      <div className="flex flex-col-reverse md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 bg-black/5 shadow-lg">
+      <div className="flex flex-col-reverse md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">
         <div className="flex flex-col items-center p-4 rounded-3xl m-8 lg:m-16 bg-black/5 shadow-lg">
           <div className="flex flex-col m-4 rounded-2xl">
             <div className="flex flex-row m-2">

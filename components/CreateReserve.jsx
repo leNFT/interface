@@ -4,6 +4,11 @@ import contractAddresses from "../contractAddresses.json";
 import { useAccount, useNetwork, useContract, useSigner } from "wagmi";
 import marketContract from "../contracts/Market.json";
 import { useState, useEffect } from "react";
+import Box from "@mui/material/Box";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 
 export default function Vote(props) {
   const { isConnected } = useAccount();
@@ -59,11 +64,19 @@ export default function Vote(props) {
         />
       </div>
       <div className="flex flex-row items-center justify-center m-8">
-        <Input
-          label="Underlying Asset"
-          type="text"
-          onChange={handleAssetChange}
-        />
+        <FormControl fullWidth>
+          <InputLabel>Asset</InputLabel>
+          <Select
+            value={asset}
+            label="Asset"
+            onChange={handleAssetChange}
+            className="rounded-2xl"
+          >
+            <MenuItem value={"0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6"}>
+              ETH
+            </MenuItem>
+          </Select>
+        </FormControl>
       </div>
       <div className="flex flex-row items-center justify-center m-8 mt-2">
         <Button

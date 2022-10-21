@@ -230,7 +230,7 @@ export default function Reserve() {
                 <Box
                   sx={{
                     fontFamily: "Monospace",
-                    fontSize: "body16.fontSize",
+                    fontSize: "subtitle1.fontSize",
                   }}
                 >
                   {formatUnits(maxAmount, 18) + " " + assetSymbol}

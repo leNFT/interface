@@ -2,7 +2,6 @@ import styles from "../styles/Home.module.css";
 import { Button, Table, Avatar, Tag } from "@web3uikit/core";
 import { getReserves } from "../helpers/getReserves.js";
 import { formatUnits, parseUnits } from "@ethersproject/units";
-
 import StyledModal from "../components/StyledModal";
 import { ethers } from "ethers";
 import contractAddresses from "../contractAddresses.json";
@@ -13,6 +12,7 @@ import erc721 from "../contracts/erc721.json";
 import erc20 from "../contracts/erc20.json";
 import { useState, useEffect } from "react";
 import Router from "next/router";
+import { ExternalLink } from "@web3uikit/icons";
 
 export default function Reserves() {
   const SECONDS_IN_DAY = 86400;
@@ -63,7 +63,15 @@ export default function Reserves() {
       underlyingSymbol = await underlyingToken.symbol();
 
       newTableData.push([
-        <div className="m-2 break-all">{assetNames}</div>,
+        <div className="m-2 break-all">
+          {assetNames.length == 0 ? (
+            <span>No Assets</span>
+          ) : (
+            assetNames.map((assetName) => (
+              <div key={assetName}>{assetName}</div>
+            ))
+          )}
+        </div>,
         <div className="m-2">{daysSinceCreation + " days ago"}</div>,
         <div className="m-2">
           {formatUnits(tvl, 18) + " " + underlyingSymbol}
@@ -77,13 +85,34 @@ export default function Reserves() {
           text="Details"
           theme="custom"
           size="large"
+          id={key}
           radius="12"
-          onClick={async function () {
+          onClick={async function (event) {
             console.log(key);
             Router.push({
               pathname: "/reserve/[address]",
-              query: { address: key },
+              query: { address: event.target.id },
             });
+          }}
+        />,
+        <Button
+          size="large"
+          color="#eae5ea"
+          iconLayout="icon-only"
+          id={key}
+          icon={<ExternalLink fontSize="30px" />}
+          onClick={async function (event) {
+            if (chain.id == 1) {
+              window.open(
+                "https://etherscan.io/address/" + event.target.id,
+                "_blank"
+              );
+            } else if (chain.id == 5) {
+              window.open(
+                "https://goerli.etherscan.io/address/" + event.target.id,
+                "_blank"
+              );
+            }
           }}
         />,
       ]);
@@ -115,7 +144,7 @@ export default function Reserves() {
         />
       </StyledModal>
       <div className="flex flex-col">
-        <div className="flex flex-row justify-end m-2">
+        <div className="flex flex-row justify-end m-2 mb-4">
           <Button
             customize={{
               backgroundColor: "grey",
@@ -132,7 +161,7 @@ export default function Reserves() {
           />
         </div>
         <Table
-          columnsConfig="3fr 2fr 2fr 1fr"
+          columnsConfig="3fr 2fr 2fr 1fr 0fr"
           tableBackgroundColor="#2c2424"
           data={tableData}
           header={[
@@ -145,6 +174,7 @@ export default function Reserves() {
             <span className="m-2" key="2">
               TVL
             </span>,
+            "",
             "",
           ]}
           isColumnSortable={[false, true, true]}

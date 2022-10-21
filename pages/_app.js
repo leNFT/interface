@@ -16,7 +16,10 @@ function MyApp({ Component, pageProps }) {
   const LayoutComponent = isIndex ? SplashLayout : Layout;
   const { chains, provider } = configureChains(
     [chain.mainnet, chain.goerli],
-    [alchemyProvider({ apiKey: process.env.ALCHEMY_API_KEY }), publicProvider()]
+    [
+      alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY }),
+      publicProvider(),
+    ]
   );
 
   const { connectors } = getDefaultWallets({

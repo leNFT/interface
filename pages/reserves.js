@@ -26,7 +26,7 @@ export default function Reserves() {
   const EmptyRowsForSkeletonTable = () => (
     <div style={{ width: "100%", height: "100%" }}>
       {[...Array(6)].map((el, i) => (
-        <Skeleton theme="subtitle" width="30%" />
+        <Skeleton key={i} theme="subtitle" width="30%" />
       ))}
     </div>
   );
@@ -72,7 +72,7 @@ export default function Reserves() {
       underlyingSymbol = await underlyingToken.symbol();
 
       newTableData.push([
-        <div className="m-2 break-all">
+        <div key={"noAssets" + key} className="m-2 break-all">
           {assetNames.length == 0 ? (
             <span>No Assets</span>
           ) : (
@@ -81,49 +81,55 @@ export default function Reserves() {
             ))
           )}
         </div>,
-        <div className="m-2">{daysSinceCreation + " days ago"}</div>,
-        <div className="m-2">
+        <div key={"created" + key} className="m-2">
+          {daysSinceCreation + " days ago"}
+        </div>,
+        <div key={"tvl" + key} className="m-2">
           {formatUnits(tvl, 18) + " " + underlyingSymbol}
         </div>,
-        <Button
-          customize={{
-            backgroundColor: "blue",
-            fontSize: 16,
-            textColor: "white",
-          }}
-          text="Details"
-          theme="custom"
-          size="large"
-          id={key}
-          radius="12"
-          onClick={async function (event) {
-            console.log(key);
-            Router.push({
-              pathname: "/reserve/[address]",
-              query: { address: event.target.id },
-            });
-          }}
-        />,
-        <Button
-          size="large"
-          color="#eae5ea"
-          iconLayout="icon-only"
-          id={key}
-          icon={<ExternalLink fontSize="30px" />}
-          onClick={async function (event) {
-            if (chain.id == 1) {
-              window.open(
-                "https://etherscan.io/address/" + event.target.id,
-                "_blank"
-              );
-            } else if (chain.id == 5) {
-              window.open(
-                "https://goerli.etherscan.io/address/" + event.target.id,
-                "_blank"
-              );
-            }
-          }}
-        />,
+        <div key={"details" + key}>
+          <Button
+            customize={{
+              backgroundColor: "blue",
+              fontSize: 16,
+              textColor: "white",
+            }}
+            text="Details"
+            theme="custom"
+            size="large"
+            id={key}
+            radius="12"
+            onClick={async function (event) {
+              console.log(key);
+              Router.push({
+                pathname: "/reserve/[address]",
+                query: { address: event.target.id },
+              });
+            }}
+          />
+        </div>,
+        <div key={"externalLink" + key}>
+          <Button
+            size="large"
+            color="#eae5ea"
+            iconLayout="icon-only"
+            id={key}
+            icon={<ExternalLink fontSize="30px" />}
+            onClick={async function (event) {
+              if (chain.id == 1) {
+                window.open(
+                  "https://etherscan.io/address/" + event.target.id,
+                  "_blank"
+                );
+              } else if (chain.id == 5) {
+                window.open(
+                  "https://goerli.etherscan.io/address/" + event.target.id,
+                  "_blank"
+                );
+              }
+            }}
+          />
+        </div>,
       ]);
     }
 

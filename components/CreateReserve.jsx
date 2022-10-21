@@ -1,7 +1,15 @@
-import { useNotification, Button, Input } from "@web3uikit/core";
+import { useNotification, Button, Input, Typography } from "@web3uikit/core";
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
-import { useAccount, useNetwork, useContract, useSigner } from "wagmi";
+import {
+  useAccount,
+  useNetwork,
+  useContract,
+  useSigner,
+  useProvider,
+} from "wagmi";
+import { formatUnits, parseUnits } from "@ethersproject/units";
+import { BigNumber } from "@ethersproject/bignumber";
 import marketContract from "../contracts/Market.json";
 import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
@@ -17,6 +25,12 @@ export default function Vote(props) {
   const [creatingLoading, setCreatingLoading] = useState(false);
   const [collection, setCollection] = useState("");
   const [asset, setAsset] = useState("");
+  const provider = useProvider();
+  const [underlyingSafeguard, setUnderyingSafeguard] = useState("0");
+  const [maximumUtilizationRate, setMaximumUtilizationRate] = useState("0");
+  const [protocolLiquidationFee, setProtocolLiquidationFee] = useState("0");
+  const [liquidationPenalty, setLiquidationPenalty] = useState("0");
+
   const dispatch = useNotification();
 
   const addresses =
@@ -30,8 +44,45 @@ export default function Vote(props) {
     signerOrProvider: signer,
   });
 
+  const marketProvider = useContract({
+    contractInterface: marketContract.abi,
+    addressOrName: addresses.Market,
+    signerOrProvider: provider,
+  });
+
+  async function getReserveDefaultValues() {
+    // Get default underlying safeguard
+    const updatedUnderyingSafeguard = (
+      await marketProvider.getDefaultUnderlyingSafeguard()
+    ).toString();
+
+    setUnderyingSafeguard(updatedUnderyingSafeguard);
+
+    // Get default maximum utilization rate
+    const updatedMaximumUtilizationRate = (
+      await marketProvider.getDefaultMaximumUtilizationRate()
+    ).toString();
+
+    setMaximumUtilizationRate(updatedMaximumUtilizationRate);
+
+    // Get protocol liquidation fee
+    const updatedProtocolLiquidationFee = (
+      await marketProvider.getDefaultProtocolLiquidationFee()
+    ).toString();
+
+    setProtocolLiquidationFee(updatedProtocolLiquidationFee);
+
+    // Get underlying safeguard
+    const updatedLiquidationPenalty = (
+      await marketProvider.getDefaultLiquidationPenalty()
+    ).toString();
+
+    setLiquidationPenalty(updatedLiquidationPenalty);
+  }
+
   useEffect(() => {
     if (isConnected) {
+      getReserveDefaultValues();
     }
   }, [isConnected]);
 
@@ -56,7 +107,39 @@ export default function Vote(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-row items-center justify-center m-8">
+      <div className="flex flex-col items-center m-8">
+        <div className="flex flex-col m-2 md:flex-row border-2 rounded-2xl">
+          <div className="flex flex-col m-4">
+            <Typography variant="subtitle2">Liquidation Penalty</Typography>
+            <Typography variant="caption16">
+              {BigNumber.from(liquidationPenalty).div(100) + "%"}
+            </Typography>
+          </div>
+          <div className="flex flex-col m-4">
+            <Typography variant="subtitle2">
+              Protocol Liquidation Fee
+            </Typography>
+            <Typography variant="caption16">
+              {BigNumber.from(protocolLiquidationFee).div(100) + "%"}
+            </Typography>
+          </div>
+        </div>
+        <div className="flex flex-col m-2 md:flex-row border-2 rounded-2xl">
+          <div className="flex flex-col m-4">
+            <Typography variant="subtitle2">Max Utilization Rate</Typography>
+            <Typography variant="caption16">
+              {BigNumber.from(maximumUtilizationRate).div(100) + "%"}
+            </Typography>
+          </div>
+          <div className="flex flex-col m-4">
+            <Typography variant="subtitle2">Underlying Safeguard</Typography>
+            <Typography variant="caption16">
+              {formatUnits(underlyingSafeguard, 18) + " WETH"}
+            </Typography>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-row items-center justify-center m-4">
         <Input
           label="Collection Address"
           type="text"
@@ -78,6 +161,7 @@ export default function Vote(props) {
           </Select>
         </FormControl>
       </div>
+
       <div className="flex flex-row items-center justify-center m-8 mt-2">
         <Button
           text="Create Reserve"

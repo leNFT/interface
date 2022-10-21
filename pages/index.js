@@ -87,6 +87,9 @@ export default function Home() {
             <div className={styles.indexDescribeTitle}>
               leNFT is all about NFT-backed loans.
             </div>
+            <div className={styles.indexDescribeTitle}>
+              (beta live on goerli)
+            </div>
             <div className={styles.indexDescribeSubtitle}>
               <li>Borrow money using your NFTs</li>
               <li>Earn interest on your ETH</li>

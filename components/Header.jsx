@@ -70,7 +70,11 @@ export default function Header() {
                     fontSize: "subtitle2.fontSize",
                   }}
                 >
-                  <div className="text-red-700">[ BETA ]</div>
+                  {chain.id != 1 ? (
+                    <div className="text-red-700">[ BETA ]</div>
+                  ) : (
+                    <div className="text-red-700">[ ALPHA ]</div>
+                  )}
                 </Box>
               </div>
             </a>

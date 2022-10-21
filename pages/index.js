@@ -13,6 +13,7 @@ export default function Home() {
               <img
                 src="symbol-no-bg.png"
                 className={styles.headerLogoImg}
+                alt = "symbol"
               ></img>
             </a>
           </div>

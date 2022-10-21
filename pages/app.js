@@ -261,6 +261,7 @@ export default function App() {
                               height="200"
                               width="200"
                               className="rounded-3xl"
+                              alt = "tokenURI"
                             />
                           ) : (
                             <Box

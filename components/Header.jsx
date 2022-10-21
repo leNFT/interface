@@ -9,6 +9,7 @@ import {
   Plus,
   LockClosed,
   Rocket,
+  Chart
 } from "@web3uikit/icons";
 import Box from "@mui/material/Box";
 import { useAccount, useNetwork } from "wagmi";
@@ -21,7 +22,10 @@ export default function Header() {
 
   return (
     <div>
-      {chain && chain.id != 1 && isConnected && (
+      {chain && 
+      // chain.id != 1 && 
+      isConnected && 
+      (
         <div className="mb-6">
           <BannerStrip
             buttonDisplayed
@@ -39,11 +43,11 @@ export default function Header() {
           />
         </div>
       )}
-      <div className="p-4 mb-2 border-b-2 flex flex-col md:flex-row justify-between items-center">
-        <div className="hidden lg:flex flex-col items-center justify-content lg:pr-8">
+      <div className="py-4 mb-2 border-b-2 flex flex-col md:flex-row justify-between items-center">
+        <div className="hidden lg:flex flex-col items-center justify-content lg:pl-2">
           <Link href="/">
             <a target="_blank" rel="noopener noreferrer">
-              <div className="px-4 mt-2 flex flex-row items-center">
+              <div className="px-1 mt-2 flex flex-row items-center">
                 <div className="flex flex-col items-center">
                   <Box
                     sx={{
@@ -70,19 +74,19 @@ export default function Header() {
                     fontSize: "subtitle2.fontSize",
                   }}
                 >
-                  {chain.id != 1 ? (
+                  {/* {chain.id != 1 ? (
                     <div className="text-red-700">[ BETA ]</div>
                   ) : (
                     <div className="text-red-700">[ ALPHA ]</div>
-                  )}
+                  )} */}
                 </Box>
               </div>
             </a>
           </Link>
         </div>
         <div className="flex flex-col items-center my-2">
-          <div className="flex flex-col md:flex-row md:items-center">
-            <div className="flex flex-col m-2">
+          <div className="flex flex-col md:flex-row md:items-center flex-wrap justify-center">
+            <div className="flex flex-col m-1">
               <Link href="/app">
                 <Button
                   primary
@@ -110,7 +114,7 @@ export default function Header() {
                 />
               </Link>
             </div>
-            <div className="flex flex-col m-2">
+            <div className="flex flex-col m-1">
               <Link href="/genesis">
                 <Button
                   primary
@@ -138,7 +142,7 @@ export default function Header() {
                 />
               </Link>
             </div>
-            <div className="flex flex-col m-2">
+            <div className="flex flex-col m-1">
               <Link href="/loanSearch">
                 <Button
                   primary
@@ -166,7 +170,7 @@ export default function Header() {
                 />
               </Link>
             </div>
-            <div className="flex flex-col m-2">
+            <div className="flex flex-col m-1">
               <Link href="/reserves">
                 <Button
                   primary
@@ -194,7 +198,7 @@ export default function Header() {
                 />
               </Link>
             </div>
-            <div className="flex flex-col m-2">
+            <div className="flex flex-col m-1">
               <Link href="/stake">
                 <Button
                   primary
@@ -222,13 +226,41 @@ export default function Header() {
                 />
               </Link>
             </div>
+            <div className="flex flex-col m-1">
+              <Link href="/stats">
+                <Button
+                  primary
+                  size="medium"
+                  color="#eae5ea"
+                  label={
+                    <div className="flex md:hidden lg:flex">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle2.fontSize",
+                          fontWeight: "bold",
+                          letterSpacing: 4,
+                        }}
+                      >
+                        Stats
+                      </Box>
+                    </div>
+                  }
+                  icon={
+                    <div className="pl-[10px]">
+                      <Chart fontSize="20px" color="#000000" />
+                    </div>
+                  }
+                />
+              </Link>
+            </div>
           </div>
         </div>
-        <div className="flex flex-col items-center px-8">
+        <div className="flex flex-col items-center w-[190px]">
           <ConnectButton
             showBalance={false}
             chainStatus="icon"
-            accountStatus="address"
+            accountStatus="address"            
           />
         </div>
       </div>

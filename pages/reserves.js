@@ -1,5 +1,5 @@
 import styles from "../styles/Home.module.css";
-import { Button, Table, Avatar, Tag } from "@web3uikit/core";
+import { Button, Table, Avatar, Tag, Skeleton } from "@web3uikit/core";
 import { getReserves } from "../helpers/getReserves.js";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import StyledModal from "../components/StyledModal";
@@ -20,10 +20,19 @@ export default function Reserves() {
   const { chain } = useNetwork();
   const [tableData, setTableData] = useState([]);
   const provider = useProvider();
+  const [loadingTableData, setLoadingTableData] = useState(true);
   const [visibleCreateReserveModal, setVisibleCreateReserveModal] =
     useState(false);
+  const EmptyRowsForSkeletonTable = () => (
+    <div style={{ width: "100%", height: "100%" }}>
+      {[...Array(6)].map((el, i) => (
+        <Skeleton theme="subtitle" width="30%" />
+      ))}
+    </div>
+  );
 
   async function updateTableData() {
+    setLoadingTableData(true);
     const reserves = await getReserves(chain.id);
     console.log("reserves", reserves);
     var newTableData = [];
@@ -119,6 +128,7 @@ export default function Reserves() {
     }
 
     setTableData(newTableData);
+    setLoadingTableData(false);
   }
 
   useEffect(() => {
@@ -163,6 +173,20 @@ export default function Reserves() {
         <Table
           columnsConfig="3fr 2fr 2fr 1fr 0fr"
           tableBackgroundColor="#2c2424"
+          customLoadingContent={
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                height: "80%",
+                width: "80%",
+              }}
+            >
+              <EmptyRowsForSkeletonTable />
+              <EmptyRowsForSkeletonTable />
+            </div>
+          }
+          customNoDataText="No reserves found."
           data={tableData}
           header={[
             <span className="m-2" key="0">
@@ -177,6 +201,7 @@ export default function Reserves() {
             "",
             "",
           ]}
+          isLoading={loadingTableData}
           isColumnSortable={[false, true, true]}
           onPageNumberChanged={function noRefCheck() {}}
           onRowClick={function noRefCheck() {}}

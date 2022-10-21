@@ -87,7 +87,7 @@ export default function Reserves() {
         <div key={"tvl" + key} className="m-2">
           {formatUnits(tvl, 18) + " " + underlyingSymbol}
         </div>,
-        <div key={"details" + key} className="m-2">
+        <div key={"details" + key}>
           <Button
             customize={{
               backgroundColor: "blue",

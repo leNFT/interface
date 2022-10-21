@@ -5,7 +5,7 @@ export default function SplashLayout({ children }) {
     <>
       <Head>
         <title>leNFT</title>
-        <meta name="description" content="Lend NFT" />
+        <meta name="description" content="lend NFTs" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>{children}</main>

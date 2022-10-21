@@ -70,7 +70,7 @@ export default function Header() {
                     fontSize: "subtitle2.fontSize",
                   }}
                 >
-                  {chain.id != 1 ? (
+                  {isConnected && chain.id != 1 ? (
                     <div className="text-red-700">[ BETA ]</div>
                   ) : (
                     <div className="text-red-700">[ ALPHA ]</div>

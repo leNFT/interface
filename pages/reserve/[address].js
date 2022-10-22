@@ -1,6 +1,7 @@
 import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
-import { Button, Tooltip, Loading } from "@web3uikit/core";
+import { Button, Tooltip, Loading, Typography } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
+import { BigNumber } from "@ethersproject/bignumber";
 import StyledModal from "../../components/StyledModal";
 import { formatUnits } from "@ethersproject/units";
 import contractAddresses from "../../contractAddresses.json";
@@ -35,6 +36,10 @@ export default function Reserve() {
   const [loadingReserve, setLoadingReserve] = useState(false);
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
+  const [underlyingSafeguard, setUnderyingSafeguard] = useState("0");
+  const [maximumUtilizationRate, setMaximumUtilizationRate] = useState("0");
+  const [protocolLiquidationFee, setProtocolLiquidationFee] = useState("0");
+  const [liquidationPenalty, setLiquidationPenalty] = useState("0");
 
   const provider = useProvider();
 
@@ -110,6 +115,33 @@ export default function Reserve() {
     console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
     setMaxAmount(updatedMaxAmount.toString());
 
+    const updatedUnderyingSafeguard = (
+      await reserve.getUnderlyingSafeguard()
+    ).toString();
+
+    setUnderyingSafeguard(updatedUnderyingSafeguard);
+
+    // Get default maximum utilization rate
+    const updatedMaximumUtilizationRate = (
+      await reserve.getMaximumUtilizationRate()
+    ).toString();
+
+    setMaximumUtilizationRate(updatedMaximumUtilizationRate);
+
+    // Get protocol liquidation fee
+    const updatedProtocolLiquidationFee = (
+      await reserve.getLiquidationFee()
+    ).toString();
+
+    setProtocolLiquidationFee(updatedProtocolLiquidationFee);
+
+    // Get underlying safeguard
+    const updatedLiquidationPenalty = (
+      await reserve.getLiquidationPenalty()
+    ).toString();
+
+    setLiquidationPenalty(updatedLiquidationPenalty);
+
     //Stop loading
     setLoadingReserve(false);
   }
@@ -118,7 +150,6 @@ export default function Reserve() {
     if (isConnected && asset) {
       console.log("router.query.address", router.query.address);
       setLoadingPrice(true);
-      setLoadingReserve(true);
       updateAssetETHPrice();
     }
   }, [isConnected, address, chain]);
@@ -131,6 +162,7 @@ export default function Reserve() {
         "Got reserve address, setting the rest...",
         router.query.address
       );
+      setLoadingReserve(true);
       getReserveDetails();
     }
   }, [address, router.query.address]);
@@ -336,6 +368,38 @@ export default function Reserve() {
               </div>
             </div>
           )}
+        </div>
+      </div>
+      <div className="flex flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 bg-black/5 shadow-lg">
+        <div className="flex flex-col m-2 md:flex-row border-2 rounded-2xl">
+          <div className="flex flex-col m-4">
+            <Typography variant="subtitle2">Liquidation Penalty</Typography>
+            <Typography variant="caption16">
+              {BigNumber.from(liquidationPenalty).div(100) + "%"}
+            </Typography>
+          </div>
+          <div className="flex flex-col m-4">
+            <Typography variant="subtitle2">
+              Protocol Liquidation Fee
+            </Typography>
+            <Typography variant="caption16">
+              {BigNumber.from(protocolLiquidationFee).div(100) + "%"}
+            </Typography>
+          </div>
+        </div>
+        <div className="flex flex-col m-2 md:flex-row border-2 rounded-2xl">
+          <div className="flex flex-col m-4">
+            <Typography variant="subtitle2">Max Utilization Rate</Typography>
+            <Typography variant="caption16">
+              {BigNumber.from(maximumUtilizationRate).div(100) + "%"}
+            </Typography>
+          </div>
+          <div className="flex flex-col m-4">
+            <Typography variant="subtitle2">Underlying Safeguard</Typography>
+            <Typography variant="caption16">
+              {formatUnits(underlyingSafeguard, 18) + " WETH"}
+            </Typography>
+          </div>
         </div>
       </div>
     </div>

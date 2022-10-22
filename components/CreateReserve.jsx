@@ -107,7 +107,7 @@ export default function Vote(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-col items-center m-8">
+      <div className="flex flex-col items-center m-4">
         <div className="flex flex-col m-2 md:flex-row border-2 rounded-2xl">
           <div className="flex flex-col m-4">
             <Typography variant="subtitle2">Liquidation Penalty</Typography>

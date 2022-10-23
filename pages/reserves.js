@@ -36,48 +36,25 @@ export default function Reserves() {
     const reserves = await getReserves(chain.id);
     console.log("reserves", reserves);
     var newTableData = [];
-    var reserve;
 
     for (const [key, value] of Object.entries(reserves)) {
-      var assetNames = [];
       var daysSinceCreation = 0;
-      var tvl = 0;
-      var underlyingTokenAddress;
-      var underlyingToken;
-      var underlyingSymbol;
-      var reserve;
 
-      // Get asset names
-      for (let i = 0; i < value.assets.length; i++) {
-        console.log("value.assets[i]", value.assets[i]);
-        const nft = new ethers.Contract(value.assets[i], erc721, provider);
-        const name = await nft.name();
-        assetNames.push(name);
-      }
+      var underlyingSymbol = "WETH";
+
       // Get reserve time since creation
       daysSinceCreation = Math.floor(
         (Date.now() / 1000 - (await provider.getBlock(value.block)).timestamp) /
           SECONDS_IN_DAY
       );
 
-      // Get reserve contract to get the TVL and then get underlying ERC20 token to get token symbol
-      reserve = new ethers.Contract(key, reserveContract.abi, provider);
-      tvl = await reserve.getUnderlyingBalance();
-      underlyingTokenAddress = await reserve.getAsset();
-      underlyingToken = new ethers.Contract(
-        underlyingTokenAddress,
-        erc20,
-        provider
-      );
-      underlyingSymbol = await underlyingToken.symbol();
-
       newTableData.push([
         <div key={"noAssets" + key} className="m-2 break-all">
-          {assetNames.length == 0 ? (
+          {value.assets.length == 0 ? (
             <span>No Assets</span>
           ) : (
-            assetNames.map((assetName) => (
-              <div key={assetName}>{assetName}</div>
+            value.assets.map((asset) => (
+              <div key={asset.name}>{asset.name}</div>
             ))
           )}
         </div>,
@@ -85,7 +62,7 @@ export default function Reserves() {
           {daysSinceCreation + " days ago"}
         </div>,
         <div key={"tvl" + key} className="m-2">
-          {formatUnits(tvl, 18) + " " + underlyingSymbol}
+          {formatUnits(value.balance, 18) + " " + underlyingSymbol}
         </div>,
         <div key={"details" + key}>
           <Button

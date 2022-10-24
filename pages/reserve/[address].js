@@ -184,7 +184,7 @@ export default function Reserve() {
         />
       </StyledModal>
       <div className="flex flex-row justify-center">
-        <div className="flex flex-col justify-center mr-4">
+        <div className="flex flex-col justify-center mr-auto ml-8">
           <Button
             size="small"
             color="#eae5ea"
@@ -207,7 +207,7 @@ export default function Reserve() {
             {router.query.address}
           </Box>
         </div>
-        <div className="flex flex-col justify-center">
+        <div className="flex flex-col justify-center mr-auto">
           <Button
             size="large"
             color="#eae5ea"

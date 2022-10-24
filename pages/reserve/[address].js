@@ -18,6 +18,7 @@ import { ethers } from "ethers";
 import Router from "next/router";
 import { useRouter } from "next/router";
 import { ChevronLeft } from "@web3uikit/icons";
+import { ExternalLink } from "@web3uikit/icons";
 
 export default function Reserve() {
   const router = useRouter();
@@ -31,8 +32,6 @@ export default function Reserve() {
   const [supplyRate, setSupplyRate] = useState(0);
   const [borrowRate, setBorrowRate] = useState(0);
   const [utilizationRate, setUtilizationRate] = useState(0);
-  const [ethPrice, setETHPrice] = useState("0");
-  const [loadingPrice, setLoadingPrice] = useState(false);
   const [loadingReserve, setLoadingReserve] = useState(false);
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
@@ -65,17 +64,6 @@ export default function Reserve() {
     addressOrName: router.query.address,
     signerOrProvider: provider,
   });
-
-  async function updateAssetETHPrice() {
-    const updatedAssetETHPrice = (
-      await tokenOracle.getTokenETHPrice(asset)
-    ).toString();
-    setETHPrice(updatedAssetETHPrice);
-    console.log("updatedAssetETHPrice", updatedAssetETHPrice);
-
-    //Stop loading
-    setLoadingPrice(false);
-  }
 
   async function getReserveDetails() {
     const updatedDebt = await reserve.getDebt();
@@ -146,14 +134,6 @@ export default function Reserve() {
     setLoadingReserve(false);
   }
 
-  useEffect(() => {
-    if (isConnected && asset) {
-      console.log("router.query.address", router.query.address);
-      setLoadingPrice(true);
-      updateAssetETHPrice();
-    }
-  }, [isConnected, address, chain]);
-
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
     console.log("router", router.query);
@@ -203,32 +183,51 @@ export default function Reserve() {
           updateUI={getReserveDetails}
         />
       </StyledModal>
-      <div className="flex flex-row justify-left pl-8">
-        <Button
-          size="small"
-          color="#eae5ea"
-          iconLayout="icon-only"
-          icon={<ChevronLeft fontSize="50px" />}
-          onClick={async function () {
-            Router.push({
-              pathname: "/reserves",
-            });
-          }}
-        />
-      </div>
       <div className="flex flex-row justify-center">
-        {loadingPrice ? (
-          <Loading size={12} spinnerColor="#000000" />
-        ) : (
+        <div className="flex flex-col justify-center mr-4">
+          <Button
+            size="small"
+            color="#eae5ea"
+            iconLayout="icon-only"
+            icon={<ChevronLeft fontSize="50px" />}
+            onClick={async function () {
+              Router.push({
+                pathname: "/reserves",
+              });
+            }}
+          />
+        </div>
+        <div className="flex flex-col justify-center break-all">
           <Box
             sx={{
               fontFamily: "Monospace",
               fontSize: "body2.fontSize",
             }}
           >
-            {"1 " + assetSymbol + " = " + formatUnits(ethPrice, 18) + " ETH"}
+            {router.query.address}
           </Box>
-        )}
+        </div>
+        <div className="flex flex-col justify-center">
+          <Button
+            size="large"
+            color="#eae5ea"
+            iconLayout="icon-only"
+            icon={<ExternalLink fontSize="20px" />}
+            onClick={async function (event) {
+              if (chain.id == 1) {
+                window.open(
+                  "https://etherscan.io/address/" + router.query.address,
+                  "_blank"
+                );
+              } else if (chain.id == 5) {
+                window.open(
+                  "https://goerli.etherscan.io/address/" + router.query.address,
+                  "_blank"
+                );
+              }
+            }}
+          />
+        </div>
       </div>
       <div className="flex flex-col-reverse md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">
         <div className="flex flex-col items-center p-4 rounded-3xl m-8 lg:m-16 bg-black/5 shadow-lg">
@@ -242,7 +241,7 @@ export default function Reserve() {
                     fontWeight: "bold",
                   }}
                 >
-                  <div className="text-black">My Reserve Balance</div>
+                  My Reserve Balance
                 </Box>
               </div>
               <div className="flex flex-col ml-1">
@@ -373,32 +372,82 @@ export default function Reserve() {
       <div className="flex flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 bg-black/5 shadow-lg">
         <div className="flex flex-col m-2 md:flex-row border-2 rounded-2xl">
           <div className="flex flex-col m-4">
-            <Typography variant="subtitle2">Liquidation Penalty</Typography>
-            <Typography variant="caption16">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+                fontWeight: "bold",
+              }}
+            >
+              Liquidation Penalty
+            </Box>
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+              }}
+            >
               {BigNumber.from(liquidationPenalty).div(100) + "%"}
-            </Typography>
+            </Box>
           </div>
           <div className="flex flex-col m-4">
-            <Typography variant="subtitle2">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+                fontWeight: "bold",
+              }}
+            >
               Protocol Liquidation Fee
-            </Typography>
-            <Typography variant="caption16">
+            </Box>
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+              }}
+            >
               {BigNumber.from(protocolLiquidationFee).div(100) + "%"}
-            </Typography>
+            </Box>
           </div>
         </div>
         <div className="flex flex-col m-2 md:flex-row border-2 rounded-2xl">
           <div className="flex flex-col m-4">
-            <Typography variant="subtitle2">Max Utilization Rate</Typography>
-            <Typography variant="caption16">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+                fontWeight: "bold",
+              }}
+            >
+              Max Utilization Rate
+            </Box>
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+              }}
+            >
               {BigNumber.from(maximumUtilizationRate).div(100) + "%"}
-            </Typography>
+            </Box>
           </div>
           <div className="flex flex-col m-4">
-            <Typography variant="subtitle2">Underlying Safeguard</Typography>
-            <Typography variant="caption16">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+                fontWeight: "bold",
+              }}
+            >
+              Underlying Safeguard
+            </Box>
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+              }}
+            >
               {formatUnits(underlyingSafeguard, 18) + " WETH"}
-            </Typography>
+            </Box>
           </div>
         </div>
       </div>

@@ -1,31 +1,24 @@
 import styles from "../styles/Home.module.css";
-import { Button, Table, Avatar, Tag, Skeleton } from "@web3uikit/core";
+import { Button, Table, Skeleton } from "@web3uikit/core";
 import { getReserves } from "../helpers/getReserves.js";
-import { formatUnits, parseUnits } from "@ethersproject/units";
+import { formatUnits } from "@ethersproject/units";
 import StyledModal from "../components/StyledModal";
-import { ethers } from "ethers";
-import contractAddresses from "../contractAddresses.json";
 import CreateReserve from "../components/CreateReserve";
-import reserveContract from "../contracts/Reserve.json";
-import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
-import erc721 from "../contracts/erc721.json";
-import erc20 from "../contracts/erc20.json";
+import { useAccount, useNetwork } from "wagmi";
 import { useState, useEffect } from "react";
 import Router from "next/router";
 import { ExternalLink } from "@web3uikit/icons";
 
 export default function Reserves() {
-  const SECONDS_IN_DAY = 86400;
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const { chain } = useNetwork();
   const [tableData, setTableData] = useState([]);
-  const provider = useProvider();
   const [loadingTableData, setLoadingTableData] = useState(true);
   const [visibleCreateReserveModal, setVisibleCreateReserveModal] =
     useState(false);
   const EmptyRowsForSkeletonTable = () => (
     <div style={{ width: "100%", height: "100%" }}>
-      {[...Array(6)].map((el, i) => (
+      {[...Array(6)].map((_el, i) => (
         <Skeleton key={i} theme="subtitle" width="30%" />
       ))}
     </div>

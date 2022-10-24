@@ -207,13 +207,13 @@ export default function Reserve() {
             {router.query.address}
           </Box>
         </div>
-        <div className="flex flex-col justify-center mr-auto">
+        <div className="flex flex-col justify-center pb-1 mr-auto">
           <Button
             size="large"
             color="#eae5ea"
             iconLayout="icon-only"
             icon={<ExternalLink fontSize="20px" />}
-            onClick={async function (event) {
+            onClick={async function (_event) {
               if (chain.id == 1) {
                 window.open(
                   "https://etherscan.io/address/" + router.query.address,

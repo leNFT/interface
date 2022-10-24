@@ -38,15 +38,7 @@ export default function Reserves() {
     var newTableData = [];
 
     for (const [key, value] of Object.entries(reserves)) {
-      var daysSinceCreation = 0;
-
       var underlyingSymbol = "WETH";
-
-      // Get reserve time since creation
-      daysSinceCreation = Math.floor(
-        (Date.now() / 1000 - (await provider.getBlock(value.block)).timestamp) /
-          SECONDS_IN_DAY
-      );
 
       newTableData.push([
         <div key={"noAssets" + key} className="m-2 break-all">
@@ -58,8 +50,11 @@ export default function Reserves() {
             ))
           )}
         </div>,
-        <div key={"created" + key} className="m-2">
-          {daysSinceCreation + " days ago"}
+        <div key={"borrow" + key} className="m-2">
+          {value.borrowRate / 100 + "%"}
+        </div>,
+        <div key={"supply" + key} className="m-2">
+          {value.supplyRate / 100 + "%"}
         </div>,
         <div key={"tvl" + key} className="m-2">
           {formatUnits(value.balance, 18) + " " + underlyingSymbol}
@@ -154,7 +149,7 @@ export default function Reserves() {
           />
         </div>
         <Table
-          columnsConfig="3fr 2fr 2fr 1fr 0fr"
+          columnsConfig="3fr 2fr 2fr 2fr 1fr 0fr"
           tableBackgroundColor="#2c2424"
           customLoadingContent={
             <div
@@ -176,7 +171,10 @@ export default function Reserves() {
               Assets
             </span>,
             <span className="m-2" key="1">
-              Created
+              Borrow Rate
+            </span>,
+            <span className="m-2" key="1">
+              Supply Rate
             </span>,
             <span className="m-2" key="2">
               TVL

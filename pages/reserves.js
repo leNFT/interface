@@ -8,6 +8,7 @@ import { useAccount, useNetwork } from "wagmi";
 import { useState, useEffect } from "react";
 import Router from "next/router";
 import { ExternalLink } from "@web3uikit/icons";
+import Box from "@mui/material/Box";
 
 export default function Reserves() {
   const { isConnected } = useAccount();
@@ -34,7 +35,14 @@ export default function Reserves() {
       var underlyingSymbol = "WETH";
 
       newTableData.push([
-        <div key={"noAssets" + key} className="m-2 break-all">
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: "subtitle1.fontSize",
+          }}
+          className="m-2 break-all"
+          key={"noAssets" + key}
+        >
           {value.assets.length == 0 ? (
             <span>No Assets</span>
           ) : (
@@ -42,16 +50,37 @@ export default function Reserves() {
               <div key={asset.name}>{asset.name}</div>
             ))
           )}
-        </div>,
-        <div key={"borrow" + key} className="m-2">
+        </Box>,
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: "subtitle1.fontSize",
+          }}
+          className="m-2"
+          key={"borrow" + key}
+        >
           {value.borrowRate / 100 + "%"}
-        </div>,
-        <div key={"supply" + key} className="m-2">
+        </Box>,
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: "subtitle1.fontSize",
+          }}
+          className="m-2"
+          key={"supply" + key}
+        >
           {value.supplyRate / 100 + "%"}
-        </div>,
-        <div key={"tvl" + key} className="m-2">
+        </Box>,
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: "subtitle1.fontSize",
+          }}
+          className="m-2"
+          key={"tvl" + key}
+        >
           {formatUnits(value.balance, 18) + " " + underlyingSymbol}
-        </div>,
+        </Box>,
         <div key={"details" + key}>
           <Button
             customize={{
@@ -143,7 +172,7 @@ export default function Reserves() {
         </div>
         <Table
           columnsConfig="3fr 2fr 2fr 2fr 1fr 0fr"
-          tableBackgroundColor="#2c2424"
+          tableBackgroundColor="black"
           customLoadingContent={
             <div
               style={{
@@ -160,18 +189,46 @@ export default function Reserves() {
           customNoDataText="No reserves found."
           data={tableData}
           header={[
-            <span className="m-2" key="0">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle1.fontSize",
+              }}
+              className="m-2"
+              key="1"
+            >
               Assets
-            </span>,
-            <span className="m-2" key="1">
+            </Box>,
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle1.fontSize",
+              }}
+              className="m-2"
+              key="2"
+            >
               Borrow Rate
-            </span>,
-            <span className="m-2" key="1">
+            </Box>,
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle1.fontSize",
+              }}
+              className="m-2"
+              key="4"
+            >
               Supply Rate
-            </span>,
-            <span className="m-2" key="2">
+            </Box>,
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle1.fontSize",
+              }}
+              className="m-2"
+              key="4"
+            >
               TVL
-            </span>,
+            </Box>,
             "",
             "",
           ]}

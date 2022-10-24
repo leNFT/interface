@@ -37,7 +37,6 @@ export default function App() {
   const [visibleLoanModal, setVisibleLoanModal] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState();
   const [selectedLoan, setSelectedLoan] = useState();
-  const [walletMaxBorrowable, setWalletMaxBorrowable] = useState("0");
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
 
@@ -65,7 +64,6 @@ export default function App() {
     var updatedLoans = [];
     var updatedSupportedAssets = [];
     var updatedUnsupportedAssets = [];
-    var maxBorrowSum = BigNumber.from(0);
 
     console.log("addressNFTs", addressNFTs);
 
@@ -118,19 +116,6 @@ export default function App() {
           BigNumber.from(addressNFTs[i].id.tokenId).toNumber()
         );
 
-        // Get max LTV of collection
-        console.log(addressNFTs[i].token_address);
-        const maxLTV = await loanCenter.getCollectionMaxCollaterization(
-          addressNFTs[i].contract.address
-        );
-        console.log("maxLTV", maxLTV);
-
-        //Update wallet max borrowable
-        const assetMaxCollateral = BigNumber.from(maxLTV)
-          .mul(tokenPrice)
-          .div(10000);
-        maxBorrowSum = maxBorrowSum.add(assetMaxCollateral);
-
         //Replace token URI
         addressNFTs[i].token_uri = await getNFTImage(
           addressNFTs[i].contract.address,
@@ -158,12 +143,10 @@ export default function App() {
     console.log("updatedLoans:", updatedLoans);
     console.log("updatedSupportedAssets:", updatedSupportedAssets);
     console.log("updatedUnsupportedAssets:", updatedUnsupportedAssets);
-    console.log("walletMaxBorrowable:", maxBorrowSum);
 
     setLoans(updatedLoans);
     setSupportedAssets(updatedSupportedAssets);
     setUnsupportedAssets(updatedUnsupportedAssets);
-    setWalletMaxBorrowable(maxBorrowSum);
 
     setLoadingUI(false);
   }
@@ -353,14 +336,7 @@ export default function App() {
                   }}
                 >
                   <div className="text-sm md:text-lg">
-                    {"You can use " +
-                      supportedAssets.length +
-                      " NFTs and borrow up to " +
-                      formatUnits(
-                        BigNumber.from(walletMaxBorrowable).div(2),
-                        18
-                      ) +
-                      " ETH"}
+                    {supportedAssets.length + " supported NFTs"}
                   </div>
                 </Box>
               </div>

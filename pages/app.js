@@ -88,7 +88,7 @@ export default function App() {
 
         console.log("debt", debt);
 
-        const tokenURI = await getNFTImage(
+        const tokenImage = await getNFTImage(
           loan.nftAsset,
           loan.nftTokenId,
           chain.id
@@ -100,7 +100,7 @@ export default function App() {
           tokenName: addressNFTs[i].title,
           tokenAddress: loan.nftAsset,
           tokenId: loan.nftTokenId.toString(),
-          tokenURI: tokenURI,
+          tokenImage: tokenImage,
           amount: loan.amount,
           boost: loan.boost,
           debt: debt,
@@ -110,30 +110,11 @@ export default function App() {
       } else if (
         supportedNFTs[getAddress(addressNFTs[i].contract.address)] != undefined
       ) {
-        // Get token price
-        const tokenPrice = await getAssetPrice(
-          getAddress(addressNFTs[i].contract.address),
-          BigNumber.from(addressNFTs[i].id.tokenId).toNumber()
-        );
-
-        //Replace token URI
-        addressNFTs[i].token_uri = await getNFTImage(
-          addressNFTs[i].contract.address,
-          BigNumber.from(addressNFTs[i].id.tokenId).toNumber(),
-          chain.id
-        );
-
         // Add asset to supported assets
         updatedSupportedAssets.push(addressNFTs[i]);
       } else {
         // Get max 5 unsupported assets
         if (updatedUnsupportedAssets.length < 5) {
-          //Replace token URI
-          addressNFTs[i].token_uri = await getNFTImage(
-            addressNFTs[i].contract.address,
-            BigNumber.from(addressNFTs[i].id.tokenId).toNumber(),
-            chain.id
-          );
           updatedUnsupportedAssets.push(addressNFTs[i]);
         }
       }
@@ -237,13 +218,15 @@ export default function App() {
                         }}
                       >
                         <CardContent>
-                          {loan.tokenURI ? (
+                          {loan.tokenImage ? (
                             <Image
-                              loader={() => loan.tokenURI}
-                              src={loan.tokenURI}
+                              loader={() => loan.tokenImage}
+                              src={loan.tokenImage}
                               height="200"
                               width="200"
                               className="rounded-3xl"
+                              blurDataURL="../icon-no-bg.png"
+                              placeholder="blur"
                             />
                           ) : (
                             <Box
@@ -309,7 +292,7 @@ export default function App() {
                       token_name={selectedLoan.tokenName}
                       token_address={selectedLoan.tokenAddress}
                       token_id={selectedLoan.tokenId}
-                      token_uri={selectedLoan.tokenURI}
+                      token_image={selectedLoan.tokenImage}
                       updateUI={setupUI}
                     />
                   </StyledModal>
@@ -365,11 +348,11 @@ export default function App() {
                         }}
                       >
                         <CardContent>
-                          {supportedAsset.token_uri ? (
+                          {supportedAsset.metadata.image ? (
                             <div className="flex flex-col items-center">
                               <Image
-                                loader={() => supportedAsset.token_uri}
-                                src={supportedAsset.token_uri}
+                                loader={() => supportedAsset.metadata.image}
+                                src={supportedAsset.metadata.image}
                                 height="200"
                                 width="200"
                                 className="rounded-2xl"
@@ -421,7 +404,7 @@ export default function App() {
                   setVisibility={setVisibleAssetModal}
                   token_address={getAddress(selectedAsset.contract.address)}
                   token_id={BigNumber.from(selectedAsset.id.tokenId).toNumber()}
-                  token_uri={selectedAsset.token_uri}
+                  token_image={selectedAsset.metadata.image}
                   updateUI={setupUI}
                 />
               </StyledModal>
@@ -468,11 +451,11 @@ export default function App() {
                           }
                         >
                           <CardContent>
-                            {unsupportedAsset.token_uri ? (
+                            {unsupportedAsset.metadata.image ? (
                               <div className="flex flex-col items-center">
                                 <Image
-                                  loader={() => unsupportedAsset.token_uri}
-                                  src={unsupportedAsset.token_uri}
+                                  loader={() => unsupportedAsset.metadata.image}
+                                  src={unsupportedAsset.metadata.image}
                                   height="120"
                                   width="120"
                                   className="rounded-2xl"

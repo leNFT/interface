@@ -286,10 +286,10 @@ export default function Borrow(props) {
       <div className="flex flex-col items-center">
         <div className="flex flex-col lg:m-8 lg:flex-row justify-center">
           <div className="flex flex-col items-center justify-center mb-4 lg:m-8">
-            {props.token_uri ? (
+            {props.token_image ? (
               <Image
-                loader={() => props.token_uri}
-                src={props.token_uri}
+                loader={() => props.token_image}
+                src={props.token_image}
                 height="300"
                 width="300"
                 unoptimized={true}

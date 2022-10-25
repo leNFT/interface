@@ -4,15 +4,14 @@ import { getAssetPrice } from "../helpers/getAssetPrice.js";
 import { getNFTImage } from "../helpers/getNFTImage.js";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
 import { getSupportedNFTs } from "../helpers/getSupportedNFTs.js";
-import { formatUnits } from "@ethersproject/units";
 import { useState, useEffect } from "react";
-import { useNotification, Tooltip, Loading } from "@web3uikit/core";
-import { HelpCircle } from "@web3uikit/icons";
+import Pagination from "@mui/material/Pagination";
+import { useNotification, Tooltip, Loading, Input } from "@web3uikit/core";
+import { HelpCircle, Search } from "@web3uikit/icons";
 import { BigNumber } from "@ethersproject/bignumber";
 import Borrow from "../components/Borrow";
 import RepayLoan from "../components/RepayLoan";
 import Image from "next/image";
-import nftOracleContract from "../contracts/NFTOracle.json";
 import { getAddress } from "@ethersproject/address";
 import loanCenterContract from "../contracts/LoanCenter.json";
 import { calculateHealthLevel } from "../helpers/healthLevel.js";
@@ -27,11 +26,15 @@ import Box from "@mui/material/Box";
 import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 
 export default function App() {
+  const SEARCH_PAGE_SIZE = 8;
   const [loadingUI, setLoadingUI] = useState(true);
   const [count, setCount] = useState(0);
   const [processedCount, setProcessedCount] = useState(0);
   const [loans, setLoans] = useState([]);
   const [supportedAssets, setSupportedAssets] = useState([]);
+  const [searchPage, setSearchPage] = useState(0);
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchPageData, setSearchPageData] = useState([]);
   const [unsupportedAssets, setUnsupportedAssets] = useState([]);
   const [visibleAssetModal, setVisibleAssetModal] = useState(false);
   const [visibleLoanModal, setVisibleLoanModal] = useState(false);
@@ -128,6 +131,8 @@ export default function App() {
     setLoans(updatedLoans);
     setSupportedAssets(updatedSupportedAssets);
     setUnsupportedAssets(updatedUnsupportedAssets);
+    setSearchResults(updatedSupportedAssets);
+    setSearchPageData(updatedSupportedAssets.slice(0, SEARCH_PAGE_SIZE));
 
     setLoadingUI(false);
   }
@@ -150,6 +155,38 @@ export default function App() {
       position: "topR",
     });
   };
+
+  const handleSearchPageChange = (_event, value) => {
+    console.log("setSearchPage", value);
+    setSearchPage(value);
+    setSearchPageData(
+      searchResults.slice(
+        SEARCH_PAGE_SIZE * (value - 1),
+        SEARCH_PAGE_SIZE * value
+      )
+    );
+  };
+
+  function handleSearchInputChange(e) {
+    console.log("search input:", e.target.value);
+
+    function searchFilter(asset) {
+      const stringToMatch =
+        asset.contractMetadata.name +
+        " " +
+        BigNumber.from(asset.id.tokenId).toString();
+
+      console.log("stringToMatch", stringToMatch);
+
+      return stringToMatch.toLowerCase().includes(e.target.value.toLowerCase());
+    }
+
+    const updatedSearchResults = supportedAssets.filter(searchFilter);
+    console.log("updatedSearchResults", updatedSearchResults);
+    setSearchResults(updatedSearchResults);
+    setSearchPageData(updatedSearchResults.slice(0, SEARCH_PAGE_SIZE));
+    setSearchPage(1);
+  }
 
   return (
     <div className={styles.container}>
@@ -183,7 +220,9 @@ export default function App() {
                   letterSpacing: 24,
                 }}
               >
-                <div className="text-xl md:text-4xl">My Loans</div>
+                <div className="text-xl text-center md:text-left md:text-4xl">
+                  My Loans
+                </div>
               </Box>
             </div>
             {loans.length == 0 ? (
@@ -225,8 +264,6 @@ export default function App() {
                               height="200"
                               width="200"
                               className="rounded-3xl"
-                              blurDataURL="../icon-no-bg.png"
-                              placeholder="blur"
                             />
                           ) : (
                             <Box
@@ -301,37 +338,44 @@ export default function App() {
             )}
           </div>
           <div className="flex flex-col mt-8 rounded-3xl m-2 p-2 bg-black/5 shadow-lg">
-            <div className="p-8">
-              <div className="flex flex-row">
+            <div className="flex flex-col md:flex-row justify-between p-8">
+              <div className="flex flex-col">
                 <Box
                   sx={{
                     fontFamily: "Monospace",
                     letterSpacing: 24,
                   }}
                 >
-                  <div className="text-xl md:text-4xl">NFT Wallet</div>
-                </Box>
-              </div>
-              <div className="flex mb-0 flex-row mt-4">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                  }}
-                >
-                  <div className="text-sm md:text-lg">
-                    {supportedAssets.length + " supported NFTs"}
+                  <div className="text-xl text-center md:text-left md:text-4xl">
+                    NFT Wallet
                   </div>
                 </Box>
+                <div className="mt-4">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                    }}
+                  >
+                    <div className="text-sm text-center md:text-left md:text-lg">
+                      {searchResults.length + " supported NFTs"}
+                    </div>
+                  </Box>
+                </div>
+              </div>
+              <div className="flex flex-col m-4 items-center">
+                <Input
+                  onBlur={function noRefCheck() {}}
+                  onChange={handleSearchInputChange}
+                  prefixIcon={<Search />}
+                  type="text"
+                />
               </div>
             </div>
-            {supportedAssets.length != 0 && (
+            {searchPageData.length != 0 && (
               <div className="flex flex-row grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
-                {supportedAssets.map((supportedAsset) => (
+                {searchPageData.map((data) => (
                   <div
-                    key={
-                      supportedAsset.id.tokenId +
-                      supportedAsset.contract.address
-                    }
+                    key={data.id.tokenId + data.contract.address}
                     className="flex m-4 items-center justify-center max-w-[300px]"
                   >
                     <Card
@@ -343,16 +387,16 @@ export default function App() {
                     >
                       <CardActionArea
                         onClick={function () {
-                          setSelectedAsset(supportedAsset);
+                          setSelectedAsset(data);
                           setVisibleAssetModal(true);
                         }}
                       >
                         <CardContent>
-                          {supportedAsset.metadata.image ? (
+                          {data.metadata.image ? (
                             <div className="flex flex-col items-center">
                               <Image
-                                loader={() => supportedAsset.metadata.image}
-                                src={supportedAsset.metadata.image}
+                                loader={() => data.metadata.image}
+                                src={data.metadata.image}
                                 height="200"
                                 width="200"
                                 className="rounded-2xl"
@@ -375,12 +419,10 @@ export default function App() {
                             }}
                           >
                             <div className="flex flex-col mt-2 items-center text-center">
-                              <div>{supportedAsset.contractMetadata.name}</div>
+                              <div>{data.contractMetadata.name}</div>
                               <div>
                                 {"#" +
-                                  BigNumber.from(
-                                    supportedAsset.id.tokenId
-                                  ).toNumber()}
+                                  BigNumber.from(data.id.tokenId).toNumber()}
                               </div>
                             </div>
                           </Box>
@@ -391,6 +433,13 @@ export default function App() {
                 ))}
               </div>
             )}
+            <div className="flex flex-row justify-center my-2">
+              <Pagination
+                count={Math.ceil(searchResults.length / SEARCH_PAGE_SIZE)}
+                page={searchPage}
+                onChange={handleSearchPageChange}
+              />
+            </div>
             {selectedAsset && (
               <StyledModal
                 hasFooter={false}

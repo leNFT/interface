@@ -95,9 +95,9 @@ export default function Home() {
               <li>Earn interest on your ETH</li>
             </div>
             <div className={styles.indexDescribeSubtitle}>
-              <Link href="https://lenft.gitbook.io/lenft-docs/readme/supported-collections">
+              <Link href="https://discord.gg/cDywBRGcmT">
                 <a target="_blank" className="text-sky-600">
-                  Supported NFT Collections
+                  Join the Discord
                 </a>
               </Link>
             </div>

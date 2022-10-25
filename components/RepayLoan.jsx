@@ -189,10 +189,10 @@ export default function RepayLoan(props) {
       <div className="flex flex-col lg:flex-row lg:m-8 justify-center">
         <div className="flex flex-col mb-4 lg:m-8 justify-center">
           <div className="flex flex-row justify-center">
-            {props.token_image ? (
+            {props.token_uri ? (
               <Image
-                loader={() => props.token_image}
-                src={props.token_image}
+                loader={() => props.token_uri}
+                src={props.token_uri}
                 height="300"
                 width="300"
                 unoptimized={true}

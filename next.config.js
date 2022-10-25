@@ -5,6 +5,12 @@ const nextConfig = {
   images: {
     loader: "custom",
   },
+  remotePatterns: [
+    {
+      protocol: "https",
+      hostname: "**",
+    },
+  ],
 };
 
 module.exports = nextConfig;

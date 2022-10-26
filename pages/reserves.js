@@ -79,7 +79,7 @@ export default function Reserves() {
           className="m-2"
           key={"tvl" + key}
         >
-          {formatUnits(value.balance, 18) + " " + underlyingSymbol}
+          {formatUnits(value.tvl, 18) + " " + underlyingSymbol}
         </Box>,
         <div key={"details" + key}>
           <Button

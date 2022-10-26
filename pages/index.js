@@ -93,6 +93,7 @@ export default function Home() {
             <div className={styles.indexDescribeSubtitle}>
               <li>Borrow money using your NFTs</li>
               <li>Earn interest on your ETH</li>
+              <li>Add liquidity to your NFT's ecosystem</li>
             </div>
             <div className={styles.indexDescribeSubtitle}>
               <Link href="https://discord.gg/cDywBRGcmT">

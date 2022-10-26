@@ -203,7 +203,7 @@ export default function Reserves() {
           customNoDataText="No reserves found."
           data={tableData}
           header={[
-            <div className="flex flex-row m-2">
+            <div key="assets" className="flex flex-row m-2">
               <Box
                 sx={{
                   fontFamily: "Monospace",
@@ -224,7 +224,7 @@ export default function Reserves() {
                 </Tooltip>
               </div>
             </div>,
-            <div className="flex flex-row m-2">
+            <div className="flex flex-row m-2" key="rewards">
               <Box
                 sx={{
                   fontFamily: "Monospace",

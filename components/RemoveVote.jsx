@@ -96,7 +96,7 @@ export default function RemoveVote(props) {
           </Typography>
         </div>
       </div>
-      <div className="flex flex-row items-center justify-center m-8">
+      <div className="flex flex-row items-center justify-center mt-8 mb-2">
         <Input
           label="Amount"
           type="number"
@@ -108,7 +108,11 @@ export default function RemoveVote(props) {
           onChange={handleInputChange}
         />
       </div>
-
+      <div className="flex flex-row items-center text-center justify-center mb-8">
+        <Typography variant="caption14">
+          Votes can only be removed after all loans in collection are repaid.
+        </Typography>
+      </div>
       <div className="m-8 mt-2">
         <Button
           text="Remove Votes"

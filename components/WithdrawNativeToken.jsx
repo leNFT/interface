@@ -159,7 +159,7 @@ export default function WithdrawNativeToken(props) {
           </Typography>
         </div>
       </div>
-      <div className="flex flex-row items-center justify-center m-6">
+      <div className="flex flex-row items-center justify-center mt-8 mb-2">
         <Input
           label="Amount"
           type="number"
@@ -171,7 +171,7 @@ export default function WithdrawNativeToken(props) {
           onChange={handleInputChange}
         />
       </div>
-      <div className="flex flex-row items-center text-center justify-center m-2">
+      <div className="flex flex-row items-center text-center justify-center mb-8">
         <Typography variant="caption14">
           {getWithdrawalMessage(lastWithdrawRequest.timestamp)}
         </Typography>

@@ -77,7 +77,7 @@ export default function Vote(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-row items-center justify-center">
+      <div className="flex flex-row items-center justify-center m-4">
         <div className="flex flex-col">
           <Typography variant="subtitle2">Free Votes</Typography>
           <Typography variant="body16">
@@ -85,7 +85,7 @@ export default function Vote(props) {
           </Typography>
         </div>
       </div>
-      <div className="flex flex-row items-center justify-center m-8">
+      <div className="flex flex-row items-center justify-center mt-8 mb-2">
         <Input
           label="Amount"
           type="number"
@@ -97,7 +97,12 @@ export default function Vote(props) {
           onChange={handleInputChange}
         />
       </div>
-      <div className="flex flex-row items-center justify-center m-8 mt-2">
+      <div className="flex flex-row items-center text-center justify-center mb-8">
+        <Typography variant="caption14">
+          Votes can only be removed after all loans in collection are repaid.
+        </Typography>
+      </div>
+      <div className="flex flex-row items-center justify-center m-8">
         <Button
           text="Vote"
           theme="secondary"

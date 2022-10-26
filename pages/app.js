@@ -410,6 +410,7 @@ export default function App() {
                               <div className="flex flex-col items-center">
                                 <Image
                                   loader={() => data.metadata.image}
+                                  alt="Supported Asset"
                                   src={data.metadata.image}
                                   height="200"
                                   width="200"

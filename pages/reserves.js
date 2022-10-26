@@ -5,6 +5,8 @@ import { formatUnits } from "@ethersproject/units";
 import StyledModal from "../components/StyledModal";
 import CreateReserve from "../components/CreateReserve";
 import { useAccount, useNetwork } from "wagmi";
+import { Tooltip } from "@web3uikit/core";
+import { HelpCircle } from "@web3uikit/icons";
 import { useState, useEffect } from "react";
 import Router from "next/router";
 import { ExternalLink } from "@web3uikit/icons";
@@ -201,26 +203,47 @@ export default function Reserves() {
           customNoDataText="No reserves found."
           data={tableData}
           header={[
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle1.fontSize",
-              }}
-              className="m-2"
-              key="1"
-            >
-              Assets
-            </Box>,
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle1.fontSize",
-              }}
-              className="m-2"
-              key="4"
-            >
-              Liquidation Rewards
-            </Box>,
+            <div className="flex flex-row m-2">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle1.fontSize",
+                }}
+                className=""
+                key="1"
+              >
+                Assets
+              </Box>
+              <div className="flex flex-col ml-1">
+                <Tooltip
+                  content="Assets that can be used with this reserve."
+                  position="bottom"
+                  minWidth={150}
+                >
+                  <HelpCircle fontSize="14px" color="#000000" />
+                </Tooltip>
+              </div>
+            </div>,
+            <div className="flex flex-row m-2">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle1.fontSize",
+                }}
+                key="4"
+              >
+                Liquidation Rewards
+              </Box>
+              <div className="flex flex-col ml-1">
+                <Tooltip
+                  content="Whether liquidation are incentivized through the use of LE tokens."
+                  position="bottom"
+                  minWidth={250}
+                >
+                  <HelpCircle fontSize="14px" color="#000000" />
+                </Tooltip>
+              </div>
+            </div>,
             <Box
               sx={{
                 fontFamily: "Monospace",

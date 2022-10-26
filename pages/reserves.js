@@ -59,7 +59,7 @@ export default function Reserves() {
           className="m-2"
           key={"incentivized" + key}
         >
-          {value.isIncentivized}
+          {value.isIncentivized.toString()}
         </Box>,
         <Box
           sx={{

@@ -44,30 +44,13 @@ export default function Reserve() {
 
   const provider = useProvider();
 
-  const addresses =
-    chain && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["1"];
-
-  const market = useContract({
-    contractInterface: marketContract.abi,
-    addressOrName: addresses.Market,
-    signerOrProvider: provider,
-  });
-
-  const tokenOracle = useContract({
-    contractInterface: tokenOracleContract.abi,
-    addressOrName: addresses.TokenOracle,
-    signerOrProvider: provider,
-  });
-
-  const reserve = useContract({
-    contractInterface: reserveContract.abi,
-    addressOrName: router.query.address,
-    signerOrProvider: provider,
-  });
-
   async function getReserveDetails() {
+    const reserve = new ethers.Contract(
+      router.query.address,
+      reserveContract.abi,
+      provider
+    );
+
     const updatedDebt = await reserve.getDebt();
     console.log("Updated Debt:", updatedDebt);
     setDebt(updatedDebt.toString());
@@ -143,8 +126,8 @@ export default function Reserve() {
 
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
-    console.log("router", router.query);
-    if (router.query != undefined) {
+    console.log("router", router.query.address);
+    if (router.query.address != undefined && isConnected) {
       console.log(
         "Got reserve address, setting the rest...",
         router.query.address
@@ -152,7 +135,7 @@ export default function Reserve() {
       setLoadingReserve(true);
       getReserveDetails();
     }
-  }, [address, router.query.address]);
+  }, [isConnected, router.query.address]);
 
   return (
     <div>

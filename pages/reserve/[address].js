@@ -1,5 +1,6 @@
 import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 import { Button, Tooltip, Loading, Typography } from "@web3uikit/core";
+import { getSupportedNFTs } from "../../helpers/getSupportedNFTs.js";
 import { HelpCircle } from "@web3uikit/icons";
 import { BigNumber } from "@ethersproject/bignumber";
 import StyledModal from "../../components/StyledModal";
@@ -25,6 +26,7 @@ export default function Reserve() {
   const [debt, setDebt] = useState("0");
   const [asset, setAsset] = useState("");
   const [assetSymbol, setAssetSymbol] = useState("");
+  const [reserveSupportedNFTs, setReserveSupportedNFTs] = useState({});
   const [visibleDepositModal, setVisibleDepositModal] = useState(false);
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
   const [maxAmount, setMaxAmount] = useState("0");
@@ -130,6 +132,11 @@ export default function Reserve() {
 
     setLiquidationPenalty(updatedLiquidationPenalty);
 
+    const updateReserveSupportedNFTs = await getSupportedNFTs(
+      chain.id,
+      router.query.address
+    );
+    setReserveSupportedNFTs(updateReserveSupportedNFTs);
     //Stop loading
     setLoadingReserve(false);
   }
@@ -367,6 +374,27 @@ export default function Reserve() {
               </div>
             </div>
           )}
+        </div>
+      </div>
+      <div className="flex flex-col justify-center items-center p-8 rounded-3xl m-8 lg:m-16 bg-black/5 shadow-lg">
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: "h5.fontSize",
+            fontWeight: "bold",
+          }}
+        >
+          Supported NFTs:
+        </Box>
+        <div className="mt-4">
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "h6.fontSize",
+            }}
+          >
+            {Object.values(reserveSupportedNFTs).map((nft) => nft.name + " ")}
+          </Box>
         </div>
       </div>
       <div className="flex flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 bg-black/5 shadow-lg">

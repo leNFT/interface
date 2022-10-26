@@ -32,10 +32,9 @@ export default function Reserves() {
     const reserves = await getReserves(chain.id);
     console.log("reserves", reserves);
     var newTableData = [];
+    const underlyingSymbol = "WETH";
 
     for (const [key, value] of Object.entries(reserves)) {
-      var underlyingSymbol = "WETH";
-
       newTableData.push([
         <Box
           sx={{
@@ -108,10 +107,11 @@ export default function Reserves() {
             id={key}
             radius="12"
             onClick={async function (event) {
-              console.log(key);
               Router.push({
                 pathname: "/reserve/[address]",
-                query: { address: event.target.id },
+                query: {
+                  address: event.target.id,
+                },
               });
             }}
           />
@@ -236,7 +236,7 @@ export default function Reserves() {
               </Box>
               <div className="flex flex-col ml-1">
                 <Tooltip
-                  content="Whether liquidation are incentivized through the use of LE tokens."
+                  content="Whether liquidations are incentivized through LE tokens."
                   position="bottom"
                   minWidth={250}
                 >

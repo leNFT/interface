@@ -32,17 +32,6 @@ export default function Footer() {
       >
         <Book fontSize="32px" color="#000000" title="Book Icon" />
       </a>
-      <a
-        href="https://lenft.gitbook.io/lenft-docs/readme/supported-collections"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="font-bold text-sm"
-      >
-        <div>
-          <div>Supported</div>
-          <div>Collections</div>
-        </div>
-      </a>
     </footer>
   );
 }

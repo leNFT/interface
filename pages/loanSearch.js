@@ -1,6 +1,7 @@
 import styles from "../styles/Home.module.css";
 import { getAssetPrice } from "../helpers/getAssetPrice.js";
 import { ethers } from "ethers";
+import { getSupportedNFTs } from "../helpers/getSupportedNFTs.js";
 import { getNFTImage } from "../helpers/getNFTImage.js";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
 import { getSupportedNFTs } from "../helpers/getSupportedNFTs.js";

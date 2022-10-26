@@ -8,6 +8,7 @@ export async function getReserves(chainId) {
       Accept: "application/json",
     },
   };
+
   const reservesResponse = await fetch(
     serverAddress + "/api/reserves?chainId=" + chainId,
     options

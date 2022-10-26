@@ -57,6 +57,16 @@ export default function Reserves() {
             fontSize: "subtitle1.fontSize",
           }}
           className="m-2"
+          key={"incentivized" + key}
+        >
+          {value.isIncentivized}
+        </Box>,
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: "subtitle1.fontSize",
+          }}
+          className="m-2"
           key={"borrow" + key}
         >
           {value.borrowRate / 100 + "%"}
@@ -173,7 +183,7 @@ export default function Reserves() {
           />
         </div>
         <Table
-          columnsConfig="3fr 2fr 2fr 2fr 1fr 0fr"
+          columnsConfig="2fr 2fr 2fr 2fr 2fr 1fr 0fr"
           tableBackgroundColor="lightblue"
           customLoadingContent={
             <div
@@ -200,6 +210,16 @@ export default function Reserves() {
               key="1"
             >
               Assets
+            </Box>,
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle1.fontSize",
+              }}
+              className="m-2"
+              key="4"
+            >
+              Liquidation Rewards
             </Box>,
             <Box
               sx={{
@@ -235,7 +255,7 @@ export default function Reserves() {
             "",
           ]}
           isLoading={loadingTableData}
-          isColumnSortable={[false, true, true, true, false, false]}
+          isColumnSortable={[false, true, true, true, true, false, false]}
           onPageNumberChanged={function noRefCheck() {}}
           onRowClick={function noRefCheck() {}}
           pageSize={5}

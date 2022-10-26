@@ -372,22 +372,21 @@ export default function App() {
                   prefixIcon={<Search />}
                   type="text"
                 />
-                <div className="m-2">
-                  {searchInputString != "" && (
-                    <Box
-                      sx={{
-                        color: "gray",
-                        fontFamily: "Monospace",
-                      }}
-                    >
-                      <div className="text-sm text-center">
-                        {searchResults.length +
+                <div className="m-2 mb-4">
+                  <Box
+                    sx={{
+                      color: "gray",
+                      fontFamily: "Monospace",
+                    }}
+                  >
+                    <div className="text-sm text-center h-[20px]">
+                      {searchInputString != "" &&
+                        searchResults.length +
                           " results for '" +
                           searchInputString +
                           "'"}
-                      </div>
-                    </Box>
-                  )}
+                    </div>
+                  </Box>
                 </div>
               </div>
             </div>

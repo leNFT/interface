@@ -79,7 +79,9 @@ export default function Reserves() {
           className="m-2"
           key={"tvl" + key}
         >
-          {formatUnits(value.tvl, 18) + " " + underlyingSymbol}
+          {Number(formatUnits(value.tvl, 18)).toFixed(2) +
+            " " +
+            underlyingSymbol}
         </Box>,
         <div key={"details" + key}>
           <Button
@@ -172,7 +174,7 @@ export default function Reserves() {
         </div>
         <Table
           columnsConfig="3fr 2fr 2fr 2fr 1fr 0fr"
-          tableBackgroundColor="black"
+          tableBackgroundColor="lightblue"
           customLoadingContent={
             <div
               style={{

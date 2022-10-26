@@ -28,8 +28,6 @@ import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 export default function App() {
   const SEARCH_PAGE_SIZE = 8;
   const [loadingUI, setLoadingUI] = useState(true);
-  const [count, setCount] = useState(0);
-  const [processedCount, setProcessedCount] = useState(0);
   const [loans, setLoans] = useState([]);
   const [supportedAssets, setSupportedAssets] = useState([]);
   const [searchPage, setSearchPage] = useState(0);
@@ -74,7 +72,6 @@ export default function App() {
 
     // Loop through all of tthe user NFTs
     console.log("Found " + addressNFTs.length + " NFTs for user " + address);
-    setCount(addressNFTs.length);
 
     for (let i = 0; i < addressNFTs.length; i++) {
       if (
@@ -123,8 +120,6 @@ export default function App() {
           updatedUnsupportedAssets.push(addressNFTs[i]);
         }
       }
-
-      setProcessedCount(i);
     }
     console.log("updatedLoans:", updatedLoans);
     console.log("updatedSupportedAssets:", updatedSupportedAssets);
@@ -200,11 +195,10 @@ export default function App() {
               <Box
                 sx={{
                   fontFamily: "Monospace",
-                  letterSpacing: 24,
                 }}
               >
                 <div className="text-md md:text-2xl justify-center text-center">
-                  {"Got " + processedCount + "/" + count + " assets"}
+                  {"Loading your NFTs..."}
                 </div>
               </Box>
             </Typography>

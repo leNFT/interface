@@ -350,7 +350,7 @@ export default function Borrow(props) {
             </div>
             <div className="flex flex-row m-2">
               <div className="flex flex-col">
-                <Typography variant="subtitle2">Max LTV</Typography>
+                <Typography variant="subtitle2">Max LTV (+ Boost)</Typography>
                 {loadingMaxAmount ? (
                   <div className="m-2">
                     <Loading size={14} spinnerColor="#000000" />
@@ -361,7 +361,7 @@ export default function Borrow(props) {
                       ? maxCollateralization / 100 +
                         "% + " +
                         collateralizationBoost / 100 +
-                        "% (Boost) = " +
+                        "% = " +
                         (parseInt(maxCollateralization) +
                           parseInt(collateralizationBoost)) /
                           100 +

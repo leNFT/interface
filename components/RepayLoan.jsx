@@ -264,14 +264,14 @@ export default function RepayLoan(props) {
           </div>
           <div className="flex flex-row m-2">
             <div className="flex flex-col">
-              <Typography variant="subtitle2">Max LTV</Typography>
+              <Typography variant="subtitle2">Max LTV (+ Boost)</Typography>
               {loan && (
                 <Typography variant="body16">
                   {tokenPrice != "0"
                     ? loan.maxLTV.toNumber() / 100 +
                       "% + " +
                       loan.boost.toNumber() / 100 +
-                      "% (Boost) = " +
+                      "% = " +
                       loan.maxLTV.add(loan.boost).toNumber() / 100 +
                       "%"
                     : "Token Price Appraisal Error"}

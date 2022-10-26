@@ -18,7 +18,6 @@ export default function Vote(props) {
   const { chain } = useNetwork();
   const provider = useProvider();
   const { data: signer } = useSigner();
-  const [freeVotes, setFreeVotes] = useState("0");
   const [amount, setAmount] = useState("0");
   const [votingLoading, setVotingLoading] = useState(false);
 
@@ -34,23 +33,8 @@ export default function Vote(props) {
     signerOrProvider: signer,
   });
 
-  const nativeTokenVaultProvider = useContract({
-    contractInterface: nativeTokenVaultContract.abi,
-    addressOrName: addresses.NativeTokenVault,
-    signerOrProvider: provider,
-  });
-
-  async function updateFreeVotes() {
-    const updatedFreeVotes = await nativeTokenVaultProvider.getUserFreeVotes(
-      address
-    );
-    console.log("Updated Free Votes:", updatedFreeVotes);
-    setFreeVotes(updatedFreeVotes.toString());
-  }
-
   useEffect(() => {
     if (isConnected) {
-      updateFreeVotes();
     }
   }, [isConnected]);
 
@@ -58,7 +42,6 @@ export default function Vote(props) {
     console.log("Voted", amount);
     props.updateUI();
     props.setVisibility(false);
-    updateFreeVotes();
     dispatch({
       type: "success",
       message: "You have voted.",
@@ -81,7 +64,7 @@ export default function Vote(props) {
         <div className="flex flex-col">
           <Typography variant="subtitle2">Free Votes</Typography>
           <Typography variant="body16">
-            {formatUnits(freeVotes, 18)} veLE
+            {formatUnits(props.freeVotes, 18)} veLE
           </Typography>
         </div>
       </div>
@@ -91,7 +74,7 @@ export default function Vote(props) {
           type="number"
           step="any"
           validation={{
-            numberMax: Number(formatUnits(freeVotes, 18)),
+            numberMax: Number(formatUnits(props.freeVotes, 18)),
             numberMin: 0,
           }}
           onChange={handleInputChange}
@@ -116,7 +99,7 @@ export default function Vote(props) {
           loadingText=""
           isLoading={votingLoading}
           onClick={async function () {
-            if (BigNumber.from(amount).lte(BigNumber.from(freeVotes))) {
+            if (BigNumber.from(amount).lte(BigNumber.from(props.freeVotes))) {
               try {
                 setVotingLoading(true);
                 const tx = await nativeTokenVaultSigner.vote(

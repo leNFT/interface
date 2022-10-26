@@ -42,10 +42,7 @@ export default function Stake() {
     chain && chain.id in contractAddresses
       ? contractAddresses[chain.id]
       : contractAddresses["1"];
-  const [selectedCollection, setSelectedCollection] = useState({
-    label: "",
-    address: "",
-  });
+  const [selectedCollection, setSelectedCollection] = useState();
   const [collections, setCollections] = useState();
 
   const nativeTokenVault = useContract({
@@ -123,15 +120,26 @@ export default function Stake() {
   }, [isConnected]);
 
   async function updateCollectionDetails(collection) {
+    if (!collection) {
+      setCollectionVotes("0");
+      setCollectionBoost("0");
+      return;
+    }
     // Get the collection votes
     const updatedCollectionVotes =
-      await nativeTokenVault.getUserCollectionVotes(address, collection);
+      await nativeTokenVault.getUserCollectionVotes(
+        address,
+        collection.address
+      );
     console.log("collectionVotes", updatedCollectionVotes);
     setCollectionVotes(updatedCollectionVotes.toString());
 
     // Get the collection collateralization boost
     const updatedCollectionBoost =
-      await nativeTokenVault.getVoteCollateralizationBoost(address, collection);
+      await nativeTokenVault.getVoteCollateralizationBoost(
+        address,
+        collection.address
+      );
     console.log("collectionBoost", updatedCollectionBoost);
     setCollectionBoost(updatedCollectionBoost.toString());
   }
@@ -142,10 +150,8 @@ export default function Stake() {
     const collection = collections.find(
       (collection) => collection.label == value
     );
-    if (collection) {
-      setSelectedCollection(collection);
-      updateCollectionDetails(collection.address);
-    }
+    setSelectedCollection(collection);
+    updateCollectionDetails(collection);
   }
 
   return (
@@ -181,7 +187,9 @@ export default function Stake() {
       </StyledModal>
       <StyledModal
         hasFooter={false}
-        title={"Vote for " + selectedCollection.label}
+        title={
+          "Vote for " + (selectedCollection ? selectedCollection.label : "")
+        }
         width="50%"
         isVisible={visibleVoteModal}
         onCloseButtonPressed={function () {
@@ -192,11 +200,15 @@ export default function Stake() {
           {...selectedCollection}
           setVisibility={setVisibleVoteModal}
           updateUI={updateUI}
+          freeVotes={freeVotes}
         />
       </StyledModal>
       <StyledModal
         hasFooter={false}
-        title={"Remove vote from " + selectedCollection.label}
+        title={
+          "Remove vote from " +
+          (selectedCollection ? selectedCollection.label : "")
+        }
         width="50%"
         isVisible={visibleRemoveVoteModal}
         onCloseButtonPressed={function () {
@@ -207,6 +219,7 @@ export default function Stake() {
           {...selectedCollection}
           setVisibility={setVisibleRemoveVoteModal}
           updateUI={updateUI}
+          collectionVotes={collectionVotes}
         />
       </StyledModal>
       <div className="flex flex-col items-center">
@@ -415,6 +428,7 @@ export default function Stake() {
                       textColor: "white",
                     }}
                     text="Vote"
+                    disabled={selectedCollection == null}
                     theme="custom"
                     size="large"
                     radius="12"
@@ -430,6 +444,7 @@ export default function Stake() {
                       fontSize: 16,
                       textColor: "white",
                     }}
+                    disabled={selectedCollection == null}
                     text="Remove Vote"
                     theme="custom"
                     size="large"

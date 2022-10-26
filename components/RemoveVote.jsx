@@ -20,8 +20,6 @@ export default function RemoveVote(props) {
   const { data: signer } = useSigner();
   const [amount, setAmount] = useState("0");
   const [removeVotingLoading, setRemoveVotingLoading] = useState(false);
-  const [maxAmount, setMaxAmount] = useState("0");
-  const [freeVotes, setFreeVotes] = useState("0");
 
   const addresses =
     chain && chain.id in contractAddresses
@@ -41,28 +39,9 @@ export default function RemoveVote(props) {
     signerOrProvider: provider,
   });
 
-  async function updateMaxAmount() {
-    const voteTokenBalance = (
-      await nativeTokenVaultProvider.balanceOf(address)
-    ).toString();
-
-    const updatedFreeVotes = (
-      await nativeTokenVaultProvider.getUserFreeVotes(address)
-    ).toString();
-    console.log("Updated Free Votes:", updatedFreeVotes);
-    setFreeVotes(updatedFreeVotes.toString());
-
-    const updatedMaxAmount =
-      BigNumber.from(voteTokenBalance).sub(updatedFreeVotes);
-
-    console.log("Updated Max Remove Votes:", updatedMaxAmount);
-    setMaxAmount(updatedMaxAmount);
-  }
-
   //Run once
   useEffect(() => {
     if (isConnected) {
-      updateMaxAmount();
     }
   }, [isConnected]);
 
@@ -77,7 +56,6 @@ export default function RemoveVote(props) {
   const handleRemoveVoteSuccess = async function () {
     props.updateUI();
     props.setVisibility(false);
-    updateMaxAmount();
     dispatch({
       type: "success",
       message: "You can now vote for other collection.",
@@ -92,7 +70,7 @@ export default function RemoveVote(props) {
         <div className="flex flex-col">
           <Typography variant="subtitle2">Maximum removable votes</Typography>
           <Typography variant="body16">
-            {formatUnits(maxAmount, 18)} veLE
+            {formatUnits(props.collectionVotes, 18)} veLE
           </Typography>
         </div>
       </div>
@@ -102,7 +80,7 @@ export default function RemoveVote(props) {
           type="number"
           step="any"
           validation={{
-            numberMax: Number(formatUnits(maxAmount, 18)),
+            numberMax: Number(formatUnits(props.collectionVotes, 18)),
             numberMin: 0,
           }}
           onChange={handleInputChange}
@@ -127,7 +105,9 @@ export default function RemoveVote(props) {
           loadingText=""
           isLoading={removeVotingLoading}
           onClick={async function () {
-            if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
+            if (
+              BigNumber.from(amount).lte(BigNumber.from(props.collectionVotes))
+            ) {
               try {
                 setRemoveVotingLoading(true);
                 const tx = await nativeTokenVaultSigner.removeVote(

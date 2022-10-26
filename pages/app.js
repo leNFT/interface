@@ -35,6 +35,8 @@ export default function App() {
   const [searchPage, setSearchPage] = useState(0);
   const [searchResults, setSearchResults] = useState([]);
   const [searchPageData, setSearchPageData] = useState([]);
+  const [searchInputString, setSearchInputString] = useState("");
+
   const [unsupportedAssets, setUnsupportedAssets] = useState([]);
   const [visibleAssetModal, setVisibleAssetModal] = useState(false);
   const [visibleLoanModal, setVisibleLoanModal] = useState(false);
@@ -169,6 +171,7 @@ export default function App() {
 
   function handleSearchInputChange(e) {
     console.log("search input:", e.target.value);
+    setSearchInputString(e.target.value);
 
     function searchFilter(asset) {
       const stringToMatch =
@@ -357,89 +360,108 @@ export default function App() {
                     }}
                   >
                     <div className="text-sm text-center md:text-left md:text-lg">
-                      {searchResults.length + " supported NFTs"}
+                      {supportedAssets.length + " supported Assets"}
                     </div>
                   </Box>
                 </div>
               </div>
-              <div className="flex flex-col m-4 items-center">
+              <div className="flex flex-col m-4 items-center justify-center">
                 <Input
                   onBlur={function noRefCheck() {}}
                   onChange={handleSearchInputChange}
                   prefixIcon={<Search />}
                   type="text"
                 />
+                <div className="m-2">
+                  {searchInputString != "" && (
+                    <Box
+                      sx={{
+                        color: "gray",
+                        fontFamily: "Monospace",
+                      }}
+                    >
+                      <div className="text-sm text-center">
+                        {searchResults.length +
+                          " results for '" +
+                          searchInputString +
+                          "'"}
+                      </div>
+                    </Box>
+                  )}
+                </div>
               </div>
             </div>
             {searchPageData.length != 0 && (
-              <div className="flex flex-row grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
-                {searchPageData.map((data) => (
-                  <div
-                    key={data.id.tokenId + data.contract.address}
-                    className="flex m-4 items-center justify-center max-w-[300px]"
-                  >
-                    <Card
-                      sx={{
-                        borderRadius: 4,
-                        background:
-                          "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
-                      }}
+              <div>
+                <div className="flex flex-row grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                  {searchPageData.map((data) => (
+                    <div
+                      key={data.id.tokenId + data.contract.address}
+                      className="flex m-4 items-center justify-center max-w-[300px]"
                     >
-                      <CardActionArea
-                        onClick={function () {
-                          setSelectedAsset(data);
-                          setVisibleAssetModal(true);
+                      <Card
+                        sx={{
+                          borderRadius: 4,
+                          background:
+                            "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                         }}
                       >
-                        <CardContent>
-                          {data.metadata.image ? (
-                            <div className="flex flex-col items-center">
-                              <Image
-                                loader={() => data.metadata.image}
-                                src={data.metadata.image}
-                                height="200"
-                                width="200"
-                                className="rounded-2xl"
-                              />
-                            </div>
-                          ) : (
+                        <CardActionArea
+                          onClick={function () {
+                            setSelectedAsset(data);
+                            setVisibleAssetModal(true);
+                          }}
+                        >
+                          <CardContent>
+                            {data.metadata.image ? (
+                              <div className="flex flex-col items-center">
+                                <Image
+                                  loader={() => data.metadata.image}
+                                  src={data.metadata.image}
+                                  height="200"
+                                  width="200"
+                                  className="rounded-2xl"
+                                />
+                              </div>
+                            ) : (
+                              <Box
+                                sx={{
+                                  fontFamily: "Monospace",
+                                  fontSize: "caption",
+                                }}
+                              >
+                                {"Can't load Image"}.
+                              </Box>
+                            )}
                             <Box
                               sx={{
                                 fontFamily: "Monospace",
-                                fontSize: "caption",
+                                fontSize: "subtitle1.fontSize",
                               }}
                             >
-                              {"Can't load Image"}.
-                            </Box>
-                          )}
-                          <Box
-                            sx={{
-                              fontFamily: "Monospace",
-                              fontSize: "subtitle1.fontSize",
-                            }}
-                          >
-                            <div className="flex flex-col mt-2 items-center text-center">
-                              <div>{data.contractMetadata.name}</div>
-                              <div>
-                                {"#" +
-                                  BigNumber.from(data.id.tokenId).toNumber()}
+                              <div className="flex flex-col mt-2 items-center text-center">
+                                <div>{data.contractMetadata.name}</div>
+                                <div>
+                                  {"#" +
+                                    BigNumber.from(data.id.tokenId).toNumber()}
+                                </div>
                               </div>
-                            </div>
-                          </Box>
-                        </CardContent>
-                      </CardActionArea>
-                    </Card>
-                  </div>
-                ))}
+                            </Box>
+                          </CardContent>
+                        </CardActionArea>
+                      </Card>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-row justify-center my-2">
+                  <Pagination
+                    count={Math.ceil(searchResults.length / SEARCH_PAGE_SIZE)}
+                    page={searchPage}
+                    onChange={handleSearchPageChange}
+                  />
+                </div>
               </div>
             )}
-            <div className="flex flex-row justify-center my-2">
-              <Pagination
-                count={Math.ceil(searchResults.length / SEARCH_PAGE_SIZE)}
-                page={searchPage}
-                onChange={handleSearchPageChange}
-              />
-            </div>
             {selectedAsset && (
               <StyledModal
                 hasFooter={false}

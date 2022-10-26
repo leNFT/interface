@@ -99,10 +99,7 @@ export default function LoanSearch() {
 
       // Find the valuation given by the protocol to this specific asset
       const assetPrice = await getAssetPrice(
-        contractAddresses[chain.id].SupportedAssets.find(
-          (collection) =>
-            collection.address == collectionNFTs[i].contract.address
-        ).address,
+        collectionNFTs[i].contract.address,
         BigNumber.from(collectionNFTs[i].id.tokenId).toNumber()
       );
 

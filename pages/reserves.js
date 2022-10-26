@@ -233,7 +233,7 @@ export default function Reserves() {
             "",
           ]}
           isLoading={loadingTableData}
-          isColumnSortable={[false, true, true]}
+          isColumnSortable={[false, true, true, true, false, false]}
           onPageNumberChanged={function noRefCheck() {}}
           onRowClick={function noRefCheck() {}}
           pageSize={5}

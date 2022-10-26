@@ -15,7 +15,7 @@ function MyApp({ Component, pageProps }) {
   const isIndex = router.pathname == "/";
   const LayoutComponent = isIndex ? SplashLayout : Layout;
   const { chains, provider } = configureChains(
-    [chain.mainnet, chain.goerli],
+    [chain.goerli, chain.mainnet],
     [
       alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY }),
       publicProvider(),

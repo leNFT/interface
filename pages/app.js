@@ -423,14 +423,16 @@ export default function App() {
                                 />
                               </div>
                             ) : (
-                              <Box
-                                sx={{
-                                  fontFamily: "Monospace",
-                                  fontSize: "caption",
-                                }}
-                              >
-                                {"Can't load Image"}.
-                              </Box>
+                              <div className="flex flex-col w-[200px] h-[200px] text-center items-center justify-center">
+                                <Box
+                                  sx={{
+                                    fontFamily: "Monospace",
+                                    fontSize: "caption.fontSize",
+                                  }}
+                                >
+                                  Image Unavailable
+                                </Box>
+                              </div>
                             )}
                             <Box
                               sx={{
@@ -532,10 +534,15 @@ export default function App() {
                                 />
                               </div>
                             ) : (
-                              <div className="flex flex-col h-28 text-center items-center justify-center">
-                                <Typography variant="subtitle3" italic="true">
+                              <div className="flex flex-col w-[120px] h-[120px] text-center items-center justify-center">
+                                <Box
+                                  sx={{
+                                    fontFamily: "Monospace",
+                                    fontSize: "caption.fontSize",
+                                  }}
+                                >
                                   Image Unavailable
-                                </Typography>
+                                </Box>
                               </div>
                             )}
                             <Box

@@ -33,7 +33,7 @@ export default function LoanSearch() {
   const [maxCollateralization, setMaxCollateralization] = useState("0");
   const [count, setCount] = useState(0);
   const [processedCount, setProcessedCount] = useState(0);
-  const [loadingCollectionLoans, setLoadingCollectionLoans] = useState(true);
+  const [loadingCollectionLoans, setLoadingCollectionLoans] = useState(false);
   const [selectedLoan, setSelectedLoan] = useState();
   const [visibleLiquidateModal, setVisibleLiquidateModal] = useState(false);
   const { address, isConnected } = useAccount();
@@ -59,6 +59,7 @@ export default function LoanSearch() {
 
   // Get active loans for the selected collection
   async function getCollectionLoans(selectedCollection) {
+    setLoadingCollectionLoans(true);
     console.log("Getting collection loans...", selectedCollection);
     var updatedCollectionLoans = [];
 
@@ -131,7 +132,6 @@ export default function LoanSearch() {
   }
 
   async function updateCollections() {
-    setLoadingCollectionLoans(true);
     //Fill the collections with the supported assets
     const supportedNFTs = await getSupportedNFTs(chain.id);
     console.log("supportedNFTs", supportedNFTs);
@@ -408,25 +408,14 @@ export default function LoanSearch() {
           </div>
         ) : (
           <div className="flex mb-32 mt-16 items-center justify-center">
-            {collections.length != 0 ? (
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "h6.fontSize",
-                }}
-              >
-                Please select a supported collection with active loans.
-              </Box>
-            ) : (
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "h6.fontSize",
-                }}
-              >
-                leNFT does not support any NFT collections (yet).
-              </Box>
-            )}
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "h6.fontSize",
+              }}
+            >
+              Please select a supported collection with active loans.
+            </Box>
           </div>
         )}
       </div>

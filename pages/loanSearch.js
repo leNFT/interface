@@ -4,7 +4,6 @@ import { ethers } from "ethers";
 import { getSupportedNFTs } from "../helpers/getSupportedNFTs.js";
 import { getNFTImage } from "../helpers/getNFTImage.js";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
-import { getSupportedNFTs } from "../helpers/getSupportedNFTs.js";
 import contractAddresses from "../contractAddresses.json";
 import { BigNumber } from "@ethersproject/bignumber";
 import { getAddress } from "@ethersproject/address";

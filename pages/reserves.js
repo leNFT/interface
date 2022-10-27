@@ -68,19 +68,9 @@ export default function Reserves() {
             fontSize: "subtitle1.fontSize",
           }}
           className="m-2"
-          key={"borrow" + key}
-        >
-          {value.borrowRate / 100 + "%"}
-        </Box>,
-        <Box
-          sx={{
-            fontFamily: "Monospace",
-            fontSize: "subtitle1.fontSize",
-          }}
-          className="m-2"
           key={"supply" + key}
         >
-          {value.supplyRate / 100 + "%"}
+          {value.borrowRate / 100 + "%" + " / " + value.supplyRate / 100 + "%"}
         </Box>,
         <Box
           sx={{
@@ -185,7 +175,7 @@ export default function Reserves() {
           />
         </div>
         <Table
-          columnsConfig="2fr 2fr 2fr 2fr 2fr 1fr 0fr"
+          columnsConfig="2fr 2fr 2fr 2fr 1fr 0fr"
           tableBackgroundColor="white"
           customLoadingContent={
             <div
@@ -250,19 +240,9 @@ export default function Reserves() {
                 fontSize: "subtitle1.fontSize",
               }}
               className="m-2"
-              key="2"
-            >
-              Borrow Rate
-            </Box>,
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle1.fontSize",
-              }}
-              className="m-2"
               key="4"
             >
-              Supply Rate
+              Borrow / Supply Rate
             </Box>,
             <Box
               sx={{
@@ -278,7 +258,7 @@ export default function Reserves() {
             "",
           ]}
           isLoading={loadingTableData}
-          isColumnSortable={[false, true, true, true, true, false, false]}
+          isColumnSortable={[false, true, false, true, false, false]}
           onPageNumberChanged={function noRefCheck() {}}
           onRowClick={function noRefCheck() {}}
           pageSize={5}

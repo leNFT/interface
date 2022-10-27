@@ -282,7 +282,7 @@ export default function Stake() {
                     fontWeight: "bold",
                   }}
                 >
-                  Balance
+                  My Balance
                 </Box>
               </div>
               <div className="flex flex-row">
@@ -305,7 +305,7 @@ export default function Stake() {
                     fontWeight: "bold",
                   }}
                 >
-                  Vault Balance
+                  My Vault Balance
                 </Box>
               </div>
               <div className="flex flex-row">
@@ -316,9 +316,7 @@ export default function Stake() {
                   }}
                 >
                   {Number(formatUnits(voteTokenBalance, 18)).toFixed(2) +
-                    " veLE = " +
-                    Number(formatUnits(maxAmount, 18)).toFixed(2) +
-                    " LE"}
+                    " veLE"}
                 </Box>
               </div>
             </div>

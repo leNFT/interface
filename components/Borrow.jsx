@@ -296,9 +296,8 @@ export default function Borrow(props) {
                 className="rounded-3xl"
               />
             ) : (
-              <div>
-                <Illustration height="180px" logo="token" width="100%" />
-                Loading...
+              <div className="flex items-center justify-center w-[300px] h-[300px]">
+                Image Unavailable
               </div>
             )}
             {genesisNFTId != 0 && (

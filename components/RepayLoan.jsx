@@ -199,7 +199,9 @@ export default function RepayLoan(props) {
                 className="rounded-3xl"
               />
             ) : (
-              <Illustration height="180px" logo="chest" width="100%" />
+              <div className="flex items-center justify-center w-[300px] h-[300px]">
+                Image Unavailable
+              </div>
             )}
           </div>
           <div className="flex flex-row justify-center">

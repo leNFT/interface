@@ -186,7 +186,7 @@ export default function Reserves() {
         </div>
         <Table
           columnsConfig="2fr 2fr 2fr 2fr 2fr 1fr 0fr"
-          tableBackgroundColor="lightblue"
+          tableBackgroundColor="white"
           customLoadingContent={
             <div
               style={{

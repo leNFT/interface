@@ -2,6 +2,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useNotification, Button, Input, Typography } from "@web3uikit/core";
 import styles from "../styles/Home.module.css";
+import genesisNFTURIs from "../genesisNFTURIs.json";
 import contractAddresses from "../contractAddresses.json";
 import {
   useAccount,
@@ -129,6 +130,7 @@ export default function GenesisMint(props) {
               setMintingLoading(true);
               const tx = await genesisNFTSigner.mint(
                 locktimeDays * SECONDS_IN_DAY,
+                genesisNFTURIs[mintCount],
                 { value: props.price }
               );
               await tx.wait(1);

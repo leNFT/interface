@@ -1,6 +1,7 @@
 import styles from "../styles/Home.module.css";
 import { Button } from "@web3uikit/core";
 import contractAddresses from "../contractAddresses.json";
+import genesisNFTContract from "../contracts/GenesisNFT.json";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 import { useState, useEffect } from "react";
@@ -40,14 +41,14 @@ export default function Stake() {
 
   async function updateGenesisInfo() {
     // Get supply
-    const updatedMintCount = await genesisNFTProvider.getMintCount();
+    const updatedMintCount = await genesisNFTProvider.totalSupply();
     setMintCount(updatedMintCount.toNumber());
     console.log("updatedMintCount.toNumber()", updatedMintCount.toNumber());
     // Get cap
     const updatedCap = await genesisNFTProvider.getCap();
     setCap(updatedCap.toNumber());
     // Get price
-    const updatedPrice = await genesisNFTProvider.getPrice();
+    const updatedPrice = await genesisNFTProvider.getETHPrice();
     console.log("updatedPrice", updatedPrice);
     setPrice(updatedPrice.toString());
   }
@@ -146,7 +147,7 @@ export default function Stake() {
               <div className="mt-4">
                 <LinearProgressWithLabel
                   color="primary"
-                  value={mintCount / cap}
+                  value={cap != 0 ? mintCount / cap : 0}
                 />
               </div>
             </div>

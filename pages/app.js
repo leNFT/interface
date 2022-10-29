@@ -419,7 +419,7 @@ export default function App() {
                                 />
                               </div>
                             ) : (
-                              <div className="flex flex-col w-[200px] h-[200px] text-center items-center justify-center">
+                              <div className="flex flex-col w-[150px] h-[150px] text-center items-center justify-center">
                                 <Box
                                   sx={{
                                     fontFamily: "Monospace",

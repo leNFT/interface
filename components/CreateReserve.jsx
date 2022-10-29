@@ -134,7 +134,7 @@ export default function Vote(props) {
           <div className="flex flex-col m-4">
             <Typography variant="subtitle2">Underlying Safeguard</Typography>
             <Typography variant="caption16">
-              {formatUnits(underlyingSafeguard, 18) + " WETH"}
+              {formatUnits(underlyingSafeguard, 18) + " ETH"}
             </Typography>
           </div>
         </div>

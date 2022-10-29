@@ -1,7 +1,6 @@
 import styles from "../styles/Home.module.css";
-import { Button, Illustration } from "@web3uikit/core";
+import { Button } from "@web3uikit/core";
 import contractAddresses from "../contractAddresses.json";
-import genesisNFTContract from "../contracts/GenesisNFT.json";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 import { useState, useEffect } from "react";

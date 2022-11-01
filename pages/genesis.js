@@ -5,6 +5,7 @@ import genesisNFTContract from "../contracts/GenesisNFT.json";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Box from "@mui/material/Box";
 import GenesisMint from "../components/GenesisMint";
 import GenesisBurn from "../components/GenesisBurn";
@@ -204,10 +205,42 @@ export default function Stake() {
                     }}
                   >
                     <CardContent>
+                      {nft.metadata.image ? (
+                        <div className="flex flex-col items-center">
+                          <Image
+                            loader={() =>
+                              nft.metadata.image.replace(
+                                "ipfs://",
+                                "https://ipfs.io/ipfs/"
+                              )
+                            }
+                            alt="Supported Asset"
+                            src={nft.metadata.image.replace(
+                              "ipfs://",
+                              "https://ipfs.io/ipfs/"
+                            )}
+                            height="200"
+                            width="200"
+                            className="rounded-2xl"
+                            loading="eager"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex flex-col w-[150px] h-[150px] text-center items-center justify-center">
+                          <Box
+                            sx={{
+                              fontFamily: "Monospace",
+                              fontSize: "caption.fontSize",
+                            }}
+                          >
+                            Image Unavailable
+                          </Box>
+                        </div>
+                      )}
                       <Box
                         sx={{
                           fontFamily: "Monospace",
-                          fontSize: "h1.fontSize",
+                          fontSize: "subtitle1.fontSize",
                         }}
                       >
                         <div className="flex flex-col mt-2 items-center text-center">

@@ -409,9 +409,9 @@ export default function App() {
                             {data.metadata.image ? (
                               <div className="flex flex-col items-center">
                                 <Image
-                                  loader={() => data.metadata.image}
+                                  loader={() => data.media[0].gateway}
                                   alt="Supported Asset"
-                                  src={data.metadata.image}
+                                  src={data.media[0].gateway}
                                   height="200"
                                   width="200"
                                   className="rounded-2xl"
@@ -522,8 +522,10 @@ export default function App() {
                             {unsupportedAsset.metadata.image ? (
                               <div className="flex flex-col items-center">
                                 <Image
-                                  loader={() => unsupportedAsset.metadata.image}
-                                  src={unsupportedAsset.metadata.image}
+                                  loader={() =>
+                                    unsupportedAsset.media[0].gateway
+                                  }
+                                  src={unsupportedAsset.media[0].gateway}
                                   height="120"
                                   width="120"
                                   className="rounded-2xl"

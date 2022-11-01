@@ -208,17 +208,9 @@ export default function Stake() {
                       {nft.metadata.image ? (
                         <div className="flex flex-col items-center">
                           <Image
-                            loader={() =>
-                              nft.metadata.image.replace(
-                                "ipfs://",
-                                "https://ipfs.io/ipfs/"
-                              )
-                            }
+                            loader={() => nft.media[0].gateway}
                             alt="Supported Asset"
-                            src={nft.metadata.image.replace(
-                              "ipfs://",
-                              "https://ipfs.io/ipfs/"
-                            )}
+                            src={nft.media[0].gateway}
                             height="200"
                             width="200"
                             className="rounded-2xl"

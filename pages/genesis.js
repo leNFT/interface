@@ -13,6 +13,7 @@ import StyledModal from "../components/StyledModal";
 import { useContract, useProvider, useNetwork, useAccount } from "wagmi";
 import { CardActionArea } from "@mui/material";
 import Card from "@mui/material/Card";
+import Link from "@mui/material/Link";
 import CardContent from "@mui/material/CardContent";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits } from "ethers/lib/utils";
@@ -111,7 +112,22 @@ export default function Stake() {
       </StyledModal>
       <div className="flex flex-col items-center">
         <div className="flex flex-col items-center justify-center border-4 m-2 md:m-8 rounded-3xl bg-black/5 shadow-lg">
-          <div className="flex flex-col md:flex-row m-4">
+          <div className="flex flex-row mt-4">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+              }}
+            >
+              <Link
+                href="https://lenft.gitbook.io/lenft-docs/basics/genesis-mint"
+                underline="hover"
+              >
+                {"How does this work?"}
+              </Link>
+            </Box>
+          </div>
+          <div className="flex flex-col md:flex-row m-2">
             <div className="flex flex-col m-8 rounded-2xl bg-black/5 shadow-lg p-4">
               <div className="flex flex-row m-2">
                 <Box

@@ -122,6 +122,7 @@ export default function Stake() {
               <Link
                 href="https://lenft.gitbook.io/lenft-docs/basics/genesis-mint"
                 underline="hover"
+                target="_blank"
               >
                 {"How does this work?"}
               </Link>
@@ -187,7 +188,7 @@ export default function Stake() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col border-4 m-2 p-2 md:m-8 rounded-3xl bg-black/5 shadow-lg">
+      <div className="flex flex-col border-4 m-2 mt-8 p-2 md:m-8 rounded-3xl bg-black/5 shadow-lg">
         <div className="flex flex-row p-4 md:p-8">
           <Box
             sx={{

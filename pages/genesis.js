@@ -188,14 +188,16 @@ export default function Stake() {
         </div>
       </div>
       <div className="flex flex-col border-4 m-2 p-2 md:m-8 rounded-3xl bg-black/5 shadow-lg">
-        <div className="flex flex-row p-8">
+        <div className="flex flex-row p-4 md:p-8">
           <Box
             sx={{
               fontFamily: "Monospace",
-              letterSpacing: 24,
+              letterSpacing: 18,
             }}
           >
-            <div className="text-xl md:text-4xl">Your Genesis NFTs</div>
+            <div className="text-xl text-center md:text-left md:text-4xl">
+              Your Genesis NFTs
+            </div>
           </Box>
         </div>
         {userGenesisNFTs.length != 0 ? (

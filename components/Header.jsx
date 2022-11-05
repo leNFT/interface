@@ -40,7 +40,7 @@ export default function Header() {
         </div>
       )}
       <div className="p-4 mb-2 border-b-2 flex flex-col md:flex-row justify-between items-center">
-        <div className="hidden lg:flex flex-col items-center justify-content lg:pr-8">
+        <div className="hidden 2xl:flex flex-col items-center justify-content lg:pr-8">
           <Link href="/">
             <a target="_blank" rel="noopener noreferrer">
               <div className="px-4 mt-2 flex flex-row items-center">
@@ -89,7 +89,7 @@ export default function Header() {
                   size="medium"
                   color="#eae5ea"
                   label={
-                    <div className="flex md:hidden lg:flex">
+                    <div className="flex md:hidden xl:flex">
                       <Box
                         sx={{
                           fontFamily: "Monospace",
@@ -117,7 +117,7 @@ export default function Header() {
                   size="medium"
                   color="#eae5ea"
                   label={
-                    <div className="flex md:hidden lg:flex">
+                    <div className="flex md:hidden xl:flex">
                       <Box
                         sx={{
                           fontFamily: "Monospace",
@@ -145,7 +145,7 @@ export default function Header() {
                   size="medium"
                   color="#eae5ea"
                   label={
-                    <div className="flex md:hidden lg:flex">
+                    <div className="flex md:hidden xl:flex">
                       <Box
                         sx={{
                           fontFamily: "Monospace",
@@ -154,7 +154,7 @@ export default function Header() {
                           letterSpacing: 4,
                         }}
                       >
-                        Loan Search
+                        Loans
                       </Box>
                     </div>
                   }
@@ -173,7 +173,7 @@ export default function Header() {
                   size="medium"
                   color="#eae5ea"
                   label={
-                    <div className="flex md:hidden lg:flex">
+                    <div className="flex md:hidden xl:flex">
                       <Box
                         sx={{
                           fontFamily: "Monospace",
@@ -201,7 +201,7 @@ export default function Header() {
                   size="medium"
                   color="#eae5ea"
                   label={
-                    <div className="flex md:hidden lg:flex">
+                    <div className="flex md:hidden xl:flex">
                       <Box
                         sx={{
                           fontFamily: "Monospace",

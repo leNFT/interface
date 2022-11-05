@@ -35,7 +35,7 @@ export default function Layout({ children }) {
           <div className={styles.container}>
             <div className={styles.mainInfo}>
               <Typography variant="subtitle1">
-                Connect a Web 3 wallet by clicking the connect wallet button.
+                Please connect your wallet.
               </Typography>
             </div>
           </div>

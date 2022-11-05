@@ -265,7 +265,16 @@ export default function Stake() {
             ))}
           </div>
         ) : (
-          <div className="flex flex-row m-8 p-2">No Genesis NFTs found.</div>
+          <div className="flex flex-row m-8 p-2">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle1.fontSize",
+              }}
+            >
+              No Genesis NFTs found.
+            </Box>
+          </div>
         )}
       </div>
     </div>

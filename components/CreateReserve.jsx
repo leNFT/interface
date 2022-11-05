@@ -8,11 +8,10 @@ import {
   useSigner,
   useProvider,
 } from "wagmi";
-import { formatUnits, parseUnits } from "@ethersproject/units";
+import { formatUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
 import marketContract from "../contracts/Market.json";
 import { useState, useEffect } from "react";
-import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";

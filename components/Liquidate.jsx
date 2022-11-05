@@ -232,7 +232,7 @@ export default function Liquidate(props) {
                       </div>
                       <div className="flex flex-col ml-1">
                         <Tooltip
-                          content="Represents the relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
+                          content="The relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
                           position="top"
                           minWidth={300}
                         >

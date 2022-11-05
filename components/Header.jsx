@@ -111,7 +111,7 @@ export default function Header() {
               </Link>
             </div>
             <div className="flex flex-col m-2">
-              <Link href="/genesis">
+              <Link href="/reserves">
                 <Button
                   primary
                   size="medium"
@@ -126,13 +126,13 @@ export default function Header() {
                           letterSpacing: 4,
                         }}
                       >
-                        Genesis Mint
+                        Reserves
                       </Box>
                     </div>
                   }
                   icon={
                     <div className="pl-[10px]">
-                      <Rocket fontSize="20px" color="#000000" />
+                      <Plus fontSize="16px" color="#000000" />
                     </div>
                   }
                 />
@@ -167,34 +167,6 @@ export default function Header() {
               </Link>
             </div>
             <div className="flex flex-col m-2">
-              <Link href="/reserves">
-                <Button
-                  primary
-                  size="medium"
-                  color="#eae5ea"
-                  label={
-                    <div className="flex md:hidden lg:flex">
-                      <Box
-                        sx={{
-                          fontFamily: "Monospace",
-                          fontSize: "subtitle2.fontSize",
-                          fontWeight: "bold",
-                          letterSpacing: 4,
-                        }}
-                      >
-                        Reserves
-                      </Box>
-                    </div>
-                  }
-                  icon={
-                    <div className="pl-[10px]">
-                      <Plus fontSize="16px" color="#000000" />
-                    </div>
-                  }
-                />
-              </Link>
-            </div>
-            <div className="flex flex-col m-2">
               <Link href="/stake">
                 <Button
                   primary
@@ -217,6 +189,34 @@ export default function Header() {
                   icon={
                     <div className="pl-[10px]">
                       <LockClosed fontSize="20px" color="#000000" />
+                    </div>
+                  }
+                />
+              </Link>
+            </div>
+            <div className="flex flex-col m-2">
+              <Link href="/genesis">
+                <Button
+                  primary
+                  size="medium"
+                  color="#eae5ea"
+                  label={
+                    <div className="flex md:hidden lg:flex">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle2.fontSize",
+                          fontWeight: "bold",
+                          letterSpacing: 4,
+                        }}
+                      >
+                        leGenesis
+                      </Box>
+                    </div>
+                  }
+                  icon={
+                    <div className="pl-[10px]">
+                      <Rocket fontSize="20px" color="#000000" />
                     </div>
                   }
                 />

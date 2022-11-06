@@ -234,7 +234,7 @@ export default function RepayLoan(props) {
   return (
     <div className={styles.container}>
       <div className="flex flex-col xl:flex-row lg:m-8 justify-center">
-        <div className="flex flex-col mb-4 lg:m-8">
+        <div className="flex flex-col mb-4 lg:m-8 justify-center">
           <div className="flex flex-row justify-center m-2">
             <Typography variant="caption16">
               {"Asset Pricing: " + formatUnits(tokenPrice, 18) + " ETH"}

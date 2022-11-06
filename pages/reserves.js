@@ -234,26 +234,57 @@ export default function Reserves() {
                 </Tooltip>
               </div>
             </div>,
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle1.fontSize",
-              }}
-              className="m-2"
-              key="4"
-            >
-              Borrow / Supply Rate
-            </Box>,
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle1.fontSize",
-              }}
-              className="m-2"
-              key="4"
-            >
-              TVL
-            </Box>,
+            <div className="flex flex-row m-2" key="rates">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle1.fontSize",
+                }}
+                key="4"
+              >
+                Borrow / Supply Rate
+              </Box>
+              <div className="flex flex-col ml-1">
+                <Tooltip
+                  content={
+                    <div>
+                      <div>
+                        Borrow Rate: interest rate at which new borrowers take
+                        out loans.
+                      </div>
+                      <div className="mt-2">
+                        Supply rate: interest rate at which lenders are
+                        increasing their holdings.
+                      </div>
+                    </div>
+                  }
+                  position="bottom"
+                  minWidth={250}
+                >
+                  <HelpCircle fontSize="14px" color="#000000" />
+                </Tooltip>
+              </div>
+            </div>,
+            <div className="flex flex-row m-2" key="rates">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle1.fontSize",
+                }}
+                key="4"
+              >
+                TVL
+              </Box>
+              <div className="flex flex-col ml-1">
+                <Tooltip
+                  content="Total Value Locked."
+                  position="bottom"
+                  minWidth={170}
+                >
+                  <HelpCircle fontSize="14px" color="#000000" />
+                </Tooltip>
+              </div>
+            </div>,
             "",
             "",
           ]}

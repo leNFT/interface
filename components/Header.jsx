@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Tooltip, BannerStrip } from "@web3uikit/core";
+import { BannerStrip } from "@web3uikit/core";
 import { Button } from "grommet";
 import {
   Home,

@@ -1,8 +1,9 @@
 import contractAddresses from "../contractAddresses.json";
-import { useNotification, Illustration } from "@web3uikit/core";
+import { useNotification } from "@web3uikit/core";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits } from "@ethersproject/units";
-import { Button, Typography, Tooltip, Input } from "@web3uikit/core";
+import { Typography, Tooltip, Input, Button } from "@web3uikit/core";
+import { AwesomeButtonProgress } from "react-awesome-button";
 import { HelpCircle } from "@web3uikit/icons";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 import styles from "../styles/Home.module.css";
@@ -14,6 +15,7 @@ import reserveContract from "../contracts/Reserve.json";
 import erc20 from "../contracts/erc20.json";
 import Image from "next/image";
 import { ethers } from "ethers";
+import Countdown from "react-countdown";
 import { getAssetPrice } from "../helpers/getAssetPrice.js";
 import {
   useAccount,
@@ -24,8 +26,11 @@ import {
 } from "wagmi";
 
 export default function RepayLoan(props) {
+  const SECONDS_IN_YEAR = 31556926;
   const [loan, setLoan] = useState();
   const [debt, setDebt] = useState(0);
+  const [liquidationThreshold, setLiquidationThreshold] = useState("0");
+  const [liquidationTimestamp, setLiquidationTimestamp] = useState(0);
   const [approved, setApproved] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [tokenPrice, setTokenPrice] = useState("0");
@@ -111,9 +116,39 @@ export default function RepayLoan(props) {
 
   async function getAssetPricing() {
     // Get token price
-    const price = await getAssetPrice(props.token_address, props.token_id);
-    setTokenPrice(price);
-    console.log("price", price);
+    const updatedPrice = await getAssetPrice(
+      props.token_address,
+      props.token_id
+    );
+
+    setTokenPrice(updatedPrice);
+    console.log("price", updatedPrice);
+  }
+
+  function updateLiquidationThreshold() {
+    const updatedLiquidationThreshold = BigNumber.from(loan.maxLTV)
+      .add(loan.boost)
+      .mul(tokenPrice)
+      .div(10000)
+      .toString();
+
+    console.log("updatedliquidationThreshold", updatedLiquidationThreshold);
+    setLiquidationThreshold(updatedLiquidationThreshold);
+  }
+
+  function updateLiquidationTimestamp() {
+    const timeUntilLiquidation =
+      (SECONDS_IN_YEAR * 1000 * (liquidationThreshold - debt)) /
+      BigNumber.from(loan.borrowRate).mul(loan.amount).div(10000);
+
+    console.log("liquidationThreshold", liquidationThreshold);
+    console.log("debt", debt);
+
+    console.log("timeUntilLiquidation", timeUntilLiquidation);
+    const updatedLiquidationTimestamp = Date.now() + timeUntilLiquidation;
+    console.log("updatedLiquidationTimestamp", updatedLiquidationTimestamp);
+
+    setLiquidationTimestamp(updatedLiquidationTimestamp);
   }
 
   useEffect(() => {
@@ -129,6 +164,18 @@ export default function RepayLoan(props) {
       updateReserveAsset();
     }
   }, [loan]);
+
+  useEffect(() => {
+    if (loan && tokenPrice) {
+      updateLiquidationThreshold();
+    }
+  }, [loan, tokenPrice]);
+
+  useEffect(() => {
+    if (debt != 0 && loan && liquidationThreshold != "0") {
+      updateLiquidationTimestamp();
+    }
+  }, [loan, debt, liquidationThreshold]);
 
   useEffect(() => {
     if (loan && asset) {
@@ -186,8 +233,13 @@ export default function RepayLoan(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-col lg:flex-row lg:m-8 justify-center">
-        <div className="flex flex-col mb-4 lg:m-8 justify-center">
+      <div className="flex flex-col xl:flex-row lg:m-8 justify-center">
+        <div className="flex flex-col mb-4 lg:m-8">
+          <div className="flex flex-row justify-center m-2">
+            <Typography variant="caption16">
+              {"Asset Pricing: " + formatUnits(tokenPrice, 18) + " ETH"}
+            </Typography>
+          </div>
           <div className="flex flex-row justify-center">
             {props.token_image ? (
               <Image
@@ -210,41 +262,12 @@ export default function RepayLoan(props) {
             </Typography>
           </div>
         </div>
-        <div className="flex flex-col lg:m-2">
+        <div className="flex flex-col justify-center lg:m-2">
           <div className="flex flex-row m-2">
             <div className="flex flex-col">
               <Typography variant="subtitle2">Loan ID</Typography>
               <Typography variant="body16">{props.loan_id}</Typography>
             </div>
-          </div>
-          <div className="flex flex-row items-center m-2">
-            <div className="flex flex-col">
-              <Typography variant="subtitle2">Debt</Typography>
-              <Typography variant="body16">
-                {formatUnits(debt, addresses[symbol].decimals) + " " + symbol}
-              </Typography>
-            </div>
-          </div>
-          <div className="flex flex-row items-center m-2">
-            {loan && (
-              <div className="flex flex-col">
-                <Typography variant="subtitle2">
-                  Liquidation Threshold
-                </Typography>
-                <Typography variant="caption16">
-                  {formatUnits(
-                    BigNumber.from(loan.maxLTV)
-                      .add(loan.boost)
-                      .mul(tokenPrice)
-                      .div(10000)
-                      .toString(),
-                    18
-                  ) +
-                    " " +
-                    symbol}
-                </Typography>
-              </div>
-            )}
           </div>
           <div className="flex flex-row items-center m-2">
             {loan && (
@@ -255,14 +278,6 @@ export default function RepayLoan(props) {
                 </Typography>
               </div>
             )}
-          </div>
-          <div className="flex flex-row items-center m-2">
-            <div className="flex flex-col">
-              <Typography variant="subtitle2">Asset Pricing</Typography>
-              <Typography variant="body16">
-                {formatUnits(tokenPrice, 18) + " ETH"}
-              </Typography>
-            </div>
           </div>
           <div className="flex flex-row m-2">
             <div className="flex flex-col">
@@ -279,6 +294,21 @@ export default function RepayLoan(props) {
                     : "Token Price Appraisal Error"}
                 </Typography>
               )}
+            </div>
+          </div>
+          <div className="flex flex-row items-center m-2">
+            <div className="flex flex-col">
+              <Typography variant="subtitle2">
+                Debt / Liquidation Threshold
+              </Typography>
+              <Typography variant="body16">
+                {loan &&
+                  formatUnits(debt, addresses[symbol].decimals) +
+                    " / " +
+                    formatUnits(liquidationThreshold, 18) +
+                    " " +
+                    symbol}
+              </Typography>
             </div>
           </div>
           {loan && (
@@ -312,17 +342,19 @@ export default function RepayLoan(props) {
               </div>
             </div>
           )}
+          <div className="flex flex-row items-center m-2">
+            {liquidationTimestamp && (
+              <div className="flex flex-col">
+                <Typography variant="subtitle2">
+                  Time until liquidation
+                </Typography>
+                <Countdown date={liquidationTimestamp} />,
+              </div>
+            )}
+          </div>
         </div>
       </div>
-      <div className="flex flex-row items-center m-4 justify-center">
-        <div className="flex flex-col">
-          <Typography variant="subtitle2">Your {symbol} balance</Typography>
-          <Typography variant="body16">
-            {formatUnits(balance, addresses[symbol].decimals) + " " + symbol}
-          </Typography>
-        </div>
-      </div>
-      <div className="flex flex-row items-center justify-center mx-8 mt-12 mb-2">
+      <div className="flex flex-row items-center justify-center m-8 mb-2">
         <Input
           label="Amount"
           type="number"
@@ -361,7 +393,7 @@ export default function RepayLoan(props) {
           <Button onClick={() => setAmount(debt)} text="100%" theme="outline" />
         </div>
       </div>
-      <div className="flex m-8">
+      <div className="flex justify-center m-8">
         {approved ? (
           <Button
             text="Repay Loan"
@@ -396,7 +428,9 @@ export default function RepayLoan(props) {
                   } else {
                     handlePartialRepaySuccess();
                   }
+                  release();
                 } catch (error) {
+                  release(false, "Tx Failed");
                   console.log(error);
                 } finally {
                   setRepayLoading(false);

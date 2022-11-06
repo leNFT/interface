@@ -11,13 +11,17 @@ import {
   Rocket,
 } from "@web3uikit/icons";
 import Box from "@mui/material/Box";
+import { useState } from "react";
 import { useAccount, useNetwork } from "wagmi";
 import { useSwitchNetwork } from "wagmi";
 
 export default function Header() {
+  const SELECTED_COLOR = "#d2c6d2";
+  const UNSELECTED_COLOR = "#eae5ea";
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
+  const [option, setOption] = useState("home");
 
   return (
     <div>
@@ -87,7 +91,10 @@ export default function Header() {
                 <Button
                   primary
                   size="medium"
-                  color="#eae5ea"
+                  color={option == "home" ? SELECTED_COLOR : UNSELECTED_COLOR}
+                  onClick={() => {
+                    setOption("home");
+                  }}
                   label={
                     <div className="flex md:hidden xl:flex">
                       <Box
@@ -115,7 +122,12 @@ export default function Header() {
                 <Button
                   primary
                   size="medium"
-                  color="#eae5ea"
+                  color={
+                    option == "reserves" ? SELECTED_COLOR : UNSELECTED_COLOR
+                  }
+                  onClick={() => {
+                    setOption("reserves");
+                  }}
                   label={
                     <div className="flex md:hidden xl:flex">
                       <Box
@@ -139,11 +151,14 @@ export default function Header() {
               </Link>
             </div>
             <div className="flex flex-col m-2">
-              <Link href="/loanSearch">
+              <Link href="/loans">
                 <Button
                   primary
                   size="medium"
-                  color="#eae5ea"
+                  color={option == "loans" ? SELECTED_COLOR : UNSELECTED_COLOR}
+                  onClick={() => {
+                    setOption("loans");
+                  }}
                   label={
                     <div className="flex md:hidden xl:flex">
                       <Box
@@ -171,7 +186,10 @@ export default function Header() {
                 <Button
                   primary
                   size="medium"
-                  color="#eae5ea"
+                  color={option == "stake" ? SELECTED_COLOR : UNSELECTED_COLOR}
+                  onClick={() => {
+                    setOption("stake");
+                  }}
                   label={
                     <div className="flex md:hidden xl:flex">
                       <Box
@@ -199,7 +217,12 @@ export default function Header() {
                 <Button
                   primary
                   size="medium"
-                  color="#eae5ea"
+                  color={
+                    option == "genesis" ? SELECTED_COLOR : UNSELECTED_COLOR
+                  }
+                  onClick={() => {
+                    setOption("genesis");
+                  }}
                   label={
                     <div className="flex md:hidden xl:flex">
                       <Box

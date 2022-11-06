@@ -28,7 +28,7 @@ import { useContract, useProvider } from "wagmi";
 import StyledModal from "../components/StyledModal";
 import erc721 from "../contracts/erc721.json";
 
-export default function LoanSearch() {
+export default function Loans() {
   const [collectionLoans, setCollectionLoans] = useState([]);
   const [maxCollateralization, setMaxCollateralization] = useState("0");
   const [count, setCount] = useState(0);

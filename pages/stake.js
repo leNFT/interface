@@ -2,6 +2,7 @@ import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import nativeTokenVaultContract from "../contracts/NativeTokenVault.json";
 import tokenOracleContract from "../contracts/TokenOracle.json";
+import Link from "@mui/material/Link";
 import { getSupportedNFTs } from "../helpers/getSupportedNFTs.js";
 import { formatUnits } from "@ethersproject/units";
 import { ethers } from "ethers";
@@ -9,7 +10,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { getStakingInfo } from "../helpers/getStakingInfo.js";
-import { Button, Loading } from "@web3uikit/core";
+import { Button, Loading, Typography } from "@web3uikit/core";
 import StyledModal from "../components/StyledModal";
 import { useState, useEffect } from "react";
 import { useAccount, useNetwork } from "wagmi";
@@ -217,10 +218,27 @@ export default function Stake() {
         />
       </StyledModal>
       <div className="flex flex-col items-center">
-        <div className="flex flex-row justify-center">
-          {loadingAPR ? (
-            <Loading size={12} spinnerColor="#000000" />
-          ) : (
+        <div className="flex flex-row items-center justify-center min-w-[75%] border-4 m-2 rounded-3xl bg-black/5 shadow-lg">
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "h6.fontSize",
+            }}
+          >
+            <div className="text-break max-w-lg p-4">
+              Please be careful and{" "}
+              <Link
+                target="_blank"
+                href="https://lenft.gitbook.io/lenft-docs/le-token-mechanics/stake"
+              >
+                understand leNFT vaults
+              </Link>{" "}
+              before depositing into them. Your tokens are at risk.
+            </div>
+          </Box>
+        </div>
+        <div className="flex flex-col min-w-[75%] border-4 m-2 md:m-8 rounded-3xl bg-black/5 shadow-lg">
+          <div className="flex flex-row items-center justify-center mt-4">
             <Box
               sx={{
                 fontFamily: "Monospace",
@@ -229,89 +247,89 @@ export default function Stake() {
             >
               {"Vault APR = " + apr + "%"}
             </Box>
-          )}
-        </div>
-        <div className="flex flex-col-reverse md:flex-row items-center justify-center min-w-[75%] border-4 m-2 md:m-8 rounded-3xl bg-black/5 shadow-lg">
-          <div className="flex flex-col items-center m-4 lg:m-8">
-            <div className="flex flex-row m-2">
-              <Button
-                customize={{
-                  backgroundColor: "grey",
-                  fontSize: 16,
-                  textColor: "white",
-                }}
-                text="Vault Deposit"
-                theme="custom"
-                size="large"
-                radius="12"
-                onClick={async function () {
-                  setVisibleDepositModal(true);
-                }}
-              />
-            </div>
-            <div className="flex flex-row m-2">
-              <Button
-                customize={{
-                  backgroundColor: "grey",
-                  fontSize: 16,
-                  textColor: "white",
-                }}
-                text="Vault Withdraw"
-                theme="custom"
-                size="large"
-                radius="12"
-                onClick={async function () {
-                  setVisibleWithdrawalModal(true);
-                }}
-              />
-            </div>
           </div>
-          <div className="flex flex-col m-4 lg:m-8">
-            <div className="flex flex-col m-2">
-              <div className="flex flex-row">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "h5.fontSize",
-                    fontWeight: "bold",
+          <div className="flex flex-col-reverse md:flex-row items-center justify-center">
+            <div className="flex flex-col items-center m-4 lg:m-8">
+              <div className="flex flex-row m-2">
+                <Button
+                  customize={{
+                    backgroundColor: "grey",
+                    fontSize: 16,
+                    textColor: "white",
                   }}
-                >
-                  My Balance
-                </Box>
+                  text="Vault Deposit"
+                  theme="custom"
+                  size="large"
+                  radius="12"
+                  onClick={async function () {
+                    setVisibleDepositModal(true);
+                  }}
+                />
               </div>
-              <div className="flex flex-row">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
+              <div className="flex flex-row m-2">
+                <Button
+                  customize={{
+                    backgroundColor: "grey",
+                    fontSize: 16,
+                    textColor: "white",
                   }}
-                >
-                  {Number(formatUnits(nativeTokenBalance, 18)).toFixed(2)} LE
-                </Box>
+                  text="Vault Withdraw"
+                  theme="custom"
+                  size="large"
+                  radius="12"
+                  onClick={async function () {
+                    setVisibleWithdrawalModal(true);
+                  }}
+                />
               </div>
             </div>
-            <div className="flex flex-col m-2">
-              <div className="flex flex-row">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "h5.fontSize",
-                    fontWeight: "bold",
-                  }}
-                >
-                  My Vault Balance
-                </Box>
+            <div className="flex flex-col m-4 lg:m-8">
+              <div className="flex flex-col m-2">
+                <div className="flex flex-row">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "h5.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    My Balance
+                  </Box>
+                </div>
+                <div className="flex flex-row">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle1.fontSize",
+                    }}
+                  >
+                    {Number(formatUnits(nativeTokenBalance, 18)).toFixed(2)} LE
+                  </Box>
+                </div>
               </div>
-              <div className="flex flex-row">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                  }}
-                >
-                  {Number(formatUnits(voteTokenBalance, 18)).toFixed(2) +
-                    " veLE"}
-                </Box>
+              <div className="flex flex-col m-2">
+                <div className="flex flex-row">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "h5.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    My Vault Balance
+                  </Box>
+                </div>
+                <div className="flex flex-row">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle1.fontSize",
+                    }}
+                  >
+                    {Number(formatUnits(voteTokenBalance, 18)).toFixed(2) +
+                      " veLE"}
+                  </Box>
+                </div>
               </div>
             </div>
           </div>

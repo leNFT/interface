@@ -179,7 +179,7 @@ export default function Liquidate(props) {
                   Loading...
                 </div>
               )}
-              <div className="flex flex-col">
+              <div className="flex flex-col justify-center">
                 <div className="flex flex-row items-center m-2">
                   <div className="flex flex-col">
                     <Typography variant="subtitle2">Asset ID</Typography>

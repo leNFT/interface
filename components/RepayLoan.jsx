@@ -25,8 +25,9 @@ import {
   useSigner,
 } from "wagmi";
 
+const SECONDS_IN_YEAR = 31556926;
+
 export default function RepayLoan(props) {
-  const SECONDS_IN_YEAR = 31556926;
   const [loan, setLoan] = useState();
   const [debt, setDebt] = useState(0);
   const [liquidationThreshold, setLiquidationThreshold] = useState("0");

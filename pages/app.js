@@ -198,7 +198,7 @@ export default function App() {
                 }}
               >
                 <div className="text-md md:text-2xl justify-center text-center">
-                  {"Loading your loans and NFTs..."}
+                  {"Loading loans and NFTs..."}
                 </div>
               </Box>
             </Typography>

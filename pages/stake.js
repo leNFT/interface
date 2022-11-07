@@ -231,9 +231,9 @@ export default function Stake() {
                 target="_blank"
                 href="https://lenft.gitbook.io/lenft-docs/le-token-mechanics/stake"
               >
-                understand leNFT vaults
+                understand the leNFT vault dynamics
               </Link>{" "}
-              before depositing into them. Your tokens are at risk.
+              before depositing into it. Your tokens are at risk.
             </div>
           </Box>
         </div>

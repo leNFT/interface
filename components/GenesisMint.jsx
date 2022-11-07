@@ -61,7 +61,7 @@ export default function GenesisMint(props) {
     props.updateUI();
     dispatch({
       type: "success",
-      message: "You have Minted your Genesis NFT.",
+      message: "You have minted your Genesis NFT.",
       title: "Mint Successful!",
       position: "topR",
     });

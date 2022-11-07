@@ -8,7 +8,8 @@ import { ethers } from "ethers";
 import { BigNumber } from "@ethersproject/bignumber";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import { Button, Typography, Loading } from "@web3uikit/core";
+import { getStakingInfo } from "../helpers/getStakingInfo.js";
+import { Button, Loading } from "@web3uikit/core";
 import StyledModal from "../components/StyledModal";
 import { useState, useEffect } from "react";
 import { useAccount, useNetwork } from "wagmi";
@@ -35,8 +36,8 @@ export default function Stake() {
   const [visibleVoteModal, setVisibleVoteModal] = useState(false);
   const [visibleRemoveVoteModal, setVisibleRemoveVoteModal] = useState(false);
   const [collectionBoost, setCollectionBoost] = useState(0);
-  const [loadingPrice, setLoadingPrice] = useState(true);
-  const [ethPrice, setETHPrice] = useState("0");
+  const [loadingAPR, setLoadingAPR] = useState(true);
+  const [apr, setAPR] = useState("0");
 
   const addresses =
     chain && chain.id in contractAddresses
@@ -57,21 +58,14 @@ export default function Stake() {
     signerOrProvider: provider,
   });
 
-  const tokenOracle = useContract({
-    contractInterface: tokenOracleContract.abi,
-    addressOrName: addresses.TokenOracle,
-    signerOrProvider: provider,
-  });
-
-  async function updateAssetETHPrice() {
-    const updatedAssetETHPrice = (
-      await tokenOracle.getTokenETHPrice(addresses.NativeToken)
-    ).toString();
-    setETHPrice(updatedAssetETHPrice);
-    console.log("updatedAssetETHPrice", updatedAssetETHPrice);
+  async function updateAPR() {
+    const stakingInfo = await getStakingInfo(chain.id);
+    const updatedAPR = stakingInfo.apr;
+    setAPR(updatedAPR);
+    console.log("updatedAPR", updatedAPR);
 
     //Stop loading
-    setLoadingPrice(false);
+    setLoadingAPR(false);
   }
 
   async function updateUI() {
@@ -114,7 +108,7 @@ export default function Stake() {
   useEffect(() => {
     if (isConnected) {
       updateUI();
-      updateAssetETHPrice();
+      updateAPR();
       updateCollections();
     }
   }, [isConnected]);
@@ -224,16 +218,16 @@ export default function Stake() {
       </StyledModal>
       <div className="flex flex-col items-center">
         <div className="flex flex-row justify-center">
-          {loadingPrice ? (
+          {loadingAPR ? (
             <Loading size={12} spinnerColor="#000000" />
           ) : (
             <Box
               sx={{
                 fontFamily: "Monospace",
-                fontSize: "body2.fontSize",
+                fontSize: "h6.fontSize",
               }}
             >
-              {"1 LE = " + formatUnits(ethPrice, 18) + " ETH"}
+              {"Vault APR = " + apr + "%"}
             </Box>
           )}
         </div>

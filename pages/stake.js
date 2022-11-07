@@ -37,7 +37,6 @@ export default function Stake() {
   const [visibleVoteModal, setVisibleVoteModal] = useState(false);
   const [visibleRemoveVoteModal, setVisibleRemoveVoteModal] = useState(false);
   const [collectionBoost, setCollectionBoost] = useState(0);
-  const [loadingAPR, setLoadingAPR] = useState(true);
   const [apr, setAPR] = useState("0");
 
   const addresses =
@@ -59,16 +58,6 @@ export default function Stake() {
     signerOrProvider: provider,
   });
 
-  async function updateAPR() {
-    const stakingInfo = await getStakingInfo(chain.id);
-    const updatedAPR = stakingInfo.apr;
-    setAPR(updatedAPR);
-    console.log("updatedAPR", updatedAPR);
-
-    //Stop loading
-    setLoadingAPR(false);
-  }
-
   async function updateUI() {
     // Get the native token balance
     const nativeTokenBalance = await nativeToken.balanceOf(address);
@@ -88,6 +77,11 @@ export default function Stake() {
 
     console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
     setMaxAmount(updatedMaxAmount);
+
+    const stakingInfo = await getStakingInfo(chain.id);
+    const updatedAPR = stakingInfo.apr;
+    setAPR(updatedAPR);
+    console.log("updatedAPR", updatedAPR);
   }
 
   async function updateCollections() {
@@ -109,7 +103,6 @@ export default function Stake() {
   useEffect(() => {
     if (isConnected) {
       updateUI();
-      updateAPR();
       updateCollections();
     }
   }, [isConnected]);

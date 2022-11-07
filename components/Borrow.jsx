@@ -292,7 +292,7 @@ export default function Borrow(props) {
                 src={props.token_image}
                 height="300"
                 width="300"
-                unoptimized={true}
+                loading="eager"
                 className="rounded-3xl"
               />
             ) : (

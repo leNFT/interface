@@ -3,7 +3,6 @@ import { useNotification } from "@web3uikit/core";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits } from "@ethersproject/units";
 import { Typography, Tooltip, Input, Button } from "@web3uikit/core";
-import { AwesomeButtonProgress } from "react-awesome-button";
 import { HelpCircle } from "@web3uikit/icons";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 import styles from "../styles/Home.module.css";
@@ -119,11 +118,12 @@ export default function RepayLoan(props) {
     // Get token price
     const updatedPrice = await getAssetPrice(
       props.token_address,
-      props.token_id
+      props.token_id,
+      chain.id
     );
 
-    setTokenPrice(updatedPrice);
-    console.log("price", updatedPrice);
+    setTokenPrice(updatedPrice.price);
+    console.log("price", updatedPrice.price);
   }
 
   function updateLiquidationThreshold() {

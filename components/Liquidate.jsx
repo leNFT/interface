@@ -5,11 +5,7 @@ import {
   useProvider,
   useSigner,
 } from "wagmi";
-import {
-  getNewRequestID,
-  getAssetPriceSig,
-} from "../helpers/getAssetPriceSig.js";
-import { getAssetPrice } from "../helpers/getAssetPrice.js";
+import { getNewRequestID, getAssetPrice } from "../helpers/.js";
 import loanCenterContract from "../contracts/LoanCenter.json";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits } from "@ethersproject/units";
@@ -94,19 +90,19 @@ export default function Liquidate(props) {
   async function getLoanDetails() {
     // Get liquidation price for the loan
     const requestId = getNewRequestID();
-    const priceSig = await getAssetPriceSig(
-      requestId,
+    const priceSig = await getAssetPrice(
       props.loan.tokenAddress,
       props.loan.tokenId,
-      chain.id
+      chain.id,
+      requestId
     );
-    console.log("priceSig", priceSig);
+    console.log("priceSig", priceSig.sig);
 
     const newLiquidationPrice =
       await loanCenterProvider.getLoanLiquidationPrice(
         props.loan.loanId,
         requestId,
-        priceSig
+        priceSig.sig
       );
 
     console.log("newLiquidationPrice", newLiquidationPrice);
@@ -119,10 +115,11 @@ export default function Liquidate(props) {
     // Get token price
     const price = await getAssetPrice(
       props.loan.tokenAddress,
-      props.loan.tokenId
+      props.loan.tokenId,
+      chain.id
     );
-    setTokenPrice(price);
-    console.log("price:", price);
+    setTokenPrice(price.price);
+    console.log("price:", price.price);
   }
 
   useEffect(() => {
@@ -299,17 +296,17 @@ export default function Liquidate(props) {
                       try {
                         setLiquidationLoading(true);
                         const requestId = getNewRequestID();
-                        const priceSig = await getAssetPriceSig(
-                          requestId,
+                        const priceSig = await getAssetPrice(
                           props.loan.tokenAddress,
                           props.loan.tokenId,
-                          chain.id
+                          chain.id,
+                          requestId
                         );
                         console.log("Liquidation loan", props.loan);
                         const tx = await marketSigner.liquidate(
                           props.loan.loanId,
                           requestId,
-                          priceSig
+                          priceSig.sig
                         );
                         await tx.wait(1);
                         handleLiquidateSuccess();

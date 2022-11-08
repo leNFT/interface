@@ -1,10 +1,6 @@
 import contractAddresses from "../contractAddresses.json";
-import {
-  getAssetPriceSig,
-  getNewRequestID,
-} from "../helpers/getAssetPriceSig.js";
+import { getAssetPrice, getNewRequestID } from "../helpers/getAssetPrice.js";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
-import { getAssetPrice } from "../helpers/getAssetPrice.js";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import loanCenterContract from "../contracts/LoanCenter.json";
@@ -163,8 +159,12 @@ export default function Borrow(props) {
 
   async function updateMaxBorrowAmount() {
     // Get token price
-    const price = await getAssetPrice(props.token_address, props.token_id);
-    setTokenPrice(price);
+    const priceResponse = await getAssetPrice(
+      props.token_address,
+      props.token_id,
+      chain.id
+    );
+    setTokenPrice(priceResponse.price);
     console.log("price", price);
 
     //Get token max collateralization
@@ -461,11 +461,11 @@ export default function Borrow(props) {
                     setBorrowLoading(true);
                     // Get updated price trusted server signature from server
                     const requestID = getNewRequestID();
-                    const priceSig = await getAssetPriceSig(
-                      requestID,
+                    const priceSig = await getAssetPrice(
                       props.token_address,
                       props.token_id,
-                      chain.id
+                      chain.id,
+                      requestID
                     );
                     var tx;
                     if (borrowAsset == "ETH") {
@@ -475,7 +475,7 @@ export default function Borrow(props) {
                         props.token_id,
                         genesisNFTId,
                         requestID,
-                        priceSig
+                        priceSig.sig
                       );
                       await tx.wait(1);
                     } else {

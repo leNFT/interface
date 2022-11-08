@@ -99,10 +99,13 @@ export default function Loans() {
       );
 
       // Find the valuation given by the protocol to this specific asset
-      const assetPrice = await getAssetPrice(
-        collectionNFTs[i].contract.address,
-        BigNumber.from(collectionNFTs[i].id.tokenId).toNumber()
-      );
+      const assetPrice = (
+        await getAssetPrice(
+          collectionNFTs[i].contract.address,
+          BigNumber.from(collectionNFTs[i].id.tokenId).toNumber(),
+          chain.id
+        )
+      ).price;
 
       //Get token URI for image
       const tokenURI = await getNFTImage(

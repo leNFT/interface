@@ -106,7 +106,9 @@ export default function App() {
           amount: loan.amount,
           boost: loan.boost,
           debt: debt,
-          tokenPrice: await getAssetPrice(loan.nftAsset, loan.nftTokenId),
+          tokenPrice: (
+            await getAssetPrice(loan.nftAsset, loan.nftTokenId, chain.id)
+          ).price,
           maxLTV: loan.maxLTV,
         });
       } else if (

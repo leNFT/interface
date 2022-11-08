@@ -1,12 +1,7 @@
 import crypto from "crypto";
 import fetch from "node-fetch";
 
-export async function getAssetPriceSig(
-  requestId,
-  collection,
-  tokenId,
-  chainId
-) {
+export async function getAirdrop(address, chainId, requestId = "") {
   const serverAddress = "https://lenft-api-w27ha.ondigitalocean.app";
   const options = {
     method: "GET",
@@ -14,24 +9,22 @@ export async function getAssetPriceSig(
       Accept: "application/json",
     },
   };
-  console.log("Getting price Sig from chain:", chainId);
+  console.log("Getting airdrop Sig from chain:", chainId);
   const requestURL =
     serverAddress +
-    "/api/assetPriceSig?requestId=" +
+    "/api/airdrop?requestId=" +
     requestId +
     "&address=" +
-    collection +
-    "&tokenId=" +
-    tokenId +
+    address +
     "&chainId=" +
     chainId;
   console.log(requestURL);
-  const tokenBestBidResponse = await fetch(requestURL, options).catch((err) =>
+  const airdropResponse = await fetch(requestURL, options).catch((err) =>
     console.error(err)
   );
-  const priceSig = await tokenBestBidResponse.json();
+  const airdrop = await airdropResponse.json();
 
-  return priceSig;
+  return airdrop;
 }
 
 export function getNewRequestID() {

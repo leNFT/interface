@@ -230,12 +230,13 @@ export default function Stake() {
             </div>
           </Box>
         </div>
-        <div className="flex flex-col min-w-[75%] border-4 m-2 md:m-8 rounded-3xl bg-black/5 shadow-lg">
-          <div className="flex flex-row items-center justify-center mt-4">
+        <div className="flex flex-col min-w-[75%] border-4 m-2 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
+          <div className="flex flex-row items-center justify-center py-4 px-8 mt-4 rounded-3xl bg-black/5 shadow-lg max-w-fit">
             <Box
               sx={{
                 fontFamily: "Monospace",
                 fontSize: "h6.fontSize",
+                fontWeight: "bold",
               }}
             >
               {"Vault APR = " + apr + "%"}

@@ -17,9 +17,9 @@ export async function getAssetPrice(
   console.log("Getting price Sig from chain:", chainId);
   const requestURL =
     serverAddress +
-    "/api/assetPriceSig?requestId=" +
+    "/api/assetPrice?requestId=" +
     requestId +
-    "&address=" +
+    "&collection=" +
     collection +
     "&tokenId=" +
     tokenId +

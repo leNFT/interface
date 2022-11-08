@@ -165,7 +165,7 @@ export default function Borrow(props) {
       chain.id
     );
     setTokenPrice(priceResponse.price);
-    console.log("price", price);
+    console.log("price", priceResponse.price);
 
     //Get token max collateralization
     const updatedMaxCollateralization =
@@ -200,7 +200,7 @@ export default function Borrow(props) {
     console.log("tokenETHPrice", tokenETHPrice);
     const maxCollateralization = BigNumber.from(updatedMaxCollateralization)
       .add(updatedCollaterizationBoost)
-      .mul(price)
+      .mul(priceResponse.price)
       .div(10000)
       .mul(tokenETHPrice)
       .div(PRICE_PRECISION)

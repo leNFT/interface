@@ -5,7 +5,7 @@ import {
   useProvider,
   useSigner,
 } from "wagmi";
-import { getNewRequestID, getAssetPrice } from "../helpers/.js";
+import { getNewRequestID, getAssetPrice } from "../helpers/getAssetPrice.js";
 import loanCenterContract from "../contracts/LoanCenter.json";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits } from "@ethersproject/units";

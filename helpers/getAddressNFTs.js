@@ -14,7 +14,7 @@ export async function getAddressNFTs(address, collection, chainId) {
     collectionsURLString = "&collection=" + collection;
   }
 
-  const nftseResponse = await fetch(
+  const nftsResponse = await fetch(
     serverAddress +
       "/api/addressNFTs?address=" +
       address +
@@ -23,7 +23,7 @@ export async function getAddressNFTs(address, collection, chainId) {
       collectionsURLString,
     options
   ).catch((err) => console.error(err));
-  const nfts = await nftseResponse.json();
+  const nfts = await nftsResponse.json();
 
   return nfts;
 }

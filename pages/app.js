@@ -5,7 +5,7 @@ import { getNFTImage } from "../helpers/getNFTImage.js";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
 import { getSupportedNFTs } from "../helpers/getSupportedNFTs.js";
 import { useState, useEffect } from "react";
-import Link from "@mui/material/Link";
+import Link from "next/link";
 import Pagination from "@mui/material/Pagination";
 import { useNotification, Tooltip, Loading, Input } from "@web3uikit/core";
 import { HelpCircle, Search } from "@web3uikit/icons";
@@ -220,9 +220,16 @@ export default function App() {
                 letterSpacing: 2,
               }}
             >
-              {"the leNFT token airdop is  "}
-              <Link href="/airdrop" underline="hover">
-                {"live"}
+              {"the leNFT token airdrop is  "}
+              <Link href="/airdrop">
+                <a
+                  style={{
+                    textDecoration: "underline",
+                    color: "blue",
+                  }}
+                >
+                  live
+                </a>
               </Link>
             </Box>
           </div>

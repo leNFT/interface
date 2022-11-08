@@ -3,7 +3,10 @@ import contractAddresses from "../contractAddresses.json";
 import { getAirdrop, getNewRequestID } from "../helpers/getAirdrop.js";
 import { useState, useEffect } from "react";
 import { Button } from "@web3uikit/core";
+import { BigNumber } from "@ethersproject/bignumber";
 import Box from "@mui/material/Box";
+import { ChevronLeft } from "@web3uikit/icons";
+import Router from "next/router";
 import { formatUnits } from "@ethersproject/units";
 import { useContract, useSigner, useNetwork, useAccount } from "wagmi";
 import nativeTokenContract from "../contracts/NativeToken.json";
@@ -54,15 +57,29 @@ export default function Airdrop() {
 
   return (
     <div className={styles.container}>
-      <div className="flex justify-center">
-        <div className="flex flex-col rounded-3xl p-8 mt-8 items-center bg-black/5 shadow-lg max-w-3xl">
+      <div className="flex flex-col items-center">
+        <div className="flex flex-row mr-auto">
+          <Button
+            size="small"
+            color="#eae5ea"
+            iconLayout="icon-only"
+            icon={<ChevronLeft fontSize="50px" />}
+            onClick={async function () {
+              Router.push({
+                pathname: "/app",
+              });
+            }}
+          />
+        </div>
+
+        <div className="flex flex-col rounded-3xl p-8 mt-4 items-center bg-black/5 shadow-lg max-w-3xl">
           <div className="flex flex-row">
             <Box
               sx={{
                 fontFamily: "Monospace",
               }}
             >
-              <div className="text-center break-all md:text-left text-xl">
+              <div className="text-center break-all md:text-left text-lg">
                 {address}
               </div>
             </Box>
@@ -99,6 +116,7 @@ export default function Airdrop() {
                 size: "24",
               }}
               loadingText=""
+              disabled={!BigNumber.from(amount).gt(0)}
               isLoading={mintingLoading}
               customize={{
                 backgroundColor: "grey",

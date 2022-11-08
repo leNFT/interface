@@ -5,6 +5,7 @@ import { getNFTImage } from "../helpers/getNFTImage.js";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
 import { getSupportedNFTs } from "../helpers/getSupportedNFTs.js";
 import { useState, useEffect } from "react";
+import Link from "@mui/material/Link";
 import Pagination from "@mui/material/Pagination";
 import { useNotification, Tooltip, Loading, Input } from "@web3uikit/core";
 import { HelpCircle, Search } from "@web3uikit/icons";
@@ -211,6 +212,20 @@ export default function App() {
         </div>
       ) : (
         <div>
+          <div className="flex flex-row items-center justify-center mb-4">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle1.fontSize",
+                letterSpacing: 2,
+              }}
+            >
+              {"the leNFT token airdop is  "}
+              <Link href="/airdrop" underline="hover">
+                {"live"}
+              </Link>
+            </Box>
+          </div>
           <div className="flex flex-col mb-8 rounded-3xl m-2 p-2 bg-black/5 shadow-lg">
             <div className="p-8">
               <Box

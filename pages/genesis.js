@@ -187,95 +187,95 @@ export default function Stake() {
             />
           </div>
         </div>
-      </div>
-      <div className="flex flex-col border-4 m-2 mt-8 p-2 md:m-8 rounded-3xl bg-black/5 shadow-lg">
-        <div className="flex flex-row p-4 md:p-8">
-          <Box
-            sx={{
-              fontFamily: "Monospace",
-              letterSpacing: 18,
-            }}
-          >
-            <div className="text-xl text-center md:text-left md:text-4xl">
-              Your Genesis NFTs
-            </div>
-          </Box>
-        </div>
-        {userGenesisNFTs.length != 0 ? (
-          <div className="flex flex-row grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
-            {userGenesisNFTs.map((nft) => (
-              <div
-                key={nft.id.tokenId}
-                className="flex m-4 items-center justify-center"
-              >
-                <Card
-                  sx={{
-                    borderRadius: 4,
-                    background:
-                      "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
-                  }}
-                >
-                  <CardActionArea
-                    onClick={function () {
-                      setSelectedToken(
-                        BigNumber.from(nft.id.tokenId).toNumber()
-                      );
-                      setVisibleBurnModal(true);
-                    }}
-                  >
-                    <CardContent>
-                      {nft.metadata.image ? (
-                        <div className="flex flex-col items-center">
-                          <Image
-                            loader={() => nft.media[0].gateway}
-                            alt="Supported Asset"
-                            src={nft.media[0].gateway}
-                            height="200"
-                            width="200"
-                            className="rounded-2xl"
-                            loading="eager"
-                          />
-                        </div>
-                      ) : (
-                        <div className="flex flex-col w-[150px] h-[150px] text-center items-center justify-center">
-                          <Box
-                            sx={{
-                              fontFamily: "Monospace",
-                              fontSize: "caption.fontSize",
-                            }}
-                          >
-                            Image Unavailable
-                          </Box>
-                        </div>
-                      )}
-                      <Box
-                        sx={{
-                          fontFamily: "Monospace",
-                          fontSize: "subtitle1.fontSize",
-                        }}
-                      >
-                        <div className="flex flex-col mt-2 items-center text-center">
-                          {"#" + BigNumber.from(nft.id.tokenId).toNumber()}
-                        </div>
-                      </Box>
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-row m-8 p-2">
+        <div className="flex flex-col border-4 m-2 mt-8 p-2 md:m-8 rounded-3xl bg-black/5 shadow-lg max-w-3xl">
+          <div className="flex flex-row p-4 md:p-8">
             <Box
               sx={{
                 fontFamily: "Monospace",
-                fontSize: "subtitle1.fontSize",
+                letterSpacing: 18,
               }}
             >
-              No Genesis NFTs found.
+              <div className="text-xl text-center md:text-left md:text-4xl">
+                Your Genesis NFTs
+              </div>
             </Box>
           </div>
-        )}
+          {userGenesisNFTs.length != 0 ? (
+            <div className="flex flex-row grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
+              {userGenesisNFTs.map((nft) => (
+                <div
+                  key={nft.id.tokenId}
+                  className="flex m-4 items-center justify-center"
+                >
+                  <Card
+                    sx={{
+                      borderRadius: 4,
+                      background:
+                        "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
+                    }}
+                  >
+                    <CardActionArea
+                      onClick={function () {
+                        setSelectedToken(
+                          BigNumber.from(nft.id.tokenId).toNumber()
+                        );
+                        setVisibleBurnModal(true);
+                      }}
+                    >
+                      <CardContent>
+                        {nft.metadata.image ? (
+                          <div className="flex flex-col items-center">
+                            <Image
+                              loader={() => nft.media[0].gateway}
+                              alt="Supported Asset"
+                              src={nft.media[0].gateway}
+                              height="200"
+                              width="200"
+                              className="rounded-2xl"
+                              loading="eager"
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex flex-col w-[150px] h-[150px] text-center items-center justify-center">
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "caption.fontSize",
+                              }}
+                            >
+                              Image Unavailable
+                            </Box>
+                          </div>
+                        )}
+                        <Box
+                          sx={{
+                            fontFamily: "Monospace",
+                            fontSize: "subtitle1.fontSize",
+                          }}
+                        >
+                          <div className="flex flex-col mt-2 items-center text-center">
+                            {"#" + BigNumber.from(nft.id.tokenId).toNumber()}
+                          </div>
+                        </Box>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-row m-8 p-2">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle1.fontSize",
+                }}
+              >
+                No Genesis NFTs found.
+              </Box>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

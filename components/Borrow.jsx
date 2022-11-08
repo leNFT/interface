@@ -15,7 +15,6 @@ import {
   Loading,
 } from "@web3uikit/core";
 import marketContract from "../contracts/Market.json";
-import nftOracleContract from "../contracts/NFTOracle.json";
 import tokenOracleContract from "../contracts/TokenOracle.json";
 import reserveContract from "../contracts/Reserve.json";
 import genesisNFTContract from "../contracts/GenesisNFT.json";
@@ -283,7 +282,7 @@ export default function Borrow(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-col items-center">
+      <div className="flex justify-center">
         <div className="flex flex-col lg:m-8 xl:flex-row justify-center">
           <div className="flex flex-col items-center justify-center mb-4 lg:m-8">
             {props.token_image ? (

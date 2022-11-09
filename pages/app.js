@@ -228,7 +228,7 @@ export default function App() {
                     color: "blue",
                   }}
                 >
-                  live
+                  coming soon
                 </a>
               </Link>
             </Box>

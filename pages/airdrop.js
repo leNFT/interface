@@ -8,26 +8,40 @@ import Box from "@mui/material/Box";
 import { ChevronLeft } from "@web3uikit/icons";
 import Router from "next/router";
 import { formatUnits } from "@ethersproject/units";
-import { useContract, useSigner, useNetwork, useAccount } from "wagmi";
+import {
+  useContract,
+  useSigner,
+  useNetwork,
+  useAccount,
+  useProvider,
+} from "wagmi";
 import nativeTokenContract from "../contracts/NativeToken.json";
 
 export default function Airdrop() {
   const [amount, setAmount] = useState("0");
+  const [hasMinted, setHasMinted] = useState(false);
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const [mintingLoading, setMintingLoading] = useState(false);
   const { data: signer } = useSigner();
   const dispatch = useNotification();
+  const provider = useProvider();
 
   const addresses =
     chain && chain.id in contractAddresses
       ? contractAddresses[chain.id]
       : contractAddresses["1"];
 
-  const nativeToken = useContract({
+  const nativeTokenSigner = useContract({
     contractInterface: nativeTokenContract.abi,
     addressOrName: addresses.NativeToken,
     signerOrProvider: signer,
+  });
+
+  const nativeTokenProvider = useContract({
+    contractInterface: nativeTokenContract.abi,
+    addressOrName: addresses.NativeToken,
+    signerOrProvider: provider,
   });
 
   async function updateAirdropInfo() {
@@ -35,6 +49,13 @@ export default function Airdrop() {
     const updatedAmount = await getAirdrop(address, chain.id);
     console.log("updatedAmount", updatedAmount.amount);
     setAmount(updatedAmount.amount);
+
+    // Check if user already minted
+    const updatedHasMinted = await nativeTokenProvider.hasMintedAirdrop(
+      address
+    );
+    setHasMinted(updatedHasMinted);
+    console.log("updatedHasMinted", updatedHasMinted);
   }
 
   async function updateUI() {
@@ -48,6 +69,7 @@ export default function Airdrop() {
   }, [isConnected]);
 
   const handleMintingSuccess = async function () {
+    updateUI();
     dispatch({
       type: "success",
       message: "You just minted your airdrop tokens.",
@@ -93,7 +115,7 @@ export default function Airdrop() {
               }}
             >
               <div className="text-2xl text-center break-all md:text-left">
-                {"can mint"}
+                {"is eligible for"}
               </div>
             </Box>
           </div>
@@ -109,47 +131,60 @@ export default function Airdrop() {
             </Box>
           </div>
           <div className="flex flex-row mt-12 justify-center">
-            <Button
-              loadingProps={{
-                spinnerColor: "#000000",
-                spinnerType: "loader",
-                direction: "right",
-                size: "24",
-              }}
-              loadingText=""
-              disabled={!BigNumber.from(amount).gt(0)}
-              isLoading={mintingLoading}
-              customize={{
-                backgroundColor: "grey",
-                fontSize: 20,
-                textColor: "white",
-              }}
-              text="Mint Airdrop"
-              theme="custom"
-              size="large"
-              radius="12"
-              onClick={async function () {
-                try {
-                  setMintingLoading(true);
-                  const requestID = getNewRequestID();
-                  const airdrop = await getAirdrop(
-                    address,
-                    chain.id,
-                    requestID
-                  );
-                  const tx = await nativeToken.mintAirdropTokens(
-                    requestID,
-                    airdrop.sig
-                  );
-                  await tx.wait(1);
-                  handleMintingSuccess();
-                } catch (error) {
-                  console.log(error);
-                } finally {
-                  setMintingLoading(false);
-                }
-              }}
-            />
+            {hasMinted ? (
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "h6.fontSize",
+                  fontWeight: "bold",
+                  letterSpacing: 2,
+                }}
+              >
+                Already minted
+              </Box>
+            ) : (
+              <Button
+                loadingProps={{
+                  spinnerColor: "#000000",
+                  spinnerType: "loader",
+                  direction: "right",
+                  size: "24",
+                }}
+                loadingText=""
+                disabled={!BigNumber.from(amount).gt(0)}
+                isLoading={mintingLoading}
+                customize={{
+                  backgroundColor: "grey",
+                  fontSize: 20,
+                  textColor: "white",
+                }}
+                text="Mint Airdrop"
+                theme="custom"
+                size="large"
+                radius="12"
+                onClick={async function () {
+                  try {
+                    setMintingLoading(true);
+                    const requestID = getNewRequestID();
+                    const airdrop = await getAirdrop(
+                      address,
+                      chain.id,
+                      requestID
+                    );
+                    const tx = await nativeTokenSigner.mintAirdropTokens(
+                      requestID,
+                      airdrop.sig
+                    );
+                    await tx.wait(1);
+                    handleMintingSuccess();
+                  } catch (error) {
+                    console.log(error);
+                  } finally {
+                    setMintingLoading(false);
+                  }
+                }}
+              />
+            )}
           </div>
         </div>
       </div>

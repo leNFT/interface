@@ -359,7 +359,7 @@ export default function App() {
             )}
           </div>
           <div className="flex flex-col mt-8 rounded-3xl m-2 p-2 bg-black/5 shadow-lg">
-            <div className="flex flex-col md:flex-row justify-between p-8">
+            <div className="flex flex-col md:flex-row justify-between p-8 pb-4">
               <div className="flex flex-col">
                 <Box
                   sx={{
@@ -390,7 +390,7 @@ export default function App() {
                   prefixIcon={<Search />}
                   type="text"
                 />
-                <div className="m-2 mb-4">
+                <div className="m-2">
                   <Box
                     sx={{
                       color: "gray",

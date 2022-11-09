@@ -2,7 +2,7 @@ import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { getAirdrop, getNewRequestID } from "../helpers/getAirdrop.js";
 import { useState, useEffect } from "react";
-import { Button, useNotification } from "@web3uikit/core";
+import { Button, useNotification, Loading } from "@web3uikit/core";
 import { BigNumber } from "@ethersproject/bignumber";
 import Box from "@mui/material/Box";
 import { ChevronLeft } from "@web3uikit/icons";
@@ -23,6 +23,7 @@ export default function Airdrop() {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const [mintingLoading, setMintingLoading] = useState(false);
+  const [hasMintedLoading, setHasMintedLoading] = useState(true);
   const { data: signer } = useSigner();
   const dispatch = useNotification();
   const provider = useProvider();
@@ -56,6 +57,7 @@ export default function Airdrop() {
     );
     setHasMinted(updatedHasMinted);
     console.log("updatedHasMinted", updatedHasMinted);
+    setHasMintedLoading(false);
   }
 
   async function updateUI() {
@@ -94,7 +96,6 @@ export default function Airdrop() {
             }}
           />
         </div>
-
         <div className="flex flex-col rounded-3xl p-8 mt-4 items-center bg-black/5 shadow-lg max-w-3xl">
           <div className="flex flex-row">
             <Box
@@ -131,59 +132,65 @@ export default function Airdrop() {
             </Box>
           </div>
           <div className="flex flex-row mt-12 justify-center">
-            {hasMinted ? (
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "h6.fontSize",
-                  fontWeight: "bold",
-                  letterSpacing: 2,
-                }}
-              >
-                Already minted
-              </Box>
+            {hasMintedLoading ? (
+              <Loading className="m-2" size={12} spinnerColor="#000000" />
             ) : (
-              <Button
-                loadingProps={{
-                  spinnerColor: "#000000",
-                  spinnerType: "loader",
-                  direction: "right",
-                  size: "24",
-                }}
-                loadingText=""
-                disabled={!BigNumber.from(amount).gt(0)}
-                isLoading={mintingLoading}
-                customize={{
-                  backgroundColor: "grey",
-                  fontSize: 20,
-                  textColor: "white",
-                }}
-                text="Mint Airdrop"
-                theme="custom"
-                size="large"
-                radius="12"
-                onClick={async function () {
-                  try {
-                    setMintingLoading(true);
-                    const requestID = getNewRequestID();
-                    const airdrop = await getAirdrop(
-                      address,
-                      chain.id,
-                      requestID
-                    );
-                    const tx = await nativeTokenSigner.mintAirdropTokens(
-                      requestID,
-                      airdrop.sig
-                    );
-                    await tx.wait(1);
-                    handleMintingSuccess();
-                  } catch (error) {
-                    console.log(error);
-                  } finally {
-                    setMintingLoading(false);
-                  }
-                }}
-              />
+              <div>
+                {hasMinted ? (
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "h6.fontSize",
+                      fontWeight: "bold",
+                      letterSpacing: 2,
+                    }}
+                  >
+                    Already minted
+                  </Box>
+                ) : (
+                  <Button
+                    loadingProps={{
+                      spinnerColor: "#000000",
+                      spinnerType: "loader",
+                      direction: "right",
+                      size: "24",
+                    }}
+                    loadingText=""
+                    disabled={!BigNumber.from(amount).gt(0)}
+                    isLoading={mintingLoading}
+                    customize={{
+                      backgroundColor: "grey",
+                      fontSize: 20,
+                      textColor: "white",
+                    }}
+                    text="Mint Airdrop"
+                    theme="custom"
+                    size="large"
+                    radius="12"
+                    onClick={async function () {
+                      try {
+                        setMintingLoading(true);
+                        const requestID = getNewRequestID();
+                        const airdrop = await getAirdrop(
+                          address,
+                          chain.id,
+                          requestID
+                        );
+                        const tx = await nativeTokenSigner.mintAirdropTokens(
+                          requestID,
+                          airdrop.sig
+                        );
+                        await tx.wait(1);
+                        handleMintingSuccess();
+                      } catch (error) {
+                        console.log(error);
+                      } finally {
+                        setMintingLoading(false);
+                      }
+                    }}
+                  />
+                )}
+              </div>
             )}
           </div>
         </div>

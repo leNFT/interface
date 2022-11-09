@@ -91,7 +91,7 @@ export default function Airdrop() {
                 letterSpacing: 14,
               }}
             >
-              <div className="text-2xl text-center break-all md:text-left md:text-4xl">
+              <div className="text-2xl text-center break-all md:text-left">
                 {"can mint"}
               </div>
             </Box>
@@ -102,7 +102,7 @@ export default function Airdrop() {
                 fontFamily: "Monospace",
               }}
             >
-              <div className="text-xl text-center break-all">
+              <div className="text-3xl text-center break-all">
                 {formatUnits(amount, 18) + " LE"}
               </div>
             </Box>

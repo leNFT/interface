@@ -282,7 +282,7 @@ export default function Borrow(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex justify-center">
+      <div className="flex flex-col justify-center">
         <div className="flex flex-col lg:m-8 xl:flex-row justify-center">
           <div className="flex flex-col items-center justify-center mb-4 lg:m-8">
             {props.token_image ? (

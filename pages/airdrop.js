@@ -2,7 +2,7 @@ import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { getAirdrop, getNewRequestID } from "../helpers/getAirdrop.js";
 import { useState, useEffect } from "react";
-import { Button } from "@web3uikit/core";
+import { Button, useNotification } from "@web3uikit/core";
 import { BigNumber } from "@ethersproject/bignumber";
 import Box from "@mui/material/Box";
 import { ChevronLeft } from "@web3uikit/icons";
@@ -17,6 +17,7 @@ export default function Airdrop() {
   const { chain } = useNetwork();
   const [mintingLoading, setMintingLoading] = useState(false);
   const { data: signer } = useSigner();
+  const dispatch = useNotification();
 
   const addresses =
     chain && chain.id in contractAddresses

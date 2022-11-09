@@ -27,7 +27,7 @@ export default function Stake() {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const provider = useProvider();
-  const [nativeTokenBalance, setNativeTokenBalance] = useState("0");
+  const [vaultBalance, setVaultBalance] = useState("0");
   const [voteTokenBalance, setVoteTokenBalance] = useState("0");
   const [freeVotes, setFreeVotes] = useState("0");
   const [maxAmount, setMaxAmount] = useState("0");
@@ -59,10 +59,6 @@ export default function Stake() {
   });
 
   async function updateUI() {
-    // Get the native token balance
-    const nativeTokenBalance = await nativeToken.balanceOf(address);
-    setNativeTokenBalance(nativeTokenBalance.toString());
-
     //Get the vote token Balance
     const voteTokenBalance = await nativeTokenVault.balanceOf(address);
     setVoteTokenBalance(voteTokenBalance.toString());
@@ -80,7 +76,9 @@ export default function Stake() {
 
     const stakingInfo = await getStakingInfo(chain.id);
     const updatedAPR = stakingInfo.apr;
+    const updatedVaultBalance = stakingInfo.vaultBalance;
     setAPR(updatedAPR);
+    setVaultBalance(updatedVaultBalance);
     console.log("updatedAPR", updatedAPR);
   }
 
@@ -123,11 +121,10 @@ export default function Stake() {
     setCollectionVotes(updatedCollectionVotes.toString());
 
     // Get the collection collateralization boost
-    const updatedCollectionBoost =
-      await nativeTokenVault.getVoteCollateralizationBoost(
-        address,
-        collection.address
-      );
+    const updatedCollectionBoost = await nativeTokenVault.getLTVBoost(
+      address,
+      collection.address
+    );
     console.log("collectionBoost", updatedCollectionBoost);
     setCollectionBoost(updatedCollectionBoost.toString());
   }
@@ -287,7 +284,7 @@ export default function Stake() {
                       fontWeight: "bold",
                     }}
                   >
-                    My Balance
+                    Vault TVL
                   </Box>
                 </div>
                 <div className="flex flex-row">
@@ -297,7 +294,7 @@ export default function Stake() {
                       fontSize: "subtitle1.fontSize",
                     }}
                   >
-                    {Number(formatUnits(nativeTokenBalance, 18)).toFixed(2)} LE
+                    {Number(formatUnits(vaultBalance, 18)).toFixed(2)} LE
                   </Box>
                 </div>
               </div>

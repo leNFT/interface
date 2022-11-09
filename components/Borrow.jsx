@@ -173,11 +173,10 @@ export default function Borrow(props) {
     setMaxCollateralization(updatedMaxCollateralization);
 
     //Get vote collaterization boost
-    const voteCollaterizationBoost =
-      await nativeTokenVaultProvider.getVoteCollateralizationBoost(
-        address,
-        props.token_address
-      );
+    const voteCollaterizationBoost = await nativeTokenVaultProvider.getLTVBoost(
+      address,
+      props.token_address
+    );
 
     //Get genesis boost
     var genesisBoostAmount = "0";

@@ -242,18 +242,18 @@ export default function Reserves() {
                 }}
                 key="4"
               >
-                Borrow / Supply Rate
+                Borrow / Supply APR
               </Box>
               <div className="flex flex-col ml-1">
                 <Tooltip
                   content={
                     <div>
                       <div>
-                        Borrow Rate: interest rate at which new borrowers take
+                        Borrow APR: interest rate at which new borrowers take
                         out loans.
                       </div>
                       <div className="mt-2">
-                        Supply rate: interest rate at which lenders are
+                        Supply APR: interest rate at which lenders are
                         increasing their holdings.
                       </div>
                     </div>

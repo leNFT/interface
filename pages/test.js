@@ -3,6 +3,7 @@ import testNFTContract from "../contracts/test/TestNFT.json";
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import nativeTokenContract from "../contracts/NativeToken.json";
+import nativeTokenVaultContract from "../contracts/NativeTokenVault.json";
 import { useState } from "react";
 import {
   useAccount,
@@ -34,6 +35,12 @@ export default function Test() {
   const nativeTokenSigner = useContract({
     contractInterface: nativeTokenContract.abi,
     addressOrName: addresses.NativeToken,
+    signerOrProvider: signer,
+  });
+
+  const nativeTokenVaultSigner = useContract({
+    contractInterface: nativeTokenVaultContract.abi,
+    addressOrName: addresses.NativeTokenVault,
     signerOrProvider: signer,
   });
 
@@ -90,7 +97,7 @@ export default function Test() {
         onClick={async function () {
           try {
             setRewardsLoading(true);
-            const tx = await nativeTokenSigner.distributeRewards();
+            const tx = await nativeTokenVaultSigner.distributeStakingRewards();
             await tx.wait(1);
           } catch (error) {
             console.log(error);

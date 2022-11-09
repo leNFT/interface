@@ -304,7 +304,7 @@ export default function Reserve() {
                 lineHeight: 1,
               }}
             >
-              <div>Supply Rate: {supplyRate / 100}%</div>
+              <div>Supply APR: {supplyRate / 100}%</div>
             </Box>
           </div>
           <div>
@@ -331,7 +331,7 @@ export default function Reserve() {
                     fontSize: "body1.fontSize",
                   }}
                 >
-                  Borrow Rate: {borrowRate / 100}%
+                  Borrow APR: {borrowRate / 100}%
                 </Box>
               </div>
               <div className="my-2">

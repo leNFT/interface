@@ -282,7 +282,7 @@ export default function Borrow(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-col justify-center">
+      <div className="flex flex-col justify-center items-center">
         <div className="flex flex-col lg:m-8 xl:flex-row justify-center">
           <div className="flex flex-col items-center justify-center mb-4 lg:m-8">
             {props.token_image ? (
@@ -393,7 +393,7 @@ export default function Borrow(props) {
         <div className="m-8 lg:hidden">
           <Divider />
         </div>
-        <div className="flex flex-col items-center m-2 border-2 rounded-3xl max-w-max items-center p-2">
+        <div className="flex flex-col m-2 border-2 rounded-3xl max-w-max items-center p-2">
           <div className="flex flex-row m-2">
             <div className="flex flex-col items-center">
               <Typography variant="subtitle1">

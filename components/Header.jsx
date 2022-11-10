@@ -45,7 +45,7 @@ export default function Header() {
           />
         </div>
       )}
-      <div className="p-4 mb-2 border-b-2 flex flex-row justify-between items-center">
+      <div className="p-4 pb-0 md:pb-2 mb-2 border-b-2 flex flex-row justify-between items-center">
         <div className="hidden 2xl:flex flex-col items-center justify-content lg:pr-8">
           <Link href="/">
             <a target="_blank" rel="noopener noreferrer">

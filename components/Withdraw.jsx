@@ -19,7 +19,6 @@ import erc20 from "../contracts/erc20.json";
 
 export default function Withdraw(props) {
   const [withdrawalLoading, setWithdrawalLoading] = useState(false);
-  const [reserveAddress, setReserveAddress] = useState("");
   const [amount, setAmount] = useState("0");
   const [maxAmount, setMaxAmount] = useState("0");
   const { address, isConnected } = useAccount();
@@ -55,6 +54,7 @@ export default function Withdraw(props) {
   useEffect(() => {
     if (props.reserve && props.asset) {
       console.log("Got reserve address, setting the rest...", props.reserve);
+      console.log(" props.asset", props.asset);
       updateMaxAmount();
     }
   }, [props.reserve, props.asset]);
@@ -156,10 +156,11 @@ export default function Withdraw(props) {
               try {
                 setWithdrawalLoading(true);
                 var tx;
-                if (props.asset == "ETH") {
-                  tx = await marketSigner.withdrawETH(amount);
+                if (props.assetSymbol == "ETH") {
+                  console.log("Withdrawal ETH");
+                  tx = await marketSigner.withdrawETH(props.reserve, amount);
                 } else {
-                  tx = await marketSigner.withdraw(props.asset, amount);
+                  tx = await marketSigner.withdraw(props.reserve, amount);
                 }
                 await tx.wait(1);
                 handleWithdrawalSuccess();

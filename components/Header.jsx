@@ -115,6 +115,7 @@ export default function Header() {
                 {
                   label: (
                     <Box
+                      className="m-1"
                       sx={{
                         fontFamily: "Monospace",
                         fontSize: "subtitle1.fontSize",
@@ -129,11 +130,16 @@ export default function Header() {
                       pathname: "/app",
                     });
                   },
-                  icon: <Home className="mr-2" fontSize="20px" />,
+                  icon: (
+                    <div className="mr-1 my-1">
+                      <Home fontSize="20px" />
+                    </div>
+                  ),
                 },
                 {
                   label: (
                     <Box
+                      className="m-1"
                       sx={{
                         fontFamily: "Monospace",
                         fontSize: "subtitle1.fontSize",
@@ -148,11 +154,16 @@ export default function Header() {
                       pathname: "/reserves",
                     });
                   },
-                  icon: <Plus className="mr-2" fontSize="20px" />,
+                  icon: (
+                    <div className="mr-1 my-1">
+                      <Plus fontSize="20px" />
+                    </div>
+                  ),
                 },
                 {
                   label: (
                     <Box
+                      className="m-1"
                       sx={{
                         fontFamily: "Monospace",
                         fontSize: "subtitle1.fontSize",
@@ -167,11 +178,16 @@ export default function Header() {
                       pathname: "/loans",
                     });
                   },
-                  icon: <Search className="mr-2" fontSize="20px" />,
+                  icon: (
+                    <div className="mr-1 my-1">
+                      <Search fontSize="20px" />
+                    </div>
+                  ),
                 },
                 {
                   label: (
                     <Box
+                      className="m-1"
                       sx={{
                         fontFamily: "Monospace",
                         fontSize: "subtitle1.fontSize",
@@ -186,11 +202,16 @@ export default function Header() {
                       pathname: "/stake",
                     });
                   },
-                  icon: <LockClosed className="mr-2" fontSize="20px" />,
+                  icon: (
+                    <div className="mr-1 my-1">
+                      <LockClosed fontSize="20px" />
+                    </div>
+                  ),
                 },
                 {
                   label: (
                     <Box
+                      className="m-1"
                       sx={{
                         fontFamily: "Monospace",
                         fontSize: "subtitle1.fontSize",
@@ -205,7 +226,11 @@ export default function Header() {
                       pathname: "/genesis",
                     });
                   },
-                  icon: <Rocket className="mr-2" fontSize="20px" />,
+                  icon: (
+                    <div className="mr-1 my-1">
+                      <Rocket fontSize="20px" />
+                    </div>
+                  ),
                 },
               ]}
             />

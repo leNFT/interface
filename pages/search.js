@@ -28,7 +28,7 @@ import { useContract, useProvider } from "wagmi";
 import StyledModal from "../components/StyledModal";
 import erc721 from "../contracts/erc721.json";
 
-export default function Loans() {
+export default function Search() {
   const [collectionLoans, setCollectionLoans] = useState([]);
   const [maxCollateralization, setMaxCollateralization] = useState("0");
   const [count, setCount] = useState(0);
@@ -119,6 +119,7 @@ export default function Loans() {
         loanId: loanId,
         debt: loanDebt,
         maxLTV: loan.maxLTV,
+        borrowRate: loan.borrowRate,
         boost: loan.boost,
         tokenAddress: collectionNFTs[i].contract.address,
         tokenId: BigNumber.from(collectionNFTs[i].id.tokenId).toNumber(),

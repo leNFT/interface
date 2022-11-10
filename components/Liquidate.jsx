@@ -219,6 +219,17 @@ export default function Liquidate(props) {
                     </Typography>
                   </div>
                 </div>
+                <div className="flex flex-row items-center m-2">
+                  <div className="flex flex-col">
+                    <Typography variant="subtitle2">Interest Rate</Typography>
+                    <Typography variant="caption16">
+                      {BigNumber.from(props.loan.borrowRate)
+                        .div(100)
+                        .toString()}
+                      %
+                    </Typography>
+                  </div>
+                </div>
                 <div className="flex flex-row m-2">
                   <div className="flex flex-col min-w-[80%]">
                     <div className="flex flex-row">

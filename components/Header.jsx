@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { BannerStrip } from "@web3uikit/core";
-import { Button } from "grommet";
+import { Button, Menu } from "grommet";
 import {
   Home,
   Search,
@@ -9,11 +9,13 @@ import {
   Plus,
   LockClosed,
   Rocket,
+  Menu as MenuIcon,
 } from "@web3uikit/icons";
 import Box from "@mui/material/Box";
 import { useState } from "react";
 import { useAccount, useNetwork } from "wagmi";
 import { useSwitchNetwork } from "wagmi";
+import Router from "next/router";
 
 export default function Header() {
   const SELECTED_COLOR = "#d2c6d2";
@@ -43,7 +45,7 @@ export default function Header() {
           />
         </div>
       )}
-      <div className="p-4 mb-2 border-b-2 flex flex-col md:flex-row justify-between items-center">
+      <div className="p-4 mb-2 border-b-2 flex flex-row justify-between items-center">
         <div className="hidden 2xl:flex flex-col items-center justify-content lg:pr-8">
           <Link href="/">
             <a target="_blank" rel="noopener noreferrer">
@@ -84,8 +86,131 @@ export default function Header() {
             </a>
           </Link>
         </div>
-        <div className="flex flex-col items-center my-2">
-          <div className="flex flex-col md:flex-row md:items-center">
+        <div className="flex flex-row items-center m-2">
+          <div className="flex md:hidden px-2">
+            <Menu
+              icon={false}
+              label={
+                <div className="flex md:hidden xl:flex">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "h6.fontSize",
+                      fontWeight: "bold",
+                      letterSpacing: 2,
+                    }}
+                  >
+                    <div className="flex flex-row items-center">
+                      <MenuIcon
+                        className="m-2 mr-4"
+                        fontSize="30px"
+                        color="#000000"
+                      />
+                      leNFT
+                    </div>
+                  </Box>
+                </div>
+              }
+              items={[
+                {
+                  label: (
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                        letterSpacing: 2,
+                      }}
+                    >
+                      Home
+                    </Box>
+                  ),
+                  onClick: () => {
+                    Router.push({
+                      pathname: "/app",
+                    });
+                  },
+                  icon: <Home className="mr-2" fontSize="20px" />,
+                },
+                {
+                  label: (
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                        letterSpacing: 2,
+                      }}
+                    >
+                      Reserves
+                    </Box>
+                  ),
+                  onClick: () => {
+                    Router.push({
+                      pathname: "/reserves",
+                    });
+                  },
+                  icon: <Plus className="mr-2" fontSize="20px" />,
+                },
+                {
+                  label: (
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                        letterSpacing: 2,
+                      }}
+                    >
+                      Loans
+                    </Box>
+                  ),
+                  onClick: () => {
+                    Router.push({
+                      pathname: "/loans",
+                    });
+                  },
+                  icon: <Search className="mr-2" fontSize="20px" />,
+                },
+                {
+                  label: (
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                        letterSpacing: 2,
+                      }}
+                    >
+                      Stake
+                    </Box>
+                  ),
+                  onClick: () => {
+                    Router.push({
+                      pathname: "/stake",
+                    });
+                  },
+                  icon: <LockClosed className="mr-2" fontSize="20px" />,
+                },
+                {
+                  label: (
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                        letterSpacing: 2,
+                      }}
+                    >
+                      Genesis
+                    </Box>
+                  ),
+                  onClick: () => {
+                    Router.push({
+                      pathname: "/genesis",
+                    });
+                  },
+                  icon: <Rocket className="mr-2" fontSize="20px" />,
+                },
+              ]}
+            />
+          </div>
+          <div className="hidden md:flex flex-row md:items-center">
             <div className="flex flex-col m-2">
               <Link href="/app">
                 <Button

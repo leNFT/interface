@@ -457,7 +457,10 @@ export default function Reserve() {
                 fontSize: "subtitle2.fontSize",
               }}
             >
-              {formatUnits(underlyingSafeguard, 18) + " WETH"}
+              {formatUnits(BigNumber.from(underlyingBalance).add(debt), 18) +
+                " / " +
+                formatUnits(underlyingSafeguard, 18) +
+                " WETH"}
             </Box>
           </div>
         </div>

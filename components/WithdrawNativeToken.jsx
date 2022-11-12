@@ -227,12 +227,11 @@ export default function WithdrawNativeToken(props) {
               size: "24",
             }}
             loadingText=""
-            disabled={BigNumber.from(props.maxAmount).isZero()}
             isLoading={requestLoading}
             onClick={async function () {
               try {
                 setRequestLoading(true);
-                const tx = await nativeTokenVaultProvider.createWithdrawRequest(
+                const tx = await nativeTokenVaultSigner.createWithdrawalRequest(
                   amount
                 );
                 await tx.wait(1);

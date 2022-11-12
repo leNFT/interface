@@ -208,7 +208,7 @@ export default function Stake() {
         />
       </StyledModal>
       <div className="flex flex-col items-center">
-        <div className="flex flex-row items-center justify-center min-w-[75%] border-4 m-2 rounded-3xl bg-black/5 shadow-lg">
+        <div className="flex flex-row items-center justify-center max-w-[100%] hover:w-full border-4 m-2 rounded-3xl bg-black/5 shadow-lg">
           <Box
             sx={{
               fontFamily: "Monospace",
@@ -227,283 +227,285 @@ export default function Stake() {
             </div>
           </Box>
         </div>
-        <div className="flex flex-col min-w-[75%] border-4 m-2 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
-          <div className="flex flex-row items-center justify-center py-4 px-8 mt-4 rounded-3xl bg-black/5 shadow-lg max-w-fit">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "h6.fontSize",
-                fontWeight: "bold",
-              }}
-            >
-              {"Vault APR = " + apr + "%"}
-            </Box>
-          </div>
-          <div className="flex flex-col-reverse md:flex-row items-center justify-center">
-            <div className="flex flex-col items-center m-4 lg:m-8">
-              <div className="flex flex-row m-2">
-                <Button
-                  customize={{
-                    backgroundColor: "grey",
-                    fontSize: 16,
-                    textColor: "white",
-                  }}
-                  text="Vault Deposit"
-                  theme="custom"
-                  size="large"
-                  radius="12"
-                  onClick={async function () {
-                    setVisibleDepositModal(true);
-                  }}
-                />
-              </div>
-              <div className="flex flex-row m-2">
-                <Button
-                  customize={{
-                    backgroundColor: "grey",
-                    fontSize: 16,
-                    textColor: "white",
-                  }}
-                  text="Vault Withdraw"
-                  theme="custom"
-                  size="large"
-                  radius="12"
-                  onClick={async function () {
-                    setVisibleWithdrawalModal(true);
-                  }}
-                />
-              </div>
-            </div>
-            <div className="flex flex-col m-4 lg:m-8">
-              <div className="flex flex-col m-2">
-                <div className="flex flex-row">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "h5.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Vault TVL
-                  </Box>
-                </div>
-                <div className="flex flex-row">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle1.fontSize",
-                    }}
-                  >
-                    {Number(formatUnits(vaultBalance, 18)).toFixed(2)} LE
-                  </Box>
-                </div>
-              </div>
-              <div className="flex flex-col m-2">
-                <div className="flex flex-row">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "h5.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    My Vault Balance
-                  </Box>
-                </div>
-                <div className="flex flex-row">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle1.fontSize",
-                    }}
-                  >
-                    {Number(formatUnits(voteTokenBalance, 18)).toFixed(2) +
-                      " veLE"}
-                  </Box>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col items-center justify-center min-w-[75%] border-4 m-2 md:m-8 rounded-3xl bg-black/5 shadow-lg">
-          <div className="flex flex-col md:flex-row min-w-[85%] items-center m-4 justify-center">
-            <div className="flex flex-row m-4">
-              <div className="flex flex-col m-4">
-                <div className="flex flex-row">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "h6.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Free Votes
-                  </Box>
-                </div>
-                <div className="flex flex-row">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle1.fontSize",
-                    }}
-                  >
-                    {Number(formatUnits(freeVotes, 18)).toFixed(2)} veLE
-                  </Box>
-                </div>
-              </div>
-              <div className="flex flex-col m-4">
-                <div className="flex flex-row">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "h6.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Used Votes
-                  </Box>
-                </div>
-                <div className="flex flex-row">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle1.fontSize",
-                    }}
-                  >
-                    {formatUnits(
-                      BigNumber.from(voteTokenBalance).sub(freeVotes),
-                      18
-                    )}{" "}
-                    veLE
-                  </Box>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col justify-center items-center mb-8 p-2 rounded-3xl bg-black/5 shadow-lg">
-            <div className="flex flex-row m-8">
-              <Autocomplete
-                disablePortal
-                ListboxProps={{
-                  style: {
-                    backgroundColor: "rgb(253, 241, 244)",
-                    fontFamily: "Monospace",
-                  },
+        <div className="flex flex-col max-w-[100%] lg:flex-row justify-center items-center">
+          <div className="flex flex-col border-4 m-2 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
+            <div className="flex flex-row items-center justify-center py-4 px-8 m-8 mb-4 text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "h6.fontSize",
+                  fontWeight: "bold",
                 }}
-                options={collections}
-                isOptionEqualToValue={(option, value) =>
-                  option.address === value.address
-                }
-                sx={{ minWidth: 320 }}
-                onInputChange={handleCollectionChange}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Supported Collections"
-                    sx={{
-                      "& label": {
-                        paddingLeft: (theme) => theme.spacing(2),
-                        fontFamily: "Monospace",
-                      },
-                      "& input": {
-                        paddingLeft: (theme) => theme.spacing(3.5),
-                        fontFamily: "Monospace",
-                      },
-                      "& fieldset": {
-                        paddingLeft: (theme) => theme.spacing(2.5),
-                        borderRadius: "25px",
-                        fontFamily: "Monospace",
-                      },
-                    }}
-                  />
-                )}
-              />
+              >
+                {"Vault APR = " + apr + "%"}
+              </Box>
             </div>
-            <div className="flex flex-row">
-              <div className="flex flex-col justify-center m-4">
-                <div className="flex flex-row justify-center items-center m-2">
+            <div className="flex flex-col-reverse md:flex-row items-center justify-center">
+              <div className="flex flex-col items-center m-4 lg:m-8">
+                <div className="flex flex-row m-2">
                   <Button
                     customize={{
                       backgroundColor: "grey",
                       fontSize: 16,
                       textColor: "white",
                     }}
-                    text="Vote"
-                    disabled={selectedCollection == null}
+                    text="Vault Deposit"
                     theme="custom"
                     size="large"
                     radius="12"
                     onClick={async function () {
-                      setVisibleVoteModal(true);
+                      setVisibleDepositModal(true);
                     }}
                   />
                 </div>
-                <div className="flex flex-row justify-center items-center m-2">
+                <div className="flex flex-row m-2">
                   <Button
                     customize={{
                       backgroundColor: "grey",
                       fontSize: 16,
                       textColor: "white",
                     }}
-                    disabled={selectedCollection == null}
-                    text="Remove Vote"
+                    text="Vault Withdraw"
                     theme="custom"
                     size="large"
                     radius="12"
                     onClick={async function () {
-                      setVisibleRemoveVoteModal(true);
+                      setVisibleWithdrawalModal(true);
                     }}
                   />
                 </div>
               </div>
-              <div className="flex flex-col m-4">
-                <div className="flex flex-row m-2">
-                  <div className="flex flex-col">
-                    <div className="flex flex-row">
-                      <Box
-                        sx={{
-                          fontFamily: "Monospace",
-                          fontSize: "h6.fontSize",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        Collection Votes
-                      </Box>
-                    </div>
-                    <div className="flex flex-row">
-                      <Box
-                        sx={{
-                          fontFamily: "Monospace",
-                          fontSize: "subtitle1.fontSize",
-                        }}
-                      >
-                        {formatUnits(collectionVotes, 18)} veLE
-                      </Box>
-                    </div>
+              <div className="flex flex-col m-4 lg:m-8">
+                <div className="flex flex-col m-2">
+                  <div className="flex flex-row">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "h5.fontSize",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Vault TVL
+                    </Box>
+                  </div>
+                  <div className="flex flex-row">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                      }}
+                    >
+                      {Number(formatUnits(vaultBalance, 18)).toFixed(2)} LE
+                    </Box>
                   </div>
                 </div>
-                <div className="flex flex-row m-2">
-                  <div className="flex flex-col">
-                    <div className="flex flex-row">
-                      <Box
-                        sx={{
+                <div className="flex flex-col m-2">
+                  <div className="flex flex-row">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "h5.fontSize",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      My Vault Balance
+                    </Box>
+                  </div>
+                  <div className="flex flex-row">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                      }}
+                    >
+                      {Number(formatUnits(voteTokenBalance, 18)).toFixed(2) +
+                        " veLE"}
+                    </Box>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col items-center justify-center border-4 m-2 md:m-8 rounded-3xl bg-black/5 shadow-lg">
+            <div className="flex flex-col md:flex-row min-w-[85%] items-center m-4 justify-center">
+              <div className="flex flex-row m-4">
+                <div className="flex flex-col m-4">
+                  <div className="flex flex-row">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "h6.fontSize",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Free Votes
+                    </Box>
+                  </div>
+                  <div className="flex flex-row">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                      }}
+                    >
+                      {Number(formatUnits(freeVotes, 18)).toFixed(2)} veLE
+                    </Box>
+                  </div>
+                </div>
+                <div className="flex flex-col m-4">
+                  <div className="flex flex-row">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "h6.fontSize",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Used Votes
+                    </Box>
+                  </div>
+                  <div className="flex flex-row">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                      }}
+                    >
+                      {formatUnits(
+                        BigNumber.from(voteTokenBalance).sub(freeVotes),
+                        18
+                      )}{" "}
+                      veLE
+                    </Box>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col justify-center items-center m-8 p-2 rounded-3xl bg-black/5 shadow-lg">
+              <div className="flex flex-row m-8">
+                <Autocomplete
+                  disablePortal
+                  ListboxProps={{
+                    style: {
+                      backgroundColor: "rgb(253, 241, 244)",
+                      fontFamily: "Monospace",
+                    },
+                  }}
+                  options={collections}
+                  isOptionEqualToValue={(option, value) =>
+                    option.address === value.address
+                  }
+                  sx={{ minWidth: { xs: 180, sm: 250, md: 300 } }}
+                  onInputChange={handleCollectionChange}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Collections"
+                      sx={{
+                        "& label": {
+                          paddingLeft: (theme) => theme.spacing(2),
                           fontFamily: "Monospace",
-                          fontSize: "h6.fontSize",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        Collection Boost
-                      </Box>
+                        },
+                        "& input": {
+                          paddingLeft: (theme) => theme.spacing(3.5),
+                          fontFamily: "Monospace",
+                        },
+                        "& fieldset": {
+                          paddingLeft: (theme) => theme.spacing(2.5),
+                          borderRadius: "25px",
+                          fontFamily: "Monospace",
+                        },
+                      }}
+                    />
+                  )}
+                />
+              </div>
+              <div className="flex flex-col md:flex-row">
+                <div className="flex flex-col justify-center m-4">
+                  <div className="flex flex-row justify-center items-center m-2">
+                    <Button
+                      customize={{
+                        backgroundColor: "grey",
+                        fontSize: 16,
+                        textColor: "white",
+                      }}
+                      text="Vote"
+                      disabled={selectedCollection == null}
+                      theme="custom"
+                      size="large"
+                      radius="12"
+                      onClick={async function () {
+                        setVisibleVoteModal(true);
+                      }}
+                    />
+                  </div>
+                  <div className="flex flex-row justify-center items-center m-2">
+                    <Button
+                      customize={{
+                        backgroundColor: "grey",
+                        fontSize: 16,
+                        textColor: "white",
+                      }}
+                      disabled={selectedCollection == null}
+                      text="Remove Vote"
+                      theme="custom"
+                      size="large"
+                      radius="12"
+                      onClick={async function () {
+                        setVisibleRemoveVoteModal(true);
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col m-4">
+                  <div className="flex flex-row m-2">
+                    <div className="flex flex-col">
+                      <div className="flex flex-row">
+                        <Box
+                          sx={{
+                            fontFamily: "Monospace",
+                            fontSize: "h6.fontSize",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Collection Votes
+                        </Box>
+                      </div>
+                      <div className="flex flex-row">
+                        <Box
+                          sx={{
+                            fontFamily: "Monospace",
+                            fontSize: "subtitle1.fontSize",
+                          }}
+                        >
+                          {formatUnits(collectionVotes, 18)} veLE
+                        </Box>
+                      </div>
                     </div>
-                    <div className="flex flex-row">
-                      <Box
-                        sx={{
-                          fontFamily: "Monospace",
-                          fontSize: "subtitle1.fontSize",
-                        }}
-                      >
-                        {collectionBoost / 100}%
-                      </Box>
+                  </div>
+                  <div className="flex flex-row m-2">
+                    <div className="flex flex-col">
+                      <div className="flex flex-row">
+                        <Box
+                          sx={{
+                            fontFamily: "Monospace",
+                            fontSize: "h6.fontSize",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Collection Boost
+                        </Box>
+                      </div>
+                      <div className="flex flex-row">
+                        <Box
+                          sx={{
+                            fontFamily: "Monospace",
+                            fontSize: "subtitle1.fontSize",
+                          }}
+                        >
+                          {collectionBoost / 100}%
+                        </Box>
+                      </div>
                     </div>
                   </div>
                 </div>

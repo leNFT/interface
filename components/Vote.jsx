@@ -19,6 +19,7 @@ export default function Vote(props) {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const [amount, setAmount] = useState("0");
+  const [votesBoost, setVotesBoost] = useState("0");
   const [votingLoading, setVotingLoading] = useState(false);
 
   const addresses =
@@ -33,6 +34,23 @@ export default function Vote(props) {
     signerOrProvider: signer,
   });
 
+  const nativeTokenVaultProvider = useContract({
+    contractInterface: nativeTokenVaultContract.abi,
+    addressOrName: addresses.NativeTokenVault,
+    signerOrProvider: provider,
+  });
+
+  async function updateVotesBoost(votes) {
+    const updatedVotesBoost = await nativeTokenVaultProvider.calculateLTVBoost(
+      address,
+      props.address,
+      votes
+    );
+
+    console.log("Updated Votes Boost Amount:", updatedVotesBoost);
+    setVotesBoost(updatedVotesBoost);
+  }
+
   useEffect(() => {
     if (isConnected) {
     }
@@ -41,6 +59,7 @@ export default function Vote(props) {
   const handleVoteSuccess = async function (amount) {
     console.log("Voted", amount);
     props.updateUI();
+    props.updateCollectionDetails(props.address);
     props.setVisibility(false);
     dispatch({
       type: "success",
@@ -53,6 +72,7 @@ export default function Vote(props) {
   function handleInputChange(e) {
     if (e.target.value != "") {
       setAmount(parseUnits(e.target.value, 18).toString());
+      updateVotesBoost(parseUnits(e.target.value, 18).toString());
     } else {
       setAmount("0");
     }
@@ -69,18 +89,27 @@ export default function Vote(props) {
         </div>
       </div>
       <div className="flex flex-row items-center justify-center mt-8 mb-2">
-        <Input
-          label="Amount"
-          type="number"
-          step="any"
-          validation={{
-            numberMax: Number(formatUnits(props.freeVotes, 18)),
-            numberMin: 0,
-          }}
-          onChange={handleInputChange}
-        />
+        <div className="flex flex-col max-w-[250px]">
+          <Input
+            label="Amount"
+            placeholder="0"
+            type="number"
+            step="any"
+            validation={{
+              numberMax: Number(formatUnits(props.freeVotes, 18)),
+              numberMin: 0,
+            }}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div className="flex flex-col m-4"> = </div>
+        <div className="flex flex-col">
+          <Typography variant="h6">
+            {votesBoost / 100 + "% TVL Boost"}
+          </Typography>
+        </div>
       </div>
-      <div className="flex flex-row items-center text-center justify-center mb-8">
+      <div className="flex flex-row items-center text-center justify-center my-8">
         <Typography variant="caption14">
           Votes can only be removed after all loans in collection are repaid.
         </Typography>

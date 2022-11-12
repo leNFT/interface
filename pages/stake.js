@@ -105,25 +105,22 @@ export default function Stake() {
     }
   }, [isConnected]);
 
-  async function updateCollectionDetails(collection) {
-    if (!collection) {
+  async function updateCollectionDetails(collectionAddress) {
+    if (!collectionAddress) {
       setCollectionVotes("0");
       setCollectionBoost("0");
       return;
     }
     // Get the collection votes
     const updatedCollectionVotes =
-      await nativeTokenVault.getUserCollectionVotes(
-        address,
-        collection.address
-      );
+      await nativeTokenVault.getUserCollectionVotes(address, collectionAddress);
     console.log("collectionVotes", updatedCollectionVotes);
     setCollectionVotes(updatedCollectionVotes.toString());
 
     // Get the collection collateralization boost
     const updatedCollectionBoost = await nativeTokenVault.getLTVBoost(
       address,
-      collection.address
+      collectionAddress
     );
     console.log("collectionBoost", updatedCollectionBoost);
     setCollectionBoost(updatedCollectionBoost.toString());
@@ -136,7 +133,7 @@ export default function Stake() {
       (collection) => collection.label == value
     );
     setSelectedCollection(collection);
-    updateCollectionDetails(collection);
+    updateCollectionDetails(collection.address);
   }
 
   return (
@@ -185,6 +182,7 @@ export default function Stake() {
           {...selectedCollection}
           setVisibility={setVisibleVoteModal}
           updateUI={updateUI}
+          updateCollectionDetails={updateCollectionDetails}
           freeVotes={freeVotes}
         />
       </StyledModal>
@@ -204,11 +202,12 @@ export default function Stake() {
           {...selectedCollection}
           setVisibility={setVisibleRemoveVoteModal}
           updateUI={updateUI}
+          updateCollectionDetails={updateCollectionDetails}
           collectionVotes={collectionVotes}
         />
       </StyledModal>
       <div className="flex flex-col items-center">
-        <div className="flex flex-row items-center justify-center max-w-[100%] hover:w-full border-4 m-2 rounded-3xl bg-black/5 shadow-lg">
+        <div className="flex flex-row items-center text-center justify-center max-w-[100%] border-4 m-2 rounded-3xl bg-black/5 shadow-lg">
           <Box
             sx={{
               fontFamily: "Monospace",
@@ -327,7 +326,7 @@ export default function Stake() {
             </div>
           </div>
           <div className="flex flex-col items-center justify-center border-4 m-2 md:m-8 rounded-3xl bg-black/5 shadow-lg">
-            <div className="flex flex-col md:flex-row min-w-[85%] items-center m-4 justify-center">
+            <div className="flex flex-col md:flex-row min-w-[85%] items-center mx-4 my-2 justify-center">
               <div className="flex flex-row m-4">
                 <div className="flex flex-col m-4">
                   <div className="flex flex-row">
@@ -381,7 +380,7 @@ export default function Stake() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col justify-center items-center m-8 p-2 rounded-3xl bg-black/5 shadow-lg">
+            <div className="flex flex-col justify-center items-center m-8 mt-0 p-4 rounded-3xl bg-black/5 shadow-lg">
               <div className="flex flex-row m-8">
                 <Autocomplete
                   disablePortal

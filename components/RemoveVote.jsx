@@ -55,6 +55,7 @@ export default function RemoveVote(props) {
 
   const handleRemoveVoteSuccess = async function () {
     props.updateUI();
+    props.updateCollectionDetails(props.address);
     props.setVisibility(false);
     dispatch({
       type: "success",

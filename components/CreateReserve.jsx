@@ -105,9 +105,9 @@ export default function Vote(props) {
   }
 
   return (
-    <div className={styles.container}>
+    <div>
       <div className="flex flex-col items-center m-4">
-        <div className="flex flex-col m-2 md:flex-row border-2 rounded-2xl">
+        <div className="flex flex-col my-2 md:m-2 md:flex-row border-2 rounded-2xl">
           <div className="flex flex-col m-4">
             <Typography variant="subtitle2">Liquidation Penalty</Typography>
             <Typography variant="caption16">
@@ -123,7 +123,7 @@ export default function Vote(props) {
             </Typography>
           </div>
         </div>
-        <div className="flex flex-col m-2 md:flex-row border-2 rounded-2xl">
+        <div className="flex flex-col my-2 md:m-2 md:flex-row border-2 rounded-2xl">
           <div className="flex flex-col m-4">
             <Typography variant="subtitle2">Max Utilization Rate</Typography>
             <Typography variant="caption16">
@@ -145,7 +145,7 @@ export default function Vote(props) {
           onChange={handleCollectionChange}
         />
       </div>
-      <div className="flex flex-row items-center justify-center m-8">
+      <div className="flex flex-row items-center justify-center my-8 mx-2 md:mx-8">
         <FormControl fullWidth>
           <InputLabel>Asset</InputLabel>
           <Select

@@ -39,7 +39,7 @@ export default function Reserves() {
         <Box
           sx={{
             fontFamily: "Monospace",
-            fontSize: "subtitle1.fontSize",
+            fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
           }}
           className="m-2 break-all"
           key={"noAssets" + key}
@@ -52,20 +52,11 @@ export default function Reserves() {
             ))
           )}
         </Box>,
+
         <Box
           sx={{
             fontFamily: "Monospace",
-            fontSize: "subtitle1.fontSize",
-          }}
-          className="m-2"
-          key={"incentivized" + key}
-        >
-          {value.isIncentivized ? "Yes" : "No"}
-        </Box>,
-        <Box
-          sx={{
-            fontFamily: "Monospace",
-            fontSize: "subtitle1.fontSize",
+            fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
           }}
           className="m-2"
           key={"supply" + key}
@@ -75,7 +66,7 @@ export default function Reserves() {
         <Box
           sx={{
             fontFamily: "Monospace",
-            fontSize: "subtitle1.fontSize",
+            fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
           }}
           className="m-2"
           key={"tvl" + key}
@@ -83,6 +74,16 @@ export default function Reserves() {
           {Number(formatUnits(value.tvl, 18)).toFixed(2) +
             " " +
             underlyingSymbol}
+        </Box>,
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
+          }}
+          className="m-2"
+          key={"incentivized" + key}
+        >
+          {value.isIncentivized ? "Yes" : "No"}
         </Box>,
         <div key={"details" + key}>
           <Button
@@ -93,7 +94,6 @@ export default function Reserves() {
             }}
             text="Details"
             theme="custom"
-            size="large"
             id={key}
             radius="12"
             onClick={async function (event) {
@@ -108,7 +108,7 @@ export default function Reserves() {
         </div>,
         <div key={"externalLink" + key}>
           <Button
-            size="large"
+            size="small md:large"
             color="#eae5ea"
             iconLayout="icon-only"
             id={key}
@@ -147,7 +147,6 @@ export default function Reserves() {
         hasFooter={false}
         title="Create Reserve"
         isVisible={visibleCreateReserveModal}
-        width="50%"
         onCloseButtonPressed={function () {
           setVisibleCreateReserveModal(false);
         }}
@@ -197,7 +196,10 @@ export default function Reserves() {
               <Box
                 sx={{
                   fontFamily: "Monospace",
-                  fontSize: "subtitle1.fontSize",
+                  fontSize: {
+                    xs: "caption.fontSize",
+                    sm: "subtitle1.fontSize",
+                  },
                 }}
                 className=""
                 key="1"
@@ -214,35 +216,19 @@ export default function Reserves() {
                 </Tooltip>
               </div>
             </div>,
-            <div className="flex flex-row m-2" key="rewards">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "subtitle1.fontSize",
-                }}
-                key="4"
-              >
-                Liquidation Rewards
-              </Box>
-              <div className="flex flex-col ml-1">
-                <Tooltip
-                  content="Whether liquidations are incentivized through LE tokens."
-                  position="bottom"
-                  minWidth={250}
-                >
-                  <HelpCircle fontSize="14px" color="#000000" />
-                </Tooltip>
-              </div>
-            </div>,
+
             <div className="flex flex-row m-2" key="rates">
               <Box
                 sx={{
                   fontFamily: "Monospace",
-                  fontSize: "subtitle1.fontSize",
+                  fontSize: {
+                    xs: "caption.fontSize",
+                    sm: "subtitle1.fontSize",
+                  },
                 }}
                 key="4"
               >
-                Borrow / Supply APR
+                APRs
               </Box>
               <div className="flex flex-col ml-1">
                 <Tooltip
@@ -259,7 +245,7 @@ export default function Reserves() {
                     </div>
                   }
                   position="bottom"
-                  minWidth={250}
+                  minWidth={350}
                 >
                   <HelpCircle fontSize="14px" color="#000000" />
                 </Tooltip>
@@ -269,7 +255,10 @@ export default function Reserves() {
               <Box
                 sx={{
                   fontFamily: "Monospace",
-                  fontSize: "subtitle1.fontSize",
+                  fontSize: {
+                    xs: "caption.fontSize",
+                    sm: "subtitle1.fontSize",
+                  },
                 }}
                 key="4"
               >
@@ -280,6 +269,29 @@ export default function Reserves() {
                   content="Total Value Locked."
                   position="bottom"
                   minWidth={170}
+                >
+                  <HelpCircle fontSize="14px" color="#000000" />
+                </Tooltip>
+              </div>
+            </div>,
+            <div className="flex flex-row m-2" key="rewards">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: {
+                    xs: "caption.fontSize",
+                    sm: "subtitle1.fontSize",
+                  },
+                }}
+                key="4"
+              >
+                Liquidation Rewards
+              </Box>
+              <div className="flex flex-col ml-1">
+                <Tooltip
+                  content="Whether liquidations are incentivized through LE tokens."
+                  position="bottom"
+                  minWidth={250}
                 >
                   <HelpCircle fontSize="14px" color="#000000" />
                 </Tooltip>

@@ -25,7 +25,7 @@ export default function Vote(props) {
   const [collection, setCollection] = useState("");
   const [asset, setAsset] = useState("");
   const provider = useProvider();
-  const [underlyingSafeguard, setUnderyingSafeguard] = useState("0");
+  const [tvlSafeguard, setTVLSafeguard] = useState("0");
   const [maximumUtilizationRate, setMaximumUtilizationRate] = useState("0");
   const [protocolLiquidationFee, setProtocolLiquidationFee] = useState("0");
   const [liquidationPenalty, setLiquidationPenalty] = useState("0");
@@ -51,11 +51,11 @@ export default function Vote(props) {
 
   async function getReserveDefaultValues() {
     // Get default underlying safeguard
-    const updatedUnderyingSafeguard = (
-      await marketProvider.getDefaultUnderlyingSafeguard()
+    const updatedTVLSafeguard = (
+      await marketProvider.getDefaultTVLSafeguard()
     ).toString();
 
-    setUnderyingSafeguard(updatedUnderyingSafeguard);
+    setTVLSafeguard(updatedTVLSafeguard);
 
     // Get default maximum utilization rate
     const updatedMaximumUtilizationRate = (
@@ -131,9 +131,9 @@ export default function Vote(props) {
             </Typography>
           </div>
           <div className="flex flex-col m-4">
-            <Typography variant="subtitle2">Underlying Safeguard</Typography>
+            <Typography variant="subtitle2">TVL Safeguard</Typography>
             <Typography variant="caption16">
-              {formatUnits(underlyingSafeguard, 18) + " ETH"}
+              {formatUnits(tvlSafeguard, 18) + " ETH"}
             </Typography>
           </div>
         </div>

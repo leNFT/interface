@@ -37,7 +37,7 @@ export default function Reserve() {
   const [loadingReserve, setLoadingReserve] = useState(false);
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
-  const [underlyingSafeguard, setUnderyingSafeguard] = useState("0");
+  const [tvlSafeguard, setTVLSafeguard] = useState("0");
   const [maximumUtilizationRate, setMaximumUtilizationRate] = useState("0");
   const [protocolLiquidationFee, setProtocolLiquidationFee] = useState("0");
   const [liquidationPenalty, setLiquidationPenalty] = useState("0");
@@ -89,10 +89,10 @@ export default function Reserve() {
     setMaxAmount(updatedMaxAmount.toString());
 
     const updatedUnderyingSafeguard = (
-      await reserve.getUnderlyingSafeguard()
+      await reserve.getTVLSafeguard()
     ).toString();
 
-    setUnderyingSafeguard(updatedUnderyingSafeguard);
+    setTVLSafeguard(updatedUnderyingSafeguard);
 
     // Get default maximum utilization rate
     const updatedMaximumUtilizationRate = (
@@ -459,7 +459,7 @@ export default function Reserve() {
             >
               {formatUnits(BigNumber.from(underlyingBalance).add(debt), 18) +
                 " / " +
-                formatUnits(underlyingSafeguard, 18) +
+                formatUnits(tvlSafeguard, 18) +
                 " WETH"}
             </Box>
           </div>

@@ -24,7 +24,7 @@ export default function WithdrawNativeToken(props) {
   const [withdrawalLoading, setWithdrawalLoading] = useState(false);
   const [requestLoading, setRequestLoading] = useState(false);
   const [amount, setAmount] = useState("0");
-  const [lastWithdrawRequest, setLastWithdrawRequest] = useState({
+  const [lastWithdrawalRequest, setLastWithdrawalRequest] = useState({
     amount: "0",
     timestamp: 0,
   });
@@ -49,7 +49,7 @@ export default function WithdrawNativeToken(props) {
   async function getLastWithdrawRequest() {
     var withdrawRequest;
     try {
-      withdrawRequest = await nativeTokenVaultProvider.getWithdrawRequest(
+      withdrawRequest = await nativeTokenVaultProvider.getWithdrawalRequest(
         address
       );
     } catch (error) {
@@ -60,7 +60,7 @@ export default function WithdrawNativeToken(props) {
 
     // Withdraw might be undefined if no request was made before
     if (withdrawRequest) {
-      setLastWithdrawRequest({
+      setLastWithdrawalRequest({
         amount: withdrawRequest.amount.toString(),
         timestamp: withdrawRequest.timestamp.toNumber(),
       });
@@ -173,10 +173,10 @@ export default function WithdrawNativeToken(props) {
       </div>
       <div className="flex flex-row items-center text-center justify-center mb-8">
         <Typography variant="caption14">
-          {getWithdrawalMessage(lastWithdrawRequest.timestamp)}
+          {getWithdrawalMessage(lastWithdrawalRequest.timestamp)}
         </Typography>
       </div>
-      {canWithdraw(lastWithdrawRequest.timestamp) ? (
+      {canWithdraw(lastWithdrawalRequest.timestamp) ? (
         <div className="m-8 mt-2">
           <Button
             text="Withdraw"

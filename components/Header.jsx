@@ -400,7 +400,7 @@ export default function Header() {
         <div className="flex flex-col items-center px-8">
           <ConnectButton
             showBalance={false}
-            chainStatus="icon"
+            chainStatus={{ smallScreen: "none", largeScreen: "icon" }}
             accountStatus="address"
           />
         </div>

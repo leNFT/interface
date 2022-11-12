@@ -204,7 +204,7 @@ export default function Search() {
               },
             }}
             options={collections}
-            sx={{ minWidth: 380 }}
+            sx={{ minWidth: { xs: 260, sm: 350, md: 380 } }}
             isOptionEqualToValue={(option, value) =>
               option.address === value.address
             }
@@ -212,7 +212,7 @@ export default function Search() {
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Search NFT Collections"
+                label="Collection Search"
                 sx={{
                   "& label": {
                     paddingLeft: (theme) => theme.spacing(2),

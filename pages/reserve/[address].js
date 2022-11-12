@@ -174,7 +174,7 @@ export default function Reserve() {
         />
       </StyledModal>
       <div className="flex flex-row justify-center">
-        <div className="flex flex-col justify-center mr-auto ml-8">
+        <div className="flex flex-col justify-center mr-auto ml-4">
           <Button
             size="small"
             color="#eae5ea"
@@ -187,7 +187,7 @@ export default function Reserve() {
             }}
           />
         </div>
-        <div className="flex flex-col justify-center break-all">
+        <div className="flex flex-col justify-center break-all ml-4">
           <Box
             sx={{
               fontFamily: "Monospace",

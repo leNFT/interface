@@ -47,21 +47,22 @@ export default function WithdrawNativeToken(props) {
   });
 
   async function getLastWithdrawRequest() {
-    var withdrawRequest;
-    try {
-      withdrawRequest = await nativeTokenVaultProvider.getWithdrawalRequest(
-        address
-      );
-    } catch (error) {
-      console.log(error);
-    }
+    const withdrawRequest = await nativeTokenVaultProvider.getWithdrawalRequest(
+      address
+    );
 
+    console.log("withdrawRequest", withdrawRequest);
+
+    const assets = await nativeTokenVaultProvider.convertToAssets(
+      withdrawRequest.amount.toString()
+    );
     console.log("withdrawRequest", withdrawRequest);
 
     // Withdraw might be undefined if no request was made before
     if (withdrawRequest) {
       setLastWithdrawalRequest({
-        amount: withdrawRequest.amount.toString(),
+        shares: withdrawRequest.amount.toString(),
+        assets: assets.toString(),
         timestamp: withdrawRequest.timestamp.toNumber(),
       });
     }
@@ -150,99 +151,109 @@ export default function WithdrawNativeToken(props) {
   }
 
   return (
-    <div className={styles.container}>
-      <div className="flex flex-row items-center justify-center m-4">
-        <div className="flex flex-col">
-          <Typography variant="subtitle2">Maximum withdrawal amount</Typography>
-          <Typography variant="body16">
-            {formatUnits(props.maxAmount, 18)} LE
-          </Typography>
-        </div>
-      </div>
-      <div className="flex flex-row items-center justify-center mt-8 mb-2">
-        <Input
-          label="Amount"
-          type="number"
-          step="any"
-          validation={{
-            numberMax: Number(formatUnits(props.maxAmount, 18)),
-            numberMin: 0,
-          }}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div className="flex flex-row items-center text-center justify-center mb-8">
-        <Typography variant="caption14">
-          {getWithdrawalMessage(lastWithdrawalRequest.timestamp)}
-        </Typography>
-      </div>
+    <div>
       {canWithdraw(lastWithdrawalRequest.timestamp) ? (
-        <div className="m-8 mt-2">
-          <Button
-            text="Withdraw"
-            theme="secondary"
-            isFullWidth
-            loadingProps={{
-              spinnerColor: "#000000",
-              spinnerType: "loader",
-              direction: "right",
-              size: "24",
+        <div className="flex flex-col justify-center mt-8 mb-2">
+          <div className="flex flex-col">
+            <Typography variant="subtitle2">
+              Maximum withdrawal amount
+            </Typography>
+            <Typography variant="body16">
+              {formatUnits(lastWithdrawalRequest.shares, 18) +
+                " veLE (" +
+                formatUnits(lastWithdrawalRequest.assets, 18) +
+                " LE)"}
+            </Typography>
+          </div>
+          <Input
+            label="Amount"
+            type="number"
+            step="any"
+            validation={{
+              numberMax: Number(formatUnits(props.maxAmount, 18)),
+              numberMin: 0,
             }}
-            loadingText=""
-            isLoading={withdrawalLoading}
-            disabled={BigNumber.from(props.maxAmount).isZero()}
-            onClick={async function () {
-              if (BigNumber.from(amount).lte(BigNumber.from(props.maxAmount))) {
+            onChange={handleInputChange}
+          />
+          <div className="m-8 mt-2">
+            <Button
+              text="Withdraw"
+              theme="secondary"
+              isFullWidth
+              loadingProps={{
+                spinnerColor: "#000000",
+                spinnerType: "loader",
+                direction: "right",
+                size: "24",
+              }}
+              loadingText=""
+              isLoading={withdrawalLoading}
+              disabled={BigNumber.from(props.maxAmount).isZero()}
+              onClick={async function () {
+                if (
+                  BigNumber.from(amount).lte(BigNumber.from(props.maxAmount))
+                ) {
+                  try {
+                    setWithdrawalLoading(true);
+                    const tx = await nativeTokenVaultSigner.withdraw(amount);
+                    await tx.wait(1);
+                    handleWithdrawalSuccess();
+                  } catch (error) {
+                    console.log(error);
+                  } finally {
+                    setWithdrawalLoading(false);
+                  }
+                } else {
+                  dispatch({
+                    type: "error",
+                    message: "Amount is bigger than max permited withdrawal",
+                    title: "Error",
+                    position: "topR",
+                  });
+                }
+              }}
+            />
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center text-center justify-center m-8">
+          <Typography variant="caption14">
+            {getWithdrawalMessage(lastWithdrawalRequest.timestamp)}
+          </Typography>
+          <div className="m-8">
+            <Button
+              text={
+                "Create " +
+                formatUnits(props.voteTokenBalance, 18) +
+                " veLE withdraw request"
+              }
+              theme="secondary"
+              isFullWidth
+              loadingProps={{
+                spinnerColor: "#000000",
+                spinnerType: "loader",
+                direction: "right",
+                size: "24",
+              }}
+              loadingText=""
+              isLoading={requestLoading}
+              onClick={async function () {
                 try {
-                  setWithdrawalLoading(true);
-                  const tx = await nativeTokenVaultSigner.withdraw(amount);
+                  setRequestLoading(true);
+                  const tx =
+                    await nativeTokenVaultSigner.createWithdrawalRequest(
+                      amount
+                    );
                   await tx.wait(1);
-                  handleWithdrawalSuccess();
+                  handleRequestSuccess();
                 } catch (error) {
                   console.log(error);
                 } finally {
-                  setWithdrawalLoading(false);
+                  setRequestLoading(false);
                 }
-              } else {
-                dispatch({
-                  type: "error",
-                  message: "Amount is bigger than max permited withdrawal",
-                  title: "Error",
-                  position: "topR",
-                });
-              }
-            }}
-          />
-        </div>
-      ) : (
-        <div className="m-8 mt-2">
-          <Button
-            text="Create Withdraw Request"
-            theme="secondary"
-            isFullWidth
-            loadingProps={{
-              spinnerColor: "#000000",
-              spinnerType: "loader",
-              direction: "right",
-              size: "24",
-            }}
-            loadingText=""
-            isLoading={requestLoading}
-            onClick={async function () {
-              try {
-                setRequestLoading(true);
-                const tx = await nativeTokenVaultSigner.createWithdrawalRequest(
-                  amount
-                );
-                await tx.wait(1);
-                handleRequestSuccess();
-              } catch (error) {
-                console.log(error);
-              } finally {
-                setRequestLoading(false);
-              }
-            }}
-          ></Button>
+              }}
+            ></Button>
+          </div>
         </div>
       )}
     </div>

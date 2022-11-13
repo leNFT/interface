@@ -106,7 +106,7 @@ export default function DepositNativeToken(props) {
   }
 
   return (
-    <div className={styles.container}>
+    <div>
       <div className="flex flex-row items-center justify-center">
         <div className="flex flex-col">
           <Typography variant="subtitle2">My Balance</Typography>
@@ -134,7 +134,7 @@ export default function DepositNativeToken(props) {
         </Typography>
       </div>
       {approved ? (
-        <div className="m-8 mt-2">
+        <div className="my-4 md:m-8">
           <Button
             text="Deposit"
             theme="secondary"
@@ -151,7 +151,10 @@ export default function DepositNativeToken(props) {
               if (BigNumber.from(amount).lte(BigNumber.from(balance))) {
                 try {
                   setDepositLoading(true);
-                  const tx = await nativeTokenVaultSigner.deposit(amount);
+                  const tx = await nativeTokenVaultSigner.deposit(
+                    amount,
+                    address
+                  );
                   await tx.wait(1);
                   handleDepositSuccess();
                 } catch (error) {

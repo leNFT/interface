@@ -1,7 +1,6 @@
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import nativeTokenVaultContract from "../contracts/NativeTokenVault.json";
-import tokenOracleContract from "../contracts/TokenOracle.json";
 import Link from "@mui/material/Link";
 import { getSupportedNFTs } from "../helpers/getSupportedNFTs.js";
 import { formatUnits } from "@ethersproject/units";
@@ -52,15 +51,9 @@ export default function Stake() {
     signerOrProvider: provider,
   });
 
-  const nativeToken = useContract({
-    contractInterface: erc20,
-    addressOrName: addresses.NativeToken,
-    signerOrProvider: provider,
-  });
-
   async function updateUI() {
     //Get the vote token Balance
-    const voteTokenBalance = await nativeTokenVault.balanceOf(address);
+    const voteTokenBalance = await nativeTokenVault.maxRedeem(address);
     setVoteTokenBalance(voteTokenBalance.toString());
 
     //Get the vote token Balance
@@ -68,7 +61,7 @@ export default function Stake() {
     setFreeVotes(freeVotes.toString());
 
     const updatedMaxAmount = (
-      await nativeTokenVault.getMaximumWithdrawalAmount(address)
+      await nativeTokenVault.maxWithdraw(address)
     ).toString();
 
     console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
@@ -163,6 +156,7 @@ export default function Stake() {
       >
         <WithdrawNativeToken
           setVisibility={setVisibleWithdrawalModal}
+          voteTokenBalance={voteTokenBalance}
           maxAmount={maxAmount}
           updateUI={updateUI}
         />
@@ -318,7 +312,9 @@ export default function Stake() {
                       }}
                     >
                       {Number(formatUnits(voteTokenBalance, 18)).toFixed(2) +
-                        " veLE"}
+                        " veLE (" +
+                        Number(formatUnits(maxAmount, 18)).toFixed(2) +
+                        " LE)"}
                     </Box>
                   </div>
                 </div>

@@ -254,7 +254,7 @@ export default function Stake() {
                       fontSize: 16,
                       textColor: "white",
                     }}
-                    text="Vault Withdraw"
+                    text="Vault Withdrawal"
                     theme="custom"
                     size="large"
                     radius="12"

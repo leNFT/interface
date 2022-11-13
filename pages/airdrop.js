@@ -145,7 +145,7 @@ export default function Airdrop() {
                       letterSpacing: 2,
                     }}
                   >
-                    Already minted
+                    Minted!
                   </Box>
                 ) : (
                   <Button

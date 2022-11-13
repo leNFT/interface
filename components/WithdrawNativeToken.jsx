@@ -61,6 +61,7 @@ export default function WithdrawNativeToken(props) {
     // Withdraw might be undefined if no request was made before
     if (withdrawRequest) {
       setLastWithdrawalRequest({
+        created: withdrawRequest.created,
         shares: withdrawRequest.amount.toString(),
         assets: assets.toString(),
         timestamp: withdrawRequest.timestamp.toNumber(),
@@ -82,6 +83,15 @@ export default function WithdrawNativeToken(props) {
       now > requestTimestamp + ONE_WEEK &&
       now < requestTimestamp + ONE_WEEK + UNVOTE_WINDOW
     ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  function isWithdrawalRequestButtonDisabled(request) {
+    let now = Date.now() / 1000; // Date in seconds
+    if (now < request.timestamp + ONE_WEEK && request.created) {
       return true;
     }
 
@@ -123,6 +133,7 @@ export default function WithdrawNativeToken(props) {
 
   const handleWithdrawalSuccess = async function () {
     props.updateUI();
+    getLastWithdrawRequest();
     props.setVisibility(false);
     dispatch({
       type: "success",
@@ -134,6 +145,7 @@ export default function WithdrawNativeToken(props) {
 
   const handleRequestSuccess = async function () {
     props.setVisibility(false);
+    getLastWithdrawRequest();
     dispatch({
       type: "info",
       message: "You will be able to withdraw in 7 days.",
@@ -225,7 +237,7 @@ export default function WithdrawNativeToken(props) {
               text={
                 "Create " +
                 formatUnits(props.voteTokenBalance, 18) +
-                " veLE withdraw request"
+                " veLE withdrawal request"
               }
               theme="secondary"
               isFullWidth
@@ -235,6 +247,9 @@ export default function WithdrawNativeToken(props) {
                 direction: "right",
                 size: "24",
               }}
+              disabled={isWithdrawalRequestButtonDisabled(
+                lastWithdrawalRequest
+              )}
               loadingText=""
               isLoading={requestLoading}
               onClick={async function () {

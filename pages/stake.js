@@ -135,7 +135,6 @@ export default function Stake() {
         hasFooter={false}
         title="Deposit LE"
         isVisible={visibleDepositModal}
-        width="50%"
         onCloseButtonPressed={function () {
           setVisibleDepositModal(false);
         }}
@@ -148,7 +147,6 @@ export default function Stake() {
       <StyledModal
         hasFooter={false}
         title="Withdraw LE"
-        width="50%"
         isVisible={visibleWithdrawalModal}
         onCloseButtonPressed={function () {
           setVisibleWithdrawalModal(false);
@@ -166,7 +164,6 @@ export default function Stake() {
         title={
           "Vote for " + (selectedCollection ? selectedCollection.label : "")
         }
-        width="50%"
         isVisible={visibleVoteModal}
         onCloseButtonPressed={function () {
           setVisibleVoteModal(false);
@@ -186,7 +183,6 @@ export default function Stake() {
           "Remove vote from " +
           (selectedCollection ? selectedCollection.label : "")
         }
-        width="50%"
         isVisible={visibleRemoveVoteModal}
         onCloseButtonPressed={function () {
           setVisibleRemoveVoteModal(false);

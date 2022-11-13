@@ -220,7 +220,7 @@ export default function WithdrawNativeToken(props) {
           <Typography variant="caption14">
             {getWithdrawalMessage(lastWithdrawalRequest.timestamp)}
           </Typography>
-          <div className="m-8">
+          <div className="mt-8">
             <Button
               text={
                 "Create " +
@@ -241,9 +241,7 @@ export default function WithdrawNativeToken(props) {
                 try {
                   setRequestLoading(true);
                   const tx =
-                    await nativeTokenVaultSigner.createWithdrawalRequest(
-                      amount
-                    );
+                    await nativeTokenVaultSigner.createWithdrawalRequest();
                   await tx.wait(1);
                   handleRequestSuccess();
                 } catch (error) {

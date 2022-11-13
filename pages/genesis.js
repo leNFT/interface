@@ -130,7 +130,7 @@ export default function Stake() {
           </div>
           <div className="flex flex-col md:flex-row m-2">
             <div className="flex flex-col m-8 rounded-2xl bg-black/5 shadow-lg p-4">
-              <div className="flex flex-row m-2">
+              <div className="flex flex-row justify-center m-2">
                 <Box
                   sx={{
                     fontFamily: "Monospace",
@@ -141,7 +141,7 @@ export default function Stake() {
                   Price
                 </Box>
               </div>
-              <div className="flex flex-row m-2">
+              <div className="flex flex-row justify-center text-center m-2">
                 <Box
                   sx={{
                     fontFamily: "Monospace",

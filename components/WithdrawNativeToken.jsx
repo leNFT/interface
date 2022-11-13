@@ -104,10 +104,15 @@ export default function WithdrawNativeToken(props) {
 
     if (now < requestTimestamp + ONE_WEEK) {
       let hoursToWithdraw = (requestTimestamp + ONE_WEEK - now) / 3600;
+      let minutesToWithdraw = Math.ceil(
+        (hoursToWithdraw - parseInt(hoursToWithdraw)) * 60
+      );
       return (
         "Please wait until the withdrawal cooling down period is over, " +
-        hoursToWithdraw.toString() +
-        " hours."
+        Math.floor(hoursToWithdraw) +
+        " hours and " +
+        minutesToWithdraw +
+        " minutes."
       );
     }
 
@@ -117,10 +122,16 @@ export default function WithdrawNativeToken(props) {
     ) {
       let hoursUntilWithdrawClosed =
         requestTimestamp + ONE_WEEK + UNVOTE_WINDOW - now;
+      let minutesToWithdrawClosed = Math.ceil(
+        (hoursUntilWithdrawClosed - parseInt(hoursUntilWithdrawClosed)) *
+          MINUTES_IN_HOURS
+      );
       return (
         "You can withdraw for " +
-        hoursUntilWithdrawClosed.toString() +
-        " hours."
+        Math.floor(hoursUntilWithdrawClosed) +
+        " hours " +
+        minutesToWithdrawClosed +
+        " minutes."
       );
     }
 

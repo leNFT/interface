@@ -238,7 +238,7 @@ export default function App() {
               <Box
                 sx={{
                   fontFamily: "Monospace",
-                  letterSpacing: 24,
+                  letterSpacing: 14,
                 }}
               >
                 <div className="text-xl text-center md:text-left md:text-4xl">
@@ -364,7 +364,7 @@ export default function App() {
                 <Box
                   sx={{
                     fontFamily: "Monospace",
-                    letterSpacing: 24,
+                    letterSpacing: 14,
                   }}
                 >
                   <div className="text-xl text-center md:text-left md:text-4xl">

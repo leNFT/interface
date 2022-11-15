@@ -55,7 +55,7 @@ export default function Reserve() {
     console.log("Updated Debt:", updatedDebt);
     setDebt(updatedDebt.toString());
 
-    const updatedAsset = await reserve.getAsset();
+    const updatedAsset = await reserve.asset();
     console.log("Updated Asset:", updatedAsset);
     setAsset(updatedAsset.toString());
 
@@ -84,7 +84,7 @@ export default function Reserve() {
     console.log("Updated Borrow Rate:", updatedBorrowRate);
     setBorrowRate(updatedBorrowRate.toNumber());
 
-    const updatedMaxAmount = await reserve.getMaximumWithdrawalAmount(address);
+    const updatedMaxAmount = await reserve.maxWithdraw(address);
     console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
     setMaxAmount(updatedMaxAmount.toString());
 

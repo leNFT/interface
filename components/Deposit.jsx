@@ -12,9 +12,9 @@ import { useNotification, Button, Input, Typography } from "@web3uikit/core";
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { ethers } from "ethers";
-import marketContract from "../contracts/Market.json";
+import reserveContract from "../contracts/Reserve.json";
+import wethGatewayContract from "../contracts/WETHGateway.json";
 import erc20 from "../contracts/erc20.json";
 
 export default function Deposit(props) {
@@ -36,16 +36,10 @@ export default function Deposit(props) {
       ? contractAddresses[chain.id]
       : contractAddresses["1"];
 
-  const marketSigner = useContract({
-    contractInterface: marketContract.abi,
-    addressOrName: addresses.Market,
+  const wethGatewaySigner = useContract({
+    contractInterface: wethGatewayContract.abi,
+    addressOrName: addresses.WETHGateway,
     signerOrProvider: signer,
-  });
-
-  const marketProvider = useContract({
-    contractInterface: marketContract.abi,
-    addressOrName: addresses.Market,
-    signerOrProvider: provider,
   });
 
   const tokenProvider = useContract({
@@ -75,7 +69,7 @@ export default function Deposit(props) {
 
     console.log("Got allowance:", allowance);
 
-    if (!allowance.eq(BigNumber.from(0))) {
+    if (!allowance.eq(BigNumber.from(0)) || props.assetSymbol == "ETH") {
       setApproved(true);
     } else {
       setApproved(false);
@@ -166,11 +160,16 @@ export default function Deposit(props) {
                   var tx;
                   if (props.assetSymbol == "ETH") {
                     console.log("Depositing ETH");
-                    tx = await marketSigner.depositETH(props.reserve, {
+                    tx = await wethGatewaySigner.depositETH(props.reserve, {
                       value: amount,
                     });
                   } else {
-                    tx = await marketSigner.deposit(props.asset, amount);
+                    const reserve = new ethers.Contract(
+                      props.reserve,
+                      reserveContract.abi,
+                      signer
+                    );
+                    tx = await reserve.deposit(amount, address);
                   }
                   await tx.wait(1);
                   handleDepositSuccess();

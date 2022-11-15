@@ -486,7 +486,6 @@ export default function App() {
             {selectedAsset && (
               <StyledModal
                 hasFooter={false}
-                width="50%"
                 isVisible={visibleAssetModal}
                 onCloseButtonPressed={function () {
                   setVisibleAssetModal(false);

@@ -29,6 +29,7 @@ import {
   useSigner,
 } from "wagmi";
 import nativeTokenVaultContract from "../contracts/NativeTokenVault.json";
+import wethGatewayContract from "../contracts/WETHGateway.json";
 
 export default function Borrow(props) {
   const PRICE_PRECISION = "1000000000000000000";
@@ -58,6 +59,12 @@ export default function Borrow(props) {
 
   const dispatch = useNotification();
   const [borrowAsset, setBorrowAsset] = useState("ETH");
+
+  const wethGatewaySigner = useContract({
+    contractInterface: wethGatewayContract.abi,
+    addressOrName: addresses.WETHGateway,
+    signerOrProvider: signer,
+  });
 
   const nativeTokenVaultProvider = useContract({
     contractInterface: nativeTokenVaultContract.abi,
@@ -467,7 +474,7 @@ export default function Borrow(props) {
                     );
                     var tx;
                     if (borrowAsset == "ETH") {
-                      tx = await marketSigner.borrowETH(
+                      tx = await wethGatewaySigner.borrowETH(
                         amount,
                         props.token_address,
                         props.token_id,
@@ -524,7 +531,9 @@ export default function Borrow(props) {
                 try {
                   setApprovalLoading(true);
                   const tx = await assetCollectionSigner.approve(
-                    addresses.Market,
+                    borrowAsset == "ETH"
+                      ? addresses.WETHGateway
+                      : addresses.Market,
                     props.token_id
                   );
                   await tx.wait(1);

@@ -82,7 +82,7 @@ export default function RepayLoan(props) {
       provider
     );
 
-    const updatedAsset = await reserve.getAsset();
+    const updatedAsset = await reserve.asset();
     setAsset(updatedAsset);
   }
 
@@ -91,7 +91,7 @@ export default function RepayLoan(props) {
 
     console.log("Got allowance:", allowance);
 
-    if (!allowance.eq(BigNumber.from(0))) {
+    if (!allowance.eq(BigNumber.from(0)) || symbol == "ETH") {
       setApproved(true);
     } else {
       setApproved(false);

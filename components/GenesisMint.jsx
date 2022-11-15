@@ -105,7 +105,7 @@ export default function GenesisMint(props) {
           <Slider
             valueLabelDisplay="auto"
             onChange={handleInputChange}
-            min={14}
+            min={0}
             step={1}
             max={120}
           />

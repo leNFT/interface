@@ -45,7 +45,7 @@ export default function Withdraw(props) {
       provider
     );
 
-    const updatedMaxAmount = await reserve.getMaximumWithdrawalAmount(address);
+    const updatedMaxAmount = await reserve.maxWithdraw(address);
 
     console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
     setMaxAmount(updatedMaxAmount);

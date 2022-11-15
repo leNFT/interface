@@ -43,7 +43,7 @@ export default function Stake() {
 
   async function updateGenesisInfo() {
     // Get supply
-    const updatedMintCount = await genesisNFTProvider.totalSupply();
+    const updatedMintCount = await genesisNFTProvider.mintCount();
     setMintCount(updatedMintCount.toNumber());
     console.log("updatedMintCount.toNumber()", updatedMintCount.toNumber());
     // Get cap

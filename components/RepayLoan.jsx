@@ -20,9 +20,11 @@ import {
   useAccount,
   useNetwork,
   useContract,
+  useBalance,
   useProvider,
   useSigner,
 } from "wagmi";
+import wethGatewayContract from "../contracts/WETHGateway.json";
 
 const SECONDS_IN_YEAR = 31556926;
 
@@ -50,6 +52,12 @@ export default function RepayLoan(props) {
   const [symbol, setSymbol] = useState("ETH");
 
   const dispatch = useNotification();
+
+  const wethGatewaySigner = useContract({
+    contractInterface: wethGatewayContract.abi,
+    addressOrName: addresses.WETHGateway,
+    signerOrProvider: signer,
+  });
 
   const market = useContract({
     contractInterface: marketContract.abi,
@@ -99,7 +107,13 @@ export default function RepayLoan(props) {
   }
 
   async function updateTokenBalance() {
-    const updatedBalance = await tokenProvider.balanceOf(address);
+    var updatedBalance;
+    if (symbol == "ETH") {
+      updatedBalance = await provider.getBalance(address);
+    } else {
+      updatedBalance = await tokenProvider.balanceOf(address);
+    }
+
     setBalance(updatedBalance.toString());
   }
 
@@ -416,7 +430,7 @@ export default function RepayLoan(props) {
                   if (symbol == "ETH") {
                     console.log("Repay ETH");
                     console.log("amount", amount);
-                    tx = await market.repayETH(props.loan_id, {
+                    tx = await wethGatewaySigner.repayETH(props.loan_id, {
                       value: amount,
                     });
                     await tx.wait(1);
@@ -429,9 +443,7 @@ export default function RepayLoan(props) {
                   } else {
                     handlePartialRepaySuccess();
                   }
-                  release();
                 } catch (error) {
-                  release(false, "Tx Failed");
                   console.log(error);
                 } finally {
                   setRepayLoading(false);

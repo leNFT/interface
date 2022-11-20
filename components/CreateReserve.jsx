@@ -112,9 +112,9 @@ export default function Vote(props) {
   }
 
   return (
-    <div>
-      <div className="flex flex-col items-center m-4">
-        <div className="flex flex-col my-2 md:m-2 md:flex-row border-2 rounded-2xl">
+    <div className="flex flex-col">
+      <div className="flex flex-col md:flex-row justify-center m-2 border-2 rounded-2xl max-w-lg self-center">
+        <div className="flex flex-col my-2 md:m-2">
           <div className="flex flex-col m-4">
             <Typography variant="subtitle2">Liquidation Penalty</Typography>
             <Typography variant="caption16">
@@ -130,7 +130,7 @@ export default function Vote(props) {
             </Typography>
           </div>
         </div>
-        <div className="flex flex-col my-2 md:m-2 md:flex-row border-2 rounded-2xl">
+        <div className="flex flex-col my-2 md:m-2">
           <div className="flex flex-col m-4">
             <Typography variant="subtitle2">Max Utilization Rate</Typography>
             <Typography variant="caption16">
@@ -145,25 +145,25 @@ export default function Vote(props) {
           </div>
         </div>
       </div>
-      <div className="flex flex-row items-center justify-center m-4">
+      <div className="flex flex-row items-center justify-center mt-8 mb-2 mx-2 md:mx-8">
         <Input
+          width="100%"
           label="Collection Address"
           type="text"
           onChange={handleCollectionChange}
         />
       </div>
       {collectionFloorPrice && (
-        <div className="flex flex-row items-center justify-center m-4">
-          <Typography variant="caption16">
+        <div className="flex flex-row items-center text-center justify-center">
+          <Typography variant="caption12">
             {collectionFloorPrice == "0"
               ? "Collection appraisal is not available"
               : "Collection Appraisal available! Floor Price @ " +
-                parseUnits(collectionFloorPrice, 18) +
+                formatUnits(collectionFloorPrice, 18) +
                 " ETH"}
           </Typography>
         </div>
       )}
-
       <div className="flex flex-row items-center justify-center my-8 mx-2 md:mx-8">
         <FormControl fullWidth>
           <InputLabel>Asset</InputLabel>
@@ -174,7 +174,7 @@ export default function Vote(props) {
             className="rounded-2xl"
           >
             <MenuItem value={"0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6"}>
-              ETH
+              Ethereum (ETH)
             </MenuItem>
           </Select>
         </FormControl>
@@ -191,7 +191,9 @@ export default function Vote(props) {
             direction: "right",
             size: "24",
           }}
-          disabled={collectionFloorPrice && collectionFloorPrice != "0"}
+          disabled={
+            !collectionFloorPrice || collectionFloorPrice == "0" || !asset
+          }
           loadingText=""
           isLoading={creatingLoading}
           onClick={async function () {

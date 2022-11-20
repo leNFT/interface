@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 
-export async function getAirdrop(address, chainId) {
+export async function getCollectionInfo(address, chainId) {
   const serverAddress = "https://lenft-api-w27ha.ondigitalocean.app";
   const options = {
     method: "GET",

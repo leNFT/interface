@@ -27,20 +27,20 @@ export default function Header() {
 
   return (
     <div>
-      {chain && chain.id != 1 && isConnected && (
+      {chain && isConnected && chain.id != 5 && (
         <div className="mb-6">
           <BannerStrip
             buttonDisplayed
             buttonConfig={{
               onClick: function noRefCheck() {
-                switchNetwork(1);
+                switchNetwork(5);
               },
               iconLayout: "icon-only",
               icon: (
-                <Reload fontSize="26px" color="#000000" title="Reload Icon" />
+                <Reload fontSize="28px" color="#000000" title="Reload Icon" />
               ),
             }}
-            text="Switch to Ethereum mainnet."
+            text="leNFT is live on the Goerli testnet. Switch network to use the beta."
             type="warning"
           />
         </div>

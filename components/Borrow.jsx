@@ -1,5 +1,6 @@
 import contractAddresses from "../contractAddresses.json";
-import { getAssetPrice, getNewRequestID } from "../helpers/getAssetPrice.js";
+import { getAssetPrice } from "../helpers/getAssetPrice.js";
+import { getNewRequestID } from "../helpers/getNewRequestID.js";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits, parseUnits } from "@ethersproject/units";

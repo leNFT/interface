@@ -15,7 +15,6 @@ import {
   useProvider,
   useSigner,
 } from "wagmi";
-import erc20 from "../contracts/erc20.json";
 
 export default function Withdraw(props) {
   const [withdrawalLoading, setWithdrawalLoading] = useState(false);

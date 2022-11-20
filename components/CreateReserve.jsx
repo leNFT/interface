@@ -1,5 +1,4 @@
 import { useNotification, Button, Input, Typography } from "@web3uikit/core";
-import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import {
   useAccount,
@@ -16,6 +15,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import { getCollectionInfo } from "../helpers/getCollectionInfo.js";
 
 export default function Vote(props) {
   const { isConnected } = useAccount();
@@ -24,6 +24,7 @@ export default function Vote(props) {
   const [creatingLoading, setCreatingLoading] = useState(false);
   const [collection, setCollection] = useState("");
   const [asset, setAsset] = useState("");
+  const [collectionFloorPrice, setCollectionFloorPrice] = useState();
   const provider = useProvider();
   const [tvlSafeguard, setTVLSafeguard] = useState("0");
   const [maximumUtilizationRate, setMaximumUtilizationRate] = useState("0");
@@ -79,6 +80,11 @@ export default function Vote(props) {
     setLiquidationPenalty(updatedLiquidationPenalty);
   }
 
+  async function updateCollectionInfo(collection) {
+    const collectionInfo = await getCollectionInfo(collection, chain.id);
+    setCollectionFloorPrice(collectionInfo.floorPrice);
+  }
+
   useEffect(() => {
     if (isConnected) {
       getReserveDefaultValues();
@@ -98,6 +104,7 @@ export default function Vote(props) {
 
   function handleCollectionChange(e) {
     setCollection(e.target.value);
+    updateCollectionInfo(e.target.value);
   }
 
   function handleAssetChange(e) {
@@ -145,6 +152,18 @@ export default function Vote(props) {
           onChange={handleCollectionChange}
         />
       </div>
+      {collectionFloorPrice && (
+        <div className="flex flex-row items-center justify-center m-4">
+          <Typography variant="caption16">
+            {collectionFloorPrice == "0"
+              ? "Collection appraisal is not available"
+              : "Collection Appraisal available! Floor Price @ " +
+                parseUnits(collectionFloorPrice, 18) +
+                " ETH"}
+          </Typography>
+        </div>
+      )}
+
       <div className="flex flex-row items-center justify-center my-8 mx-2 md:mx-8">
         <FormControl fullWidth>
           <InputLabel>Asset</InputLabel>
@@ -172,6 +191,7 @@ export default function Vote(props) {
             direction: "right",
             size: "24",
           }}
+          disabled={collectionFloorPrice && collectionFloorPrice != "0"}
           loadingText=""
           isLoading={creatingLoading}
           onClick={async function () {

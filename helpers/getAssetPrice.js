@@ -1,4 +1,3 @@
-import crypto from "crypto";
 import fetch from "node-fetch";
 
 export async function getAssetPrice(
@@ -32,9 +31,4 @@ export async function getAssetPrice(
   const assetPrice = await assetPriceResponse.json();
 
   return assetPrice;
-}
-
-export function getNewRequestID() {
-  const requestID = crypto.randomBytes(32).toString("hex");
-  return "0x" + requestID;
 }

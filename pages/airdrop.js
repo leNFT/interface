@@ -1,6 +1,7 @@
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
-import { getAirdrop, getNewRequestID } from "../helpers/getAirdrop.js";
+import { getAirdrop } from "../helpers/getAirdrop.js";
+import { getNewRequestID } from "../helpers/getNewRequestID.js";
 import { useState, useEffect } from "react";
 import { Button, useNotification, Loading } from "@web3uikit/core";
 import { BigNumber } from "@ethersproject/bignumber";

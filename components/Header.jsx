@@ -40,7 +40,7 @@ export default function Header() {
                 <Reload fontSize="28px" color="#000000" title="Reload Icon" />
               ),
             }}
-            text="leNFT is live on the Goerli testnet. Switch network to use the beta."
+            text="leNFT is only live on the Goerli testnet. Change networks to use the beta."
             type="warning"
           />
         </div>

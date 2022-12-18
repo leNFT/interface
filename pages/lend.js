@@ -26,7 +26,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 
-export default function App() {
+export default function Lend() {
   const SEARCH_PAGE_SIZE = 8;
   const [loadingUI, setLoadingUI] = useState(true);
   const [loans, setLoans] = useState([]);
@@ -212,27 +212,6 @@ export default function App() {
         </div>
       ) : (
         <div>
-          <div className="flex flex-row items-center text-center justify-center mb-4">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle1.fontSize",
-                letterSpacing: 2,
-              }}
-            >
-              {"the leNFT token airdrop is  "}
-              <Link href="/airdrop">
-                <a
-                  style={{
-                    textDecoration: "underline",
-                    color: "blue",
-                  }}
-                >
-                  coming soon
-                </a>
-              </Link>
-            </Box>
-          </div>
           <div className="flex flex-col mb-8 rounded-3xl m-2 p-2 bg-black/5 shadow-lg">
             <div className="p-8">
               <Box

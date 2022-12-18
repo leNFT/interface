@@ -1,4 +1,4 @@
-import Header from "./Header";
+import HeaderController from "./Header/HeaderController";
 import Footer from "./Footer";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
@@ -17,7 +17,7 @@ export default function Layout({ children }) {
         <meta name="description" content="lend NFTs" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Header />
+      <HeaderController />
       <main>
         {isConnected ? (
           supportedChains.includes(chain.id) ? (

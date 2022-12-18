@@ -14,7 +14,7 @@ import { useState, useEffect } from "react";
 import nativeTokenVaultContract from "../contracts/NativeTokenVault.json";
 import nativeTokenContract from "../contracts/NativeToken.json";
 
-export default function DepositNativeToken(props) {
+export default function LockNativeToken(props) {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const provider = useProvider();

@@ -11,7 +11,6 @@ import {
   useNotification,
   Button,
   Input,
-  Illustration,
   Typography,
   Loading,
 } from "@web3uikit/core";

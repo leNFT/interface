@@ -87,7 +87,9 @@ export default function HeaderController() {
               </div>
             </a>
           </Link>
-          <div className="mt-2">
+        </div>
+        <div className="flex flex-col items-center">
+          <div className="mb-2">
             <ToggleButtonGroup
               size="small"
               color="warning"
@@ -119,8 +121,8 @@ export default function HeaderController() {
               </ToggleButton>
             </ToggleButtonGroup>
           </div>
+          {mode == "swap" ? <SwapHeader /> : <LendingHeader />}
         </div>
-        {mode == "swap" ? <SwapHeader /> : <LendingHeader />}
         <div className="flex flex-col items-center px-8">
           <ConnectButton
             showBalance={false}

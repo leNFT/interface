@@ -5,7 +5,6 @@ import { getNFTImage } from "../helpers/getNFTImage.js";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
 import { getSupportedNFTs } from "../helpers/getSupportedNFTs.js";
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import Pagination from "@mui/material/Pagination";
 import { useNotification, Tooltip, Loading, Input } from "@web3uikit/core";
 import { HelpCircle, Search } from "@web3uikit/icons";
@@ -61,7 +60,7 @@ export default function Lend() {
     console.log("Setting up UI");
     setLoadingUI(true);
 
-    // Get user NFT assetss
+    // Get user NFT assets
     const addressNFTs = await getAddressNFTs(address, "", chain.id);
     const supportedNFTs = await getSupportedNFTs(chain.id);
     console.log("supportedNFTs:", supportedNFTs);

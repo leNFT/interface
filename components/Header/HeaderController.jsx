@@ -16,7 +16,7 @@ export default function HeaderController() {
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
-  const [mode, setMode] = useState("lend");
+  const [mode, setMode] = useState("swap");
 
   function handleModeChange(event) {
     console.log(event.target.value);
@@ -99,6 +99,8 @@ export default function HeaderController() {
                 sx={{
                   fontFamily: "Monospace",
                   fontSize: "subtitle2.fontSize",
+                  fontWeight: "bold",
+                  letterSpacing: 4,
                 }}
                 value="swap"
               >
@@ -108,6 +110,8 @@ export default function HeaderController() {
                 sx={{
                   fontFamily: "Monospace",
                   fontSize: "subtitle2.fontSize",
+                  fontWeight: "bold",
+                  letterSpacing: 4,
                 }}
                 value="lend"
               >

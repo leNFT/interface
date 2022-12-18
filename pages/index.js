@@ -56,7 +56,7 @@ export default function Home() {
                 </a>
               </li>
               <li className="px-8">
-                <Link href="/lend">
+                <Link href="/swap">
                   <a>
                     <Button
                       primary

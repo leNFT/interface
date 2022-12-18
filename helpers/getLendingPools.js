@@ -10,7 +10,7 @@ export async function getLendingPools(chainId) {
   };
 
   const lendingPoolsResponse = await fetch(
-    serverAddress + "/api/reserves?chainId=" + chainId,
+    serverAddress + "/api/lendingPools?chainId=" + chainId,
     options
   ).catch((err) => console.error(err));
   var lendingPools = [];

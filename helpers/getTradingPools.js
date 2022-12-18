@@ -9,17 +9,17 @@ export async function getTradingPools(chainId) {
     },
   };
 
-  const lendingPoolsResponse = await fetch(
-    serverAddress + "/api/reserves?chainId=" + chainId,
+  const tradingPoolsResponse = await fetch(
+    serverAddress + "/api/tradingPools?chainId=" + chainId,
     options
   ).catch((err) => console.error(err));
-  var lendingPools = [];
+  var tradingPools = [];
 
   try {
-    lendingPools = await lendingPoolsResponse.json();
+    tradingPools = await tradingPoolsResponse.json();
   } catch (error) {
     console.log(error);
   }
 
-  return lendingPools;
+  return tradingPools;
 }

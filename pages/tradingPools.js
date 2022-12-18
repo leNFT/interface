@@ -41,27 +41,10 @@ export default function TradingPools() {
             fontFamily: "Monospace",
             fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
           }}
-          className="m-2 break-all"
-          key={"noAssets" + key}
-        >
-          {value.assets.length == 0 ? (
-            <span>No Assets</span>
-          ) : (
-            value.assets.map((asset) => (
-              <div key={asset.name}>{asset.name}</div>
-            ))
-          )}
-        </Box>,
-
-        <Box
-          sx={{
-            fontFamily: "Monospace",
-            fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
-          }}
           className="m-2"
-          key={"supply" + key}
+          key={"pool" + key}
         >
-          {value.borrowRate / 100 + "%" + " / " + value.supplyRate / 100 + "%"}
+          {key}
         </Box>,
         <Box
           sx={{
@@ -69,11 +52,9 @@ export default function TradingPools() {
             fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
           }}
           className="m-2"
-          key={"tvl" + key}
+          key={"nft" + key}
         >
-          {Number(formatUnits(value.tvl, 18)).toFixed(2) +
-            " " +
-            underlyingSymbol}
+          {value.nft}
         </Box>,
         <Box
           sx={{
@@ -81,9 +62,9 @@ export default function TradingPools() {
             fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
           }}
           className="m-2"
-          key={"incentivized" + key}
+          key={"token" + key}
         >
-          {value.isIncentivized ? "Yes" : "No"}
+          {value.token}
         </Box>,
         <div key={"details" + key}>
           <Button
@@ -174,7 +155,7 @@ export default function TradingPools() {
           />
         </div>
         <Table
-          columnsConfig="2fr 2fr 2fr 2fr 1fr 0fr"
+          columnsConfig="2fr 2fr 1fr 0fr"
           tableBackgroundColor="white"
           customLoadingContent={
             <div
@@ -192,32 +173,7 @@ export default function TradingPools() {
           customNoDataText="No trading pools found."
           data={tableData}
           header={[
-            <div key="assets" className="flex flex-row m-2">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: {
-                    xs: "caption.fontSize",
-                    sm: "subtitle1.fontSize",
-                  },
-                }}
-                className=""
-                key="1"
-              >
-                Assets
-              </Box>
-              <div className="flex flex-col ml-1">
-                <Tooltip
-                  content="Asset that can be used with this trading pool."
-                  position="bottom"
-                  minWidth={150}
-                >
-                  <HelpCircle fontSize="14px" color="#000000" />
-                </Tooltip>
-              </div>
-            </div>,
-
-            <div className="flex flex-row m-2" key="rates">
+            <div className="flex flex-row m-2" key="nft">
               <Box
                 sx={{
                   fontFamily: "Monospace",
@@ -228,22 +184,11 @@ export default function TradingPools() {
                 }}
                 key="4"
               >
-                APRs
+                NFT
               </Box>
               <div className="flex flex-col ml-1">
                 <Tooltip
-                  content={
-                    <div>
-                      <div>
-                        Borrow APR: interest rate at which new borrowers take
-                        out loans.
-                      </div>
-                      <div className="mt-2">
-                        Supply APR: interest rate at which lenders are
-                        increasing their holdings.
-                      </div>
-                    </div>
-                  }
+                  content="NFT in this pool"
                   position="bottom"
                   minWidth={350}
                 >
@@ -262,36 +207,13 @@ export default function TradingPools() {
                 }}
                 key="4"
               >
-                TVL
+                Token
               </Box>
               <div className="flex flex-col ml-1">
                 <Tooltip
-                  content="Total Value Locked."
+                  content="Token in this pool."
                   position="bottom"
                   minWidth={170}
-                >
-                  <HelpCircle fontSize="14px" color="#000000" />
-                </Tooltip>
-              </div>
-            </div>,
-            <div className="flex flex-row m-2" key="rewards">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: {
-                    xs: "caption.fontSize",
-                    sm: "subtitle1.fontSize",
-                  },
-                }}
-                key="4"
-              >
-                Liquidation Rewards
-              </Box>
-              <div className="flex flex-col ml-1">
-                <Tooltip
-                  content="Whether liquidations are incentivized through LE tokens."
-                  position="bottom"
-                  minWidth={250}
                 >
                   <HelpCircle fontSize="14px" color="#000000" />
                 </Tooltip>

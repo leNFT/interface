@@ -16,8 +16,9 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { getCollectionInfo } from "../helpers/getCollectionInfo.js";
+import tradingPoolFactoryContract from "../contracts/TradingPoolFactory.json";
 
-export default function Vote(props) {
+export default function CreateTradingPool(props) {
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
   const { data: signer } = useSigner();
@@ -26,10 +27,7 @@ export default function Vote(props) {
   const [asset, setAsset] = useState("");
   const [collectionFloorPrice, setCollectionFloorPrice] = useState();
   const provider = useProvider();
-  const [tvlSafeguard, setTVLSafeguard] = useState("0");
-  const [maximumUtilizationRate, setMaximumUtilizationRate] = useState("0");
-  const [protocolLiquidationFee, setProtocolLiquidationFee] = useState("0");
-  const [liquidationPenalty, setLiquidationPenalty] = useState("0");
+  const [protocolSwapFee, setProtocolSwapFee] = useState("0");
 
   const dispatch = useNotification();
 
@@ -38,46 +36,25 @@ export default function Vote(props) {
       ? contractAddresses[chain.id]
       : contractAddresses["1"];
 
-  const marketSigner = useContract({
-    contractInterface: marketContract.abi,
-    addressOrName: addresses.Market,
+  const factorySigner = useContract({
+    contractInterface: tradingPoolFactoryContract.abi,
+    addressOrName: addresses.TradingPoolFactory,
     signerOrProvider: signer,
   });
 
-  const marketProvider = useContract({
-    contractInterface: marketContract.abi,
-    addressOrName: addresses.Market,
+  const factoryProvider = useContract({
+    contractInterface: tradingPoolFactoryContract.abi,
+    addressOrName: addresses.TradingPoolFactory,
     signerOrProvider: provider,
   });
 
-  async function getReserveDefaultValues() {
-    // Get default underlying safeguard
-    const updatedTVLSafeguard = (
-      await marketProvider.getDefaultTVLSafeguard()
+  async function getTradingPoolDefaultValues() {
+    // Get swap fee
+    const updatedSwapFee = (
+      await factoryProvider.getDefaultSwapFee()
     ).toString();
 
-    setTVLSafeguard(updatedTVLSafeguard);
-
-    // Get default maximum utilization rate
-    const updatedMaximumUtilizationRate = (
-      await marketProvider.getDefaultMaximumUtilizationRate()
-    ).toString();
-
-    setMaximumUtilizationRate(updatedMaximumUtilizationRate);
-
-    // Get protocol liquidation fee
-    const updatedProtocolLiquidationFee = (
-      await marketProvider.getDefaultProtocolLiquidationFee()
-    ).toString();
-
-    setProtocolLiquidationFee(updatedProtocolLiquidationFee);
-
-    // Get underlying safeguard
-    const updatedLiquidationPenalty = (
-      await marketProvider.getDefaultLiquidationPenalty()
-    ).toString();
-
-    setLiquidationPenalty(updatedLiquidationPenalty);
+    setSwapFee(updatedSwapFee);
   }
 
   async function updateCollectionInfo(collection) {
@@ -87,11 +64,11 @@ export default function Vote(props) {
 
   useEffect(() => {
     if (isConnected) {
-      getReserveDefaultValues();
+      getTradingPoolDefaultValues();
     }
   }, [isConnected]);
 
-  const handleCreateReserveSuccess = async function () {
+  const handleCreateTradingPoolSuccess = async function () {
     props.updateUI();
     props.setVisibility(false);
     dispatch({
@@ -116,31 +93,9 @@ export default function Vote(props) {
       <div className="flex flex-col md:flex-row justify-center m-2 border-2 rounded-2xl max-w-lg self-center">
         <div className="flex flex-col my-2 md:m-2">
           <div className="flex flex-col m-4">
-            <Typography variant="subtitle2">Liquidation Penalty</Typography>
+            <Typography variant="subtitle2">Swap Fee</Typography>
             <Typography variant="caption16">
-              {BigNumber.from(liquidationPenalty).div(100) + "%"}
-            </Typography>
-          </div>
-          <div className="flex flex-col m-4">
-            <Typography variant="subtitle2">
-              Protocol Liquidation Fee
-            </Typography>
-            <Typography variant="caption16">
-              {BigNumber.from(protocolLiquidationFee).div(100) + "%"}
-            </Typography>
-          </div>
-        </div>
-        <div className="flex flex-col my-2 md:m-2">
-          <div className="flex flex-col m-4">
-            <Typography variant="subtitle2">Max Utilization Rate</Typography>
-            <Typography variant="caption16">
-              {BigNumber.from(maximumUtilizationRate).div(100) + "%"}
-            </Typography>
-          </div>
-          <div className="flex flex-col m-4">
-            <Typography variant="subtitle2">TVL Safeguard</Typography>
-            <Typography variant="caption16">
-              {formatUnits(tvlSafeguard, 18) + " ETH"}
+              {BigNumber.from(protocolSwapFee).div(100) + "%"}
             </Typography>
           </div>
         </div>
@@ -182,7 +137,7 @@ export default function Vote(props) {
 
       <div className="flex flex-row items-center justify-center m-8 mt-2">
         <Button
-          text="Create Reserve"
+          text="Create Trading Pool"
           theme="secondary"
           isFullWidth
           loadingProps={{
@@ -191,9 +146,7 @@ export default function Vote(props) {
             direction: "right",
             size: "24",
           }}
-          disabled={
-            !collectionFloorPrice || collectionFloorPrice == "0" || !asset
-          }
+          disabled={!asset}
           loadingText=""
           isLoading={creatingLoading}
           onClick={async function () {
@@ -201,7 +154,7 @@ export default function Vote(props) {
               setCreatingLoading(true);
               const tx = await marketSigner.createReserve(collection, asset);
               await tx.wait(1);
-              await handleCreateReserveSuccess();
+              await handleCreateTradingPoolSuccess();
             } catch (error) {
               console.log(error);
             } finally {

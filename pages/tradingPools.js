@@ -1,54 +1,312 @@
 import styles from "../styles/Home.module.css";
-import contractAddresses from "../contractAddresses.json";
-import { getAssetPrice } from "../helpers/getAssetPrice.js";
-import { getNFTImage } from "../helpers/getNFTImage.js";
-import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
-import { getSupportedNFTs } from "../helpers/getSupportedNFTs.js";
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import Pagination from "@mui/material/Pagination";
-import { useNotification, Tooltip, Loading, Input } from "@web3uikit/core";
-import { HelpCircle, Search } from "@web3uikit/icons";
-import { BigNumber } from "@ethersproject/bignumber";
-import Borrow from "../components/Borrow";
-import RepayLoan from "../components/RepayLoan";
-import Image from "next/image";
-import { getAddress } from "@ethersproject/address";
-import loanCenterContract from "../contracts/LoanCenter.json";
-import { calculateHealthLevel } from "../helpers/healthLevel.js";
-import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
+import { Button, Table, Skeleton } from "@web3uikit/core";
+import { getTradingPools } from "../helpers/getTradingPools.js";
+import { formatUnits } from "@ethersproject/units";
 import StyledModal from "../components/StyledModal";
-import { Divider } from "@mui/material";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import { CardActionArea } from "@mui/material";
-import Typography from "@mui/material/Typography";
+import CreateTradingPool from "../components/CreateTradingPool";
+import { useAccount, useNetwork } from "wagmi";
+import { Tooltip } from "@web3uikit/core";
+import { HelpCircle } from "@web3uikit/icons";
+import { useState, useEffect } from "react";
+import Router from "next/router";
+import { ExternalLink } from "@web3uikit/icons";
 import Box from "@mui/material/Box";
-import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 
-export default function Lend() {
-  const SEARCH_PAGE_SIZE = 8;
-  const [loadingUI, setLoadingUI] = useState(true);
-  const [loans, setLoans] = useState([]);
-  const [supportedAssets, setSupportedAssets] = useState([]);
-  const [searchPage, setSearchPage] = useState(0);
-  const [searchResults, setSearchResults] = useState([]);
-  const [searchPageData, setSearchPageData] = useState([]);
-  const [searchInputString, setSearchInputString] = useState("");
-
-  const [unsupportedAssets, setUnsupportedAssets] = useState([]);
-  const [visibleAssetModal, setVisibleAssetModal] = useState(false);
-  const [visibleLoanModal, setVisibleLoanModal] = useState(false);
-  const [selectedAsset, setSelectedAsset] = useState();
-  const [selectedLoan, setSelectedLoan] = useState();
-  const { address, isConnected } = useAccount();
+export default function TradingPools() {
+  const { isConnected } = useAccount();
   const { chain } = useNetwork();
+  const [tableData, setTableData] = useState([]);
+  const [loadingTableData, setLoadingTableData] = useState(true);
+  const [visibleCreateTradingPoolModal, setVisibleCreateTradingPoolModal] =
+    useState(false);
+  const EmptyRowsForSkeletonTable = () => (
+    <div style={{ width: "100%", height: "100%" }}>
+      {[...Array(6)].map((_el, i) => (
+        <Skeleton key={i} theme="subtitle" width="30%" />
+      ))}
+    </div>
+  );
 
-  const provider = useProvider();
-  const addresses =
-    chain && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["1"];
+  async function updateTableData() {
+    setLoadingTableData(true);
+    const TradingPools = await getTradingPools(chain.id);
+    console.log("TradingPools", TradingPools);
+    var newTableData = [];
+    const underlyingSymbol = "WETH";
 
-  return <div></div>;
+    for (const [key, value] of Object.entries(TradingPools)) {
+      newTableData.push([
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
+          }}
+          className="m-2 break-all"
+          key={"noAssets" + key}
+        >
+          {value.assets.length == 0 ? (
+            <span>No Assets</span>
+          ) : (
+            value.assets.map((asset) => (
+              <div key={asset.name}>{asset.name}</div>
+            ))
+          )}
+        </Box>,
+
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
+          }}
+          className="m-2"
+          key={"supply" + key}
+        >
+          {value.borrowRate / 100 + "%" + " / " + value.supplyRate / 100 + "%"}
+        </Box>,
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
+          }}
+          className="m-2"
+          key={"tvl" + key}
+        >
+          {Number(formatUnits(value.tvl, 18)).toFixed(2) +
+            " " +
+            underlyingSymbol}
+        </Box>,
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
+          }}
+          className="m-2"
+          key={"incentivized" + key}
+        >
+          {value.isIncentivized ? "Yes" : "No"}
+        </Box>,
+        <div key={"details" + key}>
+          <Button
+            customize={{
+              backgroundColor: "blue",
+              fontSize: 16,
+              textColor: "white",
+            }}
+            text="Details"
+            theme="custom"
+            id={key}
+            radius="12"
+            onClick={async function (event) {
+              Router.push({
+                pathname: "/TradingPool/[address]",
+                query: {
+                  address: event.target.id,
+                },
+              });
+            }}
+          />
+        </div>,
+        <div key={"externalLink" + key}>
+          <Button
+            size="small md:large"
+            color="#eae5ea"
+            iconLayout="icon-only"
+            id={key}
+            icon={<ExternalLink fontSize="30px" />}
+            onClick={async function (event) {
+              if (chain.id == 1) {
+                window.open(
+                  "https://etherscan.io/address/" + event.target.id,
+                  "_blank"
+                );
+              } else if (chain.id == 5) {
+                window.open(
+                  "https://goerli.etherscan.io/address/" + event.target.id,
+                  "_blank"
+                );
+              }
+            }}
+          />
+        </div>,
+      ]);
+    }
+
+    setTableData(newTableData);
+    setLoadingTableData(false);
+  }
+
+  useEffect(() => {
+    if (isConnected) {
+      updateTableData();
+    }
+  }, [isConnected]);
+
+  return (
+    <div className={styles.container}>
+      <StyledModal
+        hasFooter={false}
+        title="Create Trading Pool"
+        isVisible={visibleCreateTradingPoolModal}
+        onCloseButtonPressed={function () {
+          setVisibleCreateTradingPoolModal(false);
+        }}
+      >
+        <CreateTradingPool
+          setVisibility={setVisibleCreateTradingPoolModal}
+          updateUI={updateTableData}
+        />
+      </StyledModal>
+      <div className="flex flex-col">
+        <div className="flex flex-row justify-end m-2 mb-4">
+          <Button
+            customize={{
+              backgroundColor: "grey",
+              fontSize: 20,
+              textColor: "white",
+            }}
+            text="Create Trading Pool"
+            theme="custom"
+            size="large"
+            radius="12"
+            onClick={async function () {
+              setVisibleCreateTradingPoolModal(true);
+            }}
+          />
+        </div>
+        <Table
+          columnsConfig="2fr 2fr 2fr 2fr 1fr 0fr"
+          tableBackgroundColor="white"
+          customLoadingContent={
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                height: "80%",
+                width: "80%",
+              }}
+            >
+              <EmptyRowsForSkeletonTable />
+              <EmptyRowsForSkeletonTable />
+            </div>
+          }
+          customNoDataText="No trading pools found."
+          data={tableData}
+          header={[
+            <div key="assets" className="flex flex-row m-2">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: {
+                    xs: "caption.fontSize",
+                    sm: "subtitle1.fontSize",
+                  },
+                }}
+                className=""
+                key="1"
+              >
+                Assets
+              </Box>
+              <div className="flex flex-col ml-1">
+                <Tooltip
+                  content="Asset that can be used with this trading pool."
+                  position="bottom"
+                  minWidth={150}
+                >
+                  <HelpCircle fontSize="14px" color="#000000" />
+                </Tooltip>
+              </div>
+            </div>,
+
+            <div className="flex flex-row m-2" key="rates">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: {
+                    xs: "caption.fontSize",
+                    sm: "subtitle1.fontSize",
+                  },
+                }}
+                key="4"
+              >
+                APRs
+              </Box>
+              <div className="flex flex-col ml-1">
+                <Tooltip
+                  content={
+                    <div>
+                      <div>
+                        Borrow APR: interest rate at which new borrowers take
+                        out loans.
+                      </div>
+                      <div className="mt-2">
+                        Supply APR: interest rate at which lenders are
+                        increasing their holdings.
+                      </div>
+                    </div>
+                  }
+                  position="bottom"
+                  minWidth={350}
+                >
+                  <HelpCircle fontSize="14px" color="#000000" />
+                </Tooltip>
+              </div>
+            </div>,
+            <div className="flex flex-row m-2" key="rates">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: {
+                    xs: "caption.fontSize",
+                    sm: "subtitle1.fontSize",
+                  },
+                }}
+                key="4"
+              >
+                TVL
+              </Box>
+              <div className="flex flex-col ml-1">
+                <Tooltip
+                  content="Total Value Locked."
+                  position="bottom"
+                  minWidth={170}
+                >
+                  <HelpCircle fontSize="14px" color="#000000" />
+                </Tooltip>
+              </div>
+            </div>,
+            <div className="flex flex-row m-2" key="rewards">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: {
+                    xs: "caption.fontSize",
+                    sm: "subtitle1.fontSize",
+                  },
+                }}
+                key="4"
+              >
+                Liquidation Rewards
+              </Box>
+              <div className="flex flex-col ml-1">
+                <Tooltip
+                  content="Whether liquidations are incentivized through LE tokens."
+                  position="bottom"
+                  minWidth={250}
+                >
+                  <HelpCircle fontSize="14px" color="#000000" />
+                </Tooltip>
+              </div>
+            </div>,
+            "",
+            "",
+          ]}
+          isLoading={loadingTableData}
+          isColumnSortable={[false, true, false, true, false, false]}
+          onPageNumberChanged={function noRefCheck() {}}
+          onRowClick={function noRefCheck() {}}
+          pageSize={5}
+        />
+      </div>
+    </div>
+  );
 }

@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 
-export async function getReserves(chainId) {
+export async function getTradingPools(chainId) {
   const serverAddress = "https://lenft-api-w27ha.ondigitalocean.app";
   const options = {
     method: "GET",
@@ -9,17 +9,17 @@ export async function getReserves(chainId) {
     },
   };
 
-  const reservesResponse = await fetch(
+  const lendingPoolsResponse = await fetch(
     serverAddress + "/api/reserves?chainId=" + chainId,
     options
   ).catch((err) => console.error(err));
-  var reserves = [];
+  var lendingPools = [];
 
   try {
-    reserves = await reservesResponse.json();
+    lendingPools = await lendingPoolsResponse.json();
   } catch (error) {
     console.log(error);
   }
 
-  return reserves;
+  return lendingPools;
 }

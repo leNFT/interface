@@ -1,9 +1,9 @@
 import styles from "../styles/Home.module.css";
 import { Button, Table, Skeleton } from "@web3uikit/core";
-import { getReserves } from "../helpers/getReserves.js";
+import { getLendingPools } from "../helpers/getLendingPools.js";
 import { formatUnits } from "@ethersproject/units";
 import StyledModal from "../components/StyledModal";
-import CreateReserve from "../components/CreateReserve";
+import CreateLendingPool from "../components/CreateLendingPool";
 import { useAccount, useNetwork } from "wagmi";
 import { Tooltip } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
@@ -12,12 +12,12 @@ import Router from "next/router";
 import { ExternalLink } from "@web3uikit/icons";
 import Box from "@mui/material/Box";
 
-export default function Reserves() {
+export default function LendingPools() {
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
   const [tableData, setTableData] = useState([]);
   const [loadingTableData, setLoadingTableData] = useState(true);
-  const [visibleCreateReserveModal, setVisibleCreateReserveModal] =
+  const [visibleCreateLendingPoolModal, setVisibleCreateLendingPoolModal] =
     useState(false);
   const EmptyRowsForSkeletonTable = () => (
     <div style={{ width: "100%", height: "100%" }}>
@@ -29,12 +29,12 @@ export default function Reserves() {
 
   async function updateTableData() {
     setLoadingTableData(true);
-    const reserves = await getReserves(chain.id);
-    console.log("reserves", reserves);
+    const lendingPools = await getLendingPools(chain.id);
+    console.log("lendingPools", lendingPools);
     var newTableData = [];
     const underlyingSymbol = "WETH";
 
-    for (const [key, value] of Object.entries(reserves)) {
+    for (const [key, value] of Object.entries(lendingPools)) {
       newTableData.push([
         <Box
           sx={{
@@ -98,7 +98,7 @@ export default function Reserves() {
             radius="12"
             onClick={async function (event) {
               Router.push({
-                pathname: "/reserve/[address]",
+                pathname: "/lendingPool/[address]",
                 query: {
                   address: event.target.id,
                 },
@@ -145,14 +145,14 @@ export default function Reserves() {
     <div className={styles.container}>
       <StyledModal
         hasFooter={false}
-        title="Create Reserve"
-        isVisible={visibleCreateReserveModal}
+        title="Create Lending Pool"
+        isVisible={visibleCreateLendingPoolModal}
         onCloseButtonPressed={function () {
-          setVisibleCreateReserveModal(false);
+          setVisibleCreateLendingPoolModal(false);
         }}
       >
-        <CreateReserve
-          setVisibility={setVisibleCreateReserveModal}
+        <CreateLendingPool
+          setVisibility={setVisibleCreateLendingPoolModal}
           updateUI={updateTableData}
         />
       </StyledModal>
@@ -164,12 +164,12 @@ export default function Reserves() {
               fontSize: 20,
               textColor: "white",
             }}
-            text="Create Reserve"
+            text="Create Lending Pool"
             theme="custom"
             size="large"
             radius="12"
             onClick={async function () {
-              setVisibleCreateReserveModal(true);
+              setVisibleCreateLendingPoolModal(true);
             }}
           />
         </div>
@@ -189,7 +189,7 @@ export default function Reserves() {
               <EmptyRowsForSkeletonTable />
             </div>
           }
-          customNoDataText="No reserves found."
+          customNoDataText="No lending pools found."
           data={tableData}
           header={[
             <div key="assets" className="flex flex-row m-2">
@@ -208,7 +208,7 @@ export default function Reserves() {
               </Box>
               <div className="flex flex-col ml-1">
                 <Tooltip
-                  content="Assets that can be used with this reserve."
+                  content="Assets that can be used with this lending pool."
                   position="bottom"
                   minWidth={150}
                 >

@@ -26,7 +26,7 @@ export default function Swap() {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="flex flex-col items-center text-center justify-center w-6/12 border-4 m-2 rounded-3xl bg-black/5 shadow-lg">
+      <div className="flex flex-col items-center text-center justify-center md:w-6/12 border-4 m-2 rounded-3xl bg-black/5 shadow-lg">
         <div className="flex flex-row m-4">
           <div className="flex flex-col m-2">
             <Button
@@ -92,7 +92,7 @@ export default function Swap() {
             isOptionEqualToValue={(option, value) =>
               option.address === value.address
             }
-            sx={{ minWidth: { xs: 100, sm: 170, md: 220 } }}
+            sx={{ minWidth: { xs: 180, sm: 250, md: 300 } }}
             renderInput={(params) => (
               <TextField
                 {...params}

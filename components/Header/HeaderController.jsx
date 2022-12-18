@@ -89,7 +89,7 @@ export default function HeaderController() {
           </Link>
         </div>
         <div className="flex flex-col items-center">
-          <div className="mb-2">
+          <div className="flex items-center">
             <ToggleButtonGroup
               size="small"
               color="warning"

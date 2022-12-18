@@ -9,7 +9,7 @@ import {
 } from "wagmi";
 import { formatUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
-import marketContract from "../contracts/Market.json";
+import lendingMarketContract from "../contracts/LendingMarket.json";
 import { useState, useEffect } from "react";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -38,43 +38,43 @@ export default function CreateLendingPool(props) {
       ? contractAddresses[chain.id]
       : contractAddresses["1"];
 
-  const marketSigner = useContract({
-    contractInterface: marketContract.abi,
-    addressOrName: addresses.Market,
+  const lendingMarketContractSigner = useContract({
+    contractInterface: lendingMarketContract.abi,
+    addressOrName: addresses.LendingMarket,
     signerOrProvider: signer,
   });
 
-  const marketProvider = useContract({
-    contractInterface: marketContract.abi,
-    addressOrName: addresses.Market,
+  const lendingMarketContractProvider = useContract({
+    contractInterface: lendingMarketContract.abi,
+    addressOrName: addresses.LendingMarket,
     signerOrProvider: provider,
   });
 
-  async function getReserveDefaultValues() {
+  async function getLendingPoolDefaultValues() {
     // Get default underlying safeguard
     const updatedTVLSafeguard = (
-      await marketProvider.getDefaultTVLSafeguard()
+      await lendingMarketContractProvider.getDefaultTVLSafeguard()
     ).toString();
 
     setTVLSafeguard(updatedTVLSafeguard);
 
     // Get default maximum utilization rate
     const updatedMaximumUtilizationRate = (
-      await marketProvider.getDefaultMaximumUtilizationRate()
+      await lendingMarketContractProvider.getDefaultMaximumUtilizationRate()
     ).toString();
 
     setMaximumUtilizationRate(updatedMaximumUtilizationRate);
 
     // Get protocol liquidation fee
     const updatedLiquidationFee = (
-      await marketProvider.getDefaultliquidationFee()
+      await lendingMarketContractProvider.getDefaultLiquidationFee()
     ).toString();
 
     setLiquidationFee(updatedLiquidationFee);
 
     // Get underlying safeguard
     const updatedLiquidationPenalty = (
-      await marketProvider.getDefaultLiquidationPenalty()
+      await lendingMarketContractProvider.getDefaultLiquidationPenalty()
     ).toString();
 
     setLiquidationPenalty(updatedLiquidationPenalty);
@@ -87,7 +87,7 @@ export default function CreateLendingPool(props) {
 
   useEffect(() => {
     if (isConnected) {
-      getReserveDefaultValues();
+      getLendingPoolDefaultValues();
     }
   }, [isConnected]);
 
@@ -197,7 +197,10 @@ export default function CreateLendingPool(props) {
           onClick={async function () {
             try {
               setCreatingLoading(true);
-              const tx = await marketSigner.createReserve(collection, asset);
+              const tx = await lendingMarketContractSigner.createLendingPool(
+                collection,
+                asset
+              );
               await tx.wait(1);
               await handleCreateReserveSuccess();
             } catch (error) {

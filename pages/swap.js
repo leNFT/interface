@@ -115,8 +115,8 @@ export default function Swap() {
             )}
           />
         </div>
-        <div className="flex flex-row mb-4 mx-4">
-          <div className="flex flex-col justify-center m-2">
+        <div className="flex flex-row justify-center mb-8 mx-4">
+          <div className="flex flex-col w-4/12 justify-center m-2">
             <TextField size="small" placeholder="Amount" variant="outlined" />
           </div>
           <div className="flex flex-col text-center justify-center m-2">OR</div>
@@ -136,14 +136,17 @@ export default function Swap() {
                       letterSpacing: 2,
                     }}
                   >
-                    Choose NFTs
+                    Select NFTs
                   </Box>
                 </div>
               }
             />
           </div>
         </div>
-        <div className="flex flex-row mt-8 mb-4 w-4/12">
+        <div className="flex flex-row w-11/12 justify-center items-center">
+          <Divider style={{ width: "100%" }} />
+        </div>
+        <div className="flex flex-row m-4 w-4/12">
           <Button
             primary
             fill="horizontal"

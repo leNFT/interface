@@ -9,7 +9,6 @@ import {
 } from "wagmi";
 import { formatUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
-import marketContract from "../contracts/Market.json";
 import { useState, useEffect } from "react";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -25,9 +24,8 @@ export default function CreateTradingPool(props) {
   const [creatingLoading, setCreatingLoading] = useState(false);
   const [collection, setCollection] = useState("");
   const [asset, setAsset] = useState("");
-  const [collectionFloorPrice, setCollectionFloorPrice] = useState();
   const provider = useProvider();
-  const [protocolSwapFee, setProtocolSwapFee] = useState("0");
+  const [swapFee, setSwapFee] = useState("0");
 
   const dispatch = useNotification();
 
@@ -57,11 +55,6 @@ export default function CreateTradingPool(props) {
     setSwapFee(updatedSwapFee);
   }
 
-  async function updateCollectionInfo(collection) {
-    const collectionInfo = await getCollectionInfo(collection, chain.id);
-    setCollectionFloorPrice(collectionInfo.floorPrice);
-  }
-
   useEffect(() => {
     if (isConnected) {
       getTradingPoolDefaultValues();
@@ -81,7 +74,6 @@ export default function CreateTradingPool(props) {
 
   function handleCollectionChange(e) {
     setCollection(e.target.value);
-    updateCollectionInfo(e.target.value);
   }
 
   function handleAssetChange(e) {
@@ -95,7 +87,7 @@ export default function CreateTradingPool(props) {
           <div className="flex flex-col m-4">
             <Typography variant="subtitle2">Swap Fee</Typography>
             <Typography variant="caption16">
-              {BigNumber.from(protocolSwapFee).div(100) + "%"}
+              {BigNumber.from(swapFee).div(100) + "%"}
             </Typography>
           </div>
         </div>
@@ -108,17 +100,7 @@ export default function CreateTradingPool(props) {
           onChange={handleCollectionChange}
         />
       </div>
-      {collectionFloorPrice && (
-        <div className="flex flex-row items-center text-center justify-center">
-          <Typography variant="caption12">
-            {collectionFloorPrice == "0"
-              ? "Collection appraisal is not available"
-              : "Collection Appraisal available! Floor Price @ " +
-                formatUnits(collectionFloorPrice, 18) +
-                " ETH"}
-          </Typography>
-        </div>
-      )}
+
       <div className="flex flex-row items-center justify-center my-8 mx-2 md:mx-8">
         <FormControl fullWidth>
           <InputLabel>Asset</InputLabel>
@@ -146,13 +128,16 @@ export default function CreateTradingPool(props) {
             direction: "right",
             size: "24",
           }}
-          disabled={!asset}
+          disabled={!collection || !asset}
           loadingText=""
           isLoading={creatingLoading}
           onClick={async function () {
             try {
               setCreatingLoading(true);
-              const tx = await marketSigner.createReserve(collection, asset);
+              const tx = await factorySigner.createTradingPool(
+                collection,
+                asset
+              );
               await tx.wait(1);
               await handleCreateTradingPoolSuccess();
             } catch (error) {

@@ -14,7 +14,7 @@ import {
   Typography,
   Loading,
 } from "@web3uikit/core";
-import marketContract from "../contracts/Market.json";
+import lendingMarketContract from "../contracts/LendingMarket.json";
 import tokenOracleContract from "../contracts/TokenOracle.json";
 import reserveContract from "../contracts/Reserve.json";
 import genesisNFTContract from "../contracts/GenesisNFT.json";
@@ -28,7 +28,6 @@ import {
   useProvider,
   useSigner,
 } from "wagmi";
-import nativeTokenVaultContract from "../contracts/NativeTokenVault.json";
 import wethGatewayContract from "../contracts/WETHGateway.json";
 
 export default function Borrow(props) {

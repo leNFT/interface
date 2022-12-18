@@ -23,7 +23,7 @@ import contractAddresses from "../contractAddresses.json";
 import { calculateHealthLevel } from "../helpers/healthLevel.js";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import marketContract from "../contracts/Market.json";
+import lendingMarketContract from "../contracts/LendingMarket.json";
 import LinearProgressWithLabel from "./LinearProgressWithLabel";
 import erc20 from "../contracts/erc20.json";
 

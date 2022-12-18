@@ -7,7 +7,7 @@ import { ethers } from "ethers";
 import reserveContract from "../contracts/Reserve.json";
 import contractAddresses from "../contractAddresses.json";
 import { useState, useEffect } from "react";
-import marketContract from "../contracts/Market.json";
+import lendingMarketContract from "../contracts/LendingMarket.json";
 import {
   useAccount,
   useNetwork,

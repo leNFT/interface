@@ -8,7 +8,7 @@ import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 import styles from "../styles/Home.module.css";
 import { calculateHealthLevel } from "../helpers/healthLevel.js";
 import { useState, useEffect } from "react";
-import marketContract from "../contracts/Market.json";
+import lendingMarketContract from "../contracts/LendingMarket.json";
 import loanCenterContract from "../contracts/LoanCenter.json";
 import reserveContract from "../contracts/Reserve.json";
 import erc20 from "../contracts/erc20.json";

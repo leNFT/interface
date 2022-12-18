@@ -7,7 +7,7 @@ import StyledModal from "../../components/StyledModal";
 import { formatUnits } from "@ethersproject/units";
 import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
-import marketContract from "../../contracts/Market.json";
+import lendingMarketContract from "../../contracts/LendingMarket.json";
 import tokenOracleContract from "../../contracts/TokenOracle.json";
 import reserveContract from "../../contracts/Reserve.json";
 import LinearProgressWithLabel from "../../components/LinearProgressWithLabel";

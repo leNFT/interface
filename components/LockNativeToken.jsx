@@ -11,7 +11,6 @@ import { useNotification, Button, Input, Typography } from "@web3uikit/core";
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { useState, useEffect } from "react";
-import nativeTokenVaultContract from "../contracts/NativeTokenVault.json";
 import nativeTokenContract from "../contracts/NativeToken.json";
 
 export default function LockNativeToken(props) {

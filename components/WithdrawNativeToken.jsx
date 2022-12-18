@@ -11,7 +11,6 @@ import {
   useSigner,
 } from "wagmi";
 import { useState, useEffect } from "react";
-import nativeTokenVaultContract from "../contracts/NativeTokenVault.json";
 
 export default function WithdrawNativeToken(props) {
   const ONE_DAY = 86400;

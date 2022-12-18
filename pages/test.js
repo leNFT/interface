@@ -3,7 +3,7 @@ import testNFTContract from "../contracts/test/TestNFT.json";
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import nativeTokenContract from "../contracts/NativeToken.json";
-import nativeTokenVaultContract from "../contracts/NativeTokenVault.json";
+
 import { useState } from "react";
 import {
   useAccount,

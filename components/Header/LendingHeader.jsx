@@ -39,7 +39,6 @@ export default function LendingHeader() {
                     fontSize="30px"
                     color="#000000"
                   />
-                  leNFT
                 </div>
               </Box>
             </div>

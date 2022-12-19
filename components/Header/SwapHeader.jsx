@@ -39,7 +39,6 @@ export default function SwapHeader() {
                     fontSize="30px"
                     color="#000000"
                   />
-                  leNFT
                 </div>
               </Box>
             </div>

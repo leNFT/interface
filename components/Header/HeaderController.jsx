@@ -88,7 +88,7 @@ export default function HeaderController() {
             </a>
           </Link>
         </div>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-row-reverse md:flex-row 2xl:flex-col items-center">
           <div className="flex items-center">
             <ToggleButtonGroup
               size="small"
@@ -100,9 +100,15 @@ export default function HeaderController() {
               <ToggleButton
                 sx={{
                   fontFamily: "Monospace",
-                  fontSize: "subtitle2.fontSize",
+                  fontSize: {
+                    xs: "caption.fontSize",
+                    md: "subtitle2.fontSize",
+                  },
                   fontWeight: "bold",
-                  letterSpacing: 4,
+                  letterSpacing: {
+                    xs: 2,
+                    md: 4,
+                  },
                 }}
                 value="swap"
               >
@@ -111,9 +117,15 @@ export default function HeaderController() {
               <ToggleButton
                 sx={{
                   fontFamily: "Monospace",
-                  fontSize: "subtitle2.fontSize",
+                  fontSize: {
+                    xs: "caption.fontSize",
+                    md: "subtitle2.fontSize",
+                  },
                   fontWeight: "bold",
-                  letterSpacing: 4,
+                  letterSpacing: {
+                    xs: 2,
+                    md: 4,
+                  },
                 }}
                 value="lend"
               >
@@ -127,7 +139,7 @@ export default function HeaderController() {
           <ConnectButton
             showBalance={false}
             chainStatus={{ smallScreen: "none", largeScreen: "icon" }}
-            accountStatus="address"
+            accountStatus={{ smallScreen: "avatar", largeScreen: "address" }}
           />
         </div>
       </div>

@@ -11,8 +11,8 @@ import lendingMarketContract from "../../contracts/LendingMarket.json";
 import tokenOracleContract from "../../contracts/TokenOracle.json";
 import reserveContract from "../../contracts/Reserve.json";
 import LinearProgressWithLabel from "../../components/LinearProgressWithLabel";
-import Deposit from "../../components/Deposit";
-import Withdraw from "../../components/Withdraw";
+import DepositLendingPool from "../../components/DepositLendingPool";
+import WithdrawLendingPool from "../../components/WithdrawLendingPool";
 import Box from "@mui/material/Box";
 import erc20 from "../../contracts/erc20.json";
 import { ethers } from "ethers";
@@ -148,7 +148,7 @@ export default function LendingPool() {
           setVisibleDepositModal(false);
         }}
       >
-        <Deposit
+        <DepositLendingPool
           setVisibility={setVisibleDepositModal}
           reserve={router.query.address}
           assetSymbol={assetSymbol}
@@ -165,7 +165,7 @@ export default function LendingPool() {
           setVisibleWithdrawalModal(false);
         }}
       >
-        <Withdraw
+        <WithdrawLendingPool
           setVisibility={setVisibleWithdrawalModal}
           reserve={router.query.address}
           assetSymbol={assetSymbol}

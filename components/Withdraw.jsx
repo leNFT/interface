@@ -31,9 +31,9 @@ export default function Withdraw(props) {
 
   const dispatch = useNotification();
 
-  const marketSigner = useContract({
-    contractInterface: marketContract.abi,
-    addressOrName: addresses.Market,
+  const lendingMarketSigner = useContract({
+    contractInterface: lendingMarketContract.abi,
+    addressOrName: addresses.LendingMarket,
     signerOrProvider: signer,
   });
 
@@ -157,9 +157,15 @@ export default function Withdraw(props) {
                 var tx;
                 if (props.assetSymbol == "ETH") {
                   console.log("Withdrawal ETH");
-                  tx = await marketSigner.withdrawETH(props.reserve, amount);
+                  tx = await lendingMarketSigner.withdrawETH(
+                    props.reserve,
+                    amount
+                  );
                 } else {
-                  tx = await marketSigner.withdraw(props.reserve, amount);
+                  tx = await lendingMarketSigner.withdraw(
+                    props.reserve,
+                    amount
+                  );
                 }
                 await tx.wait(1);
                 handleWithdrawalSuccess();

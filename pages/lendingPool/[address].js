@@ -21,7 +21,7 @@ import { useRouter } from "next/router";
 import { ChevronLeft } from "@web3uikit/icons";
 import { ExternalLink } from "@web3uikit/icons";
 
-export default function Reserve() {
+export default function LendingPool() {
   const router = useRouter();
   const [debt, setDebt] = useState("0");
   const [asset, setAsset] = useState("");
@@ -39,7 +39,7 @@ export default function Reserve() {
   const { chain } = useNetwork();
   const [tvlSafeguard, setTVLSafeguard] = useState("0");
   const [maximumUtilizationRate, setMaximumUtilizationRate] = useState("0");
-  const [protocolLiquidationFee, setProtocolLiquidationFee] = useState("0");
+  const [liquidationFee, setLiquidationFee] = useState("0");
   const [liquidationPenalty, setLiquidationPenalty] = useState("0");
 
   const provider = useProvider();
@@ -102,11 +102,11 @@ export default function Reserve() {
     setMaximumUtilizationRate(updatedMaximumUtilizationRate);
 
     // Get protocol liquidation fee
-    const updatedProtocolLiquidationFee = (
+    const updatedliquidationFee = (
       await reserve.getLiquidationFee()
     ).toString();
 
-    setProtocolLiquidationFee(updatedProtocolLiquidationFee);
+    setLiquidationFee(updatedliquidationFee);
 
     // Get underlying safeguard
     const updatedLiquidationPenalty = (
@@ -417,7 +417,7 @@ export default function Reserve() {
                 fontSize: "subtitle2.fontSize",
               }}
             >
-              {BigNumber.from(protocolLiquidationFee).div(100) + "%"}
+              {BigNumber.from(liquidationFee).div(100) + "%"}
             </Box>
           </div>
         </div>

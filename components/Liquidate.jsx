@@ -58,9 +58,9 @@ export default function Liquidate(props) {
       ? contractAddresses[chain.id]
       : contractAddresses["1"];
 
-  const marketSigner = useContract({
-    contractInterface: marketContract.abi,
-    addressOrName: addresses.Market,
+  const lendingMarketSigner = useContract({
+    contractInterface: lendingMarketContract.abi,
+    addressOrName: addresses.LendingMarket,
     signerOrProvider: signer,
   });
 
@@ -315,7 +315,7 @@ export default function Liquidate(props) {
                           requestId
                         );
                         console.log("Liquidation loan", props.loan);
-                        const tx = await marketSigner.liquidate(
+                        const tx = await lendingMarketSigner.liquidate(
                           props.loan.loanId,
                           requestId,
                           priceSig.sig
@@ -365,7 +365,7 @@ export default function Liquidate(props) {
                       try {
                         setApprovalLoading(true);
                         const tx = await wethSigner.approve(
-                          addresses.Market,
+                          addresses.LendingMarket,
                           liquidationPrice
                         );
                         await tx.wait(1);

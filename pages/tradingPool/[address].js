@@ -1,11 +1,54 @@
 import { useState, useEffect } from "react";
+import { Button, Tooltip, Loading, Typography } from "@web3uikit/core";
+import { HelpCircle } from "@web3uikit/icons";
+import { BigNumber } from "@ethersproject/bignumber";
+import StyledModal from "../../components/StyledModal";
+import { formatUnits } from "@ethersproject/units";
+import contractAddresses from "../../contractAddresses.json";
+import lendingMarketContract from "../../contracts/LendingMarket.json";
+import tokenOracleContract from "../../contracts/TokenOracle.json";
+import reserveContract from "../../contracts/Reserve.json";
+import LinearProgressWithLabel from "../../components/LinearProgressWithLabel";
+import Deposit from "../../components/Deposit";
+import Withdraw from "../../components/Withdraw";
+import Box from "@mui/material/Box";
+import erc20 from "../../contracts/erc20.json";
+import { ethers } from "ethers";
 import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
+import Router from "next/router";
+import { useRouter } from "next/router";
+import { ChevronLeft } from "@web3uikit/icons";
+import { ExternalLink } from "@web3uikit/icons";
 
-export default function Lend() {
+export default function TradingPool() {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
-
+  const router = useRouter();
+  const [debt, setDebt] = useState("0");
+  const [asset, setAsset] = useState("");
+  const [assetSymbol, setAssetSymbol] = useState("");
+  const [reserveSupportedNFTs, setReserveSupportedNFTs] = useState({});
+  const [visibleDepositModal, setVisibleDepositModal] = useState(false);
+  const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
+  const [maxAmount, setMaxAmount] = useState("0");
+  const [underlyingBalance, setUnderlyingBalance] = useState("0");
+  const [supplyRate, setSupplyRate] = useState(0);
+  const [borrowRate, setBorrowRate] = useState(0);
+  const [utilizationRate, setUtilizationRate] = useState(0);
+  const [loadingReserve, setLoadingReserve] = useState(false);
+  const [tvlSafeguard, setTVLSafeguard] = useState("0");
+  const [maximumUtilizationRate, setMaximumUtilizationRate] = useState("0");
+  const [protocolLiquidationFee, setProtocolLiquidationFee] = useState("0");
+  const [liquidationPenalty, setLiquidationPenalty] = useState("0");
   const provider = useProvider();
+
+  async function getTradingPoolDetails() {
+    const reserve = new ethers.Contract(
+      router.query.address,
+      reserveContract.abi,
+      provider
+    );
+  }
 
   return (
     <div>
@@ -23,7 +66,7 @@ export default function Lend() {
           reserve={router.query.address}
           assetSymbol={assetSymbol}
           asset={asset}
-          updateUI={getReserveDetails}
+          updateUI={getTradingPoolDetails}
         />
       </StyledModal>
       <StyledModal
@@ -40,7 +83,7 @@ export default function Lend() {
           reserve={router.query.address}
           assetSymbol={assetSymbol}
           asset={asset}
-          updateUI={getReserveDetails}
+          updateUI={getTradingPoolDetails}
         />
       </StyledModal>
       <div className="flex flex-row justify-center">

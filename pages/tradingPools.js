@@ -42,16 +42,6 @@ export default function TradingPools() {
             fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
           }}
           className="m-2"
-          key={"pool" + key}
-        >
-          {key}
-        </Box>,
-        <Box
-          sx={{
-            fontFamily: "Monospace",
-            fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
-          }}
-          className="m-2"
           key={"nft" + key}
         >
           {value.nft}
@@ -79,7 +69,7 @@ export default function TradingPools() {
             radius="12"
             onClick={async function (event) {
               Router.push({
-                pathname: "/TradingPool/[address]",
+                pathname: "/tradingPool/[address]",
                 query: {
                   address: event.target.id,
                 },
@@ -155,7 +145,7 @@ export default function TradingPools() {
           />
         </div>
         <Table
-          columnsConfig="2fr 2fr 1fr 0fr"
+          columnsConfig="2fr 2fr 0fr 0fr"
           tableBackgroundColor="white"
           customLoadingContent={
             <div

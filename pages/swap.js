@@ -77,10 +77,10 @@ export default function Swap() {
             />
           </div>
         </div>
-        <div className="flex flex-row w-10/12 justify-center items-center">
+        <div className="flex flex-row w-8/12 justify-center items-center">
           <Divider style={{ width: "100%" }} />
         </div>
-        <div className="flex flex-row m-8">
+        <div className="flex flex-row m-12">
           <Autocomplete
             disablePortal
             ListboxProps={{
@@ -115,7 +115,7 @@ export default function Swap() {
             )}
           />
         </div>
-        <div className="flex flex-row justify-center mb-8 mx-4">
+        <div className="flex flex-row justify-center mb-10">
           <div className="flex flex-col w-4/12 justify-center m-2">
             <TextField size="small" placeholder="Amount" variant="outlined" />
           </div>
@@ -146,7 +146,7 @@ export default function Swap() {
         <div className="flex flex-row w-11/12 justify-center items-center">
           <Divider style={{ width: "100%" }} />
         </div>
-        <div className="flex flex-row m-4 w-4/12">
+        <div className="flex flex-row m-6 w-4/12">
           <Button
             primary
             fill="horizontal"

@@ -17,7 +17,7 @@ import reserveContract from "../contracts/Reserve.json";
 import wethGatewayContract from "../contracts/WETHGateway.json";
 import erc20 from "../contracts/erc20.json";
 
-export default function Deposit(props) {
+export default function DepositLendingPool(props) {
   const [amount, setAmount] = useState("0");
   const [balance, setBalance] = useState("0");
   const [approved, setApproved] = useState(false);

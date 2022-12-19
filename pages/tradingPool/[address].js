@@ -4,6 +4,7 @@ import { HelpCircle } from "@web3uikit/icons";
 import { BigNumber } from "@ethersproject/bignumber";
 import StyledModal from "../../components/StyledModal";
 import { formatUnits } from "@ethersproject/units";
+import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
 import contractAddresses from "../../contractAddresses.json";
 import lendingMarketContract from "../../contracts/LendingMarket.json";
 import tokenOracleContract from "../../contracts/TokenOracle.json";
@@ -26,6 +27,7 @@ export default function TradingPool() {
   const router = useRouter();
   const [nft, setNFT] = useState("");
   const [token, setToken] = useState("");
+  const [lpPositions, setLpPositions] = useState([]);
   const [visibleDepositModal, setVisibleDepositModal] = useState(false);
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
   const [loadingTradingPool, setLoadingTradingPool] = useState(false);
@@ -48,6 +50,21 @@ export default function TradingPool() {
 
     const tokenResponse = await pool.getToken();
     setToken(tokenResponse.toString());
+
+    // Get lp positions
+    const addressNFTs = await getAddressNFTs(
+      address,
+      router.query.address,
+      chain.id
+    );
+    const newLpPositions = [];
+    for (let i = 0; i < addressNFTs.length; i++) {
+      newLpPositions.push({
+        id: BigNumber.from(addressNFTs[i].id.tokenId).toNumber(),
+      });
+    }
+
+    setLpPositions(newLpPositions);
   }
 
   // Set the rest of the UI when we receive the reserve address
@@ -150,7 +167,7 @@ export default function TradingPool() {
                     fontWeight: "bold",
                   }}
                 >
-                  Total LP
+                  Total in LP Positions
                 </Box>
               </div>
               <div className="flex flex-col ml-1">
@@ -163,8 +180,34 @@ export default function TradingPool() {
                 </Tooltip>
               </div>
             </div>
+            <div className="flex flex-row m-2">
+              <div className="flex flex-col">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "h5.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  0 NFT
+                </Box>
+              </div>
+            </div>
+            <div className="flex flex-row m-2">
+              <div className="flex flex-col">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "h5.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  2 ETH
+                </Box>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col md:flex-row items-center ">
+          <div className="flex flex-row items-center ">
             <div className="m-4">
               <Button
                 customize={{
@@ -184,14 +227,50 @@ export default function TradingPool() {
           </div>
         </div>
         <div className="flex flex-col m-8 lg:my-16 lg:mx-16">
-          <div className="mb-8"></div>
-
           {loadingTradingPool ? (
             <div className="flex m-4">
               <Loading size={12} spinnerColor="#000000" />
             </div>
           ) : (
-            <div></div>
+            <div className="flex grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
+              {lpPositions.map((data) => (
+                <div
+                  key={data.id}
+                  className="flex m-4 items-center justify-center max-w-[300px]"
+                >
+                  <Card
+                    sx={{
+                      borderRadius: 4,
+                      background:
+                        "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
+                    }}
+                  >
+                    <CardActionArea
+                      onClick={function () {
+                        setSelectedLP(data);
+                        setVisibleLPModal(true);
+                      }}
+                    >
+                      <CardContent>
+                        <Box
+                          sx={{
+                            fontFamily: "Monospace",
+                            fontSize: "subtitle1.fontSize",
+                          }}
+                        >
+                          <div className="flex flex-col mt-2 items-center text-center">
+                            <div>{"LP Position"}</div>
+                            <div>
+                              {"#" + BigNumber.from(data.id).toNumber()}
+                            </div>
+                          </div>
+                        </Box>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>

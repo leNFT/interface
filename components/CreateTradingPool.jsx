@@ -66,7 +66,7 @@ export default function CreateTradingPool(props) {
     props.setVisibility(false);
     dispatch({
       type: "success",
-      message: "You have create a new reserve.",
+      message: "You have create a new trading pool.",
       title: "Create Successful!",
       position: "topR",
     });

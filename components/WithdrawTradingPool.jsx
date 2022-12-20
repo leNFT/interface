@@ -1,189 +1,182 @@
-import { useNotification } from "@web3uikit/core";
-import { BigNumber } from "@ethersproject/bignumber";
-import styles from "../styles/Home.module.css";
-import { Button, Input, Typography } from "@web3uikit/core";
-import { formatUnits, parseUnits } from "@ethersproject/units";
-import { ethers } from "ethers";
-import reserveContract from "../contracts/Reserve.json";
-import contractAddresses from "../contractAddresses.json";
-import { useState, useEffect } from "react";
-import lendingMarketContract from "../contracts/LendingMarket.json";
 import {
   useAccount,
+  useBalance,
   useNetwork,
   useContract,
   useProvider,
   useSigner,
 } from "wagmi";
+import Box from "@mui/material/Box";
+import { BigNumber } from "@ethersproject/bignumber";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import { CardActionArea } from "@mui/material";
+import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
+import { formatUnits, parseUnits } from "@ethersproject/units";
+import {
+  useNotification,
+  Button,
+  Input,
+  Typography,
+  Select,
+} from "@web3uikit/core";
+import styles from "../styles/Home.module.css";
+import contractAddresses from "../contractAddresses.json";
+import { useState, useEffect } from "react";
+import { ethers } from "ethers";
+import tradingPoolContract from "../contracts/TradingPool.json";
+import wethGatewayContract from "../contracts/WETHGateway.json";
+import erc20 from "../contracts/erc20.json";
+import erc721 from "../contracts/erc721.json";
 
-export default function Withdraw(props) {
-  const [withdrawalLoading, setWithdrawalLoading] = useState(false);
-  const [amount, setAmount] = useState("0");
-  const [maxAmount, setMaxAmount] = useState("0");
+export default function WithdrawTradingPool(props) {
+  const [approvedLP, setApprovedLP] = useState(false);
+  const [approvalLPLoading, setApprovalLPLoading] = useState(false);
+  const [withdrawLoading, setWithdrawLoading] = useState(false);
+  const dispatch = useNotification();
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
-  const { data: signer } = useSigner();
   const provider = useProvider();
+  const { data: signer } = useSigner();
   const addresses =
     chain && chain.id in contractAddresses
       ? contractAddresses[chain.id]
       : contractAddresses["1"];
 
-  const dispatch = useNotification();
-
-  const lendingMarketSigner = useContract({
-    contractInterface: lendingMarketContract.abi,
-    addressOrName: addresses.LendingMarket,
+  const wethGatewaySigner = useContract({
+    contractInterface: wethGatewayContract.abi,
+    addressOrName: addresses.WETHGateway,
     signerOrProvider: signer,
   });
 
-  async function updateMaxAmount() {
-    const reserve = new ethers.Contract(
-      props.reserve,
-      reserveContract.abi,
-      provider
-    );
+  const poolNFTProvider = useContract({
+    contractInterface: erc721,
+    addressOrName: props.pool,
+    signerOrProvider: provider,
+  });
 
-    const updatedMaxAmount = await reserve.maxWithdraw(address);
+  async function getLPAllowance() {
+    const allowed = await poolNFTProvider.getApproved(address);
 
-    console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
-    setMaxAmount(updatedMaxAmount);
+    console.log("Got pool getApproved:", allowed);
+
+    if (allowed) {
+      setApprovedLP(true);
+    } else {
+      setApprovedLP(false);
+    }
   }
 
+  // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
-    if (props.reserve && props.asset) {
-      console.log("Got reserve address, setting the rest...", props.reserve);
-      console.log(" props.asset", props.asset);
-      updateMaxAmount();
+    if (props.pool && props.lp) {
+      console.log("Got trading pool address, setting the rest...", props.pool);
+      getLPAllowance();
     }
-  }, [props.reserve, props.asset]);
+  }, [props.pool, props.lp]);
 
-  const handleWithdrawalSuccess = async function () {
+  const handleWithdrawSuccess = async function () {
     props.updateUI();
     props.setVisibility(false);
-    updateMaxAmount();
     dispatch({
       type: "success",
-      message: "Tokens are now back in your wallet.",
-      title: "Withdrawal Successful! ",
+      message: "Your LP was successfully removed from the pool.",
+      title: "Removal Successful!",
       position: "topR",
     });
   };
 
-  function handleInputChange(e) {
-    if (e.target.value != "") {
-      setAmount(parseUnits(e.target.value, 18).toString());
-    } else {
-      setAmount("0");
-    }
-  }
+  const handleLPApprovalSuccess = async function () {
+    setApprovedLP(true);
+    dispatch({
+      type: "success",
+      message: "You can now remove the LP.",
+      title: "Approval Successful!",
+      position: "topR",
+    });
+  };
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-row items-center justify-center">
-        <div className="flex flex-col">
-          <Typography variant="subtitle2">Maximum withdrawal amount</Typography>
-          <Typography variant="body16">
-            {formatUnits(maxAmount, 18) + " " + props.assetSymbol}
-          </Typography>
-        </div>
+      <div className="flex flex-row items-center justify-center m-8">
+        <Typography>{"LP #" + props.lp + " Removal"}</Typography>
       </div>
-      <div className="flex flex-row items-center justify-center mx-8 mt-12 mb-2">
-        <Input
-          label="Amount"
-          type="number"
-          step="any"
-          value={amount && formatUnits(amount, 18)}
-          validation={{
-            numberMax: Number(formatUnits(maxAmount, 18)),
-            numberMin: 0,
-          }}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div className="flex flex-row justify-center">
-        <div className="flex flex-col">
+      <div className="flex flex-row items-center justify-center m-8">
+        {approvedLP ? (
           <Button
-            onClick={() =>
-              setAmount(BigNumber.from(maxAmount).mul(2500).div(10000))
-            }
-            text="25%"
-            theme="outline"
-          />
-        </div>
-        <div className="flex flex-col">
-          <Button
-            onClick={() =>
-              setAmount(BigNumber.from(maxAmount).mul(5000).div(10000))
-            }
-            text="50%"
-            theme="outline"
-          />
-        </div>
-        <div className="flex flex-col">
-          <Button
-            onClick={() =>
-              setAmount(BigNumber.from(maxAmount).mul(7500).div(10000))
-            }
-            text="75%"
-            theme="outline"
-          />
-        </div>
-        <div className="flex flex-col">
-          <Button
-            onClick={() => setAmount(maxAmount)}
-            text="100%"
-            theme="outline"
-          />
-        </div>
-      </div>
-      <div className="m-8">
-        <Button
-          text="Withdraw"
-          theme="secondary"
-          isFullWidth
-          loadingProps={{
-            spinnerColor: "#000000",
-            spinnerType: "loader",
-            direction: "right",
-            size: "24",
-          }}
-          loadingText=""
-          isLoading={withdrawalLoading}
-          onClick={async function () {
-            if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
+            text={"Remove LP"}
+            theme="secondary"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
+            }}
+            disabled={!approvedLP}
+            loadingText=""
+            isLoading={withdrawLoading}
+            onClick={async function () {
               try {
-                setWithdrawalLoading(true);
+                setWithdrawLoading(true);
+                console.log("signer.", signer);
                 var tx;
                 if (props.assetSymbol == "ETH") {
-                  console.log("Withdrawal ETH");
-                  tx = await lendingMarketSigner.withdrawETH(
-                    props.reserve,
-                    amount
-                  );
+                  console.log("Depositing ETH");
+                  tx = await wethGatewaySigner.depositETH(props.reserve, {
+                    value: amount,
+                  });
                 } else {
-                  tx = await lendingMarketSigner.withdraw(
-                    props.reserve,
-                    amount
+                  const tradingPool = new ethers.Contract(
+                    props.pool,
+                    tradingPoolContract.abi,
+                    signer
                   );
+                  console.log("Removing LP");
+                  tx = await tradingPool.removeLiquidity(props.lp);
                 }
                 await tx.wait(1);
-                handleWithdrawalSuccess();
+                handleWithdrawSuccess();
               } catch (error) {
                 console.log(error);
               } finally {
-                setWithdrawalLoading(false);
+                setWithdrawLoading(false);
               }
-            } else {
-              dispatch({
-                type: "error",
-                message: "Amount is bigger than max permited withdrawal",
-                title: "Error",
-                position: "topR",
-              });
-            }
-          }}
-        />
+            }}
+          ></Button>
+        ) : (
+          <Button
+            text="Approve LP Use"
+            theme="secondary"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
+            }}
+            loadingText=""
+            isLoading={approvalLPLoading}
+            onClick={async function () {
+              try {
+                setApprovalLPLoading(true);
+                console.log("signer.", signer);
+                const poolContract = new ethers.Contract(
+                  props.pool,
+                  erc721,
+                  signer
+                );
+                const tx = await poolContract.approve(props.pool, props.lp);
+                await tx.wait(1);
+                handleLPApprovalSuccess();
+              } catch (error) {
+                console.log(error);
+              } finally {
+                setApprovalLPLoading(false);
+              }
+            }}
+          ></Button>
+        )}
       </div>
     </div>
   );

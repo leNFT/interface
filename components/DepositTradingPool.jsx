@@ -30,7 +30,7 @@ import erc20 from "../contracts/erc20.json";
 import erc721 from "../contracts/erc721.json";
 
 export default function DepositTradingPool(props) {
-  const [curve, setCurve] = useState("");
+  const [curve, setCurve] = useState("exponential");
   const [delta, setDelta] = useState("0");
   const [initialPrice, setInitialPrice] = useState("0");
   const [tokenAmount, setTokenAmount] = useState("0");
@@ -47,11 +47,8 @@ export default function DepositTradingPool(props) {
   const dispatch = useNotification();
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
-  const { data: signer } = useSigner();
   const provider = useProvider();
-  const { data: ethBalance } = useBalance({
-    addressOrName: address,
-  });
+  const { data: signer } = useSigner();
   const addresses =
     chain && chain.id in contractAddresses
       ? contractAddresses[chain.id]
@@ -117,10 +114,8 @@ export default function DepositTradingPool(props) {
   }, [props.pool, props.token, props.nft]);
 
   const handleDepositSuccess = async function () {
-    console.log("Deposited", amount);
     props.updateUI();
     props.setVisibility(false);
-    updateTokenBalance();
     dispatch({
       type: "success",
       message: "Your tokens were deposited into the reserve.",
@@ -160,9 +155,9 @@ export default function DepositTradingPool(props) {
   function handleCurveChange(e) {
     if (e.id != "") {
       if (e.id == "exponential") {
-        setCurve(addresses.ExponentialCurve);
+        setCurve(e.id);
       } else if (e.id == "linear") {
-        setCurve(addresses.LinearCurve);
+        setCurve(e.id);
       }
     } else {
       setCurve("");
@@ -170,7 +165,7 @@ export default function DepositTradingPool(props) {
   }
 
   function handleInitialPriceChange(e) {
-    if (e.targe.value != "") {
+    if (e.target.value != "") {
       setInitialPrice(parseUnits(e.target.value, 18));
       console.log("newInitialPrice", parseUnits(e.target.value, 18));
     } else {
@@ -179,7 +174,7 @@ export default function DepositTradingPool(props) {
   }
 
   function handleDeltaChange(e) {
-    if (e.targe.value != "") {
+    if (e.target.value != "") {
       setDelta(e.target.value);
       console.log("newDelta;", e.target.value);
     } else {
@@ -208,13 +203,18 @@ export default function DepositTradingPool(props) {
       </div>
       <div className="flex flex-row items-center justify-center m-8">
         <Input
-          label="Delta"
+          label={
+            curve == "exponential"
+              ? "Delta %"
+              : curve == "linear"
+              ? "Delta (Amount)"
+              : "Delta"
+          }
           type="number"
           step="any"
           validation={{
             numberMin: 0,
           }}
-          disabled={!approvedToken}
           onChange={handleDeltaChange}
         />
       </div>
@@ -226,7 +226,6 @@ export default function DepositTradingPool(props) {
           validation={{
             numberMin: 0,
           }}
-          disabled={!approvedToken}
           onChange={handleInitialPriceChange}
         />
       </div>
@@ -408,6 +407,7 @@ export default function DepositTradingPool(props) {
           onClick={async function () {
             try {
               setDepositLoading(true);
+              console.log("signer.", signer);
               var tx;
               if (props.assetSymbol == "ETH") {
                 console.log("Depositing ETH");
@@ -420,10 +420,17 @@ export default function DepositTradingPool(props) {
                   tradingPoolContract.abi,
                   signer
                 );
+                var curveAddress = "";
+                if (curve == "exponential") {
+                  curveAddress = addresses.ExponentialCurve;
+                } else if (curve == "linear") {
+                  curveAddress = addresses.LinearCurve;
+                }
+                console.log("Adding LP");
                 tx = await tradingPool.addLiquidity(
                   tokenAmount,
                   selectedNFTs,
-                  curve,
+                  curveAddress,
                   delta,
                   initialPrice
                 );

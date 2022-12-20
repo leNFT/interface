@@ -9,12 +9,13 @@ import contractAddresses from "../../contractAddresses.json";
 import lendingMarketContract from "../../contracts/LendingMarket.json";
 import tokenOracleContract from "../../contracts/TokenOracle.json";
 import tradingPoolContract from "../../contracts/TradingPool.json";
-import LinearProgressWithLabel from "../../components/LinearProgressWithLabel";
 import DepositTradingPool from "../../components/DepositTradingPool";
 import WithdrawTradingPool from "../../components/WithdrawTradingPool";
 import Box from "@mui/material/Box";
-import erc20 from "../../contracts/erc20.json";
 import { ethers } from "ethers";
+import Card from "@mui/material/Card";
+import { CardActionArea } from "@mui/material";
+import CardContent from "@mui/material/CardContent";
 import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 import Router from "next/router";
 import { useRouter } from "next/router";
@@ -27,7 +28,10 @@ export default function TradingPool() {
   const router = useRouter();
   const [nft, setNFT] = useState("");
   const [token, setToken] = useState("");
+  const [totalNFTs, setTotalNFTs] = useState(0);
+  const [totalTokenAmount, setTotalTokenAmount] = useState("0");
   const [lpPositions, setLpPositions] = useState([]);
+  const [selectedLP, setSelectedLP] = useState();
   const [visibleDepositModal, setVisibleDepositModal] = useState(false);
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
   const [loadingTradingPool, setLoadingTradingPool] = useState(false);
@@ -62,6 +66,15 @@ export default function TradingPool() {
       newLpPositions.push({
         id: BigNumber.from(addressNFTs[i].id.tokenId).toNumber(),
       });
+
+      const lp = await pool.getLP(
+        BigNumber.from(addressNFTs[i].id.tokenId).toNumber()
+      );
+      console.log("lp", lp);
+      setTotalNFTs(lp.nftIds.length + totalNFTs);
+      setTotalTokenAmount(
+        BigNumber.from(lp.tokenAmount).add(totalTokenAmount).toString()
+      );
     }
 
     setLpPositions(newLpPositions);
@@ -106,6 +119,7 @@ export default function TradingPool() {
         <WithdrawTradingPool
           setVisibility={setVisibleWithdrawalModal}
           pool={router.query.address}
+          lp={selectedLP}
           updateUI={updateUI}
         />
       </StyledModal>
@@ -155,7 +169,7 @@ export default function TradingPool() {
           />
         </div>
       </div>
-      <div className="flex flex-col-reverse md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">
+      <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">
         <div className="flex flex-col items-center p-4 rounded-3xl m-8 lg:m-16 bg-black/5 shadow-lg">
           <div className="flex flex-col m-4 rounded-2xl">
             <div className="flex flex-row m-2">
@@ -189,7 +203,7 @@ export default function TradingPool() {
                     fontWeight: "bold",
                   }}
                 >
-                  0 NFT
+                  {totalNFTs + " NFTs"}
                 </Box>
               </div>
             </div>
@@ -202,7 +216,7 @@ export default function TradingPool() {
                     fontWeight: "bold",
                   }}
                 >
-                  2 ETH
+                  {formatUnits(totalTokenAmount, 18) + " ETH"}
                 </Box>
               </div>
             </div>
@@ -226,50 +240,63 @@ export default function TradingPool() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col m-8 lg:my-16 lg:mx-16">
+        <div className="flex flex-col border-4 border-slate-400 rounded-2xl p-8 m-8 lg:py-16 lg:px-16">
           {loadingTradingPool ? (
             <div className="flex m-4">
               <Loading size={12} spinnerColor="#000000" />
             </div>
           ) : (
-            <div className="flex grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
-              {lpPositions.map((data) => (
-                <div
-                  key={data.id}
-                  className="flex m-4 items-center justify-center max-w-[300px]"
+            <div>
+              {lpPositions.length == 0 ? (
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                  }}
                 >
-                  <Card
-                    sx={{
-                      borderRadius: 4,
-                      background:
-                        "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
-                    }}
-                  >
-                    <CardActionArea
-                      onClick={function () {
-                        setSelectedLP(data);
-                        setVisibleLPModal(true);
-                      }}
+                  <div>{"No LP Positions found"}</div>
+                </Box>
+              ) : (
+                <div className="flex grid grid-cols-1 md:grid-cols-2 gap-2">
+                  {lpPositions.map((data) => (
+                    <div
+                      key={data.id}
+                      className="flex m-4 items-center justify-center max-w-[300px]"
                     >
-                      <CardContent>
-                        <Box
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "subtitle1.fontSize",
+                      <Card
+                        sx={{
+                          borderRadius: 4,
+                          background:
+                            "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
+                        }}
+                      >
+                        <CardActionArea
+                          onClick={function () {
+                            setSelectedLP(data.id);
+                            setVisibleWithdrawalModal(true);
                           }}
                         >
-                          <div className="flex flex-col mt-2 items-center text-center">
-                            <div>{"LP Position"}</div>
-                            <div>
-                              {"#" + BigNumber.from(data.id).toNumber()}
-                            </div>
-                          </div>
-                        </Box>
-                      </CardContent>
-                    </CardActionArea>
-                  </Card>
+                          <CardContent>
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "subtitle1.fontSize",
+                              }}
+                            >
+                              <div className="flex flex-col mt-2 items-center text-center">
+                                <div>{"LP Position"}</div>
+                                <div>
+                                  {"#" + BigNumber.from(data.id).toNumber()}
+                                </div>
+                              </div>
+                            </Box>
+                          </CardContent>
+                        </CardActionArea>
+                      </Card>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
           )}
         </div>

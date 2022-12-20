@@ -96,7 +96,7 @@ export default function CreateLendingPool(props) {
     props.setVisibility(false);
     dispatch({
       type: "success",
-      message: "You have create a new reserve.",
+      message: "You have create a new lending pool.",
       title: "Create Successful!",
       position: "topR",
     });

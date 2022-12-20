@@ -181,7 +181,7 @@ export default function TradingPool() {
                     fontWeight: "bold",
                   }}
                 >
-                  Total in LP Positions
+                  My LP Positions
                 </Box>
               </div>
               <div className="flex flex-col ml-1">

@@ -3,18 +3,28 @@ import contractAddresses from "../contractAddresses.json";
 import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 import { Button, Menu } from "grommet";
 import { useState } from "react";
+import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import { CardActionArea } from "@mui/material";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-
+import { BigNumber } from "@ethersproject/bignumber";
 import { Divider } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
-
 import { formatUnits, parseUnits } from "@ethersproject/units";
-
 import { Loading, Typography, Input } from "@web3uikit/core";
+import { ethers } from "ethers";
 
 export default function Swap() {
   const { chain } = useNetwork();
+  const { address, isConnected } = useAccount();
+
+  const [nftAddress, setNFTAddress] = useState("");
+  const [amount, setAmount] = useState(0);
+  const [selectingNFTs, setSelectingNFTs] = useState(false);
+  const [selectedNFTs, setSelectedNFTs] = useState([]);
+  const [userNFTs, setUserNFTs] = useState([]);
   const provider = useProvider();
   const addresses =
     chain && chain.id in contractAddresses
@@ -23,6 +33,32 @@ export default function Swap() {
   const SELECTED_COLOR = "#d2c6d2";
   const UNSELECTED_COLOR = "#eae5ea";
   const [option, setOption] = useState("buy");
+
+  async function getUserNFTs(collection) {
+    // Get user NFT assets
+    const addressNFTs = await getAddressNFTs(address, collection, chain.id);
+    setUserNFTs(addressNFTs);
+  }
+
+  const handleAmountInputChange = (event) => {
+    console.log("handleAmountInputChange", event.target.value);
+    try {
+      setAmount(event.target.value);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleNFTAddressChange = (event) => {
+    console.log("handleNFTAddressChange", event.target.value);
+    try {
+      ethers.utils.getAddress(event.target.value);
+      setNFTAddress(event.target.value);
+      getUserNFTs(event.target.value);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center">
@@ -81,66 +117,109 @@ export default function Swap() {
           <Divider style={{ width: "100%" }} />
         </div>
         <div className="flex flex-row m-12">
-          <Autocomplete
-            disablePortal
-            ListboxProps={{
-              style: {
-                backgroundColor: "rgb(253, 241, 244)",
-                fontFamily: "Monospace",
-              },
-            }}
-            isOptionEqualToValue={(option, value) =>
-              option.address === value.address
-            }
-            sx={{ minWidth: { xs: 180, sm: 250, md: 300 } }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Collection"
-                sx={{
-                  "& label": {
-                    paddingLeft: (theme) => theme.spacing(2),
-                    fontFamily: "Monospace",
-                  },
-                  "& input": {
-                    paddingLeft: (theme) => theme.spacing(3.5),
-                    fontFamily: "Monospace",
-                  },
-                  "& fieldset": {
-                    paddingLeft: (theme) => theme.spacing(2.5),
-                    fontFamily: "Monospace",
-                  },
-                }}
-              />
-            )}
+          <TextField
+            size="big"
+            placeholder="NFT Address"
+            variant="outlined"
+            onChange={handleNFTAddressChange}
           />
         </div>
-        <div className="flex flex-row justify-center mb-10">
-          <div className="flex flex-col w-4/12 justify-center m-2">
-            <TextField size="small" placeholder="Amount" variant="outlined" />
+        <div className="flex flex-col justify-center mb-10">
+          <div className="flex flex-row justify-center m-2">
+            <div className="flex flex-col w-4/12 justify-center m-2">
+              <TextField
+                size="small"
+                placeholder="Amount"
+                variant="outlined"
+                value={amount}
+                onChange={handleAmountInputChange}
+              />
+            </div>
+            <div className="flex flex-col text-center justify-center m-2">
+              OR
+            </div>
+            <div className="flex flex-col text-center justify-center m-2">
+              <Button
+                primary
+                size="medium"
+                color={SELECTED_COLOR}
+                onClick={() => {
+                  // Reset selected NFTs
+                  setSelectedNFTs([]);
+                  setSelectingNFTs(!selectingNFTs);
+                }}
+                disabled={!nftAddress}
+                label={
+                  <div className="flex">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle2.fontSize",
+                        fontWeight: "bold",
+                        letterSpacing: 2,
+                      }}
+                    >
+                      Select NFTs
+                    </Box>
+                  </div>
+                }
+              />
+            </div>
           </div>
-          <div className="flex flex-col text-center justify-center m-2">OR</div>
-          <div className="flex flex-col text-center justify-center m-2">
-            <Button
-              primary
-              size="medium"
-              color={SELECTED_COLOR}
-              onClick={() => {}}
-              label={
-                <div className="flex">
-                  <Box
+          {selectingNFTs && (
+            <div className="flex flex-row m-4 grid md:grid-cols-3 lg:grid-cols-4">
+              {userNFTs.map((nft, _) => (
+                <div
+                  key={BigNumber.from(nft.id.tokenId).toNumber()}
+                  className="flex m-2 items-center justify-center max-w-[300px]"
+                >
+                  <Card
                     sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle2.fontSize",
-                      fontWeight: "bold",
-                      letterSpacing: 2,
+                      borderRadius: 4,
+                      background: selectedNFTs.find(
+                        (element) =>
+                          element == BigNumber.from(nft.id.tokenId).toNumber()
+                      )
+                        ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
+                        : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                     }}
                   >
-                    Select NFTs
-                  </Box>
+                    <CardActionArea
+                      onClick={function () {
+                        //If it's selected we unselect and if its unselected we select
+                        var newSelectedNFTs = selectedNFTs.slice();
+                        var index = newSelectedNFTs.findIndex(
+                          (element) =>
+                            element == BigNumber.from(nft.id.tokenId).toNumber()
+                        );
+                        if (index == -1) {
+                          newSelectedNFTs.push(
+                            BigNumber.from(nft.id.tokenId).toNumber()
+                          );
+                        } else {
+                          newSelectedNFTs.splice(index, 1);
+                        }
+                        setSelectedNFTs(newSelectedNFTs);
+                      }}
+                    >
+                      <CardContent>
+                        <Box
+                          sx={{
+                            fontFamily: "Monospace",
+                            fontSize: "caption",
+                          }}
+                        >
+                          {BigNumber.from(nft.id.tokenId).toNumber()}
+                        </Box>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
                 </div>
-              }
-            />
+              ))}
+            </div>
+          )}
+          <div className="flex flex-row justify-center m-4 items-center">
+            <Typography>PRICE is</Typography>
           </div>
         </div>
         <div className="flex flex-row w-11/12 justify-center items-center">
@@ -163,7 +242,7 @@ export default function Swap() {
                     letterSpacing: 2,
                   }}
                 >
-                  {option.toUpperCase()}
+                  {option.toUpperCase() + " " + selectedNFTs.length + " NFTs"}
                 </Box>
               </div>
             }

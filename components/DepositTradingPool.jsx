@@ -358,19 +358,21 @@ export default function DepositTradingPool(props) {
                 <CardActionArea
                   onClick={function () {
                     //If it's selected we unselect and if its unselected we select
-                    var index = selectedNFTs.findIndex(
+                    var newSelectedNFTs = selectedNFTs.slice();
+                    var index = newSelectedNFTs.findIndex(
                       (element) =>
                         element == BigNumber.from(nft.id.tokenId).toNumber()
                     );
                     if (index == -1) {
-                      selectedNFTs.push(
+                      newSelectedNFTs.push(
                         BigNumber.from(nft.id.tokenId).toNumber()
                       );
                       setNFTAmount(nftAmount + 1);
                     } else {
-                      selectedNFTs.splice(index, 1);
+                      newSelectedNFTs.splice(index, 1);
                       setNFTAmount(nftAmount - 1);
                     }
+                    setSelectedNFTs(newSelectedNFTs);
                   }}
                 >
                   <CardContent>

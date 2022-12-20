@@ -13,17 +13,26 @@ import CardContent from "@mui/material/CardContent";
 import { CardActionArea } from "@mui/material";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
 import { formatUnits, parseUnits } from "@ethersproject/units";
-import { useNotification, Button, Input, Typography } from "@web3uikit/core";
+import {
+  useNotification,
+  Button,
+  Input,
+  Typography,
+  Select,
+} from "@web3uikit/core";
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import reserveContract from "../contracts/Reserve.json";
+import tradingPoolContract from "../contracts/TradingPool.json";
 import wethGatewayContract from "../contracts/WETHGateway.json";
 import erc20 from "../contracts/erc20.json";
 import erc721 from "../contracts/erc721.json";
 
 export default function DepositTradingPool(props) {
+  const [curve, setCurve] = useState("");
+  const [delta, setDelta] = useState("0");
+  const [initialPrice, setInitialPrice] = useState("0");
   const [tokenAmount, setTokenAmount] = useState("0");
   const [nftAmount, setNFTAmount] = useState(0);
   const [userNFTs, setUserNFTs] = useState([]);
@@ -140,7 +149,7 @@ export default function DepositTradingPool(props) {
     });
   };
 
-  function handleInputChange(e) {
+  function handleTokenAmountChange(e) {
     if (e.target.value != "") {
       setTokenAmount(parseUnits(e.target.value, 18).toString());
     } else {
@@ -148,19 +157,90 @@ export default function DepositTradingPool(props) {
     }
   }
 
+  function handleCurveChange(e) {
+    if (e.id != "") {
+      if (e.id == "exponential") {
+        setCurve(addresses.ExponentialCurve);
+      } else if (e.id == "linear") {
+        setCurve(addresses.LinearCurve);
+      }
+    } else {
+      setCurve("");
+    }
+  }
+
+  function handleInitialPriceChange(e) {
+    if (e.targe.value != "") {
+      setInitialPrice(parseUnits(e.target.value, 18));
+      console.log("newInitialPrice", parseUnits(e.target.value, 18));
+    } else {
+      setInitialPrice("0");
+    }
+  }
+
+  function handleDeltaChange(e) {
+    if (e.targe.value != "") {
+      setDelta(e.target.value);
+      console.log("newDelta;", e.target.value);
+    } else {
+      setDelta("0");
+    }
+  }
+
   return (
     <div className={styles.container}>
       <div className="flex flex-row items-center justify-center m-8">
+        <Select
+          defaultOptionIndex={0}
+          label="Curve"
+          onChange={handleCurveChange}
+          options={[
+            {
+              id: "exponential",
+              label: "Exponential",
+            },
+            {
+              id: "linear",
+              label: "Linear",
+            },
+          ]}
+        />
+      </div>
+      <div className="flex flex-row items-center justify-center m-8">
+        <Input
+          label="Delta"
+          type="number"
+          step="any"
+          validation={{
+            numberMin: 0,
+          }}
+          disabled={!approvedToken}
+          onChange={handleDeltaChange}
+        />
+      </div>
+      <div className="flex flex-row items-center justify-center m-8">
+        <Input
+          label="Initial Price"
+          type="number"
+          step="any"
+          validation={{
+            numberMin: 0,
+          }}
+          disabled={!approvedToken}
+          onChange={handleInitialPriceChange}
+        />
+      </div>
+      <div className="flex flex-row items-center justify-center m-8">
         {approvedToken ? (
           <Input
-            label="Amount"
+            label="Token Amount"
             type="number"
             step="any"
             validation={{
               numberMin: 0,
             }}
             disabled={!approvedToken}
-            onChange={handleInputChange}
+            onChange={handleTokenAmountChange}
           />
         ) : (
           <Button
@@ -267,7 +347,7 @@ export default function DepositTradingPool(props) {
                     (element) =>
                       element == BigNumber.from(nft.id.tokenId).toNumber()
                   )
-                    ? "linear-gradient(120deg, #fccb90 0%, #d57eeb 100%)"
+                    ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
                     : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                 }}
               >
@@ -326,37 +406,34 @@ export default function DepositTradingPool(props) {
           loadingText=""
           isLoading={depositLoading}
           onClick={async function () {
-            if (BigNumber.from(amount).lte(BigNumber.from(balance))) {
-              try {
-                setDepositLoading(true);
-                var tx;
-                if (props.assetSymbol == "ETH") {
-                  console.log("Depositing ETH");
-                  tx = await wethGatewaySigner.depositETH(props.reserve, {
-                    value: amount,
-                  });
-                } else {
-                  const reserve = new ethers.Contract(
-                    props.reserve,
-                    reserveContract.abi,
-                    signer
-                  );
-                  tx = await reserve.deposit(amount, address);
-                }
-                await tx.wait(1);
-                handleDepositSuccess();
-              } catch (error) {
-                console.log(error);
-              } finally {
-                setDepositLoading(false);
+            try {
+              setDepositLoading(true);
+              var tx;
+              if (props.assetSymbol == "ETH") {
+                console.log("Depositing ETH");
+                tx = await wethGatewaySigner.depositETH(props.reserve, {
+                  value: amount,
+                });
+              } else {
+                const tradingPool = new ethers.Contract(
+                  props.pool,
+                  tradingPoolContract.abi,
+                  signer
+                );
+                tx = await tradingPool.addLiquidity(
+                  tokenAmount,
+                  selectedNFTs,
+                  curve,
+                  delta,
+                  initialPrice
+                );
               }
-            } else {
-              dispatch({
-                type: "error",
-                message: "Amount is bigger than balance",
-                title: "Error",
-                position: "topR",
-              });
+              await tx.wait(1);
+              handleDepositSuccess();
+            } catch (error) {
+              console.log(error);
+            } finally {
+              setDepositLoading(false);
             }
           }}
         ></Button>

@@ -56,11 +56,11 @@ export default function WithdrawTradingPool(props) {
   });
 
   async function getLPAllowance() {
-    const allowed = await poolNFTProvider.getApproved(address);
+    const allowed = await poolNFTProvider.getApproved(props.lp);
 
     console.log("Got pool getApproved:", allowed);
 
-    if (allowed) {
+    if (allowed != "0x0000000000000000000000000000000000000000") {
       setApprovedLP(true);
     } else {
       setApprovedLP(false);

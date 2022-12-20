@@ -174,12 +174,17 @@ export default function DepositTradingPool(props) {
   }
 
   function handleDeltaChange(e) {
+    var newDelta = 0;
     if (e.target.value != "") {
-      setDelta(e.target.value);
-      console.log("newDelta;", e.target.value);
-    } else {
-      setDelta("0");
+      if (curve == "exponential") {
+        newDelta = e.target.value * 100;
+      } else if (curve == "linear") {
+        newDelta = parseUnits(e.target.value, 18);
+      }
     }
+
+    setDelta(newDelta);
+    console.log("newDelta;", e.target.value);
   }
 
   return (

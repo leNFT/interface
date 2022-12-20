@@ -30,6 +30,8 @@ import erc20 from "../contracts/erc20.json";
 import erc721 from "../contracts/erc721.json";
 
 export default function WithdrawTradingPool(props) {
+  const [tokenAmount, setTokenAmount] = useState("0");
+  const [nfts, setNFTs] = useState([]);
   const [approvedLP, setApprovedLP] = useState(false);
   const [approvalLPLoading, setApprovalLPLoading] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
@@ -55,6 +57,20 @@ export default function WithdrawTradingPool(props) {
     signerOrProvider: provider,
   });
 
+  async function getLP() {
+    const pool = new ethers.Contract(
+      props.pool,
+      tradingPoolContract.abi,
+      provider
+    );
+
+    // GEt LP
+    const lpResponse = await pool.getLP(props.lp);
+    console.log("lpResponse", lpResponse);
+    setTokenAmount(lpResponse.tokenAmount.toString());
+    setNFTs(lpResponse.nftIds);
+  }
+
   async function getLPAllowance() {
     const allowed = await poolNFTProvider.getApproved(props.lp);
 
@@ -72,6 +88,7 @@ export default function WithdrawTradingPool(props) {
     if (props.pool && props.lp) {
       console.log("Got trading pool address, setting the rest...", props.pool);
       getLPAllowance();
+      getLP();
     }
   }, [props.pool, props.lp]);
 
@@ -99,7 +116,17 @@ export default function WithdrawTradingPool(props) {
   return (
     <div className={styles.container}>
       <div className="flex flex-row items-center justify-center m-8">
-        <Typography>{"LP #" + props.lp + " Removal"}</Typography>
+        <Typography variant="subtitle1">{"LP #" + props.lp}</Typography>
+      </div>
+      <div className="flex flex-row items-center m-8">
+        <Typography variant="subtitle2">
+          {formatUnits(tokenAmount, 18) + " Tokens"}
+        </Typography>
+      </div>
+      <div className="flex flex-row items-center  m-8">
+        <Typography variant="subtitle2">
+          {nfts.length + " NFTs: " + nfts.toString()}
+        </Typography>
       </div>
       <div className="flex flex-row items-center justify-center m-8">
         {approvedLP ? (

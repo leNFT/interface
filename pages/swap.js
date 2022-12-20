@@ -4,6 +4,9 @@ import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 import { Button, Menu } from "grommet";
 import { useState } from "react";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
+import { buyQuoteAmount } from "../helpers/buyQuoteAmount.js";
+import { buyQuote } from "../helpers/buyQuote.js";
+import { sellQuote } from "../helpers/sellQuote.js";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { CardActionArea } from "@mui/material";
@@ -116,7 +119,7 @@ export default function Swap() {
         <div className="flex flex-row w-8/12 justify-center items-center">
           <Divider style={{ width: "100%" }} />
         </div>
-        <div className="flex flex-row m-12">
+        <div className="flex flex-row m-8">
           <TextField
             size="big"
             placeholder="NFT Address"
@@ -124,8 +127,8 @@ export default function Swap() {
             onChange={handleNFTAddressChange}
           />
         </div>
-        <div className="flex flex-col justify-center mb-10">
-          <div className="flex flex-row justify-center m-2">
+        <div className="flex flex-col justify-center mb-8">
+          <div className="flex flex-row justify-center">
             <div className="flex flex-col w-4/12 justify-center m-2">
               <TextField
                 size="small"

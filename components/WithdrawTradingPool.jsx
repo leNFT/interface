@@ -65,6 +65,7 @@ export default function WithdrawTradingPool(props) {
     );
 
     // GEt LP
+    console.log("props.lp", props.lp);
     const lpResponse = await pool.getLP(props.lp);
     console.log("lpResponse", lpResponse);
     setTokenAmount(lpResponse.tokenAmount.toString());
@@ -85,8 +86,9 @@ export default function WithdrawTradingPool(props) {
 
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
-    if (props.pool && props.lp) {
-      console.log("Got trading pool address, setting the rest...", props.pool);
+    if (props.pool !== undefined && props.lp !== undefined) {
+      console.log("props.lp", props.lp);
+      console.log("pool", props.pool);
       getLPAllowance();
       getLP();
     }

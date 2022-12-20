@@ -67,9 +67,7 @@ export default function TradingPool() {
         id: BigNumber.from(addressNFTs[i].id.tokenId).toNumber(),
       });
 
-      const lp = await pool.getLP(
-        BigNumber.from(addressNFTs[i].id.tokenId).toNumber()
-      );
+      const lp = await pool.getLP(addressNFTs[i].id.tokenId);
       console.log("lp", lp);
       setTotalNFTs(lp.nftIds.length + totalNFTs);
       setTotalTokenAmount(

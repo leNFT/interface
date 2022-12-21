@@ -4,7 +4,7 @@ import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 import { Button, Menu } from "grommet";
 import { useState } from "react";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
-import { buyQuoteAmount } from "../helpers/buyQuoteAmount.js";
+import { buyAnyQuote } from "../helpers/buyAnyQuote.js";
 import { buyQuote } from "../helpers/buyQuote.js";
 import { sellQuote } from "../helpers/sellQuote.js";
 import Card from "@mui/material/Card";

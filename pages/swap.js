@@ -4,9 +4,9 @@ import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 import { Button, Menu } from "grommet";
 import { useState } from "react";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
-import { buyAnyQuote } from "../helpers/buyAnyQuote.js";
-import { buyQuote } from "../helpers/buyQuote.js";
-import { sellQuote } from "../helpers/sellQuote.js";
+import { getBuyExactQuote } from "../helpers/getBuyExactQuote.js";
+import { getBuyQuote } from "../helpers/getBuyQuote.js";
+import { getSellQuote } from "../helpers/getSellQuote.js";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { CardActionArea } from "@mui/material";
@@ -16,18 +16,22 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { Divider } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import { formatUnits, parseUnits } from "@ethersproject/units";
+import tradingPoolFactoryContract from "../contracts/TradingPoolFactory.json";
+
 import { Loading, Typography, Input } from "@web3uikit/core";
 import { ethers } from "ethers";
+import { useAsyncError } from "react-router-dom";
 
 export default function Swap() {
   const { chain } = useNetwork();
   const { address, isConnected } = useAccount();
-
-  const [nftAddress, setNFTAddress] = useState("");
+  const [nftAddress, setNFTAddress] = useState("0x");
+  const [poolAddress, setPoolAddress] = useState("");
   const [amount, setAmount] = useState(0);
   const [selectingNFTs, setSelectingNFTs] = useState(false);
   const [selectedNFTs, setSelectedNFTs] = useState([]);
   const [userNFTs, setUserNFTs] = useState([]);
+  const [priceQuote, setPriceQuote] = useState();
   const provider = useProvider();
   const addresses =
     chain && chain.id in contractAddresses
@@ -37,15 +41,40 @@ export default function Swap() {
   const UNSELECTED_COLOR = "#eae5ea";
   const [option, setOption] = useState("buy");
 
+  const factoryProvider = useContract({
+    contractInterface: tradingPoolFactoryContract.abi,
+    addressOrName: addresses.TradingPoolFactory,
+    signerOrProvider: provider,
+  });
+
   async function getUserNFTs(collection) {
     // Get user NFT assets
     const addressNFTs = await getAddressNFTs(address, collection, chain.id);
     setUserNFTs(addressNFTs);
   }
+  async function getTradingPoolAddress(collection) {
+    // Get trading pool for collection
+    const updatedPool = (
+      await factoryProvider.getTradingPool(collection, addresses.ETH.address)
+    ).toString();
+
+    setPoolAddress(updatedPool);
+  }
+
+  async function getPriceQuote(amount) {
+    if (option == "buy") {
+      const buyQuote = await getBuyQuote(chain.id, amount, poolAddress);
+      setPriceQuote(buyQuote);
+    } else if (option == "sell") {
+      const sellQuote = await getSellQuote(chain.id, amount, poolAddress);
+      setPriceQuote(sellQuote);
+    }
+  }
 
   const handleAmountInputChange = (event) => {
     console.log("handleAmountInputChange", event.target.value);
     try {
+      getPriceQuote(event.target.value);
       setAmount(event.target.value);
     } catch (error) {
       console.log(error);
@@ -58,6 +87,7 @@ export default function Swap() {
       ethers.utils.getAddress(event.target.value);
       setNFTAddress(event.target.value);
       getUserNFTs(event.target.value);
+      getTradingPoolAddress(event.target.value);
     } catch (error) {
       console.log(error);
     }
@@ -119,14 +149,30 @@ export default function Swap() {
         <div className="flex flex-row w-8/12 justify-center items-center">
           <Divider style={{ width: "100%" }} />
         </div>
-        <div className="flex flex-row m-8">
+        <div className="flex flex-col m-8">
           <TextField
             size="big"
             placeholder="NFT Address"
             variant="outlined"
             onChange={handleNFTAddressChange}
           />
+          {poolAddress && (
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "caption.fontSize",
+                fontWeight: "bold",
+                letterSpacing: 2,
+              }}
+            >
+              {"Pool: " +
+                poolAddress.slice(0, 5) +
+                ".." +
+                poolAddress.slice(-2)}
+            </Box>
+          )}
         </div>
+
         <div className="flex flex-col justify-center mb-8">
           <div className="flex flex-row justify-center">
             <div className="flex flex-col w-4/12 justify-center m-2">
@@ -221,9 +267,11 @@ export default function Swap() {
               ))}
             </div>
           )}
-          <div className="flex flex-row justify-center m-4 items-center">
-            <Typography>PRICE is</Typography>
-          </div>
+          {priceQuote && (
+            <div className="flex flex-row justify-center m-4 items-center">
+              <Typography>{"Price is " + priceQuote.price + " ETH"}</Typography>
+            </div>
+          )}
         </div>
         <div className="flex flex-row w-11/12 justify-center items-center">
           <Divider style={{ width: "100%" }} />

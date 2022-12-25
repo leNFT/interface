@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 
-export async function getBuyQuote(chainId, nfts) {
-  const serverAddress = "https://lenft-api-w27ha.ondigitalocean.app";
+export async function getBuyQuote(chainId, amount, pool) {
+  const serverAddress = "https://swap-router-dtf4l.ondigitalocean.app";
   const options = {
     method: "GET",
     headers: {
@@ -10,7 +10,13 @@ export async function getBuyQuote(chainId, nfts) {
   };
 
   const requestURL =
-    serverAddress + "/api/buyQuote?nfts=" + nfts + "&chainId=" + chainId;
+    serverAddress +
+    "/buy?amount=" +
+    amount +
+    "&chainId=" +
+    chainId +
+    "&pool=" +
+    pool;
   console.log(requestURL);
   const buyQuoteResponse = await fetch(requestURL, options).catch((err) =>
     console.error(err)

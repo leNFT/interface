@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 
-export async function getBuyAnyQuote(chainId, amount) {
+export async function getBuyExactQuote(chainId, amount) {
   const serverAddress = "https://lenft-api-w27ha.ondigitalocean.app";
   const options = {
     method: "GET",
@@ -10,7 +10,7 @@ export async function getBuyAnyQuote(chainId, amount) {
   };
 
   const requestURL =
-    serverAddress + "/api/buyAnyQuote?amount=" + amount + "&chainId=" + chainId;
+    serverAddress + "/api/buyExact?amount=" + amount + "&chainId=" + chainId;
   console.log(requestURL);
   const buyAnyQuoteResponse = await fetch(requestURL, options).catch((err) =>
     console.error(err)

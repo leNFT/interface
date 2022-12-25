@@ -1,10 +1,14 @@
-import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
-import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
-import { Button, Menu } from "grommet";
+import {
+  useAccount,
+  useNetwork,
+  useContract,
+  useProvider,
+  useSigner,
+} from "wagmi";
+import { Button } from "grommet";
 import { useState } from "react";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
-import { getBuyExactQuote } from "../helpers/getBuyExactQuote.js";
 import { getBuyQuote } from "../helpers/getBuyQuote.js";
 import { getSellQuote } from "../helpers/getSellQuote.js";
 import Card from "@mui/material/Card";
@@ -14,16 +18,15 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Divider } from "@mui/material";
-import Autocomplete from "@mui/material/Autocomplete";
-import { formatUnits, parseUnits } from "@ethersproject/units";
+import { formatUnits } from "@ethersproject/units";
 import tradingPoolFactoryContract from "../contracts/TradingPoolFactory.json";
-
-import { Loading, Typography, Input } from "@web3uikit/core";
+import tradingPoolContract from "../contracts/TradingPool.json";
+import { Typography, useNotification } from "@web3uikit/core";
 import { ethers } from "ethers";
-import { useAsyncError } from "react-router-dom";
 
 export default function Swap() {
   const { chain } = useNetwork();
+  const { data: signer } = useSigner();
   const { address, isConnected } = useAccount();
   const [nftAddress, setNFTAddress] = useState("0x");
   const [poolAddress, setPoolAddress] = useState("");
@@ -32,6 +35,9 @@ export default function Swap() {
   const [selectedNFTs, setSelectedNFTs] = useState([]);
   const [userNFTs, setUserNFTs] = useState([]);
   const [priceQuote, setPriceQuote] = useState();
+  const [swapLoading, setSwapLoading] = useState(false);
+  const dispatch = useNotification();
+
   const provider = useProvider();
   const addresses =
     chain && chain.id in contractAddresses
@@ -63,18 +69,36 @@ export default function Swap() {
 
   async function getPriceQuote(amount) {
     if (option == "buy") {
-      const buyQuote = await getBuyQuote(chain.id, amount, poolAddress);
-      setPriceQuote(buyQuote);
+      const newBuyQuote = await getBuyQuote(chain.id, amount, poolAddress);
+      setPriceQuote(newBuyQuote);
+      setAmount(newBuyQuote.lps.length);
+      console.log("newBuyQuote", newBuyQuote);
     } else if (option == "sell") {
-      const sellQuote = await getSellQuote(chain.id, amount, poolAddress);
-      setPriceQuote(sellQuote);
+      const newSellQuote = await getSellQuote(chain.id, amount, poolAddress);
+      setPriceQuote(newSellQuote);
+      setAmount(newSellQuote.lps.length);
+      console.log("newSellQuote", newSellQuote);
+      // Get an amount of random NFTs to sell
+      var newSelectedNFTs = [];
+      for (let index = 0; index < newSellQuote.lps.length; index++) {
+        if (index > userNFTs.length) {
+          break;
+        }
+        newSelectedNFTs.push(
+          BigNumber.from(userNFTs[index].id.tokenId).toNumber()
+        );
+      }
+      console.log("newSelectedNFTs", newSelectedNFTs);
+      setSelectedNFTs(newSelectedNFTs);
     }
   }
 
   const handleAmountInputChange = (event) => {
     console.log("handleAmountInputChange", event.target.value);
     try {
-      getPriceQuote(event.target.value);
+      if (event.target.value) {
+        getPriceQuote(event.target.value);
+      }
       setAmount(event.target.value);
     } catch (error) {
       console.log(error);
@@ -91,6 +115,24 @@ export default function Swap() {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleBuySuccess = async function () {
+    dispatch({
+      type: "success",
+      message: "You just bought.",
+      title: "Buy Successful!",
+      position: "topR",
+    });
+  };
+
+  const handleSellSuccess = async function () {
+    dispatch({
+      type: "success",
+      message: "Your just sold.",
+      title: "Sell Successful!",
+      position: "topR",
+    });
   };
 
   return (
@@ -269,7 +311,9 @@ export default function Swap() {
           )}
           {priceQuote && (
             <div className="flex flex-row justify-center m-4 items-center">
-              <Typography>{"Price is " + priceQuote.price + " ETH"}</Typography>
+              <Typography>
+                {"Price is " + formatUnits(priceQuote.price, 18) + " ETH"}
+              </Typography>
             </div>
           )}
         </div>
@@ -281,8 +325,37 @@ export default function Swap() {
             primary
             fill="horizontal"
             size="large"
+            loading={swapLoading}
             color="#063970"
-            onClick={() => {}}
+            onClick={async function () {
+              const tradingPool = new ethers.Contract(
+                poolAddress,
+                tradingPoolContract.abi,
+                signer
+              );
+              var tx;
+              if (option == "buy") {
+                try {
+                  tx = await tradingPool.buy(priceQuote.exampleNFTs);
+                  await tx.wait(1);
+                  handleBuySuccess();
+                } catch (error) {
+                  console.log(error);
+                } finally {
+                  setSwapLoading(false);
+                }
+              } else if (option == "sell") {
+                try {
+                  tx = await tradingPool.sell(selectedNFTs, priceQuote.lps);
+                  await tx.wait(1);
+                  handleSellSuccess();
+                } catch (error) {
+                  console.log(error);
+                } finally {
+                  setSwapLoading(false);
+                }
+              }
+            }}
             label={
               <div className="flex justify-center">
                 <Box
@@ -293,7 +366,7 @@ export default function Swap() {
                     letterSpacing: 2,
                   }}
                 >
-                  {option.toUpperCase() + " " + selectedNFTs.length + " NFTs"}
+                  {option.toUpperCase() + " " + amount + " NFTs"}
                 </Box>
               </div>
             }

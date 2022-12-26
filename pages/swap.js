@@ -151,7 +151,7 @@ export default function Swap() {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="flex flex-col items-center text-center justify-center md:w-6/12 border-4 m-2 rounded-3xl bg-black/5 shadow-lg">
+      <div className="flex flex-col items-center text-center justify-center w-10/12 md:w-6/12 border-4 m-2 rounded-3xl bg-black/5 shadow-lg">
         <div className="flex flex-row m-4">
           <div className="flex flex-col m-2">
             <Button

@@ -373,6 +373,8 @@ export default function Swap() {
                 }
               } else if (option == "sell") {
                 try {
+                  console.log("selectedNFTs", selectedNFTs);
+                  console.log("priceQuote.lps", priceQuote.lps);
                   tx = await tradingPool.sell(selectedNFTs, priceQuote.lps);
                   await tx.wait(1);
                   handleSellSuccess();

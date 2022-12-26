@@ -67,6 +67,20 @@ export default function Swap() {
     setPoolAddress(updatedPool);
   }
 
+  async function getSelectedPriceQuote(selected) {
+    const newSellQuote = await getSellQuote(
+      chain.id,
+      selected.length,
+      poolAddress
+    );
+    setPriceQuote(newSellQuote);
+    setAmount(newSellQuote.lps.length);
+    console.log("amoutn", newSellQuote.lps.length);
+    console.log("new selected:", selected.slice(0, newSellQuote.lps.length));
+    setSelectedNFTs(selected.slice(0, newSellQuote.lps.length));
+    console.log("newSellQuote", newSellQuote);
+  }
+
   async function getPriceQuote(amount) {
     if (option == "buy") {
       const newBuyQuote = await getBuyQuote(chain.id, amount, poolAddress);
@@ -146,6 +160,7 @@ export default function Swap() {
               color={option == "buy" ? SELECTED_COLOR : UNSELECTED_COLOR}
               onClick={() => {
                 setOption("buy");
+                setSelectedNFTs(false);
               }}
               label={
                 <div className="flex">
@@ -191,7 +206,7 @@ export default function Swap() {
         <div className="flex flex-row w-8/12 justify-center items-center">
           <Divider style={{ width: "100%" }} />
         </div>
-        <div className="flex flex-col m-8">
+        <div className="flex flex-col mt-8 mb-4">
           <TextField
             size="big"
             placeholder="NFT Address"
@@ -214,48 +229,52 @@ export default function Swap() {
             </Box>
           )}
         </div>
-
-        <div className="flex flex-col justify-center mb-8">
+        <div className="flex flex-col justify-center m-4">
           <div className="flex flex-row justify-center">
-            <div className="flex flex-col w-4/12 justify-center m-2">
+            <div className="flex flex-col w-[150px] justify-center m-2">
               <TextField
                 size="small"
                 placeholder="Amount"
                 variant="outlined"
                 value={amount}
+                label={"Amount"}
                 onChange={handleAmountInputChange}
               />
             </div>
-            <div className="flex flex-col text-center justify-center m-2">
-              OR
-            </div>
-            <div className="flex flex-col text-center justify-center m-2">
-              <Button
-                primary
-                size="medium"
-                color={SELECTED_COLOR}
-                onClick={() => {
-                  // Reset selected NFTs
-                  setSelectedNFTs([]);
-                  setSelectingNFTs(!selectingNFTs);
-                }}
-                disabled={!nftAddress}
-                label={
-                  <div className="flex">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "subtitle2.fontSize",
-                        fontWeight: "bold",
-                        letterSpacing: 2,
-                      }}
-                    >
-                      Select NFTs
-                    </Box>
-                  </div>
-                }
-              />
-            </div>
+            {option == "sell" && (
+              <div className="flex flex-row">
+                <div className="flex flex-col text-center justify-center m-2">
+                  OR
+                </div>
+                <div className="flex flex-col text-center justify-center m-2">
+                  <Button
+                    primary
+                    size="medium"
+                    color={SELECTED_COLOR}
+                    onClick={() => {
+                      // Reset selected NFTs
+                      setSelectedNFTs([]);
+                      setSelectingNFTs(!selectingNFTs);
+                    }}
+                    disabled={!nftAddress}
+                    label={
+                      <div className="flex">
+                        <Box
+                          sx={{
+                            fontFamily: "Monospace",
+                            fontSize: "subtitle2.fontSize",
+                            fontWeight: "bold",
+                            letterSpacing: 2,
+                          }}
+                        >
+                          Select NFTs
+                        </Box>
+                      </div>
+                    }
+                  />
+                </div>
+              </div>
+            )}
           </div>
           {selectingNFTs && (
             <div className="flex flex-row m-4 grid md:grid-cols-3 lg:grid-cols-4">
@@ -290,6 +309,7 @@ export default function Swap() {
                         } else {
                           newSelectedNFTs.splice(index, 1);
                         }
+                        getSelectedPriceQuote(newSelectedNFTs);
                         setSelectedNFTs(newSelectedNFTs);
                       }}
                     >
@@ -310,10 +330,16 @@ export default function Swap() {
             </div>
           )}
           {priceQuote && (
-            <div className="flex flex-row justify-center m-4 items-center">
-              <Typography>
-                {"Price is " + formatUnits(priceQuote.price, 18) + " ETH"}
-              </Typography>
+            <div className="flex flex-row justify-center mb-4 mt-8 items-center">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "h6.fontSize",
+                  fontWeight: "bold",
+                }}
+              >
+                {"Price: " + formatUnits(priceQuote.price, 18) + " ETH"}
+              </Box>
             </div>
           )}
         </div>
@@ -325,9 +351,10 @@ export default function Swap() {
             primary
             fill="horizontal"
             size="large"
-            loading={swapLoading}
+            disabled={swapLoading}
             color="#063970"
             onClick={async function () {
+              setSwapLoading(true);
               const tradingPool = new ethers.Contract(
                 poolAddress,
                 tradingPoolContract.abi,

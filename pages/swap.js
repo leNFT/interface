@@ -259,7 +259,7 @@ export default function Swap() {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="flex flex-col items-center text-center justify-center w-10/12 md:w-6/12 border-4 m-2 rounded-3xl bg-black/5 shadow-lg">
+      <div className="flex flex-col items-center text-center justify-center w-10/12 lg:w-6/12 border-4 m-2 rounded-3xl bg-black/5 shadow-lg">
         <div className="flex flex-row m-8">
           <div className="flex flex-col m-2">
             <Button
@@ -331,7 +331,7 @@ export default function Swap() {
             )}
           </Divider>
         </div>
-        <div className="flex flex-col mt-8 mb-4">
+        <div className="flex flex-col mt-8 mx-4 mb-4">
           <Input
             size="xl"
             placeholder="NFT Address"
@@ -360,7 +360,7 @@ export default function Swap() {
           )}
         </div>
         <div className="flex flex-col justify-center m-4">
-          <div className="flex flex-row justify-center">
+          <div className="flex flex-col md:flex-row justify-center">
             <div className="flex flex-col w-[200px] justify-center m-2">
               <Input
                 labelLeft={option.charAt(0).toUpperCase() + option.slice(1)}
@@ -476,7 +476,7 @@ export default function Swap() {
         <div className="flex flex-row w-11/12 justify-center items-center">
           <Divider style={{ width: "100%" }} />
         </div>
-        <div className="flex flex-row m-6 w-4/12">
+        <div className="flex flex-row m-6 w-8/12 md:w-6/12">
           {(option == "buy" && !approvedToken) ||
           (option == "sell" && !approvedNFT) ? (
             <Button

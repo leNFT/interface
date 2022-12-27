@@ -32,7 +32,6 @@ export default function TradingPools() {
     const TradingPools = await getTradingPools(chain.id);
     console.log("TradingPools", TradingPools);
     var newTableData = [];
-    const underlyingSymbol = "WETH";
 
     for (const [key, value] of Object.entries(TradingPools)) {
       newTableData.push([
@@ -44,7 +43,7 @@ export default function TradingPools() {
           className="m-2"
           key={"nft" + key}
         >
-          {value.nft}
+          {value.nft.name}
         </Box>,
         <Box
           sx={{
@@ -54,7 +53,7 @@ export default function TradingPools() {
           className="m-2"
           key={"token" + key}
         >
-          {value.token}
+          {value.token.name}
         </Box>,
         <div key={"details" + key}>
           <Button

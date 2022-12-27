@@ -17,7 +17,6 @@ import CardContent from "@mui/material/CardContent";
 import { Input } from "@nextui-org/react";
 import { CardActionArea } from "@mui/material";
 import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Divider } from "@mui/material";
 import { formatUnits } from "@ethersproject/units";
@@ -331,7 +330,7 @@ export default function Swap() {
             )}
           </Divider>
         </div>
-        <div className="flex flex-col mt-12 m-4">
+        <div className="flex flex-col mt-10 m-4">
           <Input
             size="xl"
             placeholder="NFT Address"
@@ -359,7 +358,7 @@ export default function Swap() {
             </div>
           )}
         </div>
-        <div className="flex flex-col justify-center mb-12 m-4">
+        <div className="flex flex-col justify-center mb-10 m-4">
           <div className="flex flex-col md:flex-row justify-center items-center">
             <div className="flex flex-col w-[200px] justify-center m-2">
               <Input

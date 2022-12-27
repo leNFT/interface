@@ -21,7 +21,7 @@ import { Divider } from "@mui/material";
 import { formatUnits } from "@ethersproject/units";
 import tradingPoolFactoryContract from "../contracts/TradingPoolFactory.json";
 import tradingPoolContract from "../contracts/TradingPool.json";
-import { Typography, useNotification } from "@web3uikit/core";
+import { useNotification } from "@web3uikit/core";
 import { ethers } from "ethers";
 
 export default function Swap() {
@@ -64,10 +64,12 @@ export default function Swap() {
       await factoryProvider.getTradingPool(collection, addresses.ETH.address)
     ).toString();
 
+    console.log("updatedpool", updatedPool);
+
     setPoolAddress(updatedPool);
   }
 
-  async function getSelectedPriceQuote(selected) {
+  async function getSellSelectedPriceQuote(selected) {
     const newSellQuote = await getSellQuote(
       chain.id,
       selected.length,
@@ -81,13 +83,13 @@ export default function Swap() {
     console.log("newSellQuote", newSellQuote);
   }
 
-  async function getPriceQuote(amount) {
-    if (option == "buy") {
+  async function getPriceQuote(amount, mode) {
+    if (mode == "buy") {
       const newBuyQuote = await getBuyQuote(chain.id, amount, poolAddress);
       setPriceQuote(newBuyQuote);
       setAmount(newBuyQuote.lps.length);
       console.log("newBuyQuote", newBuyQuote);
-    } else if (option == "sell") {
+    } else if (mode == "sell") {
       const newSellQuote = await getSellQuote(chain.id, amount, poolAddress);
       setPriceQuote(newSellQuote);
       setAmount(newSellQuote.lps.length);
@@ -111,7 +113,7 @@ export default function Swap() {
     console.log("handleAmountInputChange", event.target.value);
     try {
       if (event.target.value) {
-        getPriceQuote(event.target.value);
+        getPriceQuote(event.target.value, option);
       }
       setAmount(event.target.value);
     } catch (error) {
@@ -121,12 +123,13 @@ export default function Swap() {
 
   const handleNFTAddressChange = (event) => {
     console.log("handleNFTAddressChange", event.target.value);
+    setNFTAddress(event.target.value);
     try {
       ethers.utils.getAddress(event.target.value);
-      setNFTAddress(event.target.value);
       getUserNFTs(event.target.value);
       getTradingPoolAddress(event.target.value);
     } catch (error) {
+      setPoolAddress("");
       console.log(error);
     }
   };
@@ -161,6 +164,7 @@ export default function Swap() {
               onClick={() => {
                 setOption("buy");
                 setSelectedNFTs(false);
+                getPriceQuote(amount, "buy");
               }}
               label={
                 <div className="flex">
@@ -185,6 +189,7 @@ export default function Swap() {
               color={option == "sell" ? SELECTED_COLOR : UNSELECTED_COLOR}
               onClick={() => {
                 setOption("sell");
+                getPriceQuote(amount, "sell");
               }}
               label={
                 <div className="flex">
@@ -213,7 +218,7 @@ export default function Swap() {
             variant="outlined"
             onChange={handleNFTAddressChange}
           />
-          {poolAddress && (
+          {nftAddress && (
             <Box
               sx={{
                 fontFamily: "Monospace",
@@ -222,10 +227,12 @@ export default function Swap() {
                 letterSpacing: 2,
               }}
             >
-              {"Pool: " +
-                poolAddress.slice(0, 5) +
-                ".." +
-                poolAddress.slice(-2)}
+              {poolAddress
+                ? "Pool: " +
+                  poolAddress.slice(0, 5) +
+                  ".." +
+                  poolAddress.slice(-2)
+                : "No pool found"}
             </Box>
           )}
         </div>
@@ -309,7 +316,7 @@ export default function Swap() {
                         } else {
                           newSelectedNFTs.splice(index, 1);
                         }
-                        getSelectedPriceQuote(newSelectedNFTs);
+                        getSellSelectedPriceQuote(newSelectedNFTs);
                         setSelectedNFTs(newSelectedNFTs);
                       }}
                     >

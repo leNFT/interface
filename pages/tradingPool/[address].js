@@ -62,6 +62,8 @@ export default function TradingPool() {
       chain.id
     );
     const newLpPositions = [];
+    var newTotalNFTs = 0;
+    var newTotalTokenAmount = "0";
     for (let i = 0; i < addressNFTs.length; i++) {
       newLpPositions.push({
         id: BigNumber.from(addressNFTs[i].id.tokenId).toNumber(),
@@ -69,11 +71,13 @@ export default function TradingPool() {
 
       const lp = await pool.getLP(addressNFTs[i].id.tokenId);
       console.log("lp", lp);
-      setTotalNFTs(lp.nftIds.length + totalNFTs);
-      setTotalTokenAmount(
-        BigNumber.from(lp.tokenAmount).add(totalTokenAmount).toString()
-      );
+      newTotalNFTs += lp.nftIds.length;
+      newTotalTokenAmount = BigNumber.from(lp.tokenAmount)
+        .add(newTotalTokenAmount)
+        .toString();
     }
+    setTotalNFTs(newTotalNFTs);
+    setTotalTokenAmount(newTotalTokenAmount);
 
     setLpPositions(newLpPositions);
   }

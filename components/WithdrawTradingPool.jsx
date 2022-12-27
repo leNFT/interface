@@ -1,37 +1,25 @@
 import {
   useAccount,
-  useBalance,
   useNetwork,
   useContract,
   useProvider,
   useSigner,
 } from "wagmi";
-import Box from "@mui/material/Box";
-import { BigNumber } from "@ethersproject/bignumber";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import { CardActionArea } from "@mui/material";
-import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
-import { formatUnits, parseUnits } from "@ethersproject/units";
-import {
-  useNotification,
-  Button,
-  Input,
-  Typography,
-  Select,
-} from "@web3uikit/core";
+import { formatUnits } from "@ethersproject/units";
+import { useNotification, Button, Typography } from "@web3uikit/core";
+
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import tradingPoolContract from "../contracts/TradingPool.json";
 import wethGatewayContract from "../contracts/WETHGateway.json";
-import erc20 from "../contracts/erc20.json";
 import erc721 from "../contracts/erc721.json";
 
 export default function WithdrawTradingPool(props) {
   const [tokenAmount, setTokenAmount] = useState("0");
   const [nfts, setNFTs] = useState([]);
+  const [price, setPrice] = useState(0);
   const [approvedLP, setApprovedLP] = useState(false);
   const [approvalLPLoading, setApprovalLPLoading] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
@@ -68,6 +56,7 @@ export default function WithdrawTradingPool(props) {
     console.log("props.lp", props.lp);
     const lpResponse = await pool.getLP(props.lp);
     console.log("lpResponse", lpResponse);
+    setPrice(formatUnits(lpResponse.price.toString(), 18));
     setTokenAmount(lpResponse.tokenAmount.toString());
     setNFTs(lpResponse.nftIds);
   }
@@ -119,6 +108,11 @@ export default function WithdrawTradingPool(props) {
     <div className={styles.container}>
       <div className="flex flex-row items-center justify-center m-8">
         <Typography variant="subtitle1">{"LP #" + props.lp}</Typography>
+      </div>
+      <div className="flex flex-row m-8">
+        <Typography variant="subtitle2">
+          {"LP Price: " + price + " ETH"}
+        </Typography>
       </div>
       <div className="flex flex-row items-center m-8">
         <Typography variant="subtitle2">

@@ -6,6 +6,7 @@ import {
   useProvider,
   useSigner,
 } from "wagmi";
+import Chip from "@mui/material/Chip";
 import { Button } from "grommet";
 import { useState } from "react";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
@@ -209,6 +210,7 @@ export default function Swap() {
       getTradingPoolAddress(event.target.value);
     } catch (error) {
       setPoolAddress("");
+      setNFTName("");
       console.log(error);
     }
   };
@@ -254,7 +256,7 @@ export default function Swap() {
   return (
     <div className="flex flex-col items-center">
       <div className="flex flex-col items-center text-center justify-center w-10/12 md:w-6/12 border-4 m-2 rounded-3xl bg-black/5 shadow-lg">
-        <div className="flex flex-row m-4">
+        <div className="flex flex-row m-6">
           <div className="flex flex-col m-2">
             <Button
               primary
@@ -307,10 +309,25 @@ export default function Swap() {
             />
           </div>
         </div>
-        <div className="flex flex-row w-8/12 justify-center items-center">
-          <Divider style={{ width: "100%" }} />
+        <div className="flex flex-row w-9/12 justify-center items-center">
+          <Divider style={{ width: "100%" }}>
+            {nftName && (
+              <Chip
+                label={nftName}
+                variant="outlined"
+                component="a"
+                clickable
+                target="_blank"
+                href={
+                  chain.id == 1
+                    ? "https://etherscan.io/address/" + nftAddress
+                    : "https://goerli.etherscan.io/address/" + nftAddress
+                }
+              />
+            )}
+          </Divider>
         </div>
-        <div className="flex flex-col mt-8 mb-4">
+        <div className="flex flex-col mt-10 mb-4">
           <TextField
             size="big"
             placeholder="NFT Address"
@@ -335,7 +352,7 @@ export default function Swap() {
             </Box>
           )}
         </div>
-        <div className="flex flex-col justify-center m-4">
+        <div className="flex flex-col justify-center mt-4 mb-8">
           <div className="flex flex-row justify-center">
             <div className="flex flex-col w-[150px] justify-center m-2">
               <TextField

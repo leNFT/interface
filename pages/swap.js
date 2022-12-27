@@ -428,7 +428,7 @@ export default function Swap() {
                   fontWeight: "bold",
                 }}
               >
-                {"Price: " + formatUnits(priceQuote.price, 18) + " ETH"}
+                {"Price: " + formatUnits(priceQuote.price, 18) + " WETH"}
               </Box>
             </div>
           )}

@@ -193,8 +193,10 @@ export default function Swap() {
   const handleAmountInputChange = (event) => {
     console.log("handleAmountInputChange", event.target.value);
     try {
-      if (event.target.value) {
+      if (event.target.value && nftAddress) {
         getPriceQuote(event.target.value, option);
+      } else {
+        setPriceQuote();
       }
       setAmount(event.target.value);
     } catch (error) {
@@ -210,6 +212,7 @@ export default function Swap() {
       getUserNFTs(event.target.value);
       getTradingPoolAddress(event.target.value);
     } catch (error) {
+      setPriceQuote();
       setPoolAddress("");
       setNFTName("");
       console.log(error);
@@ -337,21 +340,23 @@ export default function Swap() {
             onChange={handleNFTAddressChange}
           />
           {nftAddress && (
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "caption.fontSize",
-                fontWeight: "bold",
-                letterSpacing: 2,
-              }}
-            >
-              {poolAddress
-                ? "Pool: " +
-                  poolAddress.slice(0, 5) +
-                  ".." +
-                  poolAddress.slice(-2)
-                : "No pool found"}
-            </Box>
+            <div className="flex flex-row mt-1 justify-center">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "caption.fontSize",
+                  fontWeight: "bold",
+                  letterSpacing: 2,
+                }}
+              >
+                {poolAddress
+                  ? "Pool: " +
+                    poolAddress.slice(0, 5) +
+                    ".." +
+                    poolAddress.slice(-2)
+                  : "No pool found"}
+              </Box>
+            </div>
           )}
         </div>
         <div className="flex flex-col justify-center m-4">
@@ -361,7 +366,7 @@ export default function Swap() {
                 labelLeft={option.charAt(0).toUpperCase() + option.slice(1)}
                 size="xl"
                 labelRight={"NFTs"}
-                placeholder="Amount"
+                placeholder="0"
                 value={amount}
                 onChange={handleAmountInputChange}
               />

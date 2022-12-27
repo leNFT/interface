@@ -443,7 +443,7 @@ export default function Swap() {
               primary
               fill="horizontal"
               size="large"
-              disabled={approvalLoading}
+              disabled={approvalLoading || !nftAddress}
               color="#063970"
               onClick={async function () {
                 setApprovalLoading(true);

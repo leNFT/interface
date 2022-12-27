@@ -41,6 +41,7 @@ export default function Swap() {
   const [priceQuote, setPriceQuote] = useState();
   const [swapLoading, setSwapLoading] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
+  const [nftName, setNFTName] = useState("");
 
   const dispatch = useNotification();
 
@@ -72,6 +73,7 @@ export default function Swap() {
 
     console.log("updatedpool", updatedPool);
     getNFTAllowance(collection, updatedPool);
+    getNFTName(collection);
     getTokenAllowance(updatedPool);
     setPoolAddress(updatedPool);
   }
@@ -169,6 +171,20 @@ export default function Swap() {
       setApprovedNFT(true);
     } else {
       setApprovedNFT(false);
+    }
+  }
+
+  async function getNFTName(collection) {
+    console.log("nftAddress", nftAddress);
+    const nftContract = new ethers.Contract(collection, erc721, provider);
+    const name = await nftContract.name();
+
+    console.log("Got nft name:", name);
+
+    if (name) {
+      setNFTName(name);
+    } else {
+      setNFTName("");
     }
   }
 
@@ -495,7 +511,9 @@ export default function Swap() {
                       letterSpacing: 2,
                     }}
                   >
-                    {option == "buy" ? "Approve Token" : "Approve NFT"}
+                    {option == "buy"
+                      ? "Approve Token"
+                      : "Approve " + (nftName ? nftName : "NFT")}
                   </Box>
                 </div>
               }
@@ -551,7 +569,11 @@ export default function Swap() {
                       letterSpacing: 2,
                     }}
                   >
-                    {option.toUpperCase() + " " + amount + " NFTs"}
+                    {option.toUpperCase() +
+                      " " +
+                      amount +
+                      " " +
+                      (nftName ? nftName : "NFTs")}
                   </Box>
                 </div>
               }

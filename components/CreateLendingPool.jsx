@@ -15,7 +15,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { getCollectionInfo } from "../helpers/getCollectionInfo.js";
+import { getCollectionFloorPrice } from "../helpers/getCollectionFloorPrice.js";
 
 export default function CreateLendingPool(props) {
   const { isConnected } = useAccount();
@@ -81,8 +81,11 @@ export default function CreateLendingPool(props) {
   }
 
   async function updateCollectionInfo(collection) {
-    const collectionInfo = await getCollectionInfo(collection, chain.id);
-    setCollectionFloorPrice(collectionInfo.floorPrice);
+    const newCollectionFloorPrice = await getCollectionFloorPrice(
+      collection,
+      chain.id
+    );
+    setCollectionFloorPrice(newCollectionFloorPrice);
   }
 
   useEffect(() => {

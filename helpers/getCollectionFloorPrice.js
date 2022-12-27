@@ -15,10 +15,10 @@ export async function getCollectionFloorPrice(address, chainId) {
     "&chainId=" +
     chainId;
   console.log(requestURL);
-  const collectionResponse = await fetch(requestURL, options).catch((err) =>
+  const floorPriceResponse = await fetch(requestURL, options).catch((err) =>
     console.error(err)
   );
-  const collection = await collectionResponse.json();
+  const floorPrice = await floorPriceResponse.json();
 
-  return collection;
+  return floorPrice;
 }

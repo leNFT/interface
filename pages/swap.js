@@ -14,6 +14,7 @@ import { getBuyQuote } from "../helpers/getBuyQuote.js";
 import { getSellQuote } from "../helpers/getSellQuote.js";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import { Input } from "@nextui-org/react";
 import { CardActionArea } from "@mui/material";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -256,7 +257,7 @@ export default function Swap() {
   return (
     <div className="flex flex-col items-center">
       <div className="flex flex-col items-center text-center justify-center w-10/12 md:w-6/12 border-4 m-2 rounded-3xl bg-black/5 shadow-lg">
-        <div className="flex flex-row m-6">
+        <div className="flex flex-row m-8">
           <div className="flex flex-col m-2">
             <Button
               primary
@@ -327,11 +328,12 @@ export default function Swap() {
             )}
           </Divider>
         </div>
-        <div className="flex flex-col mt-10 mb-4">
-          <TextField
-            size="big"
+        <div className="flex flex-col mt-8 mb-4">
+          <Input
+            size="xl"
             placeholder="NFT Address"
-            variant="outlined"
+            bordered
+            color="default"
             onChange={handleNFTAddressChange}
           />
           {nftAddress && (
@@ -352,15 +354,15 @@ export default function Swap() {
             </Box>
           )}
         </div>
-        <div className="flex flex-col justify-center mt-4 mb-8">
+        <div className="flex flex-col justify-center m-4">
           <div className="flex flex-row justify-center">
-            <div className="flex flex-col w-[150px] justify-center m-2">
-              <TextField
-                size="small"
+            <div className="flex flex-col w-[200px] justify-center m-2">
+              <Input
+                labelLeft={option.charAt(0).toUpperCase() + option.slice(1)}
+                size="xl"
+                labelRight={"NFTs"}
                 placeholder="Amount"
-                variant="outlined"
                 value={amount}
-                label={"Amount"}
                 onChange={handleAmountInputChange}
               />
             </div>

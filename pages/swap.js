@@ -331,7 +331,7 @@ export default function Swap() {
             )}
           </Divider>
         </div>
-        <div className="flex flex-col mt-8 mx-4 mb-4">
+        <div className="flex flex-col mt-12 m-4">
           <Input
             size="xl"
             placeholder="NFT Address"
@@ -359,16 +359,18 @@ export default function Swap() {
             </div>
           )}
         </div>
-        <div className="flex flex-col justify-center m-4">
-          <div className="flex flex-col md:flex-row justify-center">
+        <div className="flex flex-col justify-center mb-12 m-4">
+          <div className="flex flex-col md:flex-row justify-center items-center">
             <div className="flex flex-col w-[200px] justify-center m-2">
               <Input
                 labelLeft={option.charAt(0).toUpperCase() + option.slice(1)}
+                bordered
                 size="xl"
                 labelRight={"NFTs"}
                 placeholder="0"
                 value={amount}
                 onChange={handleAmountInputChange}
+                css={{ textAlignLast: "center" }}
               />
             </div>
             {option == "sell" && (
@@ -460,7 +462,7 @@ export default function Swap() {
             </div>
           )}
           {priceQuote && (
-            <div className="flex flex-row justify-center mb-4 mt-8 items-center">
+            <div className="flex flex-row justify-center mt-8 items-center text-center">
               <Box
                 sx={{
                   fontFamily: "Monospace",

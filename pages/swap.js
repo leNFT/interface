@@ -400,6 +400,7 @@ export default function Swap() {
                 } catch (error) {
                   console.log(error);
                 } finally {
+                  getPriceQuote(amount, option);
                   setSwapLoading(false);
                 }
               } else if (option == "sell") {
@@ -412,6 +413,7 @@ export default function Swap() {
                 } catch (error) {
                   console.log(error);
                 } finally {
+                  getPriceQuote(amount, option);
                   setSwapLoading(false);
                 }
               }

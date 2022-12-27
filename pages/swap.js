@@ -23,11 +23,15 @@ import tradingPoolFactoryContract from "../contracts/TradingPoolFactory.json";
 import tradingPoolContract from "../contracts/TradingPool.json";
 import { useNotification } from "@web3uikit/core";
 import { ethers } from "ethers";
+import erc20 from "../contracts/erc20.json";
+import erc721 from "../contracts/erc721.json";
 
 export default function Swap() {
   const { chain } = useNetwork();
   const { data: signer } = useSigner();
   const { address, isConnected } = useAccount();
+  const [approvedToken, setApprovedToken] = useState(false);
+  const [approvedNFT, setApprovedNFT] = useState(false);
   const [nftAddress, setNFTAddress] = useState("");
   const [poolAddress, setPoolAddress] = useState("");
   const [amount, setAmount] = useState(0);
@@ -36,6 +40,8 @@ export default function Swap() {
   const [userNFTs, setUserNFTs] = useState([]);
   const [priceQuote, setPriceQuote] = useState();
   const [swapLoading, setSwapLoading] = useState(false);
+  const [approvalLoading, setApprovalLoading] = useState(false);
+
   const dispatch = useNotification();
 
   const provider = useProvider();
@@ -65,7 +71,8 @@ export default function Swap() {
     ).toString();
 
     console.log("updatedpool", updatedPool);
-
+    getNFTAllowance(collection, updatedPool);
+    getTokenAllowance(updatedPool);
     setPoolAddress(updatedPool);
   }
 
@@ -133,6 +140,38 @@ export default function Swap() {
     }
   }
 
+  async function getTokenAllowance(pool) {
+    const tokenContract = new ethers.Contract(
+      addresses.ETH.address,
+      erc20,
+      provider
+    );
+
+    const allowance = await tokenContract.allowance(address, pool);
+
+    console.log("Got allowance:", allowance);
+
+    if (!allowance.eq(BigNumber.from(0))) {
+      setApprovedToken(true);
+    } else {
+      setApprovedToken(false);
+    }
+  }
+
+  async function getNFTAllowance(collection, pool) {
+    console.log("nftAddress", nftAddress);
+    const nftContract = new ethers.Contract(collection, erc721, provider);
+    const allowed = await nftContract.isApprovedForAll(address, pool);
+
+    console.log("Got nft allowed:", allowed);
+
+    if (allowed) {
+      setApprovedNFT(true);
+    } else {
+      setApprovedNFT(false);
+    }
+  }
+
   const handleAmountInputChange = (event) => {
     console.log("handleAmountInputChange", event.target.value);
     try {
@@ -156,6 +195,26 @@ export default function Swap() {
       setPoolAddress("");
       console.log(error);
     }
+  };
+
+  const handleTokenApprovalSuccess = async function () {
+    setApprovedToken(true);
+    dispatch({
+      type: "success",
+      message: "You just approved your tokens.",
+      title: "Approval Successful!",
+      position: "topR",
+    });
+  };
+
+  const handleNFTApprovalSuccess = async function () {
+    setApprovedNFT(true);
+    dispatch({
+      type: "success",
+      message: "You just approved your NFTs.",
+      title: "Approval Successful!",
+      position: "topR",
+    });
   };
 
   const handleBuySuccess = async function () {
@@ -378,61 +437,126 @@ export default function Swap() {
           <Divider style={{ width: "100%" }} />
         </div>
         <div className="flex flex-row m-6 w-4/12">
-          <Button
-            primary
-            fill="horizontal"
-            size="large"
-            disabled={swapLoading}
-            color="#063970"
-            onClick={async function () {
-              setSwapLoading(true);
-              const tradingPool = new ethers.Contract(
-                poolAddress,
-                tradingPoolContract.abi,
-                signer
-              );
-              var tx;
-              if (option == "buy") {
-                try {
-                  tx = await tradingPool.buy(priceQuote.exampleNFTs);
-                  await tx.wait(1);
-                  handleBuySuccess();
-                } catch (error) {
-                  console.log(error);
-                } finally {
-                  getPriceQuote(amount, option);
-                  setSwapLoading(false);
+          {(option == "buy" && !approvedToken) ||
+          (option == "sell" && !approvedNFT) ? (
+            <Button
+              primary
+              fill="horizontal"
+              size="large"
+              disabled={approvalLoading}
+              color="#063970"
+              onClick={async function () {
+                setApprovalLoading(true);
+                if (option == "buy") {
+                  const tokenContract = new ethers.Contract(
+                    addresses.ETH.address,
+                    erc20,
+                    signer
+                  );
+                  try {
+                    const tx = await tokenContract.approve(
+                      poolAddress,
+                      "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+                    );
+                    await tx.wait(1);
+                    handleTokenApprovalSuccess();
+                  } catch (error) {
+                    console.log(error);
+                  } finally {
+                    setApprovalLoading(false);
+                  }
+                } else if (option == "sell") {
+                  const nftContract = new ethers.Contract(
+                    nftAddress,
+                    erc721,
+                    signer
+                  );
+                  try {
+                    const tx = await nftContract.setApprovalForAll(
+                      poolAddress,
+                      true
+                    );
+                    await tx.wait(1);
+                    handleNFTApprovalSuccess();
+                  } catch (error) {
+                    console.log(error);
+                  } finally {
+                    setApprovalLoading(false);
+                  }
                 }
-              } else if (option == "sell") {
-                try {
-                  console.log("selectedNFTs", selectedNFTs);
-                  console.log("priceQuote.lps", priceQuote.lps);
-                  tx = await tradingPool.sell(selectedNFTs, priceQuote.lps);
-                  await tx.wait(1);
-                  handleSellSuccess();
-                } catch (error) {
-                  console.log(error);
-                } finally {
-                  getPriceQuote(amount, option);
-                  setSwapLoading(false);
-                }
+              }}
+              label={
+                <div className="flex justify-center">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                      letterSpacing: 2,
+                    }}
+                  >
+                    {option == "buy" ? "Approve Token" : "Approve NFT"}
+                  </Box>
+                </div>
               }
-            }}
-            label={
-              <div className="flex justify-center">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle2.fontSize",
-                    fontWeight: "bold",
-                    letterSpacing: 2,
-                  }}
-                >
-                  {option.toUpperCase() + " " + amount + " NFTs"}
-                </Box>
-              </div>
-            }
-          />
+            />
+          ) : (
+            <Button
+              primary
+              fill="horizontal"
+              size="large"
+              disabled={swapLoading}
+              color="#063970"
+              onClick={async function () {
+                setSwapLoading(true);
+                const tradingPool = new ethers.Contract(
+                  poolAddress,
+                  tradingPoolContract.abi,
+                  signer
+                );
+                var tx;
+                if (option == "buy") {
+                  try {
+                    tx = await tradingPool.buy(priceQuote.exampleNFTs);
+                    await tx.wait(1);
+                    handleBuySuccess();
+                  } catch (error) {
+                    console.log(error);
+                  } finally {
+                    getPriceQuote(amount, option);
+                    setSwapLoading(false);
+                  }
+                } else if (option == "sell") {
+                  try {
+                    console.log("selectedNFTs", selectedNFTs);
+                    console.log("priceQuote.lps", priceQuote.lps);
+                    tx = await tradingPool.sell(selectedNFTs, priceQuote.lps);
+                    await tx.wait(1);
+                    handleSellSuccess();
+                  } catch (error) {
+                    console.log(error);
+                  } finally {
+                    getPriceQuote(amount, option);
+                    setSwapLoading(false);
+                  }
+                }
+              }}
+              label={
+                <div className="flex justify-center">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                      letterSpacing: 2,
+                    }}
+                  >
+                    {option.toUpperCase() + " " + amount + " NFTs"}
+                  </Box>
+                </div>
+              }
+            />
+          )}
         </div>
       </div>
     </div>

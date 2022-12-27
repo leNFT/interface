@@ -28,7 +28,7 @@ export default function Swap() {
   const { chain } = useNetwork();
   const { data: signer } = useSigner();
   const { address, isConnected } = useAccount();
-  const [nftAddress, setNFTAddress] = useState("0x");
+  const [nftAddress, setNFTAddress] = useState("");
   const [poolAddress, setPoolAddress] = useState("");
   const [amount, setAmount] = useState(0);
   const [selectingNFTs, setSelectingNFTs] = useState(false);
@@ -76,6 +76,14 @@ export default function Swap() {
       poolAddress
     );
     setPriceQuote(newSellQuote);
+    if (newSellQuote.lps.length < selected.length) {
+      dispatch({
+        type: "warning",
+        message: "Can only sell " + newSellQuote.lps.length + " NFTs",
+        title: "Maximum is " + newSellQuote.lps.length,
+        position: "topR",
+      });
+    }
     setAmount(newSellQuote.lps.length);
     console.log("amoutn", newSellQuote.lps.length);
     console.log("new selected:", selected.slice(0, newSellQuote.lps.length));
@@ -87,11 +95,27 @@ export default function Swap() {
     if (mode == "buy") {
       const newBuyQuote = await getBuyQuote(chain.id, amount, poolAddress);
       setPriceQuote(newBuyQuote);
+      if (newBuyQuote.lps.length < amount) {
+        dispatch({
+          type: "warning",
+          message: "Can only buy " + newBuyQuote.lps.length + " NFTs",
+          title: "Maximum is " + newBuyQuote.lps.length,
+          position: "topR",
+        });
+      }
       setAmount(newBuyQuote.lps.length);
       console.log("newBuyQuote", newBuyQuote);
     } else if (mode == "sell") {
       const newSellQuote = await getSellQuote(chain.id, amount, poolAddress);
       setPriceQuote(newSellQuote);
+      if (newSellQuote.lps.length < amount) {
+        dispatch({
+          type: "warning",
+          message: "Can only sell " + newSellQuote.lps.length + " NFTs",
+          title: "Maximum is " + newSellQuote.lps.length,
+          position: "topR",
+        });
+      }
       setAmount(newSellQuote.lps.length);
       console.log("newSellQuote", newSellQuote);
       // Get an amount of random NFTs to sell

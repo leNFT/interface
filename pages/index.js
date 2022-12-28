@@ -1,11 +1,30 @@
 import styles from "../styles/Home.module.css";
 import Link from "next/link";
 import { Button } from "grommet";
+import { useState, useEffect } from "react";
+
 import Box from "@mui/material/Box";
 
 export default function Home() {
+  const imagesURLs = [
+    "/lisbon-pixelated-bg.png",
+    "/paris-pixelated-bg.png",
+    "/pyramids-pixelated-bg.png",
+  ];
+  const [imageURL, setImageURL] = useState();
+
+  useEffect(() => {
+    // Show a random background image
+    if (imagesURLs) {
+      setImageURL(imagesURLs[Math.floor(Math.random() * imagesURLs.length)]);
+      console.log(
+        "Background image is: ",
+        imagesURLs[Math.floor(Math.random() * imagesURLs.length)]
+      );
+    }
+  }, []);
   return (
-    <div className={styles.mainIndex}>
+    <div className={"bg-[url('" + imageURL + "')] bg-cover min-h-[100vh]"}>
       <div className={styles.opac}>
         <div className={styles.headerCenter}>
           <div className={styles.headerLogo}>

@@ -18,7 +18,7 @@ import CardContent from "@mui/material/CardContent";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits } from "ethers/lib/utils";
 
-export default function Stake() {
+export default function Genesis() {
   const [mintCount, setMintCount] = useState(0);
   const [selectedToken, setSelectedToken] = useState(0);
   const [cap, setCap] = useState(0);

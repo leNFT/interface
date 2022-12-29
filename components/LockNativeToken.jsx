@@ -30,12 +30,6 @@ export default function LockNativeToken(props) {
       ? contractAddresses[chain.id]
       : contractAddresses["1"];
 
-  const nativeTokenVaultSigner = useContract({
-    contractInterface: nativeTokenVaultContract.abi,
-    addressOrName: addresses.NativeTokenVault,
-    signerOrProvider: signer,
-  });
-
   const nativeTokenProvider = useContract({
     contractInterface: nativeTokenContract.abi,
     addressOrName: addresses.NativeToken,

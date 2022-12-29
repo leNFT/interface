@@ -33,18 +33,6 @@ export default function WithdrawNativeToken(props) {
       : contractAddresses["1"];
   const dispatch = useNotification();
 
-  const nativeTokenVaultSigner = useContract({
-    contractInterface: nativeTokenVaultContract.abi,
-    addressOrName: addresses.NativeTokenVault,
-    signerOrProvider: signer,
-  });
-
-  const nativeTokenVaultProvider = useContract({
-    contractInterface: nativeTokenVaultContract.abi,
-    addressOrName: addresses.NativeTokenVault,
-    signerOrProvider: provider,
-  });
-
   async function getLastWithdrawRequest() {
     const withdrawRequest = await nativeTokenVaultProvider.getWithdrawalRequest(
       address

@@ -26,18 +26,6 @@ export default function RemoveVote(props) {
       : contractAddresses["1"];
   const dispatch = useNotification();
 
-  const nativeTokenVaultSigner = useContract({
-    contractInterface: nativeTokenVaultContract.abi,
-    addressOrName: addresses.NativeTokenVault,
-    signerOrProvider: signer,
-  });
-
-  const nativeTokenVaultProvider = useContract({
-    contractInterface: nativeTokenVaultContract.abi,
-    addressOrName: addresses.NativeTokenVault,
-    signerOrProvider: provider,
-  });
-
   //Run once
   useEffect(() => {
     if (isConnected) {

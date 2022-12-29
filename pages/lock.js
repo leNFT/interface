@@ -1,30 +1,21 @@
 import styles from "../styles/Home.module.css";
-import contractAddresses from "../contractAddresses.json";
-import Link from "@mui/material/Link";
-import { getSupportedNFTs } from "../helpers/getSupportedNFTs.js";
 import { formatUnits } from "@ethersproject/units";
-import { ethers } from "ethers";
 import { BigNumber } from "@ethersproject/bignumber";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import { getStakingInfo } from "../helpers/getStakingInfo.js";
-import { Button, Loading, Typography } from "@web3uikit/core";
+import { Button } from "@web3uikit/core";
 import StyledModal from "../components/StyledModal";
 import { useState, useEffect } from "react";
 import { useAccount, useNetwork } from "wagmi";
-import erc20 from "../contracts/erc20.json";
-import erc721 from "../contracts/erc721.json";
 import RemoveVote from "../components/RemoveVote";
 import Vote from "../components/Vote";
 import LockNativeToken from "../components/LockNativeToken";
-import WithdrawNativeToken from "../components/WithdrawNativeToken";
-import { useContract, useProvider } from "wagmi";
+import UnlockNativeToken from "../components/UnlockNativeToken";
 import Box from "@mui/material/Box";
 
-export default function Stake() {
-  const { address, isConnected } = useAccount();
+export default function Lock() {
+  const { isConnected } = useAccount();
   const { chain } = useNetwork();
-  const provider = useProvider();
   const [vaultBalance, setVaultBalance] = useState("0");
   const [voteTokenBalance, setVoteTokenBalance] = useState("0");
   const [freeVotes, setFreeVotes] = useState("0");
@@ -37,10 +28,6 @@ export default function Stake() {
   const [collectionBoost, setCollectionBoost] = useState(0);
   const [apr, setAPR] = useState("0");
 
-  const addresses =
-    chain && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["1"];
   const [selectedCollection, setSelectedCollection] = useState();
   const [collections, setCollections] = useState();
 
@@ -75,7 +62,7 @@ export default function Stake() {
           setVisibleWithdrawalModal(false);
         }}
       >
-        <WithdrawNativeToken
+        <UnlockNativeToken
           setVisibility={setVisibleWithdrawalModal}
           voteTokenBalance={voteTokenBalance}
           maxAmount={maxAmount}

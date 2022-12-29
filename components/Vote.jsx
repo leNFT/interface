@@ -27,18 +27,6 @@ export default function Vote(props) {
       : contractAddresses["1"];
   const dispatch = useNotification();
 
-  const nativeTokenVaultSigner = useContract({
-    contractInterface: nativeTokenVaultContract.abi,
-    addressOrName: addresses.NativeTokenVault,
-    signerOrProvider: signer,
-  });
-
-  const nativeTokenVaultProvider = useContract({
-    contractInterface: nativeTokenVaultContract.abi,
-    addressOrName: addresses.NativeTokenVault,
-    signerOrProvider: provider,
-  });
-
   async function updateVotesBoost(votes) {
     const updatedVotesBoost = await nativeTokenVaultProvider.calculateLTVBoost(
       address,

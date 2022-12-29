@@ -126,12 +126,12 @@ export default function LendingHeader() {
                     letterSpacing: 2,
                   }}
                 >
-                  Stake
+                  LOck
                 </Box>
               ),
               onClick: () => {
                 Router.push({
-                  pathname: "/stake",
+                  pathname: "/lock",
                 });
               },
               icon: (
@@ -262,13 +262,13 @@ export default function LendingHeader() {
           </Link>
         </div>
         <div className="flex flex-col m-2">
-          <Link href="/stake">
+          <Link href="/lock">
             <Button
               primary
               size="medium"
-              color={option == "stake" ? SELECTED_COLOR : UNSELECTED_COLOR}
+              color={option == "lock" ? SELECTED_COLOR : UNSELECTED_COLOR}
               onClick={() => {
-                setOption("stake");
+                setOption("lock");
               }}
               label={
                 <div className="flex md:hidden xl:flex">
@@ -280,7 +280,7 @@ export default function LendingHeader() {
                       letterSpacing: 4,
                     }}
                   >
-                    Stake
+                    L0ck
                   </Box>
                 </div>
               }

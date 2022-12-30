@@ -94,7 +94,7 @@ export default function Lock() {
       </StyledModal>
       <StyledModal
         hasFooter={false}
-        title="Withdraw LE"
+        title="Unlock LE"
         isVisible={visibleUnlockModal}
         onCloseButtonPressed={function () {
           setVisibleUnlockModal(false);

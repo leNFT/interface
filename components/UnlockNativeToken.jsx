@@ -11,6 +11,7 @@ import {
   useSigner,
 } from "wagmi";
 import { useState, useEffect } from "react";
+import votingEscrowContract from "../contracts/VotingEscrow.json";
 
 export default function WithdrawNativeToken(props) {
   const ONE_DAY = 86400;
@@ -18,6 +19,7 @@ export default function WithdrawNativeToken(props) {
   const UNVOTE_WINDOW = ONE_DAY * 2;
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
+  const [unlockTime, setUnlockTime] = useState(0);
   const provider = useProvider();
   const { data: signer } = useSigner();
   const [withdrawalLoading, setWithdrawalLoading] = useState(false);
@@ -33,53 +35,40 @@ export default function WithdrawNativeToken(props) {
       : contractAddresses["1"];
   const dispatch = useNotification();
 
-  //Run once
+  const votingEscrowProvider = useContract({
+    contractInterface: votingEscrowContract.abi,
+    addressOrName: addresses.VotingEscrow,
+    signerOrProvider: provider,
+  });
+
+  const votingEscrowSigner = useContract({
+    contractInterface: votingEscrowContract.abi,
+    addressOrName: addresses.VotingEscrow,
+    signerOrProvider: signer,
+  });
+
+  async function getUnlockTime() {
+    const updatedUnlockTime = await votingEscrowProvider.locked(address);
+    console.log(
+      "updatedUnlockTime:",
+      BigNumber.from(updatedUnlockTime.end).toNumber()
+    );
+    setUnlockTime(BigNumber.from(updatedUnlockTime.end).toNumber());
+  }
+
   useEffect(() => {
     if (isConnected) {
+      getUnlockTime();
     }
   }, [isConnected]);
 
-  function canWithdraw(requestTimestamp) {
-    let now = Date.now() / 1000; // Date in seconds
-
-    if (
-      now > requestTimestamp + ONE_WEEK &&
-      now < requestTimestamp + ONE_WEEK + UNVOTE_WINDOW
-    ) {
-      return true;
-    }
-
-    return false;
-  }
-
-  function isWithdrawalRequestButtonDisabled(request) {
-    let now = Date.now() / 1000; // Date in seconds
-    if (now < request.timestamp + ONE_WEEK && request.created) {
-      return true;
-    }
-
-    return false;
-  }
-
-  const handleWithdrawalSuccess = async function () {
+  const handleUnlockNativeTokenSuccess = async function () {
     props.updateUI();
-    getLastWithdrawRequest();
     props.setVisibility(false);
     dispatch({
       type: "success",
       message: "Please wait for transaction confirmation.",
       title: "Withdrawal Successful!",
-      position: "topR",
-    });
-  };
-
-  const handleRequestSuccess = async function () {
-    props.setVisibility(false);
-    getLastWithdrawRequest();
-    dispatch({
-      type: "info",
-      message: "You will be able to withdraw in 7 days.",
-      title: "Request Successful!",
       position: "topR",
     });
   };
@@ -94,27 +83,24 @@ export default function WithdrawNativeToken(props) {
 
   return (
     <div>
-      {canWithdraw(lastWithdrawalRequest.timestamp) ? (
-        <div className="flex flex-col justify-center mt-8 mb-2">
+      {unlockTime < Date.now() / 1000 ? (
+        <div className="flex flex-col items-center m-8">
+          <Typography variant="subtitle2">
+            Locked until {Date(unlockTime)}
+          </Typography>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center">
           <div className="flex flex-col">
             <Typography variant="subtitle2">
               Maximum withdrawal amount
             </Typography>
-            <Typography variant="body16">
-              {formatUnits(lastWithdrawalRequest.shares, 18) +
-                " veLE (" +
-                formatUnits(lastWithdrawalRequest.assets, 18) +
-                " LE)"}
-            </Typography>
+            <Typography variant="body16"></Typography>
           </div>
           <Input
             label="Amount"
             type="number"
             step="any"
-            validation={{
-              numberMax: Number(formatUnits(props.maxAmount, 18)),
-              numberMin: 0,
-            }}
             onChange={handleInputChange}
           />
           <div className="m-8 mt-2">
@@ -130,7 +116,6 @@ export default function WithdrawNativeToken(props) {
               }}
               loadingText=""
               isLoading={withdrawalLoading}
-              disabled={BigNumber.from(props.maxAmount).isZero()}
               onClick={async function () {
                 if (
                   BigNumber.from(amount).lte(BigNumber.from(props.maxAmount))
@@ -155,45 +140,6 @@ export default function WithdrawNativeToken(props) {
                 }
               }}
             />
-          </div>
-        </div>
-      ) : (
-        <div className="flex flex-col items-center text-center justify-center m-8">
-          <Typography variant="caption14"></Typography>
-          <div className="mt-8">
-            <Button
-              text={
-                "Create " +
-                formatUnits(props.voteTokenBalance, 18) +
-                " veLE withdrawal request"
-              }
-              theme="secondary"
-              isFullWidth
-              loadingProps={{
-                spinnerColor: "#000000",
-                spinnerType: "loader",
-                direction: "right",
-                size: "24",
-              }}
-              disabled={isWithdrawalRequestButtonDisabled(
-                lastWithdrawalRequest
-              )}
-              loadingText=""
-              isLoading={requestLoading}
-              onClick={async function () {
-                try {
-                  setRequestLoading(true);
-                  const tx =
-                    await nativeTokenVaultSigner.createWithdrawalRequest();
-                  await tx.wait(1);
-                  handleRequestSuccess();
-                } catch (error) {
-                  console.log(error);
-                } finally {
-                  setRequestLoading(false);
-                }
-              }}
-            ></Button>
           </div>
         </div>
       )}

@@ -33,33 +33,9 @@ export default function WithdrawNativeToken(props) {
       : contractAddresses["1"];
   const dispatch = useNotification();
 
-  async function getLastWithdrawRequest() {
-    const withdrawRequest = await nativeTokenVaultProvider.getWithdrawalRequest(
-      address
-    );
-
-    console.log("withdrawRequest", withdrawRequest);
-
-    const assets = await nativeTokenVaultProvider.convertToAssets(
-      withdrawRequest.amount.toString()
-    );
-    console.log("withdrawRequest", withdrawRequest);
-
-    // Withdraw might be undefined if no request was made before
-    if (withdrawRequest) {
-      setLastWithdrawalRequest({
-        created: withdrawRequest.created,
-        shares: withdrawRequest.amount.toString(),
-        assets: assets.toString(),
-        timestamp: withdrawRequest.timestamp.toNumber(),
-      });
-    }
-  }
-
   //Run once
   useEffect(() => {
     if (isConnected) {
-      getLastWithdrawRequest();
     }
   }, [isConnected]);
 
@@ -83,50 +59,6 @@ export default function WithdrawNativeToken(props) {
     }
 
     return false;
-  }
-
-  function getWithdrawalMessage(requestTimestamp) {
-    let now = Date.now() / 1000; // Unix timestamp in seconds
-    console.log("requestTimestamp", requestTimestamp);
-
-    if (now < requestTimestamp + ONE_WEEK) {
-      let hoursToWithdraw = (requestTimestamp + ONE_WEEK - now) / 3600;
-      let minutesToWithdraw = Math.ceil(
-        (hoursToWithdraw - parseInt(hoursToWithdraw)) * 60
-      );
-      return (
-        "Please wait until the withdrawal cooling down period is over, " +
-        Math.floor(hoursToWithdraw) +
-        " hours and " +
-        minutesToWithdraw +
-        " minutes."
-      );
-    }
-
-    if (
-      now > requestTimestamp + ONE_WEEK &&
-      now < requestTimestamp + ONE_WEEK + UNVOTE_WINDOW
-    ) {
-      let hoursUntilWithdrawClosed =
-        requestTimestamp + ONE_WEEK + UNVOTE_WINDOW - now;
-      let minutesToWithdrawClosed = Math.ceil(
-        (hoursUntilWithdrawClosed - parseInt(hoursUntilWithdrawClosed)) *
-          MINUTES_IN_HOURS
-      );
-      return (
-        "You can withdraw for " +
-        Math.floor(hoursUntilWithdrawClosed) +
-        " hours " +
-        minutesToWithdrawClosed +
-        " minutes."
-      );
-    }
-
-    if (now > requestTimestamp + ONE_WEEK + UNVOTE_WINDOW) {
-      return "Please submit an withdrawal request to be able to withdraw. 7-day cooldown period.";
-    }
-
-    return "";
   }
 
   const handleWithdrawalSuccess = async function () {
@@ -227,9 +159,7 @@ export default function WithdrawNativeToken(props) {
         </div>
       ) : (
         <div className="flex flex-col items-center text-center justify-center m-8">
-          <Typography variant="caption14">
-            {getWithdrawalMessage(lastWithdrawalRequest.timestamp)}
-          </Typography>
+          <Typography variant="caption14"></Typography>
           <div className="mt-8">
             <Button
               text={

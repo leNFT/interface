@@ -57,9 +57,7 @@ export default function RemoveVote(props) {
       <div className="flex flex-row items-center justify-center">
         <div className="flex flex-col">
           <Typography variant="subtitle2">Maximum removable votes</Typography>
-          <Typography variant="body16">
-            {formatUnits(props.collectionVotes, 18)} veLE
-          </Typography>
+          <Typography variant="body16">{formatUnits(0, 18)} veLE</Typography>
         </div>
       </div>
       <div className="flex flex-row items-center justify-center mt-8 mb-2">
@@ -68,7 +66,7 @@ export default function RemoveVote(props) {
           type="number"
           step="any"
           validation={{
-            numberMax: Number(formatUnits(props.collectionVotes, 18)),
+            numberMax: Number(formatUnits(0, 18)),
             numberMin: 0,
           }}
           onChange={handleInputChange}

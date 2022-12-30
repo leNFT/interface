@@ -38,12 +38,6 @@ export default function Test() {
     signerOrProvider: signer,
   });
 
-  const nativeTokenVaultSigner = useContract({
-    contractInterface: nativeTokenVaultContract.abi,
-    addressOrName: addresses.NativeTokenVault,
-    signerOrProvider: signer,
-  });
-
   return (
     <div className={styles.container}>
       <Button

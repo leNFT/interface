@@ -6,32 +6,65 @@ import TextField from "@mui/material/TextField";
 import { Button } from "@web3uikit/core";
 import StyledModal from "../components/StyledModal";
 import { useState, useEffect } from "react";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount, useProvider, useNetwork, useContract } from "wagmi";
 import RemoveVote from "../components/RemoveVote";
 import Vote from "../components/Vote";
 import LockNativeToken from "../components/LockNativeToken";
+import contractAddresses from "../contractAddresses.json";
 import UnlockNativeToken from "../components/UnlockNativeToken";
+import votingEscrowContract from "../contracts/VotingEscrow.json";
+import gaugeControllerContract from "../contracts/GaugeController.json";
 import Box from "@mui/material/Box";
 
 export default function Lock() {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const { chain } = useNetwork();
-  const [vaultBalance, setVaultBalance] = useState("0");
+  const provider = useProvider();
+
   const [voteTokenBalance, setVoteTokenBalance] = useState("0");
-  const [freeVotes, setFreeVotes] = useState("0");
-  const [maxAmount, setMaxAmount] = useState("0");
-  const [collectionVotes, setCollectionVotes] = useState("0");
-  const [visibleDepositModal, setVisibleDepositModal] = useState(false);
-  const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
+  const [poolVotes, setPoolVotes] = useState("0");
+  const [visibleLockModal, setVisibleLockModal] = useState(false);
+  const [visibleUnlockModal, setVisibleUnlockModal] = useState(false);
   const [visibleVoteModal, setVisibleVoteModal] = useState(false);
   const [visibleRemoveVoteModal, setVisibleRemoveVoteModal] = useState(false);
-  const [collectionBoost, setCollectionBoost] = useState(0);
   const [apr, setAPR] = useState("0");
+  const [selectedPool, setSelectedPool] = useState();
+  const [votePower, setVotePower] = useState("0");
 
-  const [selectedCollection, setSelectedCollection] = useState();
-  const [collections, setCollections] = useState();
+  const addresses =
+    chain && chain.id in contractAddresses
+      ? contractAddresses[chain.id]
+      : contractAddresses["1"];
 
-  async function updateUI() {}
+  const votingEscrowProvider = useContract({
+    contractInterface: votingEscrowContract.abi,
+    addressOrName: addresses.VotingEscrow,
+    signerOrProvider: provider,
+  });
+
+  const gaugeControllerProvider = useContract({
+    contractInterface: gaugeControllerContract.abi,
+    addressOrName: addresses.GaugeController,
+    signerOrProvider: provider,
+  });
+
+  async function updateUI() {
+    //Get the vote token Balance
+    const updatedVoteTokenBalance = await votingEscrowProvider.balanceOf(
+      address
+    );
+    setVoteTokenBalance(updatedVoteTokenBalance.toString());
+
+    //Get the vote token Balance
+    const updatedVotePower = await gaugeControllerProvider.voteUserPower(
+      address
+    );
+    setVotePower(updatedVotePower.toString());
+  }
+
+  async function updatePools() {}
+
+  async function updatePoolDetails(collectionAddress) {}
 
   useEffect(() => {
     if (isConnected) {
@@ -39,69 +72,61 @@ export default function Lock() {
     }
   }, [isConnected]);
 
+  function handlePoolChange(event, value) {
+    console.log("value", value);
+    updatePoolDetails(value);
+  }
+
   return (
     <div className={styles.container}>
       <StyledModal
         hasFooter={false}
-        title="Deposit LE"
-        isVisible={visibleDepositModal}
+        title="Lock LE"
+        isVisible={visibleLockModal}
         onCloseButtonPressed={function () {
-          setVisibleDepositModal(false);
+          setVisibleLockModal(false);
         }}
       >
         <LockNativeToken
-          setVisibility={setVisibleDepositModal}
+          setVisibility={setVisibleLockModal}
           updateUI={updateUI}
         />
       </StyledModal>
       <StyledModal
         hasFooter={false}
         title="Withdraw LE"
-        isVisible={visibleWithdrawalModal}
+        isVisible={visibleUnlockModal}
         onCloseButtonPressed={function () {
-          setVisibleWithdrawalModal(false);
+          setVisibleUnlockModal(false);
         }}
       >
         <UnlockNativeToken
-          setVisibility={setVisibleWithdrawalModal}
+          setVisibility={setVisibleUnlockModal}
           voteTokenBalance={voteTokenBalance}
-          maxAmount={maxAmount}
           updateUI={updateUI}
         />
       </StyledModal>
       <StyledModal
         hasFooter={false}
-        title={
-          "Vote for " + (selectedCollection ? selectedCollection.label : "")
-        }
+        title={"Vote for "}
         isVisible={visibleVoteModal}
         onCloseButtonPressed={function () {
           setVisibleVoteModal(false);
         }}
       >
-        <Vote
-          {...selectedCollection}
-          setVisibility={setVisibleVoteModal}
-          updateUI={updateUI}
-          freeVotes={freeVotes}
-        />
+        <Vote setVisibility={setVisibleVoteModal} updateUI={updateUI} />
       </StyledModal>
       <StyledModal
         hasFooter={false}
-        title={
-          "Remove vote from " +
-          (selectedCollection ? selectedCollection.label : "")
-        }
+        title={"Remove vote from "}
         isVisible={visibleRemoveVoteModal}
         onCloseButtonPressed={function () {
           setVisibleRemoveVoteModal(false);
         }}
       >
         <RemoveVote
-          {...selectedCollection}
           setVisibility={setVisibleRemoveVoteModal}
           updateUI={updateUI}
-          collectionVotes={collectionVotes}
         />
       </StyledModal>
       <div className="flex flex-col items-center">
@@ -119,7 +144,7 @@ export default function Lock() {
               </Box>
             </div>
             <div className="flex flex-col-reverse md:flex-row items-center justify-center">
-              <div className="flex flex-col items-center m-4 lg:m-8">
+              <div className="flex flex-col items-center m-4 lg:ml-8">
                 <div className="flex flex-row m-2">
                   <Button
                     customize={{
@@ -127,12 +152,12 @@ export default function Lock() {
                       fontSize: 16,
                       textColor: "white",
                     }}
-                    text="Vault Deposit"
+                    text="Lock"
                     theme="custom"
                     size="large"
                     radius="12"
                     onClick={async function () {
-                      setVisibleDepositModal(true);
+                      setVisibleLockModal(true);
                     }}
                   />
                 </div>
@@ -143,12 +168,12 @@ export default function Lock() {
                       fontSize: 16,
                       textColor: "white",
                     }}
-                    text="Vault Withdrawal"
+                    text="Unlock"
                     theme="custom"
                     size="large"
                     radius="12"
                     onClick={async function () {
-                      setVisibleWithdrawalModal(true);
+                      setVisibleUnlockModal(true);
                     }}
                   />
                 </div>
@@ -163,30 +188,7 @@ export default function Lock() {
                         fontWeight: "bold",
                       }}
                     >
-                      Vault TVL
-                    </Box>
-                  </div>
-                  <div className="flex flex-row">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "subtitle1.fontSize",
-                      }}
-                    >
-                      {Number(formatUnits(vaultBalance, 18)).toFixed(2)} LE
-                    </Box>
-                  </div>
-                </div>
-                <div className="flex flex-col m-2">
-                  <div className="flex flex-row">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "h5.fontSize",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      My Vault Balance
+                      Locked Balance
                     </Box>
                   </div>
                   <div className="flex flex-row">
@@ -198,7 +200,7 @@ export default function Lock() {
                     >
                       {Number(formatUnits(voteTokenBalance, 18)).toFixed(2) +
                         " veLE (" +
-                        Number(formatUnits(maxAmount, 18)).toFixed(2) +
+                        Number(formatUnits(0, 18)).toFixed(2) +
                         " LE)"}
                     </Box>
                   </div>
@@ -218,7 +220,7 @@ export default function Lock() {
                         fontWeight: "bold",
                       }}
                     >
-                      Free Votes
+                      Vote Power
                     </Box>
                   </div>
                   <div className="flex flex-row">
@@ -228,77 +230,14 @@ export default function Lock() {
                         fontSize: "subtitle1.fontSize",
                       }}
                     >
-                      {Number(formatUnits(freeVotes, 18)).toFixed(2)} veLE
-                    </Box>
-                  </div>
-                </div>
-                <div className="flex flex-col m-4">
-                  <div className="flex flex-row">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "h6.fontSize",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Used Votes
-                    </Box>
-                  </div>
-                  <div className="flex flex-row">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "subtitle1.fontSize",
-                      }}
-                    >
-                      {formatUnits(
-                        BigNumber.from(voteTokenBalance).sub(freeVotes),
-                        18
-                      )}{" "}
-                      veLE
+                      {votePower / 10000 + " %"}
                     </Box>
                   </div>
                 </div>
               </div>
             </div>
             <div className="flex flex-col justify-center items-center m-8 mt-0 p-4 rounded-3xl bg-black/5 shadow-lg">
-              <div className="flex flex-row m-8">
-                <Autocomplete
-                  disablePortal
-                  ListboxProps={{
-                    style: {
-                      backgroundColor: "rgb(253, 241, 244)",
-                      fontFamily: "Monospace",
-                    },
-                  }}
-                  options={collections}
-                  isOptionEqualToValue={(option, value) =>
-                    option.address === value.address
-                  }
-                  sx={{ minWidth: { xs: 180, sm: 250, md: 300 } }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Collections"
-                      sx={{
-                        "& label": {
-                          paddingLeft: (theme) => theme.spacing(2),
-                          fontFamily: "Monospace",
-                        },
-                        "& input": {
-                          paddingLeft: (theme) => theme.spacing(3.5),
-                          fontFamily: "Monospace",
-                        },
-                        "& fieldset": {
-                          paddingLeft: (theme) => theme.spacing(2.5),
-                          borderRadius: "25px",
-                          fontFamily: "Monospace",
-                        },
-                      }}
-                    />
-                  )}
-                />
-              </div>
+              <div className="flex flex-row m-8">INPUT</div>
               <div className="flex flex-col md:flex-row">
                 <div className="flex flex-col justify-center m-4">
                   <div className="flex flex-row justify-center items-center m-2">
@@ -309,7 +248,7 @@ export default function Lock() {
                         textColor: "white",
                       }}
                       text="Vote"
-                      disabled={selectedCollection == null}
+                      disabled={false}
                       theme="custom"
                       size="large"
                       radius="12"
@@ -325,7 +264,7 @@ export default function Lock() {
                         fontSize: 16,
                         textColor: "white",
                       }}
-                      disabled={selectedCollection == null}
+                      disabled={false}
                       text="Remove Vote"
                       theme="custom"
                       size="large"
@@ -357,7 +296,7 @@ export default function Lock() {
                             fontSize: "subtitle1.fontSize",
                           }}
                         >
-                          {formatUnits(collectionVotes, 18)} veLE
+                          {formatUnits(0, 18)} veLE
                         </Box>
                       </div>
                     </div>
@@ -382,7 +321,7 @@ export default function Lock() {
                             fontSize: "subtitle1.fontSize",
                           }}
                         >
-                          {collectionBoost / 100}%
+                          {0 / 100}%
                         </Box>
                       </div>
                     </div>

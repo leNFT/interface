@@ -7,11 +7,18 @@ import {
   useSigner,
 } from "wagmi";
 import { formatUnits, parseUnits } from "@ethersproject/units";
-import { useNotification, Button, Input, Typography } from "@web3uikit/core";
-import styles from "../styles/Home.module.css";
+import {
+  useNotification,
+  Button,
+  Input,
+  Typography,
+  DatePicker,
+} from "@web3uikit/core";
 import contractAddresses from "../contractAddresses.json";
 import { useState, useEffect } from "react";
+import votingEscrowContract from "../contracts/VotingEscrow.json";
 import nativeTokenContract from "../contracts/NativeToken.json";
+import Box from "@mui/material/Box";
 
 export default function LockNativeToken(props) {
   const { address, isConnected } = useAccount();
@@ -19,10 +26,11 @@ export default function LockNativeToken(props) {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const [amount, setAmount] = useState("0");
-  const [balance, setBalance] = useState("0");
+  const [locked, setLocked] = useState();
   const [approved, setApproved] = useState(false);
-  const [depositLoading, setDepositLoading] = useState(false);
+  const [lockedLoading, setLockedLoading] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
+  const [unlockTime, setUnlockTime] = useState(0);
 
   const dispatch = useNotification();
   const addresses =
@@ -42,16 +50,28 @@ export default function LockNativeToken(props) {
     signerOrProvider: signer,
   });
 
-  async function updateTokenBalance() {
-    const updatedBalance = await nativeTokenProvider.balanceOf(address);
-    console.log("Updated Balance:", updatedBalance);
-    setBalance(updatedBalance.toString());
+  const votingEscrowProvider = useContract({
+    contractInterface: votingEscrowContract.abi,
+    addressOrName: addresses.VotingEscrow,
+    signerOrProvider: provider,
+  });
+
+  const votingEscrowSigner = useContract({
+    contractInterface: votingEscrowContract.abi,
+    addressOrName: addresses.VotingEscrow,
+    signerOrProvider: signer,
+  });
+
+  async function getLocked() {
+    const updatedLocked = await votingEscrowProvider.locked(address);
+    console.log("Updated LOcked:", updatedLocked);
+    setLocked(updatedLocked);
   }
 
   async function getTokenAllowance() {
     const allowance = await nativeTokenProvider.allowance(
       address,
-      addresses.NativeTokenVault
+      addresses.VotingEscrow
     );
     console.log("Got allowance:", allowance);
 
@@ -63,19 +83,18 @@ export default function LockNativeToken(props) {
   useEffect(() => {
     if (isConnected) {
       getTokenAllowance();
-      updateTokenBalance();
+      getLocked();
     }
   }, [isConnected]);
 
-  const handleDepositSuccess = async function () {
-    console.log("Deposited", amount);
+  const handleLockedSuccess = async function () {
+    console.log("Locked", amount);
     props.updateUI();
     props.setVisibility(false);
-    updateTokenBalance();
     dispatch({
       type: "success",
-      message: "Your LE tokens were deposited into the vault.",
-      title: "Deposit Successful!",
+      message: "Your LE tokens were locked in the escrow contract.",
+      title: "Lock Successful!",
       position: "topR",
     });
   };
@@ -84,13 +103,13 @@ export default function LockNativeToken(props) {
     setApproved(true);
     dispatch({
       type: "success",
-      message: "You can now deposit into the vault.",
+      message: "You can now lock tokens in the escrow contract.",
       title: "Approval Successful!",
       position: "topR",
     });
   };
 
-  function handleInputChange(e) {
+  function handleAmountChange(e) {
     if (e.target.value != "") {
       setAmount(parseUnits(e.target.value, 18).toString());
     } else {
@@ -98,38 +117,48 @@ export default function LockNativeToken(props) {
     }
   }
 
+  function handleUnlockTimeChange(e) {
+    if (e.date != "") {
+      setUnlockTime(Date.parse(e.date) / 1000);
+      console.log(Date.parse(e.date) / 1000);
+    } else {
+      setUnlockTime(0);
+    }
+  }
+
   return (
     <div>
-      <div className="flex flex-row items-center justify-center">
-        <div className="flex flex-col">
-          <Typography variant="subtitle2">My Balance</Typography>
-          <Typography variant="body16">
-            {formatUnits(balance, 18)} LE
-          </Typography>
-        </div>
-      </div>
-      <div className="flex flex-row items-center justify-center mt-8 mb-2">
+      <div className="flex flex-row items-center justify-center m-8">
         <Input
           label="Amount"
           type="number"
           step="any"
           validation={{
-            numberMax: Number(formatUnits(balance, 18)),
+            numberMax: Number(formatUnits(0, 18)),
             numberMin: 0,
           }}
           disabled={!approved}
-          onChange={handleInputChange}
+          onChange={handleAmountChange}
         />
       </div>
-      <div className="flex flex-row items-center text-center justify-center mb-8">
-        <Typography variant="caption14">
-          Deposits are subject to a 7-day withdrawal period.
-        </Typography>
+      <div className="flex flex-col md:flex-row items-center justify-center m-8">
+        <div className="m-4">
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "subtitle1.fontSize",
+              fontWeight: "bold",
+            }}
+          >
+            Unlock Time:
+          </Box>
+        </div>
+        <DatePicker id="date-picker" onChange={handleUnlockTimeChange} />
       </div>
       {approved ? (
         <div className="my-4 md:m-8">
           <Button
-            text="Deposit"
+            text="Lock"
             theme="secondary"
             isFullWidth
             loadingProps={{
@@ -139,29 +168,23 @@ export default function LockNativeToken(props) {
               size: "24",
             }}
             loadingText=""
-            isLoading={depositLoading}
+            isLoading={lockedLoading}
             onClick={async function () {
-              if (BigNumber.from(amount).lte(BigNumber.from(balance))) {
-                try {
-                  setDepositLoading(true);
-                  const tx = await nativeTokenVaultSigner.deposit(
-                    amount,
-                    address
-                  );
-                  await tx.wait(1);
-                  handleDepositSuccess();
-                } catch (error) {
-                  console.log(error);
-                } finally {
-                  setDepositLoading(false);
-                }
-              } else {
-                dispatch({
-                  type: "error",
-                  message: "Amount is bigger than balance",
-                  title: "Error",
-                  position: "topR",
-                });
+              try {
+                setLockedLoading(true);
+                console.log("amount", amount);
+                console.log("unlockTime", unlockTime);
+                console.log("addresses.VotingEscrow", addresses.VotingEscrow);
+                const tx = await votingEscrowSigner.createLock(
+                  amount,
+                  unlockTime
+                );
+                await tx.wait(1);
+                handleLockedSuccess();
+              } catch (error) {
+                console.log(error);
+              } finally {
+                setLockedLoading(false);
               }
             }}
           ></Button>
@@ -184,7 +207,7 @@ export default function LockNativeToken(props) {
               try {
                 setApprovalLoading(true);
                 const tx = await nativeTokenSigner.approve(
-                  addresses.NativeTokenVault,
+                  addresses.VotingEscrow,
                   "115792089237316195423570985008687907853269984665640564039457584007913129639935"
                 );
                 await tx.wait(1);

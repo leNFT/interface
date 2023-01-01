@@ -10,6 +10,7 @@ import {
   useProvider,
   useSigner,
 } from "wagmi";
+import gaugeControllerContract from "../contracts/GaugeController.json";
 import { useState, useEffect } from "react";
 
 export default function Vote(props) {
@@ -18,8 +19,8 @@ export default function Vote(props) {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const [amount, setAmount] = useState("0");
-  const [votesBoost, setVotesBoost] = useState("0");
   const [votingLoading, setVotingLoading] = useState(false);
+  const [gaugeVotingPower, setGaugeVotingPower] = useState(0);
 
   const addresses =
     chain && chain.id in contractAddresses
@@ -27,26 +28,34 @@ export default function Vote(props) {
       : contractAddresses["1"];
   const dispatch = useNotification();
 
-  async function updateVotesBoost(votes) {
-    const updatedVotesBoost = await nativeTokenVaultProvider.calculateLTVBoost(
-      address,
-      props.address,
-      votes
-    );
+  const gaugeControllerProvider = useContract({
+    contractInterface: gaugeControllerContract.abi,
+    addressOrName: addresses.GaugeController,
+    signerOrProvider: provider,
+  });
 
-    console.log("Updated Votes Boost Amount:", updatedVotesBoost);
-    setVotesBoost(updatedVotesBoost);
+  const gaugeControllerSigner = useContract({
+    contractInterface: gaugeControllerContract.abi,
+    addressOrName: addresses.GaugeController,
+    signerOrProvider: provider,
+  });
+
+  async function getFreeVotingPower() {
+    const updatedGaugeVotingPower =
+      await gaugeControllerProvider.userGaugeVoteWeight(address, props.address);
+    setGaugeVotingPower(BigNumber.from(updatedGaugeVotingPower.toNumber()));
   }
 
   useEffect(() => {
     if (isConnected) {
+      getFreeVotingPower();
     }
   }, [isConnected]);
 
   const handleVoteSuccess = async function (amount) {
     console.log("Voted", amount);
     props.updateUI();
-    props.updateCollectionDetails(props.address);
+    props.updateGaugeDetails(props.address);
     props.setVisibility(false);
     dispatch({
       type: "success",
@@ -58,8 +67,7 @@ export default function Vote(props) {
 
   function handleInputChange(e) {
     if (e.target.value != "") {
-      setAmount(parseUnits(e.target.value, 18).toString());
-      updateVotesBoost(parseUnits(e.target.value, 18).toString());
+      setAmount(e.target.value * 100);
     } else {
       setAmount("0");
     }
@@ -67,16 +75,16 @@ export default function Vote(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-row items-center justify-center m-4">
+      <div className="flex flex-row items-center justify-center m-8">
         <div className="flex flex-col">
-          <Typography variant="subtitle2">Free Votes</Typography>
-          <Typography variant="body16">{formatUnits(0, 18)} veLE</Typography>
+          <Typography variant="subtitle2">My Gauge Voting Power</Typography>
+          <Typography variant="body16">{gaugeVotingPower / 100} %</Typography>
         </div>
       </div>
-      <div className="flex flex-row items-center justify-center mt-8 mb-2">
+      <div className="flex flex-col items-center justify-center m-8 mt-12">
         <div className="flex flex-col max-w-[250px]">
           <Input
-            label="Amount"
+            label="Amount (%)"
             placeholder="0"
             type="number"
             step="any"
@@ -87,38 +95,25 @@ export default function Vote(props) {
             onChange={handleInputChange}
           />
         </div>
-        <div className="flex flex-col m-4"> = </div>
-        <div className="flex flex-col">
-          <Typography variant="h6">
-            {votesBoost / 100 + "% TVL Boost"}
-          </Typography>
-        </div>
-      </div>
-      <div className="flex flex-row items-center text-center justify-center my-8">
-        <Typography variant="caption14">
-          Votes can only be removed after all loans in collection are repaid.
-        </Typography>
-      </div>
-      <div className="flex flex-row items-center justify-center m-8">
-        <Button
-          text="Vote"
-          theme="secondary"
-          isFullWidth
-          loadingProps={{
-            spinnerColor: "#000000",
-            spinnerType: "loader",
-            direction: "right",
-            size: "24",
-          }}
-          loadingText=""
-          isLoading={votingLoading}
-          onClick={async function () {
-            if (BigNumber.from(amount).lte(BigNumber.from(props.freeVotes))) {
+        <div className="m-4">
+          <Button
+            text="Vote"
+            theme="secondary"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
+            }}
+            loadingText=""
+            isLoading={votingLoading}
+            onClick={async function () {
               try {
                 setVotingLoading(true);
-                const tx = await nativeTokenVaultSigner.vote(
-                  amount,
-                  props.address
+                const tx = await gaugeControllerSigner.vote(
+                  props.address,
+                  amount
                 );
                 await tx.wait(1);
                 await handleVoteSuccess(amount);
@@ -127,16 +122,9 @@ export default function Vote(props) {
               } finally {
                 setVotingLoading(false);
               }
-            } else {
-              dispatch({
-                type: "error",
-                message: "Amount is bigger than balance",
-                title: "Error",
-                position: "topR",
-              });
-            }
-          }}
-        ></Button>
+            }}
+          ></Button>
+        </div>
       </div>
     </div>
   );

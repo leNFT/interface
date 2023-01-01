@@ -1,20 +1,18 @@
 import styles from "../styles/Home.module.css";
 import { formatUnits } from "@ethersproject/units";
-import { BigNumber } from "@ethersproject/bignumber";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
-import { Button } from "@web3uikit/core";
 import StyledModal from "../components/StyledModal";
 import { useState, useEffect } from "react";
 import { useAccount, useProvider, useNetwork, useContract } from "wagmi";
-import RemoveVote from "../components/RemoveVote";
 import Vote from "../components/Vote";
+import { Input } from "@nextui-org/react";
+import { Button } from "@web3uikit/core";
 import LockNativeToken from "../components/LockNativeToken";
 import contractAddresses from "../contractAddresses.json";
 import UnlockNativeToken from "../components/UnlockNativeToken";
 import votingEscrowContract from "../contracts/VotingEscrow.json";
 import gaugeControllerContract from "../contracts/GaugeController.json";
 import Box from "@mui/material/Box";
+import { BigNumber } from "ethers";
 
 export default function Lock() {
   const { isConnected, address } = useAccount();
@@ -22,13 +20,14 @@ export default function Lock() {
   const provider = useProvider();
 
   const [voteTokenBalance, setVoteTokenBalance] = useState("0");
-  const [poolVotes, setPoolVotes] = useState("0");
   const [visibleLockModal, setVisibleLockModal] = useState(false);
   const [visibleUnlockModal, setVisibleUnlockModal] = useState(false);
   const [visibleVoteModal, setVisibleVoteModal] = useState(false);
   const [visibleRemoveVoteModal, setVisibleRemoveVoteModal] = useState(false);
   const [apr, setAPR] = useState("0");
-  const [selectedPool, setSelectedPool] = useState();
+  const [selectedGauge, setSelectedGauge] = useState("");
+  const [gaugeVotingPower, setGaugeVotingPower] = useState(0);
+
   const [votePower, setVotePower] = useState("0");
 
   const addresses =
@@ -62,9 +61,15 @@ export default function Lock() {
     setVotePower(updatedVotePower.toString());
   }
 
-  async function updatePools() {}
+  async function updateGaugeDetails(gauge) {
+    // Get the voting power details for the pool
+    const gaugeWeight = await gaugeControllerProvider.getGaugeWeight(gauge);
+    const totalWeight = await gaugeControllerProvider.getTotalWeight(gauge);
 
-  async function updatePoolDetails(collectionAddress) {}
+    setGaugeVotingPower(
+      BigNumber.from(gaugeWeight).mul(10000).div(totalWeight)
+    );
+  }
 
   useEffect(() => {
     if (isConnected) {
@@ -72,10 +77,13 @@ export default function Lock() {
     }
   }, [isConnected]);
 
-  function handlePoolChange(event, value) {
-    console.log("value", value);
-    updatePoolDetails(value);
-  }
+  const handleGaugeChange = (event) => {
+    const newGauge = event.target.value;
+    console.log("newGauge", newGauge);
+    if (newGauge) {
+      updateGaugeDetails(newGauge);
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -116,19 +124,7 @@ export default function Lock() {
       >
         <Vote setVisibility={setVisibleVoteModal} updateUI={updateUI} />
       </StyledModal>
-      <StyledModal
-        hasFooter={false}
-        title={"Remove vote from "}
-        isVisible={visibleRemoveVoteModal}
-        onCloseButtonPressed={function () {
-          setVisibleRemoveVoteModal(false);
-        }}
-      >
-        <RemoveVote
-          setVisibility={setVisibleRemoveVoteModal}
-          updateUI={updateUI}
-        />
-      </StyledModal>
+
       <div className="flex flex-col items-center">
         <div className="flex flex-col max-w-[100%] lg:flex-row justify-center items-center">
           <div className="flex flex-col border-4 m-2 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
@@ -199,9 +195,7 @@ export default function Lock() {
                       }}
                     >
                       {Number(formatUnits(voteTokenBalance, 18)).toFixed(2) +
-                        " veLE (" +
-                        Number(formatUnits(0, 18)).toFixed(2) +
-                        " LE)"}
+                        " veLE"}
                     </Box>
                   </div>
                 </div>
@@ -220,7 +214,7 @@ export default function Lock() {
                         fontWeight: "bold",
                       }}
                     >
-                      Vote Power
+                      Used Voting Power
                     </Box>
                   </div>
                   <div className="flex flex-row">
@@ -237,8 +231,15 @@ export default function Lock() {
               </div>
             </div>
             <div className="flex flex-col justify-center items-center m-8 mt-0 p-4 rounded-3xl bg-black/5 shadow-lg">
-              <div className="flex flex-row m-8">INPUT</div>
-              <div className="flex flex-col md:flex-row">
+              <div className="flex flex-row m-8">
+                <Input
+                  bordered
+                  size="xl"
+                  placeholder="Gauge Address"
+                  onChange={handleGaugeChange}
+                />
+              </div>
+              <div className="flex flex-col-reverse md:flex-row">
                 <div className="flex flex-col justify-center m-4">
                   <div className="flex flex-row justify-center items-center m-2">
                     <Button
@@ -257,25 +258,8 @@ export default function Lock() {
                       }}
                     />
                   </div>
-                  <div className="flex flex-row justify-center items-center m-2">
-                    <Button
-                      customize={{
-                        backgroundColor: "grey",
-                        fontSize: 16,
-                        textColor: "white",
-                      }}
-                      disabled={false}
-                      text="Remove Vote"
-                      theme="custom"
-                      size="large"
-                      radius="12"
-                      onClick={async function () {
-                        setVisibleRemoveVoteModal(true);
-                      }}
-                    />
-                  </div>
                 </div>
-                <div className="flex flex-col m-4">
+                <div className="flex flex-col justify-center">
                   <div className="flex flex-row m-2">
                     <div className="flex flex-col">
                       <div className="flex flex-row">
@@ -286,7 +270,7 @@ export default function Lock() {
                             fontWeight: "bold",
                           }}
                         >
-                          Collection Votes
+                          Voting Power
                         </Box>
                       </div>
                       <div className="flex flex-row">
@@ -296,32 +280,7 @@ export default function Lock() {
                             fontSize: "subtitle1.fontSize",
                           }}
                         >
-                          {formatUnits(0, 18)} veLE
-                        </Box>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-row m-2">
-                    <div className="flex flex-col">
-                      <div className="flex flex-row">
-                        <Box
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "h6.fontSize",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Collection Boost
-                        </Box>
-                      </div>
-                      <div className="flex flex-row">
-                        <Box
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "subtitle1.fontSize",
-                          }}
-                        >
-                          {0 / 100}%
+                          {gaugeVotingPower / 1000 + " %"}
                         </Box>
                       </div>
                     </div>

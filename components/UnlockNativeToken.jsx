@@ -15,20 +15,14 @@ import votingEscrowContract from "../contracts/VotingEscrow.json";
 
 export default function WithdrawNativeToken(props) {
   const ONE_DAY = 86400;
-  const ONE_WEEK = ONE_DAY * 7;
-  const UNVOTE_WINDOW = ONE_DAY * 2;
+
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const [unlockTime, setUnlockTime] = useState(0);
   const provider = useProvider();
   const { data: signer } = useSigner();
-  const [withdrawalLoading, setWithdrawalLoading] = useState(false);
-  const [requestLoading, setRequestLoading] = useState(false);
-  const [amount, setAmount] = useState("0");
-  const [lastWithdrawalRequest, setLastWithdrawalRequest] = useState({
-    amount: "0",
-    timestamp: 0,
-  });
+  const [unlockLoading, setUnlockLoading] = useState(false);
+
   const addresses =
     chain && chain.id in contractAddresses
       ? contractAddresses[chain.id]
@@ -62,7 +56,7 @@ export default function WithdrawNativeToken(props) {
     }
   }, [isConnected]);
 
-  const handleUnlockNativeTokenSuccess = async function () {
+  const handleUnlockSuccess = async function () {
     props.updateUI();
     props.setVisibility(false);
     dispatch({
@@ -83,64 +77,39 @@ export default function WithdrawNativeToken(props) {
 
   return (
     <div>
-      {unlockTime < Date.now() / 1000 ? (
+      {unlockTime > Date.now() / 1000 ? (
         <div className="flex flex-col items-center m-8">
           <Typography variant="subtitle2">
-            Locked until {Date(unlockTime)}
+            Locked until {new Date(unlockTime * 1000).toLocaleString()}
           </Typography>
         </div>
       ) : (
-        <div className="flex flex-col items-center">
-          <div className="flex flex-col">
-            <Typography variant="subtitle2">
-              Maximum withdrawal amount
-            </Typography>
-            <Typography variant="body16"></Typography>
-          </div>
-          <Input
-            label="Amount"
-            type="number"
-            step="any"
-            onChange={handleInputChange}
+        <div className="m-8">
+          <Button
+            text="UNLOCK"
+            theme="secondary"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
+            }}
+            loadingText=""
+            isLoading={unlockLoading}
+            onClick={async function () {
+              try {
+                setUnlockLoading(true);
+                const tx = await votingEscrowSigner.withdraw();
+                await tx.wait(1);
+                handleUnlockSuccess();
+              } catch (error) {
+                console.log(error);
+              } finally {
+                setUnlockLoading(false);
+              }
+            }}
           />
-          <div className="m-8 mt-2">
-            <Button
-              text="Withdraw"
-              theme="secondary"
-              isFullWidth
-              loadingProps={{
-                spinnerColor: "#000000",
-                spinnerType: "loader",
-                direction: "right",
-                size: "24",
-              }}
-              loadingText=""
-              isLoading={withdrawalLoading}
-              onClick={async function () {
-                if (
-                  BigNumber.from(amount).lte(BigNumber.from(props.maxAmount))
-                ) {
-                  try {
-                    setWithdrawalLoading(true);
-                    const tx = await nativeTokenVaultSigner.withdraw(amount);
-                    await tx.wait(1);
-                    handleWithdrawalSuccess();
-                  } catch (error) {
-                    console.log(error);
-                  } finally {
-                    setWithdrawalLoading(false);
-                  }
-                } else {
-                  dispatch({
-                    type: "error",
-                    message: "Amount is bigger than max permited withdrawal",
-                    title: "Error",
-                    position: "topR",
-                  });
-                }
-              }}
-            />
-          </div>
         </div>
       )}
     </div>

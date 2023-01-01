@@ -21,6 +21,7 @@ export default function Vote(props) {
   const [amount, setAmount] = useState("0");
   const [votingLoading, setVotingLoading] = useState(false);
   const [gaugeVotingPower, setGaugeVotingPower] = useState(0);
+  const [isGauge, setIsGauge] = useState(false);
 
   const addresses =
     chain && chain.id in contractAddresses
@@ -37,7 +38,7 @@ export default function Vote(props) {
   const gaugeControllerSigner = useContract({
     contractInterface: gaugeControllerContract.abi,
     addressOrName: addresses.GaugeController,
-    signerOrProvider: provider,
+    signerOrProvider: signer,
   });
 
   async function getFreeVotingPower() {
@@ -47,10 +48,10 @@ export default function Vote(props) {
   }
 
   useEffect(() => {
-    if (isConnected) {
+    if (isConnected && props.address) {
       getFreeVotingPower();
     }
-  }, [isConnected]);
+  }, [isConnected, props.address]);
 
   const handleVoteSuccess = async function (amount) {
     console.log("Voted", amount);
@@ -100,6 +101,7 @@ export default function Vote(props) {
             text="Vote"
             theme="secondary"
             isFullWidth
+            disabled={!isGauge}
             loadingProps={{
               spinnerColor: "#000000",
               spinnerType: "loader",

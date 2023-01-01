@@ -334,6 +334,7 @@ export default function Swap() {
           <Input
             size="xl"
             placeholder="NFT Address"
+            aria-label="NFT Address"
             bordered
             color="default"
             onChange={handleNFTAddressChange}
@@ -365,6 +366,7 @@ export default function Swap() {
                 labelLeft={option.charAt(0).toUpperCase() + option.slice(1)}
                 bordered
                 size="xl"
+                aria-label="NFTs"
                 labelRight={"NFTs"}
                 placeholder="0"
                 value={amount}

@@ -23,7 +23,6 @@ export default function Lock() {
   const [visibleLockModal, setVisibleLockModal] = useState(false);
   const [visibleUnlockModal, setVisibleUnlockModal] = useState(false);
   const [visibleVoteModal, setVisibleVoteModal] = useState(false);
-  const [visibleRemoveVoteModal, setVisibleRemoveVoteModal] = useState(false);
   const [apr, setAPR] = useState("0");
   const [selectedGauge, setSelectedGauge] = useState("");
   const [gaugeVotingPower, setGaugeVotingPower] = useState(0);
@@ -62,6 +61,7 @@ export default function Lock() {
   }
 
   async function updateGaugeDetails(gauge) {
+    console.log("Updating Gauge Details");
     // Get the voting power details for the pool
     const gaugeWeight = await gaugeControllerProvider.getGaugeWeight(gauge);
     const totalWeight = await gaugeControllerProvider.getTotalWeight(gauge);
@@ -124,7 +124,6 @@ export default function Lock() {
       >
         <Vote setVisibility={setVisibleVoteModal} updateUI={updateUI} />
       </StyledModal>
-
       <div className="flex flex-col items-center">
         <div className="flex flex-col max-w-[100%] lg:flex-row justify-center items-center">
           <div className="flex flex-col border-4 m-2 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
@@ -234,6 +233,7 @@ export default function Lock() {
               <div className="flex flex-row m-8">
                 <Input
                   bordered
+                  aria-label="Gauge Address"
                   size="xl"
                   placeholder="Gauge Address"
                   onChange={handleGaugeChange}

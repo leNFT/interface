@@ -35,6 +35,32 @@ export default function TradingPools() {
 
     for (const [key, value] of Object.entries(TradingPools)) {
       newTableData.push([
+        <Button
+          id={key}
+          text={
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
+              }}
+            >
+              {key.slice(0, 4) + ".." + key.slice(-3)}
+            </Box>
+          }
+          onClick={async function (event) {
+            if (chain.id == 1) {
+              window.open(
+                "https://etherscan.io/address/" + event.target.id,
+                "_blank"
+              );
+            } else if (chain.id == 5) {
+              window.open(
+                "https://goerli.etherscan.io/address/" + event.target.id,
+                "_blank"
+              );
+            }
+          }}
+        ></Button>,
         <Box
           sx={{
             fontFamily: "Monospace",
@@ -55,6 +81,32 @@ export default function TradingPools() {
         >
           {value.token.name}
         </Box>,
+        <Button
+          id={value.gauge}
+          text={
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
+              }}
+            >
+              {value.gauge.slice(0, 4) + ".." + value.gauge.slice(-3)}
+            </Box>
+          }
+          onClick={async function (event) {
+            if (chain.id == 1) {
+              window.open(
+                "https://etherscan.io/address/" + event.target.id,
+                "_blank"
+              );
+            } else if (chain.id == 5) {
+              window.open(
+                "https://goerli.etherscan.io/address/" + event.target.id,
+                "_blank"
+              );
+            }
+          }}
+        ></Button>,
         <div key={"details" + key}>
           <Button
             customize={{
@@ -73,28 +125,6 @@ export default function TradingPools() {
                   address: event.target.id,
                 },
               });
-            }}
-          />
-        </div>,
-        <div key={"externalLink" + key}>
-          <Button
-            size="small md:large"
-            color="#eae5ea"
-            iconLayout="icon-only"
-            id={key}
-            icon={<ExternalLink fontSize="30px" />}
-            onClick={async function (event) {
-              if (chain.id == 1) {
-                window.open(
-                  "https://etherscan.io/address/" + event.target.id,
-                  "_blank"
-                );
-              } else if (chain.id == 5) {
-                window.open(
-                  "https://goerli.etherscan.io/address/" + event.target.id,
-                  "_blank"
-                );
-              }
             }}
           />
         </div>,
@@ -144,7 +174,7 @@ export default function TradingPools() {
           />
         </div>
         <Table
-          columnsConfig="2fr 2fr 0fr 0fr"
+          columnsConfig="2fr 2fr 2fr 2fr 0fr"
           tableBackgroundColor="white"
           customLoadingContent={
             <div
@@ -173,13 +203,32 @@ export default function TradingPools() {
                 }}
                 key="4"
               >
+                Address
+              </Box>
+              <div className="flex flex-col ml-1">
+                <Tooltip content="Address of this pool" position="bottom">
+                  <HelpCircle fontSize="14px" color="#000000" />
+                </Tooltip>
+              </div>
+            </div>,
+            <div className="flex flex-row m-2" key="nft">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: {
+                    xs: "caption.fontSize",
+                    sm: "subtitle1.fontSize",
+                  },
+                }}
+                key="4"
+              >
                 NFT
               </Box>
               <div className="flex flex-col ml-1">
                 <Tooltip
-                  content="NFT in this pool"
+                  content="NFTs in this pool"
                   position="bottom"
-                  minWidth={350}
+                  minWidth={150}
                 >
                   <HelpCircle fontSize="14px" color="#000000" />
                 </Tooltip>
@@ -208,7 +257,29 @@ export default function TradingPools() {
                 </Tooltip>
               </div>
             </div>,
-            "",
+            <div className="flex flex-row m-2" key="rates">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: {
+                    xs: "caption.fontSize",
+                    sm: "subtitle1.fontSize",
+                  },
+                }}
+                key="4"
+              >
+                Gauge
+              </Box>
+              <div className="flex flex-col ml-1">
+                <Tooltip
+                  content="Token in this pool."
+                  position="bottom"
+                  minWidth={170}
+                >
+                  <HelpCircle fontSize="14px" color="#000000" />
+                </Tooltip>
+              </div>
+            </div>,
             "",
           ]}
           isLoading={loadingTableData}

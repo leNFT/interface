@@ -126,7 +126,7 @@ export default function Lock() {
       </StyledModal>
       <div className="flex flex-col items-center">
         <div className="flex flex-col max-w-[100%] lg:flex-row justify-center items-center">
-          <div className="flex flex-col border-4 m-2 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
+          <div className="flex flex-col border-4 m-4 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
             <div className="flex flex-row items-center justify-center py-4 px-8 m-8 mb-4 text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
               <Box
                 sx={{
@@ -139,7 +139,7 @@ export default function Lock() {
               </Box>
             </div>
             <div className="flex flex-col-reverse md:flex-row items-center justify-center">
-              <div className="flex flex-col items-center m-4 lg:ml-8">
+              <div className="flex flex-row md:flex-col items-center m-4 lg:ml-8">
                 <div className="flex flex-row m-2">
                   <Button
                     customize={{
@@ -201,7 +201,7 @@ export default function Lock() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center justify-center border-4 m-2 md:m-8 rounded-3xl bg-black/5 shadow-lg">
+          <div className="flex flex-col items-center justify-center border-4 m-4 md:m-8 rounded-3xl bg-black/5 shadow-lg">
             <div className="flex flex-col md:flex-row min-w-[85%] items-center mx-4 my-2 justify-center">
               <div className="flex flex-row m-4">
                 <div className="flex flex-col m-4">

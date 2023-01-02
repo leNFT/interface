@@ -1,5 +1,5 @@
 import styles from "../styles/Home.module.css";
-import { Button, Table, Skeleton } from "@web3uikit/core";
+import { Button, Table, Skeleton, LinkTo } from "@web3uikit/core";
 import { getTradingPools } from "../helpers/getTradingPools.js";
 import { formatUnits } from "@ethersproject/units";
 import StyledModal from "../components/StyledModal";
@@ -9,6 +9,7 @@ import { Tooltip } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
 import { useState, useEffect } from "react";
 import Router from "next/router";
+import { ethers } from "ethers";
 import { ExternalLink } from "@web3uikit/icons";
 import Box from "@mui/material/Box";
 
@@ -29,38 +30,32 @@ export default function TradingPools() {
 
   async function updateTableData() {
     setLoadingTableData(true);
-    const TradingPools = await getTradingPools(chain.id);
-    console.log("TradingPools", TradingPools);
+    const tradingPools = await getTradingPools(chain.id);
+    console.log("TradingPools", tradingPools);
     var newTableData = [];
 
-    for (const [key, value] of Object.entries(TradingPools)) {
+    for (const [key, value] of Object.entries(tradingPools)) {
       newTableData.push([
-        <Button
-          id={key}
+        <LinkTo
+          type="external"
+          iconLayout="none"
           text={
             <Box
               sx={{
                 fontFamily: "Monospace",
                 fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
               }}
+              className="m-2"
             >
               {key.slice(0, 4) + ".." + key.slice(-3)}
             </Box>
           }
-          onClick={async function (event) {
-            if (chain.id == 1) {
-              window.open(
-                "https://etherscan.io/address/" + event.target.id,
-                "_blank"
-              );
-            } else if (chain.id == 5) {
-              window.open(
-                "https://goerli.etherscan.io/address/" + event.target.id,
-                "_blank"
-              );
-            }
-          }}
-        ></Button>,
+          address={
+            chain.id == 1
+              ? "https://etherscan.io/address/" + key
+              : "https://goerli.etherscan.io/address/" + key
+          }
+        ></LinkTo>,
         <Box
           sx={{
             fontFamily: "Monospace",
@@ -81,32 +76,21 @@ export default function TradingPools() {
         >
           {value.token.name}
         </Box>,
-        <Button
-          id={value.gauge}
-          text={
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
-              }}
-            >
-              {value.gauge.slice(0, 4) + ".." + value.gauge.slice(-3)}
-            </Box>
-          }
-          onClick={async function (event) {
-            if (chain.id == 1) {
-              window.open(
-                "https://etherscan.io/address/" + event.target.id,
-                "_blank"
-              );
-            } else if (chain.id == 5) {
-              window.open(
-                "https://goerli.etherscan.io/address/" + event.target.id,
-                "_blank"
-              );
-            }
-          }}
-        ></Button>,
+        <div className="m-1">
+          <Button
+            text={value.gauge != ethers.constants.AddressZero ? "Yes" : "No"}
+            id={value.gauge}
+            disabled={value.gauge == ethers.constants.AddressZero}
+            onClick={async function () {
+              Router.push({
+                pathname: "/tradingGauge/[address]",
+                query: {
+                  address: value.gauge,
+                },
+              });
+            }}
+          />
+        </div>,
         <div key={"details" + key}>
           <Button
             customize={{
@@ -114,7 +98,7 @@ export default function TradingPools() {
               fontSize: 16,
               textColor: "white",
             }}
-            text="Details"
+            text="+"
             theme="custom"
             id={key}
             radius="12"
@@ -272,7 +256,7 @@ export default function TradingPools() {
               </Box>
               <div className="flex flex-col ml-1">
                 <Tooltip
-                  content="Token in this pool."
+                  content="Gauge for this pool."
                   position="bottom"
                   minWidth={170}
                 >

@@ -104,7 +104,7 @@ export default function TradingPools() {
             radius="12"
             onClick={async function (event) {
               Router.push({
-                pathname: "/tradingPool/[address]",
+                pathname: "/trading/pool/[address]",
                 query: {
                   address: event.target.id,
                 },

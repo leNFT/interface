@@ -1,5 +1,5 @@
 import { useNotification, Button, Input, Typography } from "@web3uikit/core";
-import contractAddresses from "../contractAddresses.json";
+import contractAddresses from "../../contractAddresses.json";
 import {
   useAccount,
   useNetwork,
@@ -9,13 +9,13 @@ import {
 } from "wagmi";
 import { formatUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
-import lendingMarketContract from "../contracts/LendingMarket.json";
+import lendingMarketContract from "../../contracts/LendingMarket.json";
 import { useState, useEffect } from "react";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { getCollectionFloorPrice } from "../helpers/getCollectionFloorPrice.js";
+import { getCollectionFloorPrice } from "../../helpers/getCollectionFloorPrice.js";
 
 export default function CreateLendingPool(props) {
   const { isConnected } = useAccount();

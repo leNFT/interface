@@ -20,7 +20,7 @@ import {
   Typography,
   Select,
 } from "@web3uikit/core";
-import styles from "../styles/Home.module.css";
+import styles from "../../styles/Home.module.css";
 import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";

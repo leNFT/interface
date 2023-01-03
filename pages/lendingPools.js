@@ -3,7 +3,7 @@ import { Button, Table, Skeleton } from "@web3uikit/core";
 import { getLendingPools } from "../helpers/getLendingPools.js";
 import { formatUnits } from "@ethersproject/units";
 import StyledModal from "../components/StyledModal";
-import CreateLendingPool from "../components/CreateLendingPool";
+import CreateLendingPool from "../components/lending/CreateLendingPool";
 import { useAccount, useNetwork } from "wagmi";
 import { Tooltip } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";

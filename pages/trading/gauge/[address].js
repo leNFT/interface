@@ -189,7 +189,7 @@ export default function TradingPoolGauge() {
                     fontWeight: "bold",
                   }}
                 >
-                  {"10 ETH"}
+                  {stakedLPs.length + " staked LPs"}
                 </Box>
               </div>
             </div>
@@ -202,7 +202,7 @@ export default function TradingPoolGauge() {
                     fontWeight: "bold",
                   }}
                 >
-                  {"1.6x Boost"}
+                  {boost / 10000 + "x Boost"}
                 </Box>
               </div>
             </div>

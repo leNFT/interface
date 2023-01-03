@@ -8,13 +8,13 @@ import {
 import { formatUnits } from "@ethersproject/units";
 import { useNotification, Button, Typography } from "@web3uikit/core";
 
-import styles from "../styles/Home.module.css";
-import contractAddresses from "../contractAddresses.json";
+import styles from "../../styles/Home.module.css";
+import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import tradingPoolContract from "../contracts/TradingPool.json";
-import wethGatewayContract from "../contracts/WETHGateway.json";
-import erc721 from "../contracts/erc721.json";
+import tradingPoolContract from "../../contracts/TradingPool.json";
+import wethGatewayContract from "../../contracts/WETHGateway.json";
+import erc721 from "../../contracts/erc721.json";
 
 export default function WithdrawTradingPool(props) {
   const [tokenAmount, setTokenAmount] = useState("0");

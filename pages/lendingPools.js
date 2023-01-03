@@ -98,7 +98,7 @@ export default function LendingPools() {
             radius="12"
             onClick={async function (event) {
               Router.push({
-                pathname: "/lendingPool/[address]",
+                pathname: "/lending/pool/[address]",
                 query: {
                   address: event.target.id,
                 },

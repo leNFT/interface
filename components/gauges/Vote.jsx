@@ -1,8 +1,8 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useNotification, Button, Input, Typography } from "@web3uikit/core";
-import styles from "../styles/Home.module.css";
-import contractAddresses from "../contractAddresses.json";
+import styles from "../../styles/Home.module.css";
+import contractAddresses from "../../contractAddresses.json";
 import {
   useAccount,
   useNetwork,
@@ -10,7 +10,7 @@ import {
   useProvider,
   useSigner,
 } from "wagmi";
-import gaugeControllerContract from "../contracts/GaugeController.json";
+import gaugeControllerContract from "../../contracts/GaugeController.json";
 import { useState, useEffect } from "react";
 
 export default function Vote(props) {

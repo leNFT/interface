@@ -2,13 +2,13 @@ import { useState, useEffect } from "react";
 import { Button, Tooltip, Loading, Typography } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
 import { BigNumber } from "@ethersproject/bignumber";
-import StyledModal from "../../components/StyledModal";
+import StyledModal from "../../../components/StyledModal";
 import { formatUnits } from "@ethersproject/units";
-import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
-import contractAddresses from "../../contractAddresses.json";
-import tradingGaugeContract from "../../contracts/TradingGauge.json";
-import StakeTradingGauge from "../../components/StakeTradingGauge";
-import UnstakeTradingGauge from "../../components/UnstakeTradingGauge";
+import { getAddressNFTs } from "../../../helpers/getAddressNFTs.js";
+import contractAddresses from "../../../contractAddresses.json";
+import tradingGaugeContract from "../../../contracts/TradingGauge.json";
+import StakeTradingGauge from "../../../components/gauges/StakeTradingGauge";
+import UnstakeTradingGauge from "../../../components/gauges/UnstakeTradingGauge";
 import Box from "@mui/material/Box";
 import { ethers } from "ethers";
 import Card from "@mui/material/Card";
@@ -24,13 +24,14 @@ export default function TradingPoolGauge() {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const router = useRouter();
-  const [totalNFTs, setTotalNFTs] = useState(0);
-  const [totalValue, setTotalValue] = useState("0");
+  const [lpToken, setLPToken] = useState("");
   const [boost, setBoost] = useState(0);
   const [stakedLPs, setStakedLPs] = useState([]);
   const [selectedLP, setSelectedLP] = useState();
   const [visibleStakeModal, setVisibleStakeModal] = useState(false);
   const [visibleUnstakeModal, setVisibleUnstakeModal] = useState(false);
+  const [loadingGauge, setLoadingGauge] = useState(false);
+
   const provider = useProvider();
   const addresses =
     chain && chain.id in contractAddresses
@@ -44,38 +45,27 @@ export default function TradingPoolGauge() {
       provider
     );
 
-    // Set pool details
-    const nftResponse = await pool.getNFT();
-    setNFT(nftResponse.toString());
+    // Set gauge details
+    const lpTokenResponse = await gauge.lpToken();
+    setLPToken(lpTokenResponse.toString());
 
-    const tokenResponse = await pool.getToken();
-    setToken(tokenResponse.toString());
+    const boostResponse = await gauge.userBoost(address);
+    setBoost(boostResponse.toNumber());
 
-    // Get lp positions
-    const addressNFTs = await getAddressNFTs(
-      address,
-      router.query.address,
-      chain.id
-    );
-    const newLpPositions = [];
-    var newTotalNFTs = 0;
-    var newTotalTokenAmount = "0";
-    for (let i = 0; i < addressNFTs.length; i++) {
-      newLpPositions.push({
-        id: BigNumber.from(addressNFTs[i].id.tokenId).toNumber(),
-      });
+    const stakedLPsBalanceResponse = await gauge.balanceOf(address);
+    const stakedLPsAmount = stakedLPsBalanceResponse.toNumber();
 
-      const lp = await pool.getLP(addressNFTs[i].id.tokenId);
-      console.log("lp", lp);
-      newTotalNFTs += lp.nftIds.length;
-      newTotalTokenAmount = BigNumber.from(lp.tokenAmount)
-        .add(newTotalTokenAmount)
-        .toString();
+    // Get staked lp positions
+    const newStakedLps = [];
+
+    for (let i = 0; i < stakedLPsAmount; i++) {
+      const stakedLPResponse = await gauge.lpOfOwnerByIndex(address, i);
+      const stakedLP = stakedLPResponse.toNumber();
+
+      newStakedLps.push(stakedLP);
     }
-    setTotalNFTs(newTotalNFTs);
-    setTotalTokenAmount(newTotalTokenAmount);
 
-    setLpPositions(newLpPositions);
+    setStakedLPs(newStakedLps);
   }
 
   // Set the rest of the UI when we receive the reserve address
@@ -90,32 +80,30 @@ export default function TradingPoolGauge() {
     <div>
       <StyledModal
         hasFooter={false}
-        title={"Deposit LP"}
-        isVisible={visibleDepositModal}
+        title={"Stake LP"}
+        isVisible={visibleStakeModal}
         width="50%"
         onCloseButtonPressed={function () {
-          setVisibleDepositModal(false);
+          setVisibleStakeModal(false);
         }}
       >
         <StakeTradingGauge
-          setVisibility={setVisibleDepositModal}
-          pool={router.query.address}
-          token={token}
-          nft={nft}
+          setVisibility={setVisibleStakeModal}
+          gauge={router.query.address}
           updateUI={updateUI}
         />
       </StyledModal>
       <StyledModal
         hasFooter={false}
-        title={"Remove LP"}
+        title={"Unstake LP"}
         width="50%"
-        isVisible={visibleWithdrawalModal}
+        isVisible={visibleUnstakeModal}
         onCloseButtonPressed={function () {
-          setVisibleWithdrawalModal(false);
+          setVisibleUnstakeModal(false);
         }}
       >
         <UnstakeTradingGauge
-          setVisibility={setVisibleWithdrawalModal}
+          setVisibility={setVisibleUnstakeModal}
           pool={router.query.address}
           lp={selectedLP}
           updateUI={updateUI}
@@ -214,7 +202,7 @@ export default function TradingPoolGauge() {
                     fontWeight: "bold",
                   }}
                 >
-                  {"2x Boost"}
+                  {"1.6x Boost"}
                 </Box>
               </div>
             </div>
@@ -232,27 +220,27 @@ export default function TradingPoolGauge() {
                 size="large"
                 radius="12"
                 onClick={async function () {
-                  setVisibleDepositModal(true);
+                  setVisibleStakeModal(true);
                 }}
               />
             </div>
           </div>
         </div>
         <div className="flex flex-col border-4 border-slate-400 rounded-2xl p-8 m-8 lg:py-16 lg:px-16">
-          {loadingTradingPool ? (
+          {loadingGauge ? (
             <div className="flex m-4">
               <Loading size={12} spinnerColor="#000000" />
             </div>
           ) : (
             <div>
-              {lpPositions.length == 0 ? (
+              {stakedLPs.length == 0 ? (
                 <Box
                   sx={{
                     fontFamily: "Monospace",
                     fontSize: "subtitle1.fontSize",
                   }}
                 >
-                  <div>{"No LP Positions staked in gauge."}</div>
+                  <div>{"No LP Positions staked in this gauge."}</div>
                 </Box>
               ) : (
                 <div className="flex grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -271,7 +259,7 @@ export default function TradingPoolGauge() {
                         <CardActionArea
                           onClick={function () {
                             setSelectedLP(data.id);
-                            setVisibleWithdrawalModal(true);
+                            setVisibleUnstakeModal(true);
                           }}
                         >
                           <CardContent>

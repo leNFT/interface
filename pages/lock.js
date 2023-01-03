@@ -3,7 +3,7 @@ import { formatUnits } from "@ethersproject/units";
 import StyledModal from "../components/StyledModal";
 import { useState, useEffect } from "react";
 import { useAccount, useProvider, useNetwork, useContract } from "wagmi";
-import Vote from "../components/Vote";
+import Vote from "../components/gauges/Vote";
 import { Input } from "@nextui-org/react";
 import { Button } from "@web3uikit/core";
 import LockNativeToken from "../components/LockNativeToken";
@@ -195,6 +195,29 @@ export default function Lock() {
                     >
                       {Number(formatUnits(voteTokenBalance, 18)).toFixed(2) +
                         " veLE"}
+                    </Box>
+                  </div>
+                </div>
+                <div className="flex flex-col m-2">
+                  <div className="flex flex-row">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "h5.fontSize",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Earned Fees
+                    </Box>
+                  </div>
+                  <div className="flex flex-row">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                      }}
+                    >
+                      {"0 wETH"}
                     </Box>
                   </div>
                 </div>

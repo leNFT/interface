@@ -1,4 +1,4 @@
-import HeaderController from "./Header/HeaderController";
+import HeaderController from "./header/HeaderController";
 import Footer from "./Footer";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";

@@ -11,7 +11,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { CardActionArea } from "@mui/material";
-import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
+import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import {
   useNotification,
@@ -21,15 +21,15 @@ import {
   Select,
 } from "@web3uikit/core";
 import styles from "../styles/Home.module.css";
-import contractAddresses from "../contractAddresses.json";
+import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import tradingPoolContract from "../contracts/TradingPool.json";
-import wethGatewayContract from "../contracts/WETHGateway.json";
-import erc20 from "../contracts/erc20.json";
-import erc721 from "../contracts/erc721.json";
+import tradingPoolContract from "../../contracts/TradingPool.json";
+import wethGatewayContract from "../../contracts/WETHGateway.json";
+import erc20 from "../../contracts/erc20.json";
+import erc721 from "../../contracts/erc721.json";
 
-export default function StakeTradingGauge(props) {
+export default function DepositTradingPool(props) {
   const [curve, setCurve] = useState("exponential");
   const [delta, setDelta] = useState("0");
   const [initialPrice, setInitialPrice] = useState("0");

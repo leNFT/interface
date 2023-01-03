@@ -3,7 +3,7 @@ import { Button, Table, Skeleton, LinkTo } from "@web3uikit/core";
 import { getTradingPools } from "../helpers/getTradingPools.js";
 import { formatUnits } from "@ethersproject/units";
 import StyledModal from "../components/StyledModal";
-import CreateTradingPool from "../components/CreateTradingPool";
+import CreateTradingPool from "../components/trading/CreateTradingPool";
 import { useAccount, useNetwork } from "wagmi";
 import { Tooltip } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
@@ -83,7 +83,7 @@ export default function TradingPools() {
             disabled={value.gauge == ethers.constants.AddressZero}
             onClick={async function () {
               Router.push({
-                pathname: "/tradingGauge/[address]",
+                pathname: "/trading/gauge/[address]",
                 query: {
                   address: value.gauge,
                 },
@@ -98,7 +98,7 @@ export default function TradingPools() {
               fontSize: 16,
               textColor: "white",
             }}
-            text="+"
+            text="Options"
             theme="custom"
             id={key}
             radius="12"

@@ -9,8 +9,8 @@ import Pagination from "@mui/material/Pagination";
 import { useNotification, Tooltip, Loading, Input } from "@web3uikit/core";
 import { HelpCircle, Search } from "@web3uikit/icons";
 import { BigNumber } from "@ethersproject/bignumber";
-import Borrow from "../components/Borrow";
-import RepayLoan from "../components/RepayLoan";
+import Borrow from "../components/lending/Borrow";
+import RepayLoan from "../components/lending/RepayLoan";
 import Image from "next/image";
 import { getAddress } from "@ethersproject/address";
 import loanCenterContract from "../contracts/LoanCenter.json";
@@ -346,7 +346,7 @@ export default function Lend() {
                   }}
                 >
                   <div className="text-xl text-center md:text-left md:text-4xl">
-                    NFT Wallet
+                    Wallet
                   </div>
                 </Box>
                 <div className="mt-4">
@@ -355,8 +355,10 @@ export default function Lend() {
                       fontFamily: "Monospace",
                     }}
                   >
-                    <div className="text-sm text-center md:text-left md:text-lg">
-                      {supportedAssets.length + " supported Assets"}
+                    <div className="text-sm text-center md:text-left md:text-md">
+                      {"You can use " +
+                        supportedAssets.length +
+                        " of your NFTs to borrow."}
                     </div>
                   </Box>
                 </div>

@@ -11,7 +11,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { CardActionArea } from "@mui/material";
-import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
+import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import {
   useNotification,
@@ -20,26 +20,26 @@ import {
   Typography,
   Select,
 } from "@web3uikit/core";
-import styles from "../styles/Home.module.css";
-import contractAddresses from "../contractAddresses.json";
+import styles from "../../styles/Home.module.css";
+import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import tradingPoolContract from "../contracts/TradingPool.json";
-import wethGatewayContract from "../contracts/WETHGateway.json";
-import erc20 from "../contracts/erc20.json";
-import erc721 from "../contracts/erc721.json";
+import tradingGaugeContract from "../../contracts/TradingGauge.json";
+import wethGatewayContract from "../../contracts/WETHGateway.json";
+import erc20 from "../../contracts/erc20.json";
+import erc721 from "../../contracts/erc721.json";
 
-export default function DepositTradingPool(props) {
+export default function StakeTradingGauge(props) {
   const [curve, setCurve] = useState("exponential");
   const [delta, setDelta] = useState("0");
   const [initialPrice, setInitialPrice] = useState("0");
   const [tokenAmount, setTokenAmount] = useState("0");
   const [nftAmount, setNFTAmount] = useState(0);
-  const [userNFTs, setUserNFTs] = useState([]);
+  const [userLPs, setUserLPs] = useState([]);
   const [selectedNFTs, setSelectedNFTs] = useState([]);
   const [selectingNFTs, setSelectingNFTs] = useState(false);
   const [approvedToken, setApprovedToken] = useState(false);
-  const [approvedNFT, setApprovedNFT] = useState(false);
+  const [approvedLP, setApprovedLP] = useState(false);
   const [approvalNFTLoading, setApprovalNFTLoading] = useState(false);
   const [approvalTokenLoading, setApprovalTokenLoading] = useState(false);
 
@@ -54,52 +54,34 @@ export default function DepositTradingPool(props) {
       ? contractAddresses[chain.id]
       : contractAddresses["1"];
 
-  const wethGatewaySigner = useContract({
-    contractInterface: wethGatewayContract.abi,
-    addressOrName: addresses.WETHGateway,
+  const gaugeProvider = useContract({
+    contractInterface: tradingGaugeContract.abi,
+    addressOrName: props.gauge,
+    signerOrProvider: provider,
+  });
+
+  const gaugeSigner = useContract({
+    contractInterface: tradingGaugeContract.abi,
+    addressOrName: props.gauge,
     signerOrProvider: signer,
   });
 
-  const tokenProvider = useContract({
-    contractInterface: erc20,
-    addressOrName: props.token,
-    signerOrProvider: provider,
-  });
-
-  const nftProvider = useContract({
-    contractInterface: erc721,
-    addressOrName: props.nft,
-    signerOrProvider: provider,
-  });
-
-  async function getUserNFTs() {
+  async function getUserLPs() {
     // Get lp positions
-    const addressNFTs = await getAddressNFTs(address, props.nft, chain.id);
-    setUserNFTs(addressNFTs);
+    const addressNFTs = await getAddressNFTs(address, props.gauge, chain.id);
+    setUserLPs(addressNFTs);
     console.log(addressNFTs);
   }
 
-  async function getTokenAllowance() {
-    const allowance = await tokenProvider.allowance(address, props.pool);
-
-    console.log("Got allowance:", allowance);
-
-    if (!allowance.eq(BigNumber.from(0)) || props.assetSymbol == "ETH") {
-      setApprovedToken(true);
-    } else {
-      setApprovedToken(false);
-    }
-  }
-
-  async function getNFTAllowance() {
-    const allowed = await nftProvider.isApprovedForAll(address, props.pool);
+  async function getLPAllowance() {
+    const allowed = await gaugeProvider.isApprovedForAll(address, props.pool);
 
     console.log("Got nft allowed:", allowed);
 
     if (allowed) {
-      setApprovedNFT(true);
+      setApprovedLP(true);
     } else {
-      setApprovedNFT(false);
+      setApprovedLP(false);
     }
   }
 
@@ -107,9 +89,8 @@ export default function DepositTradingPool(props) {
   useEffect(() => {
     if (props.pool && props.token && props.nft) {
       console.log("Got trading pool address, setting the rest...", props.pool);
-      getTokenAllowance();
-      getNFTAllowance();
-      getUserNFTs();
+      getLPAllowance();
+      getUserLPs();
     }
   }, [props.pool, props.token, props.nft]);
 
@@ -125,7 +106,7 @@ export default function DepositTradingPool(props) {
   };
 
   const handleNFTApprovalSuccess = async function () {
-    setApprovedNFT(true);
+    setApprovedLP(true);
     dispatch({
       type: "success",
       message: "You can now deposit.",
@@ -284,7 +265,7 @@ export default function DepositTradingPool(props) {
         )}
       </div>
       <div className="flex flex-row items-center justify-center m-8">
-        {approvedNFT ? (
+        {approvedLP ? (
           <Button
             text={"Selected " + nftAmount + " NFTs"}
             theme="secondary"
@@ -339,7 +320,7 @@ export default function DepositTradingPool(props) {
       </div>
       {selectingNFTs && (
         <div className="flex flex-row grid md:grid-cols-3 lg:grid-cols-4">
-          {userNFTs.map((nft, _) => (
+          {userLPs.map((nft, _) => (
             <div
               key={BigNumber.from(nft.id.tokenId).toNumber()}
               className="flex m-4 items-center justify-center max-w-[300px]"
@@ -408,7 +389,7 @@ export default function DepositTradingPool(props) {
             direction: "right",
             size: "24",
           }}
-          disabled={!approvedToken || !approvedNFT}
+          disabled={!approvedToken || !approvedLP}
           loadingText=""
           isLoading={depositLoading}
           onClick={async function () {

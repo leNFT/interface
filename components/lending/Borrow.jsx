@@ -1,12 +1,12 @@
-import contractAddresses from "../contractAddresses.json";
-import { getAssetPrice } from "../helpers/getAssetPrice.js";
-import { getNewRequestID } from "../helpers/getNewRequestID.js";
-import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
+import contractAddresses from "../../contractAddresses.json";
+import { getAssetPrice } from "../../helpers/getAssetPrice.js";
+import { getNewRequestID } from "../../helpers/getNewRequestID.js";
+import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits, parseUnits } from "@ethersproject/units";
-import loanCenterContract from "../contracts/LoanCenter.json";
+import loanCenterContract from "../../contracts/LoanCenter.json";
 import { useState, useEffect } from "react";
-import styles from "../styles/Home.module.css";
+import styles from "../../styles/Home.module.css";
 import {
   useNotification,
   Button,
@@ -14,11 +14,11 @@ import {
   Typography,
   Loading,
 } from "@web3uikit/core";
-import lendingMarketContract from "../contracts/LendingMarket.json";
-import tokenOracleContract from "../contracts/TokenOracle.json";
-import reserveContract from "../contracts/Reserve.json";
-import genesisNFTContract from "../contracts/GenesisNFT.json";
-import erc721 from "../contracts/erc721.json";
+
+import tokenOracleContract from "../../contracts/TokenOracle.json";
+import reserveContract from "../../contracts/Reserve.json";
+import genesisNFTContract from "../../contracts/GenesisNFT.json";
+import erc721 from "../../contracts/erc721.json";
 import Image from "next/image";
 import { Divider, Switch } from "@mui/material";
 import {
@@ -28,7 +28,7 @@ import {
   useProvider,
   useSigner,
 } from "wagmi";
-import wethGatewayContract from "../contracts/WETHGateway.json";
+import wethGatewayContract from "../../contracts/WETHGateway.json";
 
 export default function Borrow(props) {
   const PRICE_PRECISION = "1000000000000000000";

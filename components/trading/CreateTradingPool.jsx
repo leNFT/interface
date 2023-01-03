@@ -1,5 +1,5 @@
 import { useNotification, Button, Input, Typography } from "@web3uikit/core";
-import contractAddresses from "../contractAddresses.json";
+import contractAddresses from "../../contractAddresses.json";
 import {
   useAccount,
   useNetwork,
@@ -14,7 +14,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import tradingPoolFactoryContract from "../contracts/TradingPoolFactory.json";
+import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json";
 
 export default function CreateTradingPool(props) {
   const { isConnected } = useAccount();

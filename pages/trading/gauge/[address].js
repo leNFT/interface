@@ -90,6 +90,7 @@ export default function TradingPoolGauge() {
         <StakeTradingGauge
           setVisibility={setVisibleStakeModal}
           gauge={router.query.address}
+          lpToken={lpToken}
           updateUI={updateUI}
         />
       </StyledModal>

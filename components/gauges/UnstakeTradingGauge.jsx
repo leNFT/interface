@@ -33,12 +33,6 @@ export default function UnstakeTradingGauge(props) {
       ? contractAddresses[chain.id]
       : contractAddresses["1"];
 
-  const wethGatewaySigner = useContract({
-    contractInterface: wethGatewayContract.abi,
-    addressOrName: addresses.WETHGateway,
-    signerOrProvider: signer,
-  });
-
   const poolNFTProvider = useContract({
     contractInterface: erc721,
     addressOrName: props.pool,

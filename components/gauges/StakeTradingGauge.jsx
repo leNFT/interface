@@ -25,23 +25,18 @@ import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import tradingGaugeContract from "../../contracts/TradingGauge.json";
-import wethGatewayContract from "../../contracts/WETHGateway.json";
-import erc20 from "../../contracts/erc20.json";
+
 import erc721 from "../../contracts/erc721.json";
 
 export default function StakeTradingGauge(props) {
   const [curve, setCurve] = useState("exponential");
   const [delta, setDelta] = useState("0");
   const [initialPrice, setInitialPrice] = useState("0");
-  const [tokenAmount, setTokenAmount] = useState("0");
-  const [nftAmount, setNFTAmount] = useState(0);
   const [userLPs, setUserLPs] = useState([]);
-  const [selectedNFTs, setSelectedNFTs] = useState([]);
-  const [selectingNFTs, setSelectingNFTs] = useState(false);
-  const [approvedToken, setApprovedToken] = useState(false);
+  const [selectedLP, setSelectedLP] = useState();
+  const [selectingLP, setSelectingLP] = useState(false);
   const [approvedLP, setApprovedLP] = useState(false);
-  const [approvalNFTLoading, setApprovalNFTLoading] = useState(false);
-  const [approvalTokenLoading, setApprovalTokenLoading] = useState(false);
+  const [approvalLPLoading, setApprovalLPLoading] = useState(false);
 
   const [depositLoading, setDepositLoading] = useState(false);
   const dispatch = useNotification();
@@ -60,6 +55,12 @@ export default function StakeTradingGauge(props) {
     signerOrProvider: provider,
   });
 
+  const lpTokenProvider = useContract({
+    contractInterface: erc721,
+    addressOrName: props.lpToken,
+    signerOrProvider: provider,
+  });
+
   const gaugeSigner = useContract({
     contractInterface: tradingGaugeContract.abi,
     addressOrName: props.gauge,
@@ -74,7 +75,10 @@ export default function StakeTradingGauge(props) {
   }
 
   async function getLPAllowance() {
-    const allowed = await gaugeProvider.isApprovedForAll(address, props.pool);
+    const allowed = await lpTokenProvider.isApprovedForAll(
+      address,
+      props.gauge
+    );
 
     console.log("Got nft allowed:", allowed);
 
@@ -87,187 +91,46 @@ export default function StakeTradingGauge(props) {
 
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
-    if (props.pool && props.token && props.nft) {
+    if (props.lpToken && props.gauge) {
       console.log("Got trading pool address, setting the rest...", props.pool);
       getLPAllowance();
       getUserLPs();
     }
-  }, [props.pool, props.token, props.nft]);
+  }, [props.lpToken, props.gauge]);
 
-  const handleDepositSuccess = async function () {
+  const handleStakeSuccess = async function () {
     props.updateUI();
     props.setVisibility(false);
     dispatch({
       type: "success",
-      message: "Your tokens were deposited into the reserve.",
-      title: "Deposit Successful!",
+      message: "Your LP was staked in the gauge.",
+      title: "Stake Successful!",
       position: "topR",
     });
   };
 
-  const handleNFTApprovalSuccess = async function () {
+  const handleLPApprovalSuccess = async function () {
     setApprovedLP(true);
     dispatch({
       type: "success",
-      message: "You can now deposit.",
+      message: "You can now stake.",
       title: "Approval Successful!",
       position: "topR",
     });
   };
-
-  const handleTokenApprovalSuccess = async function () {
-    setApprovedToken(true);
-    dispatch({
-      type: "success",
-      message: "You can now deposit.",
-      title: "Approval Successful!",
-      position: "topR",
-    });
-  };
-
-  function handleTokenAmountChange(e) {
-    if (e.target.value != "") {
-      setTokenAmount(parseUnits(e.target.value, 18).toString());
-    } else {
-      setTokenAmount("0");
-    }
-  }
-
-  function handleCurveChange(e) {
-    if (e.id != "") {
-      if (e.id == "exponential") {
-        setCurve(e.id);
-      } else if (e.id == "linear") {
-        setCurve(e.id);
-      }
-    } else {
-      setCurve("");
-    }
-  }
-
-  function handleInitialPriceChange(e) {
-    if (e.target.value != "") {
-      setInitialPrice(parseUnits(e.target.value, 18));
-      console.log("newInitialPrice", parseUnits(e.target.value, 18));
-    } else {
-      setInitialPrice("0");
-    }
-  }
-
-  function handleDeltaChange(e) {
-    var newDelta = 0;
-    if (e.target.value != "") {
-      if (curve == "exponential") {
-        newDelta = e.target.value * 100;
-      } else if (curve == "linear") {
-        newDelta = parseUnits(e.target.value, 18);
-      }
-    }
-
-    setDelta(newDelta);
-    console.log("newDelta;", e.target.value);
-  }
 
   return (
     <div className={styles.container}>
       <div className="flex flex-row items-center justify-center m-8">
-        <Select
-          defaultOptionIndex={0}
-          label="Curve"
-          onChange={handleCurveChange}
-          options={[
-            {
-              id: "exponential",
-              label: "Exponential",
-            },
-            {
-              id: "linear",
-              label: "Linear",
-            },
-          ]}
-        />
-      </div>
-      <div className="flex flex-row items-center justify-center m-8">
-        <Input
-          label={
-            curve == "exponential"
-              ? "Delta %"
-              : curve == "linear"
-              ? "Delta (Amount)"
-              : "Delta"
-          }
-          type="number"
-          step="any"
-          validation={{
-            numberMin: 0,
-          }}
-          onChange={handleDeltaChange}
-        />
-      </div>
-      <div className="flex flex-row items-center justify-center m-8">
-        <Input
-          label="Initial Price"
-          type="number"
-          step="any"
-          validation={{
-            numberMin: 0,
-          }}
-          onChange={handleInitialPriceChange}
-        />
-      </div>
-      <div className="flex flex-row items-center justify-center m-8">
-        {approvedToken ? (
-          <Input
-            label="Token Amount"
-            type="number"
-            step="any"
-            validation={{
-              numberMin: 0,
-            }}
-            disabled={!approvedToken}
-            onChange={handleTokenAmountChange}
-          />
-        ) : (
-          <Button
-            text="Approve Token"
-            theme="secondary"
-            isFullWidth
-            loadingProps={{
-              spinnerColor: "#000000",
-              spinnerType: "loader",
-              direction: "right",
-              size: "24",
-            }}
-            loadingText=""
-            isLoading={approvalTokenLoading}
-            onClick={async function () {
-              try {
-                setApprovalTokenLoading(true);
-                console.log("signer.", signer);
-                const tokenContract = new ethers.Contract(
-                  props.token,
-                  erc20,
-                  signer
-                );
-                const tx = await tokenContract.approve(
-                  props.pool,
-                  "115792089237316195423570985008687907853269984665640564039457584007913129639935"
-                );
-                await tx.wait(1);
-                handleTokenApprovalSuccess();
-              } catch (error) {
-                console.log(error);
-              } finally {
-                setApprovalTokenLoading(false);
-              }
-            }}
-          ></Button>
-        )}
-      </div>
-      <div className="flex flex-row items-center justify-center m-8">
         {approvedLP ? (
           <Button
-            text={"Selected " + nftAmount + " NFTs"}
+            text={
+              userLPs.length == 0
+                ? "No LPs to stake"
+                : selectedLP
+                ? "Selected LP #" + selectedLP
+                : "Please select an LP to stake"
+            }
             theme="secondary"
             isFullWidth
             loadingProps={{
@@ -278,12 +141,12 @@ export default function StakeTradingGauge(props) {
             }}
             loadingText=""
             onClick={async function () {
-              setSelectingNFTs(!selectingNFTs);
+              setSelectingLP(!selectingLP);
             }}
           />
         ) : (
           <Button
-            text="Approve NFT"
+            text="Approve LP"
             theme="secondary"
             isFullWidth
             loadingProps={{
@@ -293,32 +156,33 @@ export default function StakeTradingGauge(props) {
               size: "24",
             }}
             loadingText=""
-            isLoading={approvalNFTLoading}
+            isLoading={approvalLPLoading}
             onClick={async function () {
+              const lpTokenContract = new ethers.Contract(
+                erc721,
+                props.lpToken,
+                signer
+              );
               try {
-                setApprovalNFTLoading(true);
+                setApprovalLPLoading(true);
                 console.log("signer.", signer);
-                const nftContract = new ethers.Contract(
-                  props.nft,
-                  erc721,
-                  signer
-                );
-                const tx = await nftContract.setApprovalForAll(
-                  props.pool,
+
+                const tx = await lpTokenContract.setApprovalForAll(
+                  props.gauge,
                   true
                 );
                 await tx.wait(1);
-                handleNFTApprovalSuccess();
+                handleLPApprovalSuccess();
               } catch (error) {
                 console.log(error);
               } finally {
-                setApprovalNFTLoading(false);
+                setApprovalLPLoading(false);
               }
             }}
           ></Button>
         )}
       </div>
-      {selectingNFTs && (
+      {selectingLP && userLPs.length > 0 && (
         <div className="flex flex-row grid md:grid-cols-3 lg:grid-cols-4">
           {userLPs.map((nft, _) => (
             <div
@@ -348,10 +212,10 @@ export default function StakeTradingGauge(props) {
                       newSelectedNFTs.push(
                         BigNumber.from(nft.id.tokenId).toNumber()
                       );
-                      setNFTAmount(nftAmount + 1);
+                      setlpAmount(lpAmount + 1);
                     } else {
                       newSelectedNFTs.splice(index, 1);
-                      setNFTAmount(nftAmount - 1);
+                      setlpAmount(lpAmount - 1);
                     }
                     setSelectedNFTs(newSelectedNFTs);
                   }}
@@ -374,13 +238,7 @@ export default function StakeTradingGauge(props) {
       )}
       <div className="flex flex-row items-center justify-center m-8">
         <Button
-          text={
-            "Deposit (" +
-            formatUnits(tokenAmount, 18) +
-            " tokens, " +
-            nftAmount +
-            " NFTs)"
-          }
+          text={"Stake LP"}
           theme="secondary"
           isFullWidth
           loadingProps={{
@@ -389,42 +247,16 @@ export default function StakeTradingGauge(props) {
             direction: "right",
             size: "24",
           }}
-          disabled={!approvedToken || !approvedLP}
+          disabled={!approvedLP}
           loadingText=""
           isLoading={depositLoading}
           onClick={async function () {
             try {
               setDepositLoading(true);
               console.log("signer.", signer);
-              var tx;
-              if (props.assetSymbol == "ETH") {
-                console.log("Depositing ETH");
-                tx = await wethGatewaySigner.depositETH(props.reserve, {
-                  value: amount,
-                });
-              } else {
-                const tradingPool = new ethers.Contract(
-                  props.pool,
-                  tradingPoolContract.abi,
-                  signer
-                );
-                var curveAddress = "";
-                if (curve == "exponential") {
-                  curveAddress = addresses.ExponentialCurve;
-                } else if (curve == "linear") {
-                  curveAddress = addresses.LinearCurve;
-                }
-                console.log("Adding LP");
-                tx = await tradingPool.addLiquidity(
-                  tokenAmount,
-                  selectedNFTs,
-                  curveAddress,
-                  delta,
-                  initialPrice
-                );
-              }
+              const tx = await gaugeSigner.deposit(selectedLP);
               await tx.wait(1);
-              handleDepositSuccess();
+              handleStakeSuccess();
             } catch (error) {
               console.log(error);
             } finally {

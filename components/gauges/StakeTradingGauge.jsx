@@ -13,31 +13,21 @@ import CardContent from "@mui/material/CardContent";
 import { CardActionArea } from "@mui/material";
 import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
 import { formatUnits, parseUnits } from "@ethersproject/units";
-import {
-  useNotification,
-  Button,
-  Input,
-  Typography,
-  Select,
-} from "@web3uikit/core";
+import { useNotification, Button } from "@web3uikit/core";
 import styles from "../../styles/Home.module.css";
 import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import tradingGaugeContract from "../../contracts/TradingGauge.json";
-
 import erc721 from "../../contracts/erc721.json";
 
 export default function StakeTradingGauge(props) {
-  const [curve, setCurve] = useState("exponential");
-  const [delta, setDelta] = useState("0");
-  const [initialPrice, setInitialPrice] = useState("0");
   const [userLPs, setUserLPs] = useState([]);
   const [selectedLP, setSelectedLP] = useState();
   const [selectingLP, setSelectingLP] = useState(false);
   const [approvedLP, setApprovedLP] = useState(false);
   const [approvalLPLoading, setApprovalLPLoading] = useState(false);
-  const [depositLoading, setDepositLoading] = useState(false);
+  const [stakeLoading, setStakeLoading] = useState(false);
   const dispatch = useNotification();
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
@@ -237,10 +227,10 @@ export default function StakeTradingGauge(props) {
           }}
           disabled={!approvedLP}
           loadingText=""
-          isLoading={depositLoading}
+          isLoading={stakeLoading}
           onClick={async function () {
             try {
-              setDepositLoading(true);
+              setStakeLoading(true);
               console.log("signer.", signer);
               const tx = await gaugeSigner.deposit(selectedLP);
               await tx.wait(1);
@@ -248,7 +238,7 @@ export default function StakeTradingGauge(props) {
             } catch (error) {
               console.log(error);
             } finally {
-              setDepositLoading(false);
+              setStakeLoading(false);
             }
           }}
         ></Button>

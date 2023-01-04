@@ -69,9 +69,9 @@ export default function StakeTradingGauge(props) {
 
   async function getUserLPs() {
     // Get lp positions
-    const addressNFTs = await getAddressNFTs(address, props.gauge, chain.id);
+    const addressNFTs = await getAddressNFTs(address, props.lpToken, chain.id);
     setUserLPs(addressNFTs);
-    console.log(addressNFTs);
+    console.log("addressNFTs", addressNFTs);
   }
 
   async function getLPAllowance() {
@@ -127,7 +127,7 @@ export default function StakeTradingGauge(props) {
             text={
               userLPs.length == 0
                 ? "No LPs to stake"
-                : selectedLP
+                : selectedLP !== undefined
                 ? "Selected LP #" + selectedLP
                 : "Please select an LP to stake"
             }
@@ -158,7 +158,7 @@ export default function StakeTradingGauge(props) {
             loadingText=""
             isLoading={approvalLPLoading}
             onClick={async function () {
-              const lpTokenContract = new ethers.Contract(
+              const lpTokenSigner = new ethers.Contract(
                 erc721,
                 props.lpToken,
                 signer
@@ -167,7 +167,7 @@ export default function StakeTradingGauge(props) {
                 setApprovalLPLoading(true);
                 console.log("signer.", signer);
 
-                const tx = await lpTokenContract.setApprovalForAll(
+                const tx = await lpTokenSigner.setApprovalForAll(
                   props.gauge,
                   true
                 );
@@ -184,40 +184,29 @@ export default function StakeTradingGauge(props) {
       </div>
       {selectingLP && userLPs.length > 0 && (
         <div className="flex flex-row grid md:grid-cols-3 lg:grid-cols-4">
-          {userLPs.map((nft, _) => (
+          {userLPs.map((lp, _) => (
             <div
-              key={BigNumber.from(nft.id.tokenId).toNumber()}
+              key={BigNumber.from(lp.id.tokenId).toNumber()}
               className="flex m-4 items-center justify-center max-w-[300px]"
             >
               <Card
                 sx={{
                   borderRadius: 4,
-                  background: selectedNFTs.find(
-                    (element) =>
-                      element == BigNumber.from(nft.id.tokenId).toNumber()
-                  )
-                    ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
-                    : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
+                  background:
+                    selectedLP == BigNumber.from(lp.id.tokenId).toNumber()
+                      ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
+                      : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                 }}
               >
                 <CardActionArea
                   onClick={function () {
-                    //If it's selected we unselect and if its unselected we select
-                    var newSelectedNFTs = selectedNFTs.slice();
-                    var index = newSelectedNFTs.findIndex(
-                      (element) =>
-                        element == BigNumber.from(nft.id.tokenId).toNumber()
-                    );
-                    if (index == -1) {
-                      newSelectedNFTs.push(
-                        BigNumber.from(nft.id.tokenId).toNumber()
-                      );
-                      setlpAmount(lpAmount + 1);
+                    if (
+                      selectedLP == BigNumber.from(lp.id.tokenId).toNumber()
+                    ) {
+                      setSelectedLP();
                     } else {
-                      newSelectedNFTs.splice(index, 1);
-                      setlpAmount(lpAmount - 1);
+                      setSelectedLP(BigNumber.from(lp.id.tokenId).toNumber());
                     }
-                    setSelectedNFTs(newSelectedNFTs);
                   }}
                 >
                   <CardContent>
@@ -227,7 +216,7 @@ export default function StakeTradingGauge(props) {
                         fontSize: "caption",
                       }}
                     >
-                      {BigNumber.from(nft.id.tokenId).toNumber()}
+                      {BigNumber.from(lp.id.tokenId).toNumber()}
                     </Box>
                   </CardContent>
                 </CardActionArea>

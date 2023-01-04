@@ -37,7 +37,6 @@ export default function StakeTradingGauge(props) {
   const [selectingLP, setSelectingLP] = useState(false);
   const [approvedLP, setApprovedLP] = useState(false);
   const [approvalLPLoading, setApprovalLPLoading] = useState(false);
-
   const [depositLoading, setDepositLoading] = useState(false);
   const dispatch = useNotification();
   const { address, isConnected } = useAccount();
@@ -159,8 +158,8 @@ export default function StakeTradingGauge(props) {
             isLoading={approvalLPLoading}
             onClick={async function () {
               const lpTokenSigner = new ethers.Contract(
-                erc721,
                 props.lpToken,
+                erc721,
                 signer
               );
               try {

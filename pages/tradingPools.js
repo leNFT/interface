@@ -78,7 +78,18 @@ export default function TradingPools() {
         </Box>,
         <div className="m-1">
           <Button
-            text={value.gauge != ethers.constants.AddressZero ? "Yes" : "No"}
+            text={
+              <Box
+                sx={{
+                  fontSize: {
+                    xs: "caption.fontSize",
+                    sm: "h6.fontSize",
+                  },
+                }}
+              >
+                {value.gauge != ethers.constants.AddressZero ? "Yes" : "No"}
+              </Box>
+            }
             id={value.gauge}
             disabled={value.gauge == ethers.constants.AddressZero}
             onClick={async function () {

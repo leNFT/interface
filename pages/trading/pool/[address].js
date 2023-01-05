@@ -283,11 +283,8 @@ export default function TradingPool() {
                                 fontSize: "subtitle1.fontSize",
                               }}
                             >
-                              <div className="flex flex-col mt-2 items-center text-center">
-                                <div>{"LP Position"}</div>
-                                <div>
-                                  {"#" + BigNumber.from(data.id).toNumber()}
-                                </div>
+                              <div className="flex flex-col items-center text-center">
+                                {"LP #" + BigNumber.from(data.id).toNumber()}
                               </div>
                             </Box>
                           </CardContent>

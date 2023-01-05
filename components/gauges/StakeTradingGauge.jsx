@@ -38,12 +38,6 @@ export default function StakeTradingGauge(props) {
       ? contractAddresses[chain.id]
       : contractAddresses["1"];
 
-  const gaugeProvider = useContract({
-    contractInterface: tradingGaugeContract.abi,
-    addressOrName: props.gauge,
-    signerOrProvider: provider,
-  });
-
   const lpTokenProvider = useContract({
     contractInterface: erc721,
     addressOrName: props.lpToken,

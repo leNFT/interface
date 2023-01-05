@@ -105,8 +105,9 @@ export default function TradingPoolGauge() {
       >
         <UnstakeTradingGauge
           setVisibility={setVisibleUnstakeModal}
-          pool={router.query.address}
-          lp={selectedLP}
+          gauge={router.query.address}
+          lpToken={lpToken}
+          selectedLP={selectedLP}
           updateUI={updateUI}
         />
       </StyledModal>
@@ -245,9 +246,9 @@ export default function TradingPoolGauge() {
                 </Box>
               ) : (
                 <div className="flex grid grid-cols-1 md:grid-cols-2 gap-2">
-                  {lpPositions.map((data) => (
+                  {stakedLPs.map((data) => (
                     <div
-                      key={data.id}
+                      key={data}
                       className="flex m-4 items-center justify-center max-w-[300px]"
                     >
                       <Card
@@ -259,7 +260,7 @@ export default function TradingPoolGauge() {
                       >
                         <CardActionArea
                           onClick={function () {
-                            setSelectedLP(data.id);
+                            setSelectedLP(data);
                             setVisibleUnstakeModal(true);
                           }}
                         >
@@ -272,9 +273,7 @@ export default function TradingPoolGauge() {
                             >
                               <div className="flex flex-col mt-2 items-center text-center">
                                 <div>{"LP Position"}</div>
-                                <div>
-                                  {"#" + BigNumber.from(data.id).toNumber()}
-                                </div>
+                                <div>{"#" + data}</div>
                               </div>
                             </Box>
                           </CardContent>

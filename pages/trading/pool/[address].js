@@ -32,7 +32,7 @@ export default function TradingPool() {
   const [selectedLP, setSelectedLP] = useState();
   const [visibleDepositModal, setVisibleDepositModal] = useState(false);
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
-  const [loadingTradingPool, setLoadingTradingPool] = useState(false);
+  const [loadingTradingPool, setLoadingTradingPool] = useState(true);
   const provider = useProvider();
   const addresses =
     chain && chain.id in contractAddresses
@@ -78,6 +78,8 @@ export default function TradingPool() {
     setTotalTokenAmount(newTotalTokenAmount);
 
     setLpPositions(newLpPositions);
+
+    setLoadingTradingPool(false);
   }
 
   // Set the rest of the UI when we receive the reserve address
@@ -284,7 +286,10 @@ export default function TradingPool() {
                               }}
                             >
                               <div className="flex flex-col items-center text-center">
-                                {"LP #" + BigNumber.from(data.id).toNumber()}
+                                <div>{"LP Position"}</div>
+                                <div>
+                                  {"#" + BigNumber.from(data.id).toNumber()}
+                                </div>
                               </div>
                             </Box>
                           </CardContent>

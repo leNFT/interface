@@ -6,7 +6,6 @@ import {
   useSigner,
 } from "wagmi";
 import { useNotification, Button, Typography } from "@web3uikit/core";
-
 import styles from "../../styles/Home.module.css";
 import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
@@ -70,7 +69,7 @@ export default function UnstakeTradingGauge(props) {
           onClick={async function () {
             try {
               setUnstakeLoading(true);
-              console.log("signer.", signer);
+              console.log("gaugeSigner.", gaugeSigner);
               console.log("props.selectedLP.", props.selectedLP);
               const tx = await gaugeSigner.withdraw(props.selectedLP);
               await tx.wait(1);

@@ -435,8 +435,8 @@ export default function DepositTradingPool(props) {
                 }
                 console.log("Adding LP");
                 tx = await tradingPool.addLiquidity(
-                  tokenAmount,
                   selectedNFTs,
+                  tokenAmount,
                   curveAddress,
                   delta,
                   initialPrice

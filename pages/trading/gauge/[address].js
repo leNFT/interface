@@ -169,7 +169,7 @@ export default function TradingPoolGauge() {
       </div>
       <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">
         <div className="flex flex-col m-8 lg:mx-16">
-          <div className="flex flex-col items-center p-4 rounded-3xl m-2 bg-black/5 shadow-lg">
+          <div className="flex flex-col items-center p-4 rounded-3xl min-w-[280px] m-2 bg-black/5 shadow-lg">
             <div className="flex flex-col m-4 rounded-2xl">
               <div className="flex flex-row m-2">
                 <div className="flex flex-col">

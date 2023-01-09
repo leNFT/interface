@@ -9,6 +9,7 @@ import {
 } from "wagmi";
 import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
 import Box from "@mui/material/Box";
+import { getSwapQuote } from "../../helpers/getSwapQuote.js";
 import { Input } from "@nextui-org/react";
 import { Button } from "grommet";
 import { formatUnits } from "@ethersproject/units";
@@ -17,6 +18,7 @@ import { useState, useEffect } from "react";
 import { Divider } from "@mui/material";
 import ArrowDownwardOutlinedIcon from "@mui/icons-material/ArrowDownwardOutlined";
 import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json";
+import swapRouterContract from "../../contracts/SwapRouter.json";
 
 export default function Swap(props) {
   const SELECTED_COLOR = "#d2c6d2";
@@ -35,7 +37,7 @@ export default function Swap(props) {
   const [selectingNFTs, setSelectingNFTs] = useState(false);
   const [selectedNFTs, setSelectedNFTs] = useState([]);
   const [userNFTs, setUserNFTs] = useState([]);
-  const [priceQuote, setPriceQuote] = useState();
+  const [swapQuote, setSwapQuote] = useState();
   const [swapLoading, setSwapLoading] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [sellNFTName, setSellNFTName] = useState("");
@@ -48,17 +50,30 @@ export default function Swap(props) {
       ? contractAddresses[chain.id]
       : contractAddresses["1"];
 
-  const factorySigner = useContract({
-    contractInterface: tradingPoolFactoryContract.abi,
-    addressOrName: addresses.TradingPoolFactory,
-    signerOrProvider: signer,
-  });
-
   const factoryProvider = useContract({
     contractInterface: tradingPoolFactoryContract.abi,
     addressOrName: addresses.TradingPoolFactory,
     signerOrProvider: provider,
   });
+
+  const swapRouterSigner = useContract({
+    contractInterface: swapRouterContract.abi,
+    addressOrName: addresses.SwapRouter,
+    signerOrProvider: signer,
+  });
+
+  async function getSwapQuote(buyAmount, sellAmount) {
+    const newSwapQuote = await getSwapQuote(
+      chain.id,
+      buyAmount,
+      sellAmount,
+      buyPoolAddress,
+      sellPoolAddress
+    );
+    setSwapQuote(newSwapQuote);
+    setSellAmount(newSwapQuote.lps.length);
+    console.log("newSwapQuote", newSwapQuote);
+  }
 
   async function getUserNFTs(collection) {
     // Get user NFT assets
@@ -107,11 +122,7 @@ export default function Swap(props) {
   const handleSellAmountInputChange = (event) => {
     console.log("handleAmountInputChange", event.target.value);
     try {
-      if (event.target.value && sellNFTAddress) {
-        //getPriceQuote(event.target.value);
-      } else {
-        //setPriceQuote();
-      }
+      getSwapQuote(event.target.value);
       setSellAmount(event.target.value);
     } catch (error) {
       console.log(error);
@@ -161,7 +172,7 @@ export default function Swap(props) {
       if (event.target.value && sellNFTAddress) {
         //getPriceQuote(event.target.value);
       } else {
-        //setPriceQuote();
+        //setSwapQuote();
       }
       setBuyAmount(event.target.value);
     } catch (error) {
@@ -370,7 +381,7 @@ export default function Swap(props) {
             />
           </div>
         </div>
-        {priceQuote && (
+        {swapQuote && (
           <div className="flex flex-row justify-center mt-8 items-center text-center">
             <Box
               sx={{
@@ -379,7 +390,7 @@ export default function Swap(props) {
                 fontWeight: "bold",
               }}
             >
-              {"Price: " + formatUnits(priceQuote.price, 18) + " WETH"}
+              {"Price: " + formatUnits(swapQuote.price, 18) + " WETH"}
             </Box>
           </div>
         )}
@@ -435,19 +446,17 @@ export default function Swap(props) {
             color="#063970"
             onClick={async function () {
               setSwapLoading(true);
-              const tradingPool = new ethers.Contract(
-                poolAddress,
-                tradingPoolContract.abi,
-                signer
-              );
               try {
-                let tx = await tradingPool.buy(priceQuote.exampleNFTs);
+                let tx = await swapRouterSigner.swap(
+                  buyPoolAddress,
+                  sellPoolAddress
+                );
                 await tx.wait(1);
-                handleBuySuccess();
+                handleSwapSuccess();
               } catch (error) {
                 console.log(error);
               } finally {
-                getPriceQuote(amount);
+                getSwapQuote(amount);
                 setSwapLoading(false);
               }
             }}
@@ -461,7 +470,7 @@ export default function Swap(props) {
                     letterSpacing: 2,
                   }}
                 >
-                  {"NFTs"}
+                  {"SWAP"}
                 </Box>
               </div>
             }

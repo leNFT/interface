@@ -37,7 +37,7 @@ export default function Sell(props) {
   const [selectingNFTs, setSelectingNFTs] = useState(false);
   const [selectedNFTs, setSelectedNFTs] = useState([]);
   const [userNFTs, setUserNFTs] = useState([]);
-  const [priceQuote, setPriceQuote] = useState();
+  const [sellQuote, setSellQuote] = useState();
   const [swapLoading, setSwapLoading] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [nftName, setNFTName] = useState("");
@@ -72,9 +72,9 @@ export default function Sell(props) {
     setPoolAddress(updatedPool);
   }
 
-  async function getPriceQuote(amount) {
+  async function getSellQuote(amount) {
     const newSellQuote = await getSellQuote(chain.id, amount, poolAddress);
-    setPriceQuote(newSellQuote);
+    setSellQuote(newSellQuote);
     if (newSellQuote.lps.length < amount) {
       dispatch({
         type: "warning",
@@ -105,7 +105,7 @@ export default function Sell(props) {
       selected.length,
       poolAddress
     );
-    setPriceQuote(newSellQuote);
+    setSellQuote(newSellQuote);
     if (newSellQuote.lps.length < selected.length) {
       dispatch({
         type: "warning",
@@ -125,9 +125,9 @@ export default function Sell(props) {
     console.log("handleAmountInputChange", event.target.value);
     try {
       if (event.target.value && nftAddress) {
-        getPriceQuote(event.target.value);
+        getSellQuote(event.target.value);
       } else {
-        setPriceQuote();
+        setSellQuote();
       }
       setAmount(event.target.value);
     } catch (error) {
@@ -190,7 +190,7 @@ export default function Sell(props) {
       getUserNFTs(event.target.value);
       getTradingPoolAddress(event.target.value);
     } catch (error) {
-      setPriceQuote();
+      setSellQuote();
       setPoolAddress("");
       setNFTName("");
       console.log(error);
@@ -348,7 +348,7 @@ export default function Sell(props) {
             ))}
           </div>
         )}
-        {priceQuote && (
+        {sellQuote && (
           <div className="flex flex-row justify-center mt-8 items-center text-center">
             <Box
               sx={{
@@ -357,7 +357,7 @@ export default function Sell(props) {
                 fontWeight: "bold",
               }}
             >
-              {"Price: " + formatUnits(priceQuote.price, 18) + " WETH"}
+              {"Price: " + formatUnits(sellQuote.price, 18) + " WETH"}
             </Box>
           </div>
         )}
@@ -424,14 +424,14 @@ export default function Sell(props) {
               );
               try {
                 console.log("selectedNFTs", selectedNFTs);
-                console.log("priceQuote.lps", priceQuote.lps);
-                let tx = await tradingPool.sell(selectedNFTs, priceQuote.lps);
+                console.log("sellQuote.lps", sellQuote.lps);
+                let tx = await tradingPool.sell(selectedNFTs, sellQuote.lps);
                 await tx.wait(1);
                 handleSellSuccess();
               } catch (error) {
                 console.log(error);
               } finally {
-                getPriceQuote(amount);
+                getSellQuote(amount);
                 setSwapLoading(false);
               }
             }}

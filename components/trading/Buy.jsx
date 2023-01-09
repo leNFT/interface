@@ -31,7 +31,7 @@ export default function Buy() {
   const [nftAddress, setNFTAddress] = useState("");
   const [poolAddress, setPoolAddress] = useState("");
   const [amount, setAmount] = useState(0);
-  const [priceQuote, setPriceQuote] = useState();
+  const [buyQuote, setBuyQuote] = useState();
   const [swapLoading, setSwapLoading] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [nftName, setNFTName] = useState("");
@@ -61,9 +61,9 @@ export default function Buy() {
     setPoolAddress(updatedPool);
   }
 
-  async function getPriceQuote(amount) {
+  async function getBuyQuote(amount) {
     const newBuyQuote = await getBuyQuote(chain.id, amount, poolAddress);
-    setPriceQuote(newBuyQuote);
+    setBuyQuote(newBuyQuote);
     if (newBuyQuote.lps.length < amount) {
       dispatch({
         type: "warning",
@@ -131,9 +131,9 @@ export default function Buy() {
     console.log("handleAmountInputChange", event.target.value);
     try {
       if (event.target.value && nftAddress) {
-        getPriceQuote(event.target.value);
+        getBuyQuote(event.target.value);
       } else {
-        setPriceQuote();
+        setBuyQuote();
       }
       setAmount(event.target.value);
     } catch (error) {
@@ -149,7 +149,7 @@ export default function Buy() {
       getUserNFTs(event.target.value);
       getTradingPoolAddress(event.target.value);
     } catch (error) {
-      setPriceQuote();
+      setBuyQuote();
       setPoolAddress("");
       setNFTName("");
       console.log(error);
@@ -222,7 +222,7 @@ export default function Buy() {
           </div>
         </div>
 
-        {priceQuote && (
+        {buyQuote && (
           <div className="flex flex-row justify-center mt-8 items-center text-center">
             <Box
               sx={{
@@ -231,7 +231,7 @@ export default function Buy() {
                 fontWeight: "bold",
               }}
             >
-              {"Price: " + formatUnits(priceQuote.price, 18) + " WETH"}
+              {"Price: " + formatUnits(buyQuote.price, 18) + " WETH"}
             </Box>
           </div>
         )}
@@ -298,13 +298,13 @@ export default function Buy() {
                 signer
               );
               try {
-                const tx = await tradingPool.buy(priceQuote.exampleNFTs);
+                const tx = await tradingPool.buy(buyQuote.exampleNFTs);
                 await tx.wait(1);
                 handleBuySuccess();
               } catch (error) {
                 console.log(error);
               } finally {
-                getPriceQuote(amount);
+                getBuyQuote(amount);
                 setSwapLoading(false);
               }
             }}

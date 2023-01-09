@@ -1,6 +1,12 @@
 import fetch from "node-fetch";
 
-export async function getBuyQuote(chainId, amount, pool) {
+export async function getSwapQuote(
+  chainId,
+  buyAmount,
+  sellAmount,
+  buyPool,
+  sellPool
+) {
   const serverAddress = "https://trade-router-absrz.ondigitalocean.app";
   const options = {
     method: "GET",
@@ -11,17 +17,21 @@ export async function getBuyQuote(chainId, amount, pool) {
 
   const requestURL =
     serverAddress +
-    "/swap?amount=" +
-    amount +
-    "&chainId=" +
+    "/swap?chainId=" +
     chainId +
-    "&pool=" +
-    pool;
+    "&buyAmount=" +
+    buyAmount +
+    "&sellAmount=" +
+    sellAmount +
+    "&buyPool=" +
+    buyPool +
+    "&sellPool=" +
+    sellPool;
   console.log(requestURL);
-  const buyQuoteResponse = await fetch(requestURL, options).catch((err) =>
+  const swapQuoteResponse = await fetch(requestURL, options).catch((err) =>
     console.error(err)
   );
-  const buyQuote = await buyQuoteResponse.json();
+  const swapQuote = await swapQuoteResponse.json();
 
-  return buyQuote;
+  return swapQuote;
 }

@@ -219,7 +219,7 @@ export default function Swap(props) {
           </div>
         )}
       </div>
-      <div className="flex flex-col justify-center mb-6 m-4">
+      <div className="flex flex-col justify-center mb-8">
         <div className="flex flex-col md:flex-row justify-center items-center">
           <div className="flex flex-col w-[200px] justify-center m-2">
             <Input
@@ -324,7 +324,7 @@ export default function Swap(props) {
       <div className="flex flex-col items-center">
         <ArrowDownwardOutlinedIcon />
       </div>
-      <div className="flex flex-col mt-6 m-4">
+      <div className="flex flex-col mt-8 m-4">
         <Input
           labelLeft={"To"}
           size="xl"
@@ -354,9 +354,9 @@ export default function Swap(props) {
           </div>
         )}
       </div>
-      <div className="flex flex-col justify-center mb-10 m-4">
+      <div className="flex flex-col justify-center mb-10">
         <div className="flex flex-col md:flex-row justify-center items-center">
-          <div className="flex flex-col w-[200px] justify-center m-2">
+          <div className="flex flex-col w-[200px] justify-center">
             <Input
               labelLeft={"Buy"}
               bordered

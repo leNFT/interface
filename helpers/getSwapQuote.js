@@ -11,7 +11,7 @@ export async function getBuyQuote(chainId, amount, pool) {
 
   const requestURL =
     serverAddress +
-    "/buy?amount=" +
+    "/swap?amount=" +
     amount +
     "&chainId=" +
     chainId +

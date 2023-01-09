@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 
 export async function getSellQuote(chainId, amount, pool) {
-  const serverAddress = "https://swap-router-dtf4l.ondigitalocean.app";
+  const serverAddress = "https://trade-router-absrz.ondigitalocean.app";
   const options = {
     method: "GET",
     headers: {

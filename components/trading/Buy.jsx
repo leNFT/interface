@@ -11,6 +11,7 @@ import { ethers } from "ethers";
 import erc20 from "../../contracts/erc20.json";
 import erc721 from "../../contracts/erc721.json";
 import { Input } from "@nextui-org/react";
+import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
 import { getBuyQuote } from "../../helpers/getBuyQuote.js";
 import Chip from "@mui/material/Chip";
 import { formatUnits } from "@ethersproject/units";
@@ -24,7 +25,7 @@ import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json"
 export default function Buy() {
   const { chain } = useNetwork();
   const provider = useProvider();
-
+  const [userNFTs, setUserNFTs] = useState([]);
   const { data: signer } = useSigner();
   const { address } = useAccount();
   const [approvedToken, setApprovedToken] = useState(false);
@@ -48,6 +49,12 @@ export default function Buy() {
     addressOrName: addresses.TradingPoolFactory,
     signerOrProvider: provider,
   });
+
+  async function getUserNFTs(collection) {
+    // Get user NFT assets
+    const addressNFTs = await getAddressNFTs(address, collection, chain.id);
+    setUserNFTs(addressNFTs);
+  }
 
   async function getTradingPoolAddress(collection) {
     // Get trading pool for collection

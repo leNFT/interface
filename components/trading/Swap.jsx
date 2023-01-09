@@ -9,16 +9,23 @@ import {
 } from "wagmi";
 import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
 import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
+import { ethers } from "ethers";
 import { getSwapQuote } from "../../helpers/getSwapQuote.js";
 import { Input } from "@nextui-org/react";
 import { Button } from "grommet";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import { CardActionArea } from "@mui/material";
 import { formatUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
 import { useState, useEffect } from "react";
 import { Divider } from "@mui/material";
 import ArrowDownwardOutlinedIcon from "@mui/icons-material/ArrowDownwardOutlined";
+import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json";
 import swapRouterContract from "../../contracts/SwapRouter.json";
+import erc721 from "../../contracts/erc721.json";
 
 export default function Swap(props) {
   const SELECTED_COLOR = "#d2c6d2";
@@ -182,7 +189,7 @@ export default function Swap(props) {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="flex flex-row w-9/12 justify-center items-center">
+      <div className="flex flex-row w-10/12 justify-center items-center">
         <Divider style={{ width: "100%" }}>
           {sellNFTName && (
             <Chip
@@ -195,6 +202,23 @@ export default function Swap(props) {
                 chain.id == 1
                   ? "https://etherscan.io/address/" + sellNFTAddress
                   : "https://goerli.etherscan.io/address/" + sellNFTAddress
+              }
+            />
+          )}
+
+          <ArrowForwardOutlinedIcon className="mx-1" />
+
+          {buyNFTName && (
+            <Chip
+              label={buyNFTName}
+              variant="outlined"
+              component="a"
+              clickable
+              target="_blank"
+              href={
+                chain.id == 1
+                  ? "https://etherscan.io/address/" + buyNFTAddress
+                  : "https://goerli.etherscan.io/address/" + buyNFTAddress
               }
             />
           )}

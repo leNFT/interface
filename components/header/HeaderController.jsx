@@ -1,6 +1,6 @@
 import Link from "next/link";
 import LendingHeader from "./LendingHeader";
-import SwapHeader from "./SwapHeader";
+import TradeHeader from "./TradeHeader";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { BannerStrip } from "@web3uikit/core";
 import { Reload } from "@web3uikit/icons";
@@ -16,15 +16,15 @@ export default function HeaderController() {
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
-  const [mode, setMode] = useState("swap");
+  const [mode, setMode] = useState("trade");
 
   function handleModeChange(event) {
     console.log(event.target.value);
     setMode(event.target.value);
 
-    if (event.target.value == "swap") {
+    if (event.target.value == "trade") {
       Router.push({
-        pathname: "/swap",
+        pathname: "/trade",
       });
     } else {
       Router.push({
@@ -110,9 +110,9 @@ export default function HeaderController() {
                     md: 4,
                   },
                 }}
-                value="swap"
+                value="trade"
               >
-                Swap
+                Trade
               </ToggleButton>
               <ToggleButton
                 sx={{
@@ -133,7 +133,7 @@ export default function HeaderController() {
               </ToggleButton>
             </ToggleButtonGroup>
           </div>
-          {mode == "swap" ? <SwapHeader /> : <LendingHeader />}
+          {mode == "trade" ? <TradeHeader /> : <LendingHeader />}
         </div>
         <div className="flex flex-col items-center px-8">
           <ConnectButton

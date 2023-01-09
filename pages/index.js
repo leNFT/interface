@@ -56,7 +56,7 @@ export default function Home() {
                 </a>
               </li>
               <li className="px-8">
-                <Link href="/swap">
+                <Link href="/trade">
                   <a>
                     <Button
                       primary
@@ -85,14 +85,14 @@ export default function Home() {
         <div className={styles.main}>
           <div className={styles.indexDescribe}>
             <div className={styles.indexDescribeTitle}>
-              swap and lend your NFTs.
+              swap, buy, sell and lend your NFTs.
             </div>
             <div className={styles.indexDescribeTitle}>
               (beta live on goerli)
             </div>
             <div className={styles.indexDescribeSubtitle}>
+              <li>Trade your NFTs</li>
               <li>Borrow money using your NFTs</li>
-              <li>Swap your NFTs</li>
               <li>Earn interest on your ETH</li>
               <li>Bring liquidity into your NFT&apos;s ecosystem</li>
             </div>

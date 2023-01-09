@@ -13,10 +13,10 @@ import Box from "@mui/material/Box";
 import { useState } from "react";
 import Router from "next/router";
 
-export default function SwapHeader() {
+export default function TradeHeader() {
   const SELECTED_COLOR = "#d2c6d2";
   const UNSELECTED_COLOR = "#eae5ea";
-  const [option, setOption] = useState("swap");
+  const [option, setOption] = useState("trade");
 
   return (
     <div className="flex flex-row items-center m-2">
@@ -54,12 +54,12 @@ export default function SwapHeader() {
                     letterSpacing: 2,
                   }}
                 >
-                  Swap
+                  Trade
                 </Box>
               ),
               onClick: () => {
                 Router.push({
-                  pathname: "/swap",
+                  pathname: "/trade",
                 });
               },
               icon: (
@@ -145,13 +145,13 @@ export default function SwapHeader() {
       </div>
       <div className="hidden md:flex flex-row md:items-center">
         <div className="flex flex-col m-2">
-          <Link href="/swap">
+          <Link href="/trade">
             <Button
               primary
               size="medium"
-              color={option == "swap" ? SELECTED_COLOR : UNSELECTED_COLOR}
+              color={option == "trade" ? SELECTED_COLOR : UNSELECTED_COLOR}
               onClick={() => {
-                setOption("swap");
+                setOption("trade");
               }}
               label={
                 <div className="flex md:hidden xl:flex">
@@ -163,7 +163,7 @@ export default function SwapHeader() {
                       letterSpacing: 4,
                     }}
                   >
-                    Swap
+                    Trade
                   </Box>
                 </div>
               }

@@ -189,42 +189,7 @@ export default function Swap(props) {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="flex flex-row w-10/12 justify-center items-center">
-        <Divider style={{ width: "100%" }}>
-          {sellNFTName && (
-            <Chip
-              label={sellNFTName}
-              variant="outlined"
-              component="a"
-              clickable
-              target="_blank"
-              href={
-                chain.id == 1
-                  ? "https://etherscan.io/address/" + sellNFTAddress
-                  : "https://goerli.etherscan.io/address/" + sellNFTAddress
-              }
-            />
-          )}
-
-          <ArrowForwardOutlinedIcon className="mx-1" />
-
-          {buyNFTName && (
-            <Chip
-              label={buyNFTName}
-              variant="outlined"
-              component="a"
-              clickable
-              target="_blank"
-              href={
-                chain.id == 1
-                  ? "https://etherscan.io/address/" + buyNFTAddress
-                  : "https://goerli.etherscan.io/address/" + buyNFTAddress
-              }
-            />
-          )}
-        </Divider>
-      </div>
-      <div className="flex flex-col mt-10 m-4">
+      <div className="flex flex-col m-4">
         <Input
           labelLeft={"From"}
           size="xl"
@@ -389,7 +354,7 @@ export default function Swap(props) {
           </div>
         )}
       </div>
-      <div className="flex flex-col justify-center mb-10">
+      <div className="flex flex-col justify-center mb-14">
         <div className="flex flex-col md:flex-row justify-center items-center">
           <div className="flex flex-col w-[200px] justify-center">
             <Input
@@ -419,10 +384,60 @@ export default function Swap(props) {
           </div>
         )}
       </div>
-      <div className="flex flex-row w-11/12 justify-center items-center">
-        <Divider style={{ width: "100%" }} />
+      <div className="flex flex-row w-full justify-center items-center">
+        <Divider style={{ width: "100%" }}>
+          {sellNFTName && (
+            <Chip
+              label={
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle2.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {sellNFTName}
+                </Box>
+              }
+              variant="outlined"
+              component="a"
+              clickable
+              target="_blank"
+              href={
+                chain.id == 1
+                  ? "https://etherscan.io/address/" + sellNFTAddress
+                  : "https://goerli.etherscan.io/address/" + sellNFTAddress
+              }
+            />
+          )}
+          <ArrowForwardOutlinedIcon className="mx-1" />
+          {buyNFTName && (
+            <Chip
+              label={
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle2.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {buyNFTName}
+                </Box>
+              }
+              variant="outlined"
+              component="a"
+              clickable
+              target="_blank"
+              href={
+                chain.id == 1
+                  ? "https://etherscan.io/address/" + buyNFTAddress
+                  : "https://goerli.etherscan.io/address/" + buyNFTAddress
+              }
+            />
+          )}
+        </Divider>
       </div>
-      <div className="flex flex-row m-6 w-8/12 md:w-6/12">
+      <div className="flex flex-row mt-8 mb-2 w-8/12 md:w-6/12">
         {approvedNFT ? (
           <Button
             primary

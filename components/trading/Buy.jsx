@@ -165,25 +165,7 @@ export default function Buy() {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="flex flex-row w-9/12 justify-center items-center">
-        <Divider style={{ width: "100%" }}>
-          {nftName && (
-            <Chip
-              label={nftName}
-              variant="outlined"
-              component="a"
-              clickable
-              target="_blank"
-              href={
-                chain.id == 1
-                  ? "https://etherscan.io/address/" + nftAddress
-                  : "https://goerli.etherscan.io/address/" + nftAddress
-              }
-            />
-          )}
-        </Divider>
-      </div>
-      <div className="flex flex-col mt-10 m-4">
+      <div className="flex flex-col m-4">
         <Input
           size="xl"
           placeholder="NFT Address"
@@ -243,8 +225,23 @@ export default function Buy() {
           </div>
         )}
       </div>
-      <div className="flex flex-row w-11/12 justify-center items-center">
-        <Divider style={{ width: "100%" }} />
+      <div className="flex flex-row w-9/12 justify-center items-center">
+        <Divider style={{ width: "100%" }}>
+          {nftName && (
+            <Chip
+              label={nftName}
+              variant="outlined"
+              component="a"
+              clickable
+              target="_blank"
+              href={
+                chain.id == 1
+                  ? "https://etherscan.io/address/" + nftAddress
+                  : "https://goerli.etherscan.io/address/" + nftAddress
+              }
+            />
+          )}
+        </Divider>
       </div>
       <div className="flex flex-row m-6 w-8/12 md:w-6/12">
         {!approvedToken ? (

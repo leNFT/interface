@@ -223,7 +223,7 @@ export default function Swap(props) {
         <div className="flex flex-col md:flex-row justify-center items-center">
           <div className="flex flex-col w-[200px] justify-center m-2">
             <Input
-              labelLeft={"Amount"}
+              labelLeft={"Sell"}
               bordered
               size="xl"
               aria-label="NFTs"

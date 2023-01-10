@@ -87,25 +87,6 @@ export default function Swap(props) {
     }
   }
 
-  async function getSwapQuote(buyAmount, sellAmount) {
-    const newSwapQuote = await getSwapQuote(
-      chain.id,
-      buyAmount,
-      sellAmount,
-      buyPoolAddress,
-      sellPoolAddress
-    );
-    setSwapQuote(newSwapQuote);
-    setSellAmount(newSwapQuote.lps.length);
-    console.log("newSwapQuote", newSwapQuote);
-  }
-
-  async function getUserNFTs(collection) {
-    // Get user NFT assets
-    const addressNFTs = await getAddressNFTs(address, collection, chain.id);
-    setUserNFTs(addressNFTs);
-  }
-
   async function getNFTAllowance(collection, pool) {
     console.log("nftAddress", nftAddress);
     const nftContract = new ethers.Contract(collection, erc721, provider);
@@ -120,15 +101,32 @@ export default function Swap(props) {
     }
   }
 
-  async function getSellTradingPoolAddress(collection) {
-    // Get trading pool for collection
-    const updatedPool = (
-      await factoryProvider.getTradingPool(collection, addresses.ETH.address)
-    ).toString();
+  async function getPriceQuote(
+    buyAmount,
+    sellAmount,
+    buyPoolAddress,
+    sellPoolAddress
+  ) {
+    console.log("Getting swap quote");
+    if (buyAmount && sellAmount && buyPoolAddress && sellPoolAddress) {
+      const newSwapQuote = await getSwapQuote(
+        chain.id,
+        buyAmount,
+        sellAmount,
+        buyPoolAddress,
+        sellPoolAddress
+      );
+      setSwapQuote(newSwapQuote);
+      setSellAmount(newSwapQuote.sellLps.length);
+      setBuyAmount(newSwapQuote.buyLps.length);
+      console.log("newSwapQuote", newSwapQuote);
+    }
+  }
 
-    console.log("updatedpool", updatedPool);
-    getSellNFTName(collection);
-    setSellPoolAddress(updatedPool);
+  async function getUserNFTs(collection) {
+    // Get user NFT assets
+    const addressNFTs = await getAddressNFTs(address, collection, chain.id);
+    setUserNFTs(addressNFTs);
   }
 
   async function getSellNFTName(collection) {
@@ -144,17 +142,6 @@ export default function Swap(props) {
     }
   }
 
-  async function getBuyTradingPoolAddress(collection) {
-    // Get trading pool for collection
-    const updatedPool = (
-      await factoryProvider.getTradingPool(collection, addresses.ETH.address)
-    ).toString();
-
-    console.log("updatedpool", updatedPool);
-    getBuyNFTName(collection);
-    setBuyPoolAddress(updatedPool);
-  }
-
   async function getBuyNFTName(collection) {
     const nftContract = new ethers.Contract(collection, erc721, provider);
     const name = await nftContract.name();
@@ -166,6 +153,30 @@ export default function Swap(props) {
     } else {
       setBuyNFTName("");
     }
+  }
+
+  async function getSellTradingPoolAddress(collection) {
+    // Get trading pool for collection
+    const updatedPool = (
+      await factoryProvider.getTradingPool(collection, addresses.ETH.address)
+    ).toString();
+
+    console.log("updatedpool", updatedPool);
+    getSellNFTName(collection);
+    setSellPoolAddress(updatedPool);
+    getPriceQuote(buyAmount, sellAmount, buyPoolAddress, updatedPool);
+  }
+
+  async function getBuyTradingPoolAddress(collection) {
+    // Get trading pool for collection
+    const updatedPool = (
+      await factoryProvider.getTradingPool(collection, addresses.ETH.address)
+    ).toString();
+
+    console.log("updatedpool", updatedPool);
+    getBuyNFTName(collection);
+    setBuyPoolAddress(updatedPool);
+    getPriceQuote(buyAmount, sellAmount, updatedPool, sellPoolAddress);
   }
 
   const handleTokenApprovalSuccess = async function () {
@@ -192,16 +203,6 @@ export default function Swap(props) {
     }
   };
 
-  const handleSellAmountInputChange = (event) => {
-    console.log("handleAmountInputChange", event.target.value);
-    try {
-      getSwapQuote(event.target.value);
-      setSellAmount(event.target.value);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const handleBuyNFTAddressChange = (event) => {
     console.log("handleBuyNFTAddressChange", event.target.value);
     setBuyNFTAddress(event.target.value);
@@ -215,16 +216,34 @@ export default function Swap(props) {
     }
   };
 
+  const handleSellAmountInputChange = (event) => {
+    console.log("handleAmountInputChange", event.target.value);
+    try {
+      setSellAmount(event.target.value);
+      getPriceQuote(
+        buyAmount,
+        event.target.value,
+        buyPoolAddress,
+        sellPoolAddress
+      );
+    } catch (error) {
+      setSwapQuote();
+      console.log(error);
+    }
+  };
+
   const handleBuyAmountInputChange = (event) => {
     console.log("handleAmountInputChange", event.target.value);
     try {
-      if (event.target.value && sellNFTAddress) {
-        //getPriceQuote(event.target.value);
-      } else {
-        //setSwapQuote();
-      }
       setBuyAmount(event.target.value);
+      getPriceQuote(
+        event.target.value,
+        sellAmount,
+        buyPoolAddress,
+        sellPoolAddress
+      );
     } catch (error) {
+      setSwapQuote();
       console.log(error);
     }
   };
@@ -535,7 +554,7 @@ export default function Swap(props) {
               } catch (error) {
                 console.log(error);
               } finally {
-                getSwapQuote(amount);
+                getPriceQuote(amount);
                 setSwapLoading(false);
               }
             }}

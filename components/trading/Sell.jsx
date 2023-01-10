@@ -72,7 +72,7 @@ export default function Sell(props) {
     setPoolAddress(updatedPool);
   }
 
-  async function getSellQuote(amount) {
+  async function getPriceQuote(amount) {
     const newSellQuote = await getSellQuote(chain.id, amount, poolAddress);
     setSellQuote(newSellQuote);
     if (newSellQuote.lps.length < amount) {
@@ -125,7 +125,7 @@ export default function Sell(props) {
     console.log("handleAmountInputChange", event.target.value);
     try {
       if (event.target.value && nftAddress) {
-        getSellQuote(event.target.value);
+        getPriceQuote(event.target.value);
       } else {
         setSellQuote();
       }
@@ -428,7 +428,7 @@ export default function Sell(props) {
               } catch (error) {
                 console.log(error);
               } finally {
-                getSellQuote(amount);
+                getPriceQuote(amount);
                 setSwapLoading(false);
               }
             }}

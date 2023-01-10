@@ -68,7 +68,7 @@ export default function Buy() {
     setPoolAddress(updatedPool);
   }
 
-  async function getBuyQuote(amount) {
+  async function getPriceQuote(amount) {
     const newBuyQuote = await getBuyQuote(chain.id, amount, poolAddress);
     setBuyQuote(newBuyQuote);
     if (newBuyQuote.lps.length < amount) {
@@ -138,7 +138,7 @@ export default function Buy() {
     console.log("handleAmountInputChange", event.target.value);
     try {
       if (event.target.value && nftAddress) {
-        getBuyQuote(event.target.value);
+        getPriceQuote(event.target.value);
       } else {
         setBuyQuote();
       }
@@ -308,7 +308,7 @@ export default function Buy() {
               } catch (error) {
                 console.log(error);
               } finally {
-                getBuyQuote(amount);
+                getPriceQuote(amount);
                 setSwapLoading(false);
               }
             }}

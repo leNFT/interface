@@ -69,6 +69,24 @@ export default function Swap(props) {
     signerOrProvider: signer,
   });
 
+  async function getTokenAllowance(pool) {
+    const tokenContract = new ethers.Contract(
+      addresses.ETH.address,
+      erc20,
+      provider
+    );
+
+    const allowance = await tokenContract.allowance(address, pool);
+
+    console.log("Got allowance:", allowance);
+
+    if (!allowance.eq(BigNumber.from(0))) {
+      setApprovedToken(true);
+    } else {
+      setApprovedToken(false);
+    }
+  }
+
   async function getSwapQuote(buyAmount, sellAmount) {
     const newSwapQuote = await getSwapQuote(
       chain.id,
@@ -86,6 +104,20 @@ export default function Swap(props) {
     // Get user NFT assets
     const addressNFTs = await getAddressNFTs(address, collection, chain.id);
     setUserNFTs(addressNFTs);
+  }
+
+  async function getNFTAllowance(collection, pool) {
+    console.log("nftAddress", nftAddress);
+    const nftContract = new ethers.Contract(collection, erc721, provider);
+    const allowed = await nftContract.isApprovedForAll(address, pool);
+
+    console.log("Got nft allowed:", allowed);
+
+    if (allowed) {
+      setApprovedNFT(true);
+    } else {
+      setApprovedNFT(false);
+    }
   }
 
   async function getSellTradingPoolAddress(collection) {
@@ -112,30 +144,6 @@ export default function Swap(props) {
     }
   }
 
-  const handleSellNFTAddressChange = (event) => {
-    console.log("handleSellNFTAddressChange", event.target.value);
-    setSellNFTAddress(event.target.value);
-    try {
-      ethers.utils.getAddress(event.target.value);
-      getUserNFTs(event.target.value);
-      getSellTradingPoolAddress(event.target.value);
-    } catch (error) {
-      setSellPoolAddress("");
-      setSellNFTName("");
-      console.log(error);
-    }
-  };
-
-  const handleSellAmountInputChange = (event) => {
-    console.log("handleAmountInputChange", event.target.value);
-    try {
-      getSwapQuote(event.target.value);
-      setSellAmount(event.target.value);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   async function getBuyTradingPoolAddress(collection) {
     // Get trading pool for collection
     const updatedPool = (
@@ -159,6 +167,40 @@ export default function Swap(props) {
       setBuyNFTName("");
     }
   }
+
+  const handleTokenApprovalSuccess = async function () {
+    setApprovedToken(true);
+    dispatch({
+      type: "success",
+      message: "You just approved your tokens.",
+      title: "Approval Successful!",
+      position: "topR",
+    });
+  };
+
+  const handleSellNFTAddressChange = (event) => {
+    console.log("handleSellNFTAddressChange", event.target.value);
+    setSellNFTAddress(event.target.value);
+    try {
+      ethers.utils.getAddress(event.target.value);
+      getUserNFTs(event.target.value);
+      getSellTradingPoolAddress(event.target.value);
+    } catch (error) {
+      setSellPoolAddress("");
+      setSellNFTName("");
+      console.log(error);
+    }
+  };
+
+  const handleSellAmountInputChange = (event) => {
+    console.log("handleAmountInputChange", event.target.value);
+    try {
+      getSwapQuote(event.target.value);
+      setSellAmount(event.target.value);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleBuyNFTAddressChange = (event) => {
     console.log("handleBuyNFTAddressChange", event.target.value);
@@ -386,55 +428,53 @@ export default function Swap(props) {
       </div>
       <div className="flex flex-row w-full justify-center items-center">
         <Divider style={{ width: "100%" }}>
-          {sellNFTName && (
-            <Chip
-              label={
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle2.fontSize",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {sellNFTName}
-                </Box>
-              }
-              variant="outlined"
-              component="a"
-              clickable
-              target="_blank"
-              href={
-                chain.id == 1
-                  ? "https://etherscan.io/address/" + sellNFTAddress
-                  : "https://goerli.etherscan.io/address/" + sellNFTAddress
-              }
-            />
-          )}
+          <Chip
+            label={
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle2.fontSize",
+                  fontWeight: "bold",
+                }}
+              >
+                {sellNFTName ? sellNFTName : "?"}
+              </Box>
+            }
+            variant="outlined"
+            component="a"
+            clickable={sellNFTAddress != ""}
+            target="_blank"
+            href={
+              sellNFTAddress != "" &&
+              (chain.id == 1
+                ? "https://etherscan.io/address/" + sellNFTAddress
+                : "https://goerli.etherscan.io/address/" + sellNFTAddress)
+            }
+          />
           <ArrowForwardOutlinedIcon className="mx-1" />
-          {buyNFTName && (
-            <Chip
-              label={
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle2.fontSize",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {buyNFTName}
-                </Box>
-              }
-              variant="outlined"
-              component="a"
-              clickable
-              target="_blank"
-              href={
-                chain.id == 1
-                  ? "https://etherscan.io/address/" + buyNFTAddress
-                  : "https://goerli.etherscan.io/address/" + buyNFTAddress
-              }
-            />
-          )}
+          <Chip
+            label={
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle2.fontSize",
+                  fontWeight: "bold",
+                }}
+              >
+                {buyNFTName ? buyNFTName : "?"}
+              </Box>
+            }
+            variant="outlined"
+            component="a"
+            clickable={buyNFTAddress != ""}
+            target="_blank"
+            href={
+              buyNFTAddress != "" &&
+              (chain.id == 1
+                ? "https://etherscan.io/address/" + buyNFTAddress
+                : "https://goerli.etherscan.io/address/" + buyNFTAddress)
+            }
+          />
         </Divider>
       </div>
       <div className="flex flex-row mt-8 mb-2 w-8/12 md:w-6/12">

@@ -32,8 +32,8 @@ export default function Buy() {
   const [nftAddress, setNFTAddress] = useState("");
   const [poolAddress, setPoolAddress] = useState("");
   const [amount, setAmount] = useState(0);
-  const [buyQuote, setBuyQuote] = useState();
-  const [swapLoading, setSwapLoading] = useState(false);
+  const [priceQuote, setPriceQuote] = useState();
+  const [buyLoading, setBuyLoading] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [nftName, setNFTName] = useState("");
 
@@ -70,7 +70,7 @@ export default function Buy() {
 
   async function getPriceQuote(amount) {
     const newBuyQuote = await getBuyQuote(chain.id, amount, poolAddress);
-    setBuyQuote(newBuyQuote);
+    setPriceQuote(newBuyQuote);
     if (newBuyQuote.lps.length < amount) {
       dispatch({
         type: "warning",
@@ -140,7 +140,7 @@ export default function Buy() {
       if (event.target.value && nftAddress) {
         getPriceQuote(event.target.value);
       } else {
-        setBuyQuote();
+        setPriceQuote();
       }
       setAmount(event.target.value);
     } catch (error) {
@@ -156,7 +156,7 @@ export default function Buy() {
       getUserNFTs(event.target.value);
       getTradingPoolAddress(event.target.value);
     } catch (error) {
-      setBuyQuote();
+      setPriceQuote();
       setPoolAddress("");
       setNFTName("");
       console.log(error);
@@ -211,7 +211,7 @@ export default function Buy() {
           </div>
         </div>
 
-        {buyQuote && (
+        {priceQuote && (
           <div className="flex flex-row justify-center mt-8 items-center text-center">
             <Box
               sx={{
@@ -220,7 +220,7 @@ export default function Buy() {
                 fontWeight: "bold",
               }}
             >
-              {"Price: " + formatUnits(buyQuote.price, 18) + " WETH"}
+              {"Price: " + formatUnits(priceQuote.price, 18) + " WETH"}
             </Box>
           </div>
         )}
@@ -292,24 +292,24 @@ export default function Buy() {
             primary
             fill="horizontal"
             size="large"
-            disabled={swapLoading}
+            disabled={buyLoading}
             color="#063970"
             onClick={async function () {
-              setSwapLoading(true);
+              setBuyLoading(true);
               const tradingPool = new ethers.Contract(
                 poolAddress,
                 tradingPoolContract.abi,
                 signer
               );
               try {
-                const tx = await tradingPool.buy(buyQuote.exampleNFTs);
+                const tx = await tradingPool.buy(priceQuote.exampleNFTs);
                 await tx.wait(1);
                 handleBuySuccess();
               } catch (error) {
                 console.log(error);
               } finally {
                 getPriceQuote(amount);
-                setSwapLoading(false);
+                setBuyLoading(false);
               }
             }}
             label={

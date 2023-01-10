@@ -44,9 +44,10 @@ export default function Swap(props) {
   const [selectingNFTs, setSelectingNFTs] = useState(false);
   const [selectedNFTs, setSelectedNFTs] = useState([]);
   const [userNFTs, setUserNFTs] = useState([]);
-  const [swapQuote, setSwapQuote] = useState();
+  const [priceQuote, setPriceQuote] = useState();
   const [swapLoading, setSwapLoading] = useState(false);
-  const [approvalLoading, setApprovalLoading] = useState(false);
+  const [tokenApprovalLoading, setTokenApprovalLoading] = useState(false);
+  const [nftApprovalLoading, setNFTApprovalLoading] = useState(false);
   const [sellNFTName, setSellNFTName] = useState("");
   const [buyNFTName, setBuyNFTName] = useState("");
 
@@ -116,7 +117,7 @@ export default function Swap(props) {
         buyPoolAddress,
         sellPoolAddress
       );
-      setSwapQuote(newSwapQuote);
+      setPriceQuote(newSwapQuote);
       setSellAmount(newSwapQuote.sellLps.length);
       setBuyAmount(newSwapQuote.buyLps.length);
       console.log("newSwapQuote", newSwapQuote);
@@ -227,7 +228,7 @@ export default function Swap(props) {
         sellPoolAddress
       );
     } catch (error) {
-      setSwapQuote();
+      setPriceQuote();
       console.log(error);
     }
   };
@@ -243,7 +244,7 @@ export default function Swap(props) {
         sellPoolAddress
       );
     } catch (error) {
-      setSwapQuote();
+      setPriceQuote();
       console.log(error);
     }
   };
@@ -431,19 +432,6 @@ export default function Swap(props) {
             />
           </div>
         </div>
-        {swapQuote && (
-          <div className="flex flex-row justify-center mt-8 items-center text-center">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "h6.fontSize",
-                fontWeight: "bold",
-              }}
-            >
-              {"Price: " + formatUnits(swapQuote.price, 18) + " WETH"}
-            </Box>
-          </div>
-        )}
       </div>
       <div className="flex flex-row w-full justify-center items-center">
         <Divider style={{ width: "100%" }}>
@@ -464,10 +452,11 @@ export default function Swap(props) {
             clickable={sellNFTAddress != ""}
             target="_blank"
             href={
-              sellNFTAddress != "" &&
-              (chain.id == 1
-                ? "https://etherscan.io/address/" + sellNFTAddress
-                : "https://goerli.etherscan.io/address/" + sellNFTAddress)
+              sellNFTAddress != ""
+                ? chain.id == 1
+                  ? "https://etherscan.io/address/" + sellNFTAddress
+                  : "https://goerli.etherscan.io/address/" + sellNFTAddress
+                : ""
             }
           />
           <ArrowForwardOutlinedIcon className="mx-1" />
@@ -496,20 +485,82 @@ export default function Swap(props) {
           />
         </Divider>
       </div>
+      {priceQuote && (
+        <div className="flex flex-row justify-center mt-8 items-center text-center">
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "h6.fontSize",
+              fontWeight: "bold",
+            }}
+          >
+            {"Change: " +
+              formatUnits(
+                BigNumber.from(priceQuote.sellPrice).sub(priceQuote.buyPrice),
+                18
+              ) +
+              " WETH"}
+          </Box>
+          {BigNumber.from(priceQuote.sellPrice).lt(priceQuote.buyPrice) &&
+            !approvedToken && (
+              <Button
+                primary
+                fill="horizontal"
+                size="large"
+                color="#063970"
+                loading={tokenApprovalLoading}
+                onClick={async function () {
+                  setTokenApprovalLoading(true);
+                  const nftContract = new ethers.Contract(
+                    sellNFTAddress,
+                    erc721,
+                    signer
+                  );
+                  try {
+                    const tx = await nftContract.setApprovalForAll(
+                      sellPoolAddress,
+                      true
+                    );
+                    await tx.wait(1);
+                    handleTokenApprovalSuccess();
+                  } catch (error) {
+                    console.log(error);
+                  } finally {
+                    setTokenApprovalLoading(false);
+                  }
+                }}
+                label={
+                  <div className="flex justify-center">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle2.fontSize",
+                        fontWeight: "bold",
+                        letterSpacing: 2,
+                      }}
+                    >
+                      {"NFT"}
+                    </Box>
+                  </div>
+                }
+              />
+            )}
+        </div>
+      )}
       <div className="flex flex-row mt-8 mb-2 w-8/12 md:w-6/12">
         {approvedNFT ? (
           <Button
             primary
             fill="horizontal"
             size="large"
-            disabled={approvalLoading || !nftAddress}
+            disabled={nftApprovalLoading}
             color="#063970"
             onClick={async function () {
-              setApprovalLoading(true);
+              setNFTApprovalLoading(true);
 
               try {
                 const tx = await tokenContract.approve(
-                  poolAddress,
+                  sellPoolAddress,
                   "115792089237316195423570985008687907853269984665640564039457584007913129639935"
                 );
                 await tx.wait(1);
@@ -517,7 +568,7 @@ export default function Swap(props) {
               } catch (error) {
                 console.log(error);
               } finally {
-                setApprovalLoading(false);
+                setNFTApprovalLoading(false);
               }
             }}
             label={

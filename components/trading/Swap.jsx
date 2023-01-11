@@ -275,7 +275,7 @@ export default function Swap(props) {
   return (
     <div className="flex flex-col items-center">
       <div className="flex flex-col items-center text-center justify-center p-8 m-4 rounded-3xl bg-black/5 shadow-lg">
-        <div className="flex flex-col">
+        <div className="flex flex-col mb-2">
           <Box
             sx={{
               fontFamily: "Monospace",
@@ -423,7 +423,7 @@ export default function Swap(props) {
         <ArrowDownwardOutlinedIcon />
       </div>
       <div className="flex flex-col items-center text-center justify-center p-8 m-4 mb-14 rounded-3xl bg-black/5 shadow-lg">
-        <div className="flex flex-col">
+        <div className="flex flex-col mb-2">
           <Box
             sx={{
               fontFamily: "Monospace",

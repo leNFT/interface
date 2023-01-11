@@ -274,185 +274,211 @@ export default function Swap(props) {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="flex flex-col m-4">
-        <Input
-          labelLeft={"From"}
-          size="xl"
-          placeholder="NFT Address"
-          aria-label="NFT Address"
-          bordered
-          color="default"
-          onChange={handleSellNFTAddressChange}
-        />
-        {sellNFTAddress && (
-          <div className="flex flex-row mt-1 justify-center">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "caption.fontSize",
-                fontWeight: "bold",
-                letterSpacing: 2,
-              }}
-            >
-              {sellPoolAddress
-                ? "Pool: " +
-                  sellPoolAddress.slice(0, 5) +
-                  ".." +
-                  sellPoolAddress.slice(-2)
-                : "No pool found"}
-            </Box>
-          </div>
-        )}
-      </div>
-      <div className="flex flex-col justify-center mb-8">
-        <div className="flex flex-col md:flex-row justify-center items-center">
-          <div className="flex flex-col w-[200px] justify-center m-2">
-            <Input
-              labelLeft={"Sell"}
-              bordered
-              size="xl"
-              aria-label="NFTs"
-              labelRight={"NFTs"}
-              placeholder="0"
-              value={sellAmount}
-              onChange={handleSellAmountInputChange}
-              css={{ textAlignLast: "center" }}
-            />
-          </div>
-          <div className="flex flex-row">
-            <div className="flex flex-col text-center justify-center m-2">
-              OR
-            </div>
-            <div className="flex flex-col text-center justify-center m-2">
-              <Button
-                primary
-                size="medium"
-                color={SELECTED_COLOR}
-                onClick={() => {
-                  // Reset selected NFTs
-                  setSelectedNFTs([]);
-                  setSelectingNFTs(!selectingNFTs);
+      <div className="flex flex-col items-center text-center justify-center p-8 m-4 rounded-3xl bg-black/5 shadow-lg">
+        <div className="flex flex-col">
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "caption.fontSize",
+              fontWeight: "bold",
+              letterSpacing: 2,
+            }}
+          >
+            Sell
+          </Box>
+        </div>
+        <div className="flex flex-col m-4">
+          <Input
+            size="xl"
+            placeholder="NFT Address"
+            aria-label="NFT Address"
+            bordered
+            color="default"
+            onChange={handleSellNFTAddressChange}
+          />
+          {sellNFTAddress && (
+            <div className="flex flex-row mt-1 justify-center">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "caption.fontSize",
+                  fontWeight: "bold",
+                  letterSpacing: 2,
                 }}
-                disabled={!sellNFTAddress}
-                label={
-                  <div className="flex">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "subtitle2.fontSize",
-                        fontWeight: "bold",
-                        letterSpacing: 2,
-                      }}
-                    >
-                      Select NFTs
-                    </Box>
-                  </div>
-                }
+              >
+                {sellPoolAddress
+                  ? "Pool: " +
+                    sellPoolAddress.slice(0, 5) +
+                    ".." +
+                    sellPoolAddress.slice(-2)
+                  : "No pool found"}
+              </Box>
+            </div>
+          )}
+        </div>
+        <div className="flex flex-col justify-center mb-8">
+          <div className="flex flex-col md:flex-row justify-center items-center">
+            <div className="flex flex-col w-[200px] justify-center m-2">
+              <Input
+                labelLeft={"Sell"}
+                bordered
+                size="xl"
+                aria-label="NFTs"
+                labelRight={"NFTs"}
+                placeholder="0"
+                value={sellAmount}
+                onChange={handleSellAmountInputChange}
+                css={{ textAlignLast: "center" }}
               />
             </div>
-          </div>
-        </div>
-        {selectingNFTs && (
-          <div className="flex flex-row m-4 grid md:grid-cols-3 lg:grid-cols-4">
-            {userNFTs.map((nft, _) => (
-              <div
-                key={BigNumber.from(nft.id.tokenId).toNumber()}
-                className="flex m-2 items-center justify-center max-w-[300px]"
-              >
-                <Card
-                  sx={{
-                    borderRadius: 4,
-                    background: selectedNFTs.find(
-                      (element) =>
-                        element == BigNumber.from(nft.id.tokenId).toNumber()
-                    )
-                      ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
-                      : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
+            <div className="flex flex-row">
+              <div className="flex flex-col text-center justify-center m-2">
+                OR
+              </div>
+              <div className="flex flex-col text-center justify-center m-2">
+                <Button
+                  primary
+                  size="medium"
+                  color={SELECTED_COLOR}
+                  onClick={() => {
+                    // Reset selected NFTs
+                    setSelectedNFTs([]);
+                    setSelectingNFTs(!selectingNFTs);
                   }}
-                >
-                  <CardActionArea
-                    onClick={function () {
-                      //If it's selected we unselect and if its unselected we select
-                      var newSelectedNFTs = selectedNFTs.slice();
-                      var index = newSelectedNFTs.findIndex(
-                        (element) =>
-                          element == BigNumber.from(nft.id.tokenId).toNumber()
-                      );
-                      if (index == -1) {
-                        newSelectedNFTs.push(
-                          BigNumber.from(nft.id.tokenId).toNumber()
-                        );
-                      } else {
-                        newSelectedNFTs.splice(index, 1);
-                      }
-                      getSellSelectedPriceQuote(newSelectedNFTs);
-                      setSelectedNFTs(newSelectedNFTs);
-                    }}
-                  >
-                    <CardContent>
+                  disabled={!sellNFTAddress}
+                  label={
+                    <div className="flex">
                       <Box
                         sx={{
                           fontFamily: "Monospace",
-                          fontSize: "caption",
+                          fontSize: "subtitle2.fontSize",
+                          fontWeight: "bold",
+                          letterSpacing: 2,
                         }}
                       >
-                        {BigNumber.from(nft.id.tokenId).toNumber()}
+                        Select NFTs
                       </Box>
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
+                    </div>
+                  }
+                />
               </div>
-            ))}
+            </div>
           </div>
-        )}
+          {selectingNFTs && (
+            <div className="flex flex-row m-4 grid md:grid-cols-3 lg:grid-cols-4">
+              {userNFTs.map((nft, _) => (
+                <div
+                  key={BigNumber.from(nft.id.tokenId).toNumber()}
+                  className="flex m-2 items-center justify-center max-w-[300px]"
+                >
+                  <Card
+                    sx={{
+                      borderRadius: 4,
+                      background: selectedNFTs.find(
+                        (element) =>
+                          element == BigNumber.from(nft.id.tokenId).toNumber()
+                      )
+                        ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
+                        : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
+                    }}
+                  >
+                    <CardActionArea
+                      onClick={function () {
+                        //If it's selected we unselect and if its unselected we select
+                        var newSelectedNFTs = selectedNFTs.slice();
+                        var index = newSelectedNFTs.findIndex(
+                          (element) =>
+                            element == BigNumber.from(nft.id.tokenId).toNumber()
+                        );
+                        if (index == -1) {
+                          newSelectedNFTs.push(
+                            BigNumber.from(nft.id.tokenId).toNumber()
+                          );
+                        } else {
+                          newSelectedNFTs.splice(index, 1);
+                        }
+                        getSellSelectedPriceQuote(newSelectedNFTs);
+                        setSelectedNFTs(newSelectedNFTs);
+                      }}
+                    >
+                      <CardContent>
+                        <Box
+                          sx={{
+                            fontFamily: "Monospace",
+                            fontSize: "caption",
+                          }}
+                        >
+                          {BigNumber.from(nft.id.tokenId).toNumber()}
+                        </Box>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center m-2">
         <ArrowDownwardOutlinedIcon />
       </div>
-      <div className="flex flex-col mt-8 m-4">
-        <Input
-          labelLeft={"To"}
-          size="xl"
-          placeholder="NFT Address"
-          aria-label="NFT Address"
-          bordered
-          color="default"
-          onChange={handleBuyNFTAddressChange}
-        />
-        {buyPoolAddress && (
-          <div className="flex flex-row mt-1 justify-center">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "caption.fontSize",
-                fontWeight: "bold",
-                letterSpacing: 2,
-              }}
-            >
-              {buyPoolAddress
-                ? "Pool: " +
-                  buyPoolAddress.slice(0, 5) +
-                  ".." +
-                  buyPoolAddress.slice(-2)
-                : "No pool found"}
-            </Box>
-          </div>
-        )}
-      </div>
-      <div className="flex flex-col justify-center mb-14">
-        <div className="flex flex-col md:flex-row justify-center items-center">
-          <div className="flex flex-col w-[200px] justify-center">
-            <Input
-              labelLeft={"Buy"}
-              bordered
-              size="xl"
-              aria-label="NFTs"
-              labelRight={"NFTs"}
-              placeholder="0"
-              value={buyAmount}
-              onChange={handleBuyAmountInputChange}
-              css={{ textAlignLast: "center" }}
-            />
+      <div className="flex flex-col items-center text-center justify-center p-8 m-4 mb-14 rounded-3xl bg-black/5 shadow-lg">
+        <div className="flex flex-col">
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "caption.fontSize",
+              fontWeight: "bold",
+              letterSpacing: 2,
+            }}
+          >
+            Buy
+          </Box>
+        </div>
+        <div className="flex flex-col m-4">
+          <Input
+            size="xl"
+            placeholder="NFT Address"
+            aria-label="NFT Address"
+            bordered
+            color="default"
+            onChange={handleBuyNFTAddressChange}
+          />
+          {buyPoolAddress && (
+            <div className="flex flex-row mt-1 justify-center">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "caption.fontSize",
+                  fontWeight: "bold",
+                  letterSpacing: 2,
+                }}
+              >
+                {buyPoolAddress
+                  ? "Pool: " +
+                    buyPoolAddress.slice(0, 5) +
+                    ".." +
+                    buyPoolAddress.slice(-2)
+                  : "No pool found"}
+              </Box>
+            </div>
+          )}
+        </div>
+        <div className="flex flex-col justify-center">
+          <div className="flex flex-col md:flex-row justify-center items-center">
+            <div className="flex flex-col w-[200px] justify-center">
+              <Input
+                labelLeft={"Buy"}
+                bordered
+                size="xl"
+                aria-label="NFTs"
+                labelRight={"NFTs"}
+                placeholder="0"
+                value={buyAmount}
+                onChange={handleBuyAmountInputChange}
+                css={{ textAlignLast: "center" }}
+              />
+            </div>
           </div>
         </div>
       </div>

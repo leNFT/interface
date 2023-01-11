@@ -322,11 +322,7 @@ export default function Buy() {
                     letterSpacing: 2,
                   }}
                 >
-                  {option.toUpperCase() +
-                    " " +
-                    amount +
-                    " " +
-                    (nftName ? nftName : "NFTs")}
+                  {"BUY " + amount + " " + (nftName ? nftName : "NFTs")}
                 </Box>
               </div>
             }

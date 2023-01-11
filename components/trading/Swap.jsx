@@ -324,7 +324,7 @@ export default function Swap(props) {
                 bordered
                 size="xl"
                 aria-label="NFTs"
-                labelRight={"NFTs"}
+                labelRight={"random NFTs"}
                 placeholder="0"
                 value={sellAmount}
                 onChange={handleSellAmountInputChange}

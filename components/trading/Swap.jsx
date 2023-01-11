@@ -279,9 +279,9 @@ export default function Swap(props) {
           <Box
             sx={{
               fontFamily: "Monospace",
-              fontSize: "caption.fontSize",
+              fontSize: "h5.fontSize",
               fontWeight: "bold",
-              letterSpacing: 2,
+              letterSpacing: 4,
             }}
           >
             Sell
@@ -427,9 +427,9 @@ export default function Swap(props) {
           <Box
             sx={{
               fontFamily: "Monospace",
-              fontSize: "caption.fontSize",
+              fontSize: "h5.fontSize",
               fontWeight: "bold",
-              letterSpacing: 2,
+              letterSpacing: 4,
             }}
           >
             Buy

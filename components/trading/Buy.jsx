@@ -21,6 +21,7 @@ import Box from "@mui/material/Box";
 import { Button } from "grommet";
 import { Divider } from "@mui/material";
 import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json";
+import tradingPoolContract from "../../contracts/TradingPool.json";
 
 export default function Buy() {
   const { chain } = useNetwork();
@@ -302,7 +303,11 @@ export default function Buy() {
                 signer
               );
               try {
-                const tx = await tradingPool.buy(priceQuote.exampleNFTs);
+                const tx = await tradingPool.buy(
+                  address,
+                  priceQuote.exampleNFTs,
+                  priceQuote.price
+                );
                 await tx.wait(1);
                 handleBuySuccess();
               } catch (error) {

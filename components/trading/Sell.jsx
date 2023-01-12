@@ -23,8 +23,9 @@ import { Divider } from "@mui/material";
 import Box from "@mui/material/Box";
 import erc721 from "../../contracts/erc721.json";
 import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json";
+import tradingPoolContract from "../../contracts/TradingPool.json";
 
-export default function Sell(props) {
+export default function Sell() {
   const SELECTED_COLOR = "#d2c6d2";
   const provider = useProvider();
   const { chain } = useNetwork();
@@ -422,7 +423,12 @@ export default function Sell(props) {
               try {
                 console.log("selectedNFTs", selectedNFTs);
                 console.log("priceQuote.lps", priceQuote.lps);
-                let tx = await tradingPool.sell(selectedNFTs, priceQuote.lps);
+                let tx = await tradingPool.sell(
+                  address,
+                  selectedNFTs,
+                  priceQuote.lps,
+                  priceQuote.price
+                );
                 await tx.wait(1);
                 handleSellSuccess();
               } catch (error) {

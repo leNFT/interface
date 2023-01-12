@@ -28,7 +28,7 @@ import swapRouterContract from "../../contracts/SwapRouter.json";
 import erc721 from "../../contracts/erc721.json";
 import erc20 from "../../contracts/erc20.json";
 
-export default function Swap(props) {
+export default function Swap() {
   const SELECTED_COLOR = "#d2c6d2";
   const { chain } = useNetwork();
   const provider = useProvider();
@@ -121,14 +121,13 @@ export default function Swap(props) {
         sellPoolAddress
       );
       setPriceQuote(newSwapQuote);
-      setSellAmount(newSwapQuote.sellLps.length);
       setBuyAmount(newSwapQuote.buyLps.length);
       console.log("newSwapQuote", newSwapQuote);
 
       // Get an amount of random NFTs to sell
       var newSelectedNFTs = [];
       for (let index = 0; index < newSwapQuote.sellLps.length; index++) {
-        if (index > userNFTs.length) {
+        if (index > userNFTs.length - 1) {
           break;
         }
         newSelectedNFTs.push(
@@ -137,12 +136,14 @@ export default function Swap(props) {
       }
       console.log("newSelectedNFTs", newSelectedNFTs);
       setSelectedNFTs(newSelectedNFTs);
+      setSellAmount(newSelectedNFTs.length);
     }
   }
 
   async function getUserNFTs(collection) {
     // Get user NFT assets
     const addressNFTs = await getAddressNFTs(address, collection, chain.id);
+    console.log("addressNFTs", addressNFTs);
     setUserNFTs(addressNFTs);
   }
 
@@ -493,7 +494,7 @@ export default function Swap(props) {
                   fontWeight: "bold",
                 }}
               >
-                {sellNFTName ? sellNFTName : "?"}
+                {sellNFTName ? sellAmount + " " + sellNFTName : "?"}
               </Box>
             }
             variant="outlined"
@@ -518,7 +519,7 @@ export default function Swap(props) {
                   fontWeight: "bold",
                 }}
               >
-                {buyNFTName ? buyNFTName : "?"}
+                {buyNFTName ? buyAmount + " " + buyNFTName : "?"}
               </Box>
             }
             variant="outlined"
@@ -543,17 +544,24 @@ export default function Swap(props) {
               fontWeight: "bold",
             }}
           >
-            {"Change: " +
-              formatUnits(
-                BigNumber.from(priceQuote.sellPrice).sub(priceQuote.buyPrice),
-                18
-              ) +
-              " WETH"}
+            {BigNumber.from(priceQuote.sellPrice).gt(priceQuote.buyPrice)
+              ? "Price: " +
+                formatUnits(
+                  BigNumber.from(priceQuote.sellPrice).sub(priceQuote.buyPrice),
+                  18
+                ) +
+                " WETH"
+              : "Change: " +
+                formatUnits(
+                  BigNumber.from(priceQuote.buyPrice).sub(priceQuote.sellPrice),
+                  18
+                ) +
+                " WETH"}
           </Box>
         </div>
       )}
       <div className="flex flex-row mt-8 mb-2 w-8/12 md:w-6/12">
-        {approvedNFT ? (
+        {!approvedNFT ? (
           <Button
             primary
             fill="horizontal"
@@ -562,11 +570,15 @@ export default function Swap(props) {
             color="#063970"
             onClick={async function () {
               setNFTApprovalLoading(true);
-
+              const nftContract = new ethers.Contract(
+                sellNFTAddress,
+                erc721,
+                signer
+              );
               try {
-                const tx = await tokenContract.approve(
+                const tx = await nftContract.setApprovalForAll(
                   sellPoolAddress,
-                  "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+                  true
                 );
                 await tx.wait(1);
                 handleTokenApprovalSuccess();
@@ -586,13 +598,13 @@ export default function Swap(props) {
                     letterSpacing: 2,
                   }}
                 >
-                  {"NFT"}
+                  {"Approve Token"}
                 </Box>
               </div>
             }
           />
         ) : priceQuote &&
-          BigNumber.from(priceQuote.sellPrice).lt(priceQuote.buyPrice) &&
+          BigNumber.from(priceQuote.sellPrice).gt(priceQuote.buyPrice) &&
           !approvedToken ? (
           <Button
             primary
@@ -602,15 +614,15 @@ export default function Swap(props) {
             loading={tokenApprovalLoading}
             onClick={async function () {
               setTokenApprovalLoading(true);
-              const nftContract = new ethers.Contract(
-                sellNFTAddress,
-                erc721,
+              const tokenContract = new ethers.Contract(
+                addresses.ETH.address,
+                erc20,
                 signer
               );
               try {
-                const tx = await nftContract.setApprovalForAll(
-                  sellPoolAddress,
-                  true
+                const tx = await tokenContract.approve(
+                  addresses.SwapRouter,
+                  "115792089237316195423570985008687907853269984665640564039457584007913129639935"
                 );
                 await tx.wait(1);
                 handleTokenApprovalSuccess();
@@ -644,6 +656,7 @@ export default function Swap(props) {
             color="#063970"
             onClick={async function () {
               setSwapLoading(true);
+              console.log(priceQuote.buyPrice - 1);
               try {
                 let tx = await swapRouterSigner.swap(
                   buyPoolAddress,
@@ -659,7 +672,12 @@ export default function Swap(props) {
               } catch (error) {
                 console.log(error);
               } finally {
-                getPriceQuote(amount);
+                getPriceQuote(
+                  buyAmount,
+                  sellAmount,
+                  buyPoolAddress,
+                  sellPoolAddress
+                );
                 setSwapLoading(false);
               }
             }}

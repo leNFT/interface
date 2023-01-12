@@ -656,7 +656,6 @@ export default function Swap() {
             color="#063970"
             onClick={async function () {
               setSwapLoading(true);
-              console.log(priceQuote.buyPrice - 1);
               try {
                 let tx = await swapRouterSigner.swap(
                   buyPoolAddress,

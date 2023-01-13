@@ -8,12 +8,13 @@ import {
   useProvider,
 } from "wagmi";
 import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
+import { getAddressNFTCollections } from "../../helpers/getAddressNFTCollections.js";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 import { ethers } from "ethers";
 import { getSwapQuote } from "../../helpers/getSwapQuote.js";
 import { Input } from "@nextui-org/react";
-import { Button } from "grommet";
+import { Button, Select } from "grommet";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { CardActionArea } from "@mui/material";
@@ -44,7 +45,8 @@ export default function Swap() {
   const [sellAmount, setSellAmount] = useState(0);
   const [selectingNFTs, setSelectingNFTs] = useState(false);
   const [selectedNFTs, setSelectedNFTs] = useState([]);
-  const [userNFTs, setUserNFTs] = useState([]);
+  const [userSellCollectionNFTs, setUserSellCollectionNFTs] = useState([]);
+  const [userNFTCollections, setUserNFTCollections] = useState([]);
   const [priceQuote, setPriceQuote] = useState();
   const [swapLoading, setSwapLoading] = useState(false);
   const [tokenApprovalLoading, setTokenApprovalLoading] = useState(false);
@@ -127,11 +129,11 @@ export default function Swap() {
       // Get an amount of random NFTs to sell
       var newSelectedNFTs = [];
       for (let index = 0; index < newSwapQuote.sellLps.length; index++) {
-        if (index > userNFTs.length - 1) {
+        if (index > userSellCollectionNFTs.length - 1) {
           break;
         }
         newSelectedNFTs.push(
-          BigNumber.from(userNFTs[index].id.tokenId).toNumber()
+          BigNumber.from(userSellCollectionNFTs[index].id.tokenId).toNumber()
         );
       }
       console.log("newSelectedNFTs", newSelectedNFTs);
@@ -140,11 +142,21 @@ export default function Swap() {
     }
   }
 
-  async function getUserNFTs(collection) {
+  async function getUserSellCollectionNFTs(collection) {
     // Get user NFT assets
     const addressNFTs = await getAddressNFTs(address, collection, chain.id);
-    console.log("addressNFTs", addressNFTs);
-    setUserNFTs(addressNFTs);
+    console.log("addressNsellCollectionNFTs", addressNFTs);
+    setUserSellCollectionNFTs(addressNFTs);
+  }
+
+  async function getUserNFTCollections() {
+    // Get user NFT assets
+    const addressNFTCollections = await getAddressNFTCollections(
+      address,
+      chain.id
+    );
+    console.log("addressNFTCollections", addressNFTCollections);
+    setUserNFTCollections(addressNFTCollections);
   }
 
   async function getSellNFTName(collection) {
@@ -201,6 +213,7 @@ export default function Swap() {
   useEffect(() => {
     if (isConnected && address) {
       getTokenAllowance();
+      getUserNFTCollections();
     }
   }, [isConnected, address]);
 
@@ -219,7 +232,7 @@ export default function Swap() {
     setSellNFTAddress(event.target.value);
     try {
       ethers.utils.getAddress(event.target.value);
-      getUserNFTs(event.target.value);
+      getUserSellCollectionNFTs(event.target.value);
       getSellTradingPoolAddress(event.target.value);
     } catch (error) {
       setSellPoolAddress("");
@@ -288,14 +301,14 @@ export default function Swap() {
             Sell
           </Box>
         </div>
-        <div className="flex flex-col m-4">
-          <Input
-            size="xl"
-            placeholder="NFT Address"
-            aria-label="NFT Address"
-            bordered
-            color="default"
-            onChange={handleSellNFTAddressChange}
+        <div className="flex flex-col m-4 border-2 border-black/10 rounded-3xl">
+          <Select
+            plain={true}
+            icon={false}
+            placeholder="NFT to Sell"
+            options={userNFTCollections.map((collection) => collection.name)}
+            onChange={({ option }) => "option"}
+            onSearch={(text) => {}}
           />
           {sellNFTAddress && (
             <div className="flex flex-row mt-1 justify-center">
@@ -367,7 +380,7 @@ export default function Swap() {
           </div>
           {selectingNFTs && (
             <div className="flex flex-row m-4 grid md:grid-cols-3 lg:grid-cols-4">
-              {userNFTs.map((nft, _) => (
+              {userSellCollectionNFTs.map((nft, _) => (
                 <div
                   key={BigNumber.from(nft.id.tokenId).toNumber()}
                   className="flex m-2 items-center justify-center max-w-[300px]"
@@ -664,7 +677,7 @@ export default function Swap() {
                   priceQuote.buyPrice,
                   selectedNFTs,
                   priceQuote.sellLps,
-                  "97000000000000"
+                  priceQuote.sellPrice
                 );
                 await tx.wait(1);
                 handleSwapSuccess();

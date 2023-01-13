@@ -674,6 +674,7 @@ export default function Swap() {
             color="#063970"
             onClick={async function () {
               setSwapLoading(true);
+              console.log("Swapping...");
               console.log([
                 buyPoolAddress,
                 sellPoolAddress,

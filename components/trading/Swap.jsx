@@ -301,14 +301,14 @@ export default function Swap() {
             Sell
           </Box>
         </div>
-        <div className="flex flex-col m-4 border-2 border-black/10 rounded-3xl">
-          <Select
-            plain={true}
-            icon={false}
-            placeholder="NFT to Sell"
-            options={userNFTCollections.map((collection) => collection.name)}
-            onChange={({ option }) => "option"}
-            onSearch={(text) => {}}
+        <div className="flex flex-col m-4">
+          <Input
+            size="xl"
+            placeholder="NFT Address"
+            aria-label="NFT Address"
+            bordered
+            color="default"
+            onChange={handleSellNFTAddressChange}
           />
           {sellNFTAddress && (
             <div className="flex flex-row mt-1 justify-center">
@@ -411,7 +411,12 @@ export default function Swap() {
                         } else {
                           newSelectedNFTs.splice(index, 1);
                         }
-                        getSellSelectedPriceQuote(newSelectedNFTs);
+                        getPriceQuote(
+                          buyAmount,
+                          newSelectedNFTs.length,
+                          buyPoolAddress,
+                          sellPoolAddress
+                        );
                         setSelectedNFTs(newSelectedNFTs);
                       }}
                     >
@@ -557,16 +562,16 @@ export default function Swap() {
               fontWeight: "bold",
             }}
           >
-            {BigNumber.from(priceQuote.sellPrice).gt(priceQuote.buyPrice)
-              ? "Price: " +
+            {BigNumber.from(priceQuote.buyPrice).gt(priceQuote.sellPrice)
+              ? "Price Difference: " +
                 formatUnits(
-                  BigNumber.from(priceQuote.sellPrice).sub(priceQuote.buyPrice),
+                  BigNumber.from(priceQuote.buyPrice).sub(priceQuote.sellPrice),
                   18
                 ) +
                 " WETH"
               : "Change: " +
                 formatUnits(
-                  BigNumber.from(priceQuote.buyPrice).sub(priceQuote.sellPrice),
+                  BigNumber.from(priceQuote.sellPrice).sub(priceQuote.buyPrice),
                   18
                 ) +
                 " WETH"}
@@ -617,7 +622,7 @@ export default function Swap() {
             }
           />
         ) : priceQuote &&
-          BigNumber.from(priceQuote.sellPrice).gt(priceQuote.buyPrice) &&
+          BigNumber.from(priceQuote.buyPrice).gt(priceQuote.sellPrice) &&
           !approvedToken ? (
           <Button
             primary
@@ -655,7 +660,7 @@ export default function Swap() {
                     letterSpacing: 2,
                   }}
                 >
-                  {"Approve Change"}
+                  {"Approve Price Difference"}
                 </Box>
               </div>
             }
@@ -669,6 +674,15 @@ export default function Swap() {
             color="#063970"
             onClick={async function () {
               setSwapLoading(true);
+              console.log([
+                buyPoolAddress,
+                sellPoolAddress,
+                priceQuote.exampleBuyNFTs,
+                priceQuote.buyPrice,
+                selectedNFTs,
+                priceQuote.sellLps,
+                priceQuote.sellPrice,
+              ]);
               try {
                 let tx = await swapRouterSigner.swap(
                   buyPoolAddress,

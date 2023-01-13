@@ -14,8 +14,7 @@ export async function getAddressNFTCollections(address, chainId) {
       "/api/addressNFTCollections?address=" +
       address +
       "&chainId=" +
-      chainId +
-      collectionsURLString,
+      chainId,
     options
   ).catch((err) => console.error(err));
   const nftCollections = await nftCollectionsResponse.json();

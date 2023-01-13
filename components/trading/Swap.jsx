@@ -664,7 +664,7 @@ export default function Swap() {
                   priceQuote.buyPrice,
                   selectedNFTs,
                   priceQuote.sellLps,
-                  priceQuote.sellPrice
+                  "97000000000000"
                 );
                 await tx.wait(1);
                 handleSwapSuccess();

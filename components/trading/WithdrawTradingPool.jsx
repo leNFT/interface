@@ -20,8 +20,6 @@ export default function WithdrawTradingPool(props) {
   const [tokenAmount, setTokenAmount] = useState("0");
   const [nfts, setNFTs] = useState([]);
   const [price, setPrice] = useState(0);
-  const [approvedLP, setApprovedLP] = useState(false);
-  const [approvalLPLoading, setApprovalLPLoading] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
   const dispatch = useNotification();
   const { address, isConnected } = useAccount();
@@ -37,12 +35,6 @@ export default function WithdrawTradingPool(props) {
     contractInterface: wethGatewayContract.abi,
     addressOrName: addresses.WETHGateway,
     signerOrProvider: signer,
-  });
-
-  const poolNFTProvider = useContract({
-    contractInterface: erc721,
-    addressOrName: props.pool,
-    signerOrProvider: provider,
   });
 
   async function getLP() {
@@ -61,24 +53,12 @@ export default function WithdrawTradingPool(props) {
     setNFTs(lpResponse.nftIds);
   }
 
-  async function getLPAllowance() {
-    const allowed = await poolNFTProvider.getApproved(props.lp);
-
-    console.log("Got pool getApproved:", allowed);
-
-    if (allowed != "0x0000000000000000000000000000000000000000") {
-      setApprovedLP(true);
-    } else {
-      setApprovedLP(false);
-    }
-  }
-
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
     if (props.pool !== undefined && props.lp !== undefined) {
       console.log("props.lp", props.lp);
       console.log("pool", props.pool);
-      getLPAllowance();
+
       getLP();
     }
   }, [props.pool, props.lp]);
@@ -90,16 +70,6 @@ export default function WithdrawTradingPool(props) {
       type: "success",
       message: "Your LP was successfully removed from the pool.",
       title: "Removal Successful!",
-      position: "topR",
-    });
-  };
-
-  const handleLPApprovalSuccess = async function () {
-    setApprovedLP(true);
-    dispatch({
-      type: "success",
-      message: "You can now remove the LP.",
-      title: "Approval Successful!",
       position: "topR",
     });
   };

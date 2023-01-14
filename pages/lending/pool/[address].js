@@ -1,6 +1,6 @@
 import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 import { Button, Tooltip, Loading, Typography } from "@web3uikit/core";
-import { getSupportedNFTs } from "../../../helpers/getSupportedNFTs.js";
+import { getLendingNFTCollections } from "../../../helpers/getLendingNFTCollections.js";
 import { HelpCircle } from "@web3uikit/icons";
 import { BigNumber } from "@ethersproject/bignumber";
 import StyledModal from "../../../components/StyledModal";

@@ -3,7 +3,7 @@ import contractAddresses from "../contractAddresses.json";
 import { getAssetPrice } from "../helpers/getAssetPrice.js";
 import { getNFTImage } from "../helpers/getNFTImage.js";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
-import { getSupportedNFTs } from "../helpers/getSupportedNFTs.js";
+import { getLendingNFTCollections } from "../helpers/getLendingNFTCollections.js";
 import { useState, useEffect } from "react";
 import Pagination from "@mui/material/Pagination";
 import { useNotification, Tooltip, Loading, Input } from "@web3uikit/core";

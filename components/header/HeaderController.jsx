@@ -54,42 +54,8 @@ export default function HeaderController() {
         </div>
       )}
       <div className="p-4 pb-0 md:pb-2 mb-2 border-b-2 flex flex-row justify-between items-center">
-        <div className="hidden 2xl:flex flex-col items-center justify-content lg:pr-8">
-          <Link href="/">
-            <a target="_blank" rel="noopener noreferrer">
-              <div className="px-4 mt-2 flex flex-row items-center">
-                <div className="flex flex-col items-center">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                    }}
-                  >
-                    <div className="font-bold text-2xl">leNFT</div>
-                  </Box>
-                </div>
-                <div className="flex flex-col ml-1 mb-4 items-center justify-content">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                    }}
-                  >
-                    <div className="text-2xl">.finance</div>
-                  </Box>
-                </div>
-              </div>
-              <div className="flex flex-row justify-center">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle2.fontSize",
-                  }}
-                ></Box>
-              </div>
-            </a>
-          </Link>
-        </div>
-        <div className="flex flex-row-reverse md:flex-row 2xl:flex-col items-center">
-          <div className="flex items-center">
+        <div className="flex flex-row-reverse md:flex-row items-center">
+          <div className="flex flex-col items-center justify-content pr-4">
             <ToggleButtonGroup
               size="small"
               color="warning"
@@ -102,7 +68,7 @@ export default function HeaderController() {
                   fontFamily: "Monospace",
                   fontSize: {
                     xs: "caption.fontSize",
-                    md: "subtitle2.fontSize",
+                    lg: "subtitle2.fontSize",
                   },
                   fontWeight: "bold",
                   letterSpacing: {
@@ -119,7 +85,7 @@ export default function HeaderController() {
                   fontFamily: "Monospace",
                   fontSize: {
                     xs: "caption.fontSize",
-                    md: "subtitle2.fontSize",
+                    lg: "subtitle2.fontSize",
                   },
                   fontWeight: "bold",
                   letterSpacing: {
@@ -133,7 +99,9 @@ export default function HeaderController() {
               </ToggleButton>
             </ToggleButtonGroup>
           </div>
-          {mode == "trade" ? <TradeHeader /> : <LendingHeader />}
+          <div className="flex flex-row-reverse md:flex-row 2xl:flex-col items-center">
+            {mode == "trade" ? <TradeHeader /> : <LendingHeader />}
+          </div>
         </div>
         <div className="flex flex-col items-center px-8">
           <ConnectButton

@@ -8,10 +8,14 @@ import {
   useProvider,
 } from "wagmi";
 import { ethers } from "ethers";
+import Image from "next/image";
 import erc20 from "../../contracts/erc20.json";
 import erc721 from "../../contracts/erc721.json";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
 import { Input } from "@nextui-org/react";
 import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
+import { getTradingNFTCollections } from "../../helpers/getTradingNFTCollections.js";
 import { getBuyQuote } from "../../helpers/getBuyQuote.js";
 import Chip from "@mui/material/Chip";
 import { formatUnits } from "@ethersproject/units";
@@ -25,10 +29,11 @@ import tradingPoolContract from "../../contracts/TradingPool.json";
 
 export default function Buy() {
   const { chain } = useNetwork();
+  const { address, isConnected } = useAccount();
   const provider = useProvider();
   const [userNFTs, setUserNFTs] = useState([]);
+  const [tradingCollections, setTradingCollections] = useState([]);
   const { data: signer } = useSigner();
-  const { address } = useAccount();
   const [approvedToken, setApprovedToken] = useState(false);
   const [nftAddress, setNFTAddress] = useState("");
   const [poolAddress, setPoolAddress] = useState("");
@@ -55,6 +60,13 @@ export default function Buy() {
     // Get user NFT assets
     const addressNFTs = await getAddressNFTs(address, collection, chain.id);
     setUserNFTs(addressNFTs);
+  }
+
+  async function getTradingCollections() {
+    // Get user NFT assets
+    const tradingCollections = await getTradingNFTCollections(chain.id);
+    setTradingCollections(tradingCollections);
+    console.log("tradingCollections", tradingCollections);
   }
 
   async function getTradingPoolAddress(collection) {
@@ -116,6 +128,15 @@ export default function Buy() {
     }
   }
 
+  // Runs once
+  useEffect(() => {
+    if (isConnected) {
+      getTradingCollections(chain.id);
+      console.log("Web3 Enabled, ChainId:", chain.id);
+    }
+    console.log("useEffect called");
+  }, [isConnected, chain]);
+
   const handleTokenApprovalSuccess = async function () {
     setApprovedToken(true);
     dispatch({
@@ -149,31 +170,104 @@ export default function Buy() {
     }
   };
 
-  const handleNFTAddressChange = (event) => {
-    console.log("handleNFTAddressChange", event.target.value);
-    setNFTAddress(event.target.value);
-    try {
-      ethers.utils.getAddress(event.target.value);
-      getUserNFTs(event.target.value);
-      getTradingPoolAddress(event.target.value);
-    } catch (error) {
+  const handleNFTAddressChange = (_event, value) => {
+    console.log("handleNFTAddressChange", value);
+    if (ethers.utils.isAddress(value)) {
+      setNFTAddress(value);
+      getUserNFTs(value);
+      getTradingPoolAddress(value);
+    } else if (
+      tradingCollections
+        .map((collection) => collection.contractMetadata.name)
+        .includes(value)
+    ) {
+      const nftAddress = tradingCollections.find(
+        (collection) => collection.contractMetadata.name == value
+      ).address;
+      setNFTAddress(nftAddress);
+      getUserNFTs(nftAddress);
+      getTradingPoolAddress(nftAddress);
+    } else {
+      console.log("Invalid NFT Address");
+      if (value == "") {
+        setNFTAddress("");
+      } else {
+        setNFTAddress("0x");
+      }
       setPriceQuote();
       setPoolAddress("");
       setNFTName("");
-      console.log(error);
     }
   };
 
   return (
     <div className="flex flex-col items-center">
       <div className="flex flex-col m-4">
-        <Input
-          size="xl"
-          placeholder="NFT Address"
-          aria-label="NFT Address"
-          bordered
-          color="default"
-          onChange={handleNFTAddressChange}
+        <Autocomplete
+          autoComplete
+          freeSolo
+          disablePortal
+          ListboxProps={{
+            style: {
+              backgroundColor: "rgb(253, 241, 244)",
+              fontFamily: "Monospace",
+            },
+          }}
+          options={tradingCollections.map(
+            (option) => option.contractMetadata.name
+          )}
+          sx={{ minWidth: { xs: 260, sm: 350, md: 380 } }}
+          onInputChange={handleNFTAddressChange}
+          renderOption={(props, option, state) => (
+            <div className="flex flex-row m-4" {...props}>
+              <div className="flex w-3/12 h-[50px]">
+                {tradingCollections.find(
+                  (collection) => collection.contractMetadata.name == option
+                ).media.raw && (
+                  <Image
+                    loader={() =>
+                      tradingCollections.find(
+                        (collection) =>
+                          collection.contractMetadata.name == option
+                      ).media.thumbnail
+                    }
+                    src={
+                      tradingCollections.find(
+                        (collection) =>
+                          collection.contractMetadata.name == option
+                      ).media.thumbnail
+                    }
+                    height="50"
+                    width="50"
+                    className="rounded-xl"
+                  />
+                )}
+              </div>
+              <div className="flex mx-2">{option}</div>
+            </div>
+          )}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="NFT Collection"
+              sx={{
+                "& label": {
+                  paddingLeft: (theme) => theme.spacing(2),
+                  fontFamily: "Monospace",
+                  fontSize: "h6.fontSize",
+                },
+                "& input": {
+                  paddingLeft: (theme) => theme.spacing(3.5),
+                  fontFamily: "Monospace",
+                },
+                "& fieldset": {
+                  paddingLeft: (theme) => theme.spacing(2.5),
+                  borderRadius: "20px",
+                  fontFamily: "Monospace",
+                },
+              }}
+            />
+          )}
         />
         {nftAddress && (
           <div className="flex flex-row mt-1 justify-center">
@@ -199,11 +293,31 @@ export default function Buy() {
         <div className="flex flex-col md:flex-row justify-center items-center">
           <div className="flex flex-col w-[200px] justify-center m-2">
             <Input
-              labelLeft={"Buy"}
+              labelLeft={
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "h6.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Buy
+                </Box>
+              }
               bordered
               size="xl"
               aria-label="NFTs"
-              labelRight={"NFTs"}
+              labelRight={
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "h6.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  NFTs
+                </Box>
+              }
               placeholder="0"
               value={amount}
               onChange={handleAmountInputChange}

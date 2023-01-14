@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 
-export async function getSupportedNFTs(chainId, reserve = "") {
+export async function getLendingNFTCollections(chainId, reserve = "") {
   const serverAddress = "https://lenft-api-w27ha.ondigitalocean.app";
   const options = {
     method: "GET",
@@ -10,19 +10,19 @@ export async function getSupportedNFTs(chainId, reserve = "") {
   };
   const response = await fetch(
     serverAddress +
-      "/api/supportedNFTs?chainId=" +
+      "/api/lendingNFTCollections?chainId=" +
       chainId +
       "&reserve=" +
       reserve,
     options
   ).catch((err) => console.error(err));
-  var nfts = [];
+  var collections = [];
 
   try {
-    nfts = await response.json();
+    collections = await response.json();
   } catch (error) {
     console.log(error);
   }
 
-  return nfts;
+  return collections;
 }

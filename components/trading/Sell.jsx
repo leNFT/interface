@@ -229,7 +229,7 @@ export default function Sell() {
           </div>
         )}
       </div>
-      <div className="flex flex-col justify-center mb-10 m-4">
+      <div className="flex flex-col justify-center m-4">
         <div className="flex flex-col md:flex-row justify-center items-center">
           <div className="flex flex-col w-[200px] justify-center m-2">
             <Input
@@ -331,25 +331,22 @@ export default function Sell() {
             ))}
           </div>
         )}
-        {priceQuote && (
-          <div className="flex flex-row justify-center mt-8 items-center text-center">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "h6.fontSize",
-                fontWeight: "bold",
-              }}
-            >
-              {"Price: " + formatUnits(priceQuote.price, 18) + " WETH"}
-            </Box>
-          </div>
-        )}
       </div>
-      <div className="flex flex-row w-9/12 justify-center items-center">
+      <div className="flex flex-row w-9/12 justify-center m-4 items-center">
         <Divider style={{ width: "100%" }}>
           {nftName && (
             <Chip
-              label={nftName}
+              label={
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle2.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {nftName ? amount + " " + nftName : "?"}
+                </Box>
+              }
               variant="outlined"
               component="a"
               clickable
@@ -363,6 +360,19 @@ export default function Sell() {
           )}
         </Divider>
       </div>
+      {priceQuote && (
+        <div className="flex flex-row justify-center items-center text-center">
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "h6.fontSize",
+              fontWeight: "bold",
+            }}
+          >
+            {"Price: " + formatUnits(priceQuote.price, 18) + " WETH"}
+          </Box>
+        </div>
+      )}
       <div className="flex flex-row m-6 w-8/12 md:w-6/12">
         {!approvedNFT ? (
           <Button

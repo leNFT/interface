@@ -152,23 +152,27 @@ export default function Swap() {
 
   async function getSellSelectedPriceQuote(
     buyAmount,
-    sellAmount,
+    selectedNFTs,
     buyPoolAddress,
     sellPoolAddress
   ) {
     console.log("Getting sell seleted swap quote");
-    if (buyAmount && sellAmount && buyPoolAddress && sellPoolAddress) {
+    if (buyAmount && selectedNFTs && buyPoolAddress && sellPoolAddress) {
       const newSwapQuote = await getSwapQuote(
         chain.id,
         buyAmount,
-        sellAmount,
+        selectedNFTs.length,
         buyPoolAddress,
         sellPoolAddress
       );
 
+      console.log("newSwapQuote", newSwapQuote);
       setPriceQuote(newSwapQuote);
-      setSellAmount(newSellQuote.lps.length);
-      setSelectedNFTs(selectedNFTs.slice(0, newSellQuote.lps.length));
+      setSellAmount(newSwapQuote.sellLps.length);
+      setSelectedNFTs(selectedNFTs.slice(0, newSwapQuote.sellLps.length));
+    } else {
+      setSellAmount(selectedNFTs.length);
+      setSelectedNFTs(selectedNFTs);
     }
   }
 
@@ -486,7 +490,7 @@ export default function Swap() {
                       fontWeight: "bold",
                     }}
                   >
-                    random NFTs
+                    NFTs
                   </Box>
                 }
                 placeholder="0"
@@ -563,11 +567,10 @@ export default function Swap() {
                         }
                         getSellSelectedPriceQuote(
                           buyAmount,
-                          newSelectedNFTs.length,
+                          newSelectedNFTs,
                           buyPoolAddress,
                           sellPoolAddress
                         );
-                        setSelectedNFTs(newSelectedNFTs);
                       }}
                     >
                       <CardContent>

@@ -425,7 +425,6 @@ export default function Sell() {
                         newSelectedNFTs.splice(index, 1);
                       }
                       getSellSelectedPriceQuote(newSelectedNFTs);
-                      setSelectedNFTs(newSelectedNFTs);
                     }}
                   >
                     <CardContent>

@@ -100,11 +100,7 @@ export default function Swap() {
 
     console.log("Got nft allowed:", allowed);
 
-    if (allowed) {
-      setApprovedNFT(true);
-    } else {
-      setApprovedNFT(false);
-    }
+    setApprovedNFT(allowed);
   }
 
   async function getPriceQuote(
@@ -139,6 +135,28 @@ export default function Swap() {
       console.log("newSelectedNFTs", newSelectedNFTs);
       setSelectedNFTs(newSelectedNFTs);
       setSellAmount(newSelectedNFTs.length);
+    }
+  }
+
+  async function getSellSelectedPriceQuote(
+    buyAmount,
+    sellAmount,
+    buyPoolAddress,
+    sellPoolAddress
+  ) {
+    console.log("Getting sell seleted swap quote");
+    if (buyAmount && sellAmount && buyPoolAddress && sellPoolAddress) {
+      const newSwapQuote = await getSwapQuote(
+        chain.id,
+        buyAmount,
+        sellAmount,
+        buyPoolAddress,
+        sellPoolAddress
+      );
+
+      setPriceQuote(newSwapQuote);
+      setSellAmount(newSellQuote.lps.length);
+      setSelectedNFTs(selectedNFTs.slice(0, newSellQuote.lps.length));
     }
   }
 
@@ -222,6 +240,16 @@ export default function Swap() {
     dispatch({
       type: "success",
       message: "You just approved your tokens.",
+      title: "Approval Successful!",
+      position: "topR",
+    });
+  };
+
+  const handleNFTApprovalSuccess = async function () {
+    setApprovedNFT(true);
+    dispatch({
+      type: "success",
+      message: "You just approved your NFTs.",
       title: "Approval Successful!",
       position: "topR",
     });
@@ -411,7 +439,7 @@ export default function Swap() {
                         } else {
                           newSelectedNFTs.splice(index, 1);
                         }
-                        getPriceQuote(
+                        getSellSelectedPriceQuote(
                           buyAmount,
                           newSelectedNFTs.length,
                           buyPoolAddress,
@@ -563,13 +591,13 @@ export default function Swap() {
             }}
           >
             {BigNumber.from(priceQuote.buyPrice).gt(priceQuote.sellPrice)
-              ? "Price Difference: " +
+              ? "You pay: " +
                 formatUnits(
                   BigNumber.from(priceQuote.buyPrice).sub(priceQuote.sellPrice),
                   18
                 ) +
                 " WETH"
-              : "Change: " +
+              : "You receive: " +
                 formatUnits(
                   BigNumber.from(priceQuote.sellPrice).sub(priceQuote.buyPrice),
                   18
@@ -599,7 +627,7 @@ export default function Swap() {
                   true
                 );
                 await tx.wait(1);
-                handleTokenApprovalSuccess();
+                handleNFTApprovalSuccess();
               } catch (error) {
                 console.log(error);
               } finally {
@@ -616,7 +644,7 @@ export default function Swap() {
                     letterSpacing: 2,
                   }}
                 >
-                  {"Approve Token"}
+                  {"Approve Sell NFT Pool"}
                 </Box>
               </div>
             }

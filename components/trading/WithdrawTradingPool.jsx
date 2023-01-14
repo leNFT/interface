@@ -125,81 +125,46 @@ export default function WithdrawTradingPool(props) {
         </Typography>
       </div>
       <div className="flex flex-row items-center justify-center m-8">
-        {approvedLP ? (
-          <Button
-            text={"Remove LP"}
-            theme="secondary"
-            isFullWidth
-            loadingProps={{
-              spinnerColor: "#000000",
-              spinnerType: "loader",
-              direction: "right",
-              size: "24",
-            }}
-            disabled={!approvedLP}
-            loadingText=""
-            isLoading={withdrawLoading}
-            onClick={async function () {
-              try {
-                setWithdrawLoading(true);
-                console.log("signer.", signer);
-                var tx;
-                if (props.assetSymbol == "ETH") {
-                  console.log("Depositing ETH");
-                  tx = await wethGatewaySigner.depositETH(props.reserve, {
-                    value: amount,
-                  });
-                } else {
-                  const tradingPool = new ethers.Contract(
-                    props.pool,
-                    tradingPoolContract.abi,
-                    signer
-                  );
-                  console.log("Removing LP");
-                  tx = await tradingPool.removeLiquidity(props.lp);
-                }
-                await tx.wait(1);
-                handleWithdrawSuccess();
-              } catch (error) {
-                console.log(error);
-              } finally {
-                setWithdrawLoading(false);
-              }
-            }}
-          ></Button>
-        ) : (
-          <Button
-            text="Approve LP Use"
-            theme="secondary"
-            isFullWidth
-            loadingProps={{
-              spinnerColor: "#000000",
-              spinnerType: "loader",
-              direction: "right",
-              size: "24",
-            }}
-            loadingText=""
-            isLoading={approvalLPLoading}
-            onClick={async function () {
-              try {
-                setApprovalLPLoading(true);
-                console.log("signer.", signer);
-                const poolContract = new ethers.Contract(
+        <Button
+          text={"Remove LP"}
+          theme="secondary"
+          isFullWidth
+          loadingProps={{
+            spinnerColor: "#000000",
+            spinnerType: "loader",
+            direction: "right",
+            size: "24",
+          }}
+          loadingText=""
+          isLoading={withdrawLoading}
+          onClick={async function () {
+            try {
+              setWithdrawLoading(true);
+              console.log("signer.", signer);
+              var tx;
+              if (props.assetSymbol == "ETH") {
+                console.log("Depositing ETH");
+                tx = await wethGatewaySigner.depositETH(props.reserve, {
+                  value: amount,
+                });
+              } else {
+                const tradingPool = new ethers.Contract(
                   props.pool,
-                  erc721,
+                  tradingPoolContract.abi,
                   signer
                 );
-                const tx = await poolContract.approve(props.pool, props.lp);
-                await tx.wait(1);
-                handleLPApprovalSuccess();
-              } catch (error) {
-                console.log(error);
-              } finally {
-                setApprovalLPLoading(false);
+                console.log("Removing LP");
+                tx = await tradingPool.removeLiquidity(props.lp);
               }
-            }}
-          ></Button>
-        )}
+              await tx.wait(1);
+              handleWithdrawSuccess();
+            } catch (error) {
+              console.log(error);
+            } finally {
+              setWithdrawLoading(false);
+            }
+          }}
+        ></Button>
       </div>
     </div>
   );

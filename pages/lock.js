@@ -2,7 +2,13 @@ import styles from "../styles/Home.module.css";
 import { formatUnits } from "@ethersproject/units";
 import StyledModal from "../components/StyledModal";
 import { useState, useEffect } from "react";
-import { useAccount, useProvider, useNetwork, useContract } from "wagmi";
+import {
+  useAccount,
+  useProvider,
+  useNetwork,
+  useContract,
+  useSigner,
+} from "wagmi";
 import Vote from "../components/gauges/Vote";
 import { Input } from "@nextui-org/react";
 import { Button } from "@web3uikit/core";
@@ -10,6 +16,7 @@ import LockNativeToken from "../components/LockNativeToken";
 import contractAddresses from "../contractAddresses.json";
 import UnlockNativeToken from "../components/UnlockNativeToken";
 import votingEscrowContract from "../contracts/VotingEscrow.json";
+import feeDistributorContract from "../contracts/FeeDistributor.json";
 import gaugeControllerContract from "../contracts/GaugeController.json";
 import Box from "@mui/material/Box";
 import { BigNumber } from "ethers";
@@ -18,12 +25,14 @@ export default function Lock() {
   const { isConnected, address } = useAccount();
   const { chain } = useNetwork();
   const provider = useProvider();
-
+  const { data: signer } = useSigner();
   const [voteTokenBalance, setVoteTokenBalance] = useState("0");
   const [visibleLockModal, setVisibleLockModal] = useState(false);
   const [visibleUnlockModal, setVisibleUnlockModal] = useState(false);
   const [visibleVoteModal, setVisibleVoteModal] = useState(false);
   const [apr, setAPR] = useState("0");
+  const [claimingLoading, setClaimingLoading] = useState(false);
+  const [claimableRewards, setClaimableRewards] = useState("0");
   const [selectedGauge, setSelectedGauge] = useState("");
   const [gaugeVotingPower, setGaugeVotingPower] = useState(0);
 
@@ -38,6 +47,18 @@ export default function Lock() {
     contractInterface: votingEscrowContract.abi,
     addressOrName: addresses.VotingEscrow,
     signerOrProvider: provider,
+  });
+
+  const feeDistributorProvider = useContract({
+    contractInterface: feeDistributorContract.abi,
+    addressOrName: addresses.FeeDistributor,
+    signerOrProvider: provider,
+  });
+
+  const feeDistributorSigner = useContract({
+    contractInterface: feeDistributorContract.abi,
+    addressOrName: addresses.FeeDistributor,
+    signerOrProvider: signer,
   });
 
   const gaugeControllerProvider = useContract({
@@ -58,6 +79,12 @@ export default function Lock() {
       address
     );
     setVotePower(updatedVotePower.toString());
+
+    // Get the claimable rewards
+    const updatedClaimableRewards =
+      await feeDistributorProvider.callStatic.claim(addresses.ETH.address);
+    console.log("updatedClaimableRewards", updatedClaimableRewards);
+    setClaimableRewards(updatedClaimableRewards.toString());
   }
 
   async function updateGaugeDetails(gauge) {
@@ -83,6 +110,15 @@ export default function Lock() {
     if (newGauge) {
       updateGaugeDetails(newGauge);
     }
+  };
+
+  const handleClaimSuccess = async function () {
+    dispatch({
+      type: "success",
+      message: "You claimed your rewards",
+      title: "Claim Successful!",
+      position: "topR",
+    });
   };
 
   return (
@@ -186,7 +222,7 @@ export default function Lock() {
                       Locked Balance
                     </Box>
                   </div>
-                  <div className="flex flex-row">
+                  <div className="flex flex-row my-2">
                     <Box
                       sx={{
                         fontFamily: "Monospace",
@@ -207,18 +243,45 @@ export default function Lock() {
                         fontWeight: "bold",
                       }}
                     >
-                      Earned Fees
+                      Claimable Rewards
                     </Box>
                   </div>
-                  <div className="flex flex-row">
+                  <div className="flex flex-row my-2 items-center">
                     <Box
                       sx={{
                         fontFamily: "Monospace",
                         fontSize: "subtitle1.fontSize",
                       }}
                     >
-                      {"0 wETH"}
+                      {formatUnits(claimableRewards, 18) + " wETH"}
                     </Box>
+                    <div className="ml-4">
+                      <Button
+                        customize={{
+                          backgroundColor: "grey",
+                          fontSize: 16,
+                          textColor: "white",
+                        }}
+                        disabled={BigNumber.from(claimableRewards).eq(0)}
+                        text="Claim"
+                        theme="custom"
+                        size="small"
+                        onClick={async function () {
+                          try {
+                            setClaimingLoading(true);
+                            const tx = await feeDistributorSigner.claim(
+                              addresses.ETH.address
+                            );
+                            await tx.wait(1);
+                            await handleClaimSuccess();
+                          } catch (error) {
+                            console.log(error);
+                          } finally {
+                            setClaimingLoading(false);
+                          }
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

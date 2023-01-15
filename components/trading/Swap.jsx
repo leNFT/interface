@@ -272,6 +272,15 @@ export default function Swap() {
     });
   };
 
+  const handleSwapSuccess = async function () {
+    dispatch({
+      type: "success",
+      message: "You just swapped your NFTs.",
+      title: "Swap Successful!",
+      position: "topR",
+    });
+  };
+
   const handleSellNFTAddressChange = (_event, value) => {
     console.log("handleSellNFTAddressChange", value);
     if (ethers.utils.isAddress(value)) {
@@ -424,7 +433,7 @@ export default function Swap() {
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="NFT Collection"
+                label="Token"
                 sx={{
                   "& label": {
                     paddingLeft: (theme) => theme.spacing(2),
@@ -654,7 +663,7 @@ export default function Swap() {
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="NFT Collection"
+                label="Token"
                 sx={{
                   "& label": {
                     paddingLeft: (theme) => theme.spacing(2),
@@ -815,7 +824,7 @@ export default function Swap() {
             primary
             fill="horizontal"
             size="large"
-            disabled={nftApprovalLoading}
+            disabled={nftApprovalLoading || !sellNFTAddress}
             color="#063970"
             onClick={async function () {
               setNFTApprovalLoading(true);

@@ -282,7 +282,7 @@ export default function Sell() {
           renderInput={(params) => (
             <TextField
               {...params}
-              label="NFT Collection"
+              label="Token"
               sx={{
                 "& label": {
                   paddingLeft: (theme) => theme.spacing(2),

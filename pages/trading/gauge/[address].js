@@ -255,7 +255,7 @@ export default function TradingPoolGauge() {
                 </div>
                 <div className="flex flex-col ml-1">
                   <Tooltip
-                    content="The sum of all your LPs in this pool"
+                    content="The amount available to claim from this gauge"
                     position="top"
                     minWidth={200}
                   >
@@ -272,7 +272,7 @@ export default function TradingPoolGauge() {
                       fontWeight: "bold",
                     }}
                   >
-                    {"0 WETH"}
+                    {"0 LE"}
                   </Box>
                 </div>
               </div>
@@ -295,7 +295,7 @@ export default function TradingPoolGauge() {
                     direction: "right",
                     size: "24",
                   }}
-                  disabled={false}
+                  disabled={clamingLoading}
                   loadingText=""
                   isLoading={clamingLoading}
                   onClick={async function () {

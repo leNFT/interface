@@ -1,6 +1,6 @@
 import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 import { Button, Tooltip, Loading, Typography } from "@web3uikit/core";
-import { getSupportedNFTs } from "../../../helpers/getSupportedNFTs.js";
+import { getLendingNFTCollections } from "../../../helpers/getLendingNFTCollections.js";
 import { HelpCircle } from "@web3uikit/icons";
 import { BigNumber } from "@ethersproject/bignumber";
 import StyledModal from "../../../components/StyledModal";
@@ -11,8 +11,8 @@ import lendingMarketContract from "../../../contracts/LendingMarket.json";
 import tokenOracleContract from "../../../contracts/TokenOracle.json";
 import reserveContract from "../../../contracts/Reserve.json";
 import LinearProgressWithLabel from "../../../components/LinearProgressWithLabel";
-import DepositLendingPool from "../../components/DepositLendingPool";
-import WithdrawLendingPool from "../../components/WithdrawLendingPool";
+import DepositLendingPool from "../../../components/lending/DepositLendingPool";
+import WithdrawLendingPool from "../../../components/lending/WithdrawLendingPool";
 import Box from "@mui/material/Box";
 import erc20 from "../../../contracts/erc20.json";
 import { ethers } from "ethers";
@@ -115,7 +115,7 @@ export default function LendingPool() {
 
     setLiquidationPenalty(updatedLiquidationPenalty);
 
-    const updateReserveSupportedNFTs = await getSupportedNFTs(
+    const updateReserveSupportedNFTs = await getLendingNFTCollections(
       chain.id,
       router.query.address
     );

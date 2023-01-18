@@ -1,13 +1,13 @@
 import { useNotification } from "@web3uikit/core";
 import { BigNumber } from "@ethersproject/bignumber";
-import styles from "../styles/Home.module.css";
+import styles from "../../styles/Home.module.css";
 import { Button, Input, Typography } from "@web3uikit/core";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { ethers } from "ethers";
-import reserveContract from "../contracts/Reserve.json";
-import contractAddresses from "../contractAddresses.json";
+import lendingPoolContract from "../../contracts/LendingPool.json";
+import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
-import lendingMarketContract from "../contracts/LendingMarket.json";
+import lendingMarketContract from "../../contracts/LendingMarket.json";
 import {
   useAccount,
   useNetwork,

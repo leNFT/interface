@@ -1,7 +1,7 @@
 import styles from "../styles/Home.module.css";
 import { getAssetPrice } from "../helpers/getAssetPrice.js";
 import { ethers } from "ethers";
-import { getSupportedNFTs } from "../helpers/getSupportedLendingCollections.js";
+import { getLendingNFTCollections } from "../helpers/getLendingNFTCollections.js";
 import { getNFTImage } from "../helpers/getNFTImage.js";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
 import contractAddresses from "../contractAddresses.json";
@@ -23,7 +23,7 @@ import { HelpCircle } from "@web3uikit/icons";
 import Image from "next/image";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
 import Divider from "@mui/material/Divider";
-import Liquidate from "../components/Liquidate";
+import Liquidate from "../components/lending/Liquidate";
 import { useContract, useProvider } from "wagmi";
 import StyledModal from "../components/StyledModal";
 import erc721 from "../contracts/erc721.json";

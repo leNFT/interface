@@ -5,9 +5,9 @@ import {
   useProvider,
   useSigner,
 } from "wagmi";
-import { getAssetPrice } from "../helpers/getAssetPrice.js";
-import { getNewRequestID } from "../helpers/getNewRequestID.js";
-import loanCenterContract from "../contracts/LoanCenter.json";
+import { getAssetPrice } from "../../helpers/getAssetPrice.js";
+import { getNewRequestID } from "../../helpers/getNewRequestID.js";
+import loanCenterContract from "../../contracts/LoanCenter.json";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits } from "@ethersproject/units";
 import { HelpCircle } from "@web3uikit/icons";
@@ -18,14 +18,14 @@ import {
   Typography,
   Illustration,
 } from "@web3uikit/core";
-import styles from "../styles/Home.module.css";
-import contractAddresses from "../contractAddresses.json";
-import { calculateHealthLevel } from "../helpers/healthLevel.js";
+import styles from "../../styles/Home.module.css";
+import contractAddresses from "../../contractAddresses.json";
+import { calculateHealthLevel } from "../../helpers/healthLevel.js";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import lendingMarketContract from "../contracts/LendingMarket.json";
-import LinearProgressWithLabel from "./LinearProgressWithLabel";
-import erc20 from "../contracts/erc20.json";
+import lendingMarketContract from "../../contracts/LendingMarket.json";
+import LinearProgressWithLabel from "../LinearProgressWithLabel";
+import erc20 from "../../contracts/erc20.json";
 
 function isLoanLiquidatable(
   debt,

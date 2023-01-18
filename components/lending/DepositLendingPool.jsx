@@ -9,13 +9,13 @@ import {
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useNotification, Button, Input, Typography } from "@web3uikit/core";
-import styles from "../styles/Home.module.css";
-import contractAddresses from "../contractAddresses.json";
+import styles from "../../styles/Home.module.css";
+import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import reserveContract from "../contracts/Reserve.json";
-import wethGatewayContract from "../contracts/WETHGateway.json";
-import erc20 from "../contracts/erc20.json";
+import lendingPoolContract from "../../contracts/LendingPool.json";
+import wethGatewayContract from "../../contracts/WETHGateway.json";
+import erc20 from "../../contracts/erc20.json";
 
 export default function DepositLendingPool(props) {
   const [amount, setAmount] = useState("0");

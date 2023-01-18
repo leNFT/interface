@@ -24,6 +24,7 @@ export default function Layout({ children }) {
             color: "grey",
             notifications: true,
             indicator: true,
+            css: "@media (max-width: 600px) {display: none;}",
             glyph: [
               "https://raw.githubusercontent.com/leNFT/interface/main/public/icon_border.png",
               "100%",

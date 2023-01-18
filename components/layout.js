@@ -5,6 +5,7 @@ import styles from "../styles/Home.module.css";
 import { Typography } from "@web3uikit/core";
 import { useAccount, useNetwork } from "wagmi";
 import Script from "next/script";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function Layout({ children }) {
   const { isConnected } = useAccount();
@@ -54,9 +55,13 @@ export default function Layout({ children }) {
         ) : (
           <div className={styles.container}>
             <div className={styles.mainInfo}>
-              <Typography variant="subtitle1">
-                Please connect your wallet.
-              </Typography>
+              <div className="flex flex-col items-center space-y-8">
+                <Typography variant="subtitle1">
+                  you know the gist, wallet first, lenfting later
+                </Typography>
+
+                <ConnectButton />
+              </div>
             </div>
           </div>
         )}

@@ -37,6 +37,7 @@ export default function TradingPools() {
     for (const [key, value] of Object.entries(tradingPools)) {
       newTableData.push([
         <LinkTo
+          key={"link" + key}
           type="external"
           iconLayout="none"
           text={
@@ -76,7 +77,7 @@ export default function TradingPools() {
         >
           {value.token.name}
         </Box>,
-        <div className="m-1">
+        <div className="m-1" key={"gauge" + key}>
           <Button
             text={
               <Box

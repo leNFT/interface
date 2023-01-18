@@ -4,6 +4,7 @@ import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import { Typography } from "@web3uikit/core";
 import { useAccount, useNetwork } from "wagmi";
+import Script from "next/script";
 
 export default function Layout({ children }) {
   const { isConnected } = useAccount();
@@ -12,6 +13,24 @@ export default function Layout({ children }) {
 
   return (
     <>
+      <Script
+        src="https://cdn.jsdelivr.net/npm/@widgetbot/crate@3"
+        async
+        defer
+        onLoad={() => {
+          new Crate({
+            server: "993987915933814864", // leNFT
+            channel: "1065060904485527563", // #trollbox
+            color: "grey",
+            notifications: true,
+            indicator: true,
+            glyph: [
+              "https://raw.githubusercontent.com/leNFT/interface/main/public/icon_border.png",
+              "100%",
+            ],
+          });
+        }}
+      />
       <Head>
         <title>leNFT App</title>
         <meta name="description" content="lend NFTs" />

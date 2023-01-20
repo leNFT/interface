@@ -14,7 +14,13 @@ import { ethers } from "ethers";
 import Card from "@mui/material/Card";
 import { CardActionArea } from "@mui/material";
 import CardContent from "@mui/material/CardContent";
-import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
+import {
+  useAccount,
+  useNetwork,
+  useContract,
+  useProvider,
+  useSigner,
+} from "wagmi";
 import Router from "next/router";
 import { useRouter } from "next/router";
 import { ChevronLeft } from "@web3uikit/icons";
@@ -24,8 +30,10 @@ export default function TradingPoolGauge() {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const router = useRouter();
+  const { data: signer } = useSigner();
   const [lpToken, setLPToken] = useState("");
   const [boost, setBoost] = useState(0);
+  const [claimableRewards, setClaimableRewards] = useState("0");
   const [stakedLPs, setStakedLPs] = useState([]);
   const [selectedLP, setSelectedLP] = useState();
   const [visibleStakeModal, setVisibleStakeModal] = useState(false);
@@ -39,21 +47,27 @@ export default function TradingPoolGauge() {
       ? contractAddresses[chain.id]
       : contractAddresses["1"];
 
-  async function updateUI() {
-    const gauge = new ethers.Contract(
-      router.query.address,
-      tradingGaugeContract.abi,
-      provider
-    );
+  const gaugeProvider = useContract({
+    contractInterface: tradingGaugeContract.abi,
+    addressOrName: router.query.address,
+    signerOrProvider: provider,
+  });
 
+  const gaugeSigner = useContract({
+    contractInterface: tradingGaugeContract.abi,
+    addressOrName: router.query.address,
+    signerOrProvider: signer,
+  });
+
+  async function updateUI() {
     // Set gauge details
-    const lpTokenResponse = await gauge.lpToken();
+    const lpTokenResponse = await gaugeProvider.lpToken();
     setLPToken(lpTokenResponse.toString());
 
-    const boostResponse = await gauge.userBoost(address);
+    const boostResponse = await gaugeProvider.userBoost(address);
     setBoost(boostResponse.toNumber());
 
-    const stakedLPsBalanceResponse = await gauge.balanceOf(address);
+    const stakedLPsBalanceResponse = await gaugeProvider.balanceOf(address);
     const stakedLPsAmount = stakedLPsBalanceResponse.toNumber();
 
     // Get staked lp positions
@@ -67,6 +81,11 @@ export default function TradingPoolGauge() {
     }
 
     setStakedLPs(newStakedLps);
+
+    // Get the claimable rewards
+    const updatedClaimableRewards = await gaugeProvider.callStatic.claim();
+    console.log("updatedClaimableRewards", updatedClaimableRewards);
+    setClaimableRewards(updatedClaimableRewards.toString());
   }
 
   // Set the rest of the UI when we receive the reserve address
@@ -272,7 +291,7 @@ export default function TradingPoolGauge() {
                       fontWeight: "bold",
                     }}
                   >
-                    {"0 LE"}
+                    {formatUnits(claimableRewards, 18) + " LE"}
                   </Box>
                 </div>
               </div>

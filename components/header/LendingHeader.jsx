@@ -102,12 +102,12 @@ export default function LendingHeader() {
                     letterSpacing: 2,
                   }}
                 >
-                  Search
+                  Loans
                 </Box>
               ),
               onClick: () => {
                 Router.push({
-                  pathname: "/search",
+                  pathname: "/loans",
                 });
               },
               icon: (
@@ -231,13 +231,13 @@ export default function LendingHeader() {
           </Link>
         </div>
         <div className="flex flex-col m-2">
-          <Link href="/search">
+          <Link href="/loans">
             <Button
               primary
               size="medium"
-              color={option == "search" ? SELECTED_COLOR : UNSELECTED_COLOR}
+              color={option == "loans" ? SELECTED_COLOR : UNSELECTED_COLOR}
               onClick={() => {
-                setOption("search");
+                setOption("loans");
               }}
               label={
                 <div className="flex md:hidden xl:flex">
@@ -249,7 +249,7 @@ export default function LendingHeader() {
                       letterSpacing: 4,
                     }}
                   >
-                    Search
+                    Loans
                   </Box>
                 </div>
               }
@@ -280,7 +280,7 @@ export default function LendingHeader() {
                       letterSpacing: 4,
                     }}
                   >
-                    L0ck
+                    Lock
                   </Box>
                 </div>
               }

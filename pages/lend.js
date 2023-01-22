@@ -34,7 +34,6 @@ export default function Lend() {
   const [searchResults, setSearchResults] = useState([]);
   const [searchPageData, setSearchPageData] = useState([]);
   const [searchInputString, setSearchInputString] = useState("");
-
   const [unsupportedAssets, setUnsupportedAssets] = useState([]);
   const [visibleAssetModal, setVisibleAssetModal] = useState(false);
   const [visibleLoanModal, setVisibleLoanModal] = useState(false);
@@ -62,7 +61,7 @@ export default function Lend() {
 
     // Get user NFT assets
     const addressNFTs = await getAddressNFTs(address, "", chain.id);
-    const supportedNFTs = await getSupportedNFTs(chain.id);
+    const supportedNFTs = await getLendingNFTCollections(chain.id);
     console.log("supportedNFTs:", supportedNFTs);
     var updatedLoans = [];
     var updatedSupportedAssets = [];

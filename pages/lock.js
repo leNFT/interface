@@ -82,7 +82,9 @@ export default function Lock() {
 
     // Get the claimable rewards
     const updatedClaimableRewards =
-      await feeDistributorProvider.callStatic.claim(addresses.ETH.address);
+      await feeDistributorProvider.callStatic.claim(addresses.ETH.address, {
+        from: address,
+      });
     console.log("updatedClaimableRewards", updatedClaimableRewards);
     setClaimableRewards(updatedClaimableRewards.toString());
   }

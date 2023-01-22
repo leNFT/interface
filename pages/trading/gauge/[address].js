@@ -75,7 +75,7 @@ export default function TradingPoolGauge() {
     const newStakedLps = [];
 
     for (let i = 0; i < stakedLPsAmount; i++) {
-      const stakedLPResponse = await gauge.lpOfOwnerByIndex(address, i);
+      const stakedLPResponse = await gaugeProvider.lpOfOwnerByIndex(address, i);
       const stakedLP = stakedLPResponse.toNumber();
 
       newStakedLps.push(stakedLP);
@@ -84,7 +84,9 @@ export default function TradingPoolGauge() {
     setStakedLPs(newStakedLps);
 
     // Get the claimable rewards
-    const updatedClaimableRewards = await gaugeProvider.callStatic.claim();
+    const updatedClaimableRewards = await gaugeProvider.callStatic.claim({
+      from: address,
+    });
     console.log("updatedClaimableRewards", updatedClaimableRewards);
     setClaimableRewards(updatedClaimableRewards.toString());
   }
@@ -92,10 +94,10 @@ export default function TradingPoolGauge() {
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
     console.log("router", router.query.address);
-    if (router.query.address != undefined && isConnected) {
+    if (router.query.address != undefined && isConnected && address) {
       updateUI();
     }
-  }, [isConnected, router.query.address]);
+  }, [isConnected, router.query.address, address]);
 
   const handleClaimingSuccess = async function () {
     dispatch({
@@ -315,7 +317,7 @@ export default function TradingPoolGauge() {
                     direction: "right",
                     size: "24",
                   }}
-                  disabled={clamingLoading}
+                  disabled={BigNumber.from(claimableRewards).eq(0)}
                   loadingText=""
                   isLoading={clamingLoading}
                   onClick={async function () {

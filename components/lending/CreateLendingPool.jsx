@@ -183,7 +183,7 @@ export default function CreateLendingPool(props) {
 
       <div className="flex flex-row items-center justify-center m-8 mt-2">
         <Button
-          text="Create Reserve"
+          text="Create Lending Pool"
           theme="secondary"
           isFullWidth
           loadingProps={{

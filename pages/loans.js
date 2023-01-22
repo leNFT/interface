@@ -28,7 +28,7 @@ import { useContract, useProvider } from "wagmi";
 import StyledModal from "../components/StyledModal";
 import erc721 from "../contracts/erc721.json";
 
-export default function Search() {
+export default function Loans() {
   const [collectionLoans, setCollectionLoans] = useState([]);
   const [maxCollateralization, setMaxCollateralization] = useState("0");
   const [count, setCount] = useState(0);
@@ -137,7 +137,7 @@ export default function Search() {
 
   async function updateCollections() {
     //Fill the collections with the supported assets
-    const supportedNFTs = await getSupportedNFTs(chain.id);
+    const supportedNFTs = await getLendingNFTCollections(chain.id);
     console.log("supportedNFTs", supportedNFTs);
     const updatedCollections = [];
     for (const nftAddress in supportedNFTs) {

@@ -38,13 +38,13 @@ export default function Withdraw(props) {
   });
 
   async function updateMaxAmount() {
-    const reserve = new ethers.Contract(
-      props.reserve,
-      reserveContract.abi,
+    const lendingPool = new ethers.Contract(
+      props.pool,
+      lendingPoolContract.abi,
       provider
     );
 
-    const updatedMaxAmount = await reserve.maxWithdraw(address);
+    const updatedMaxAmount = await lendingPool.maxWithdraw(address);
 
     console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
     setMaxAmount(updatedMaxAmount);

@@ -9,7 +9,7 @@ import contractAddresses from "../../../contractAddresses.json";
 import { useState, useEffect } from "react";
 import lendingMarketContract from "../../../contracts/LendingMarket.json";
 import tokenOracleContract from "../../../contracts/TokenOracle.json";
-import reserveContract from "../../../contracts/Reserve.json";
+import lendingPoolContract from "../../../contracts/LendingPool.json";
 import LinearProgressWithLabel from "../../../components/LinearProgressWithLabel";
 import DepositLendingPool from "../../../components/lending/DepositLendingPool";
 import WithdrawLendingPool from "../../../components/lending/WithdrawLendingPool";
@@ -26,7 +26,7 @@ export default function LendingPool() {
   const [debt, setDebt] = useState("0");
   const [asset, setAsset] = useState("");
   const [assetSymbol, setAssetSymbol] = useState("");
-  const [reserveSupportedNFTs, setReserveSupportedNFTs] = useState({});
+  const [poolSupportedNFTs, setPoolSupportedNFTs] = useState({});
   const [visibleDepositModal, setVisibleDepositModal] = useState(false);
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
   const [maxAmount, setMaxAmount] = useState("0");
@@ -34,7 +34,7 @@ export default function LendingPool() {
   const [supplyRate, setSupplyRate] = useState(0);
   const [borrowRate, setBorrowRate] = useState(0);
   const [utilizationRate, setUtilizationRate] = useState(0);
-  const [loadingReserve, setLoadingReserve] = useState(false);
+  const [loadingPool, setLoadingPool] = useState(false);
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const [tvlSafeguard, setTVLSafeguard] = useState("0");
@@ -44,18 +44,18 @@ export default function LendingPool() {
 
   const provider = useProvider();
 
-  async function getReserveDetails() {
-    const reserve = new ethers.Contract(
+  async function getLendingPoolDetails() {
+    const lendingPool = new ethers.Contract(
       router.query.address,
-      reserveContract.abi,
+      lendingPoolContract.abi,
       provider
     );
 
-    const updatedDebt = await reserve.getDebt();
+    const updatedDebt = await lendingPool.getDebt();
     console.log("Updated Debt:", updatedDebt);
     setDebt(updatedDebt.toString());
 
-    const updatedAsset = await reserve.asset();
+    const updatedAsset = await lendingPool.asset();
     console.log("Updated Asset:", updatedAsset);
     setAsset(updatedAsset.toString());
 
@@ -68,72 +68,72 @@ export default function LendingPool() {
         : updatedAssetSymbol.toString()
     );
 
-    const updatedUnderlyingBalance = await reserve.getUnderlyingBalance();
+    const updatedUnderlyingBalance = await lendingPool.getUnderlyingBalance();
     console.log("Updated Underlying Balance:", updatedUnderlyingBalance);
     setUnderlyingBalance(updatedUnderlyingBalance.toString());
 
-    const updatedUtilizationRate = await reserve.getUtilizationRate();
+    const updatedUtilizationRate = await lendingPool.getUtilizationRate();
     console.log("Updated Utilization Rate:", updatedUtilizationRate);
     setUtilizationRate(updatedUtilizationRate.toNumber());
 
-    const updatedSupplyRate = await reserve.getSupplyRate();
+    const updatedSupplyRate = await lendingPool.getSupplyRate();
     console.log("Updated Supply Rate:", updatedSupplyRate);
     setSupplyRate(updatedSupplyRate.toNumber());
 
-    const updatedBorrowRate = await reserve.getBorrowRate();
+    const updatedBorrowRate = await lendingPool.getBorrowRate();
     console.log("Updated Borrow Rate:", updatedBorrowRate);
     setBorrowRate(updatedBorrowRate.toNumber());
 
-    const updatedMaxAmount = await reserve.maxWithdraw(address);
+    const updatedMaxAmount = await lendingPool.maxWithdraw(address);
     console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
     setMaxAmount(updatedMaxAmount.toString());
 
     const updatedUnderyingSafeguard = (
-      await reserve.getTVLSafeguard()
+      await lendingPool.getTVLSafeguard()
     ).toString();
 
     setTVLSafeguard(updatedUnderyingSafeguard);
 
     // Get default maximum utilization rate
     const updatedMaximumUtilizationRate = (
-      await reserve.getMaximumUtilizationRate()
+      await lendingPool.getMaximumUtilizationRate()
     ).toString();
 
     setMaximumUtilizationRate(updatedMaximumUtilizationRate);
 
     // Get protocol liquidation fee
     const updatedliquidationFee = (
-      await reserve.getLiquidationFee()
+      await lendingPool.getLiquidationFee()
     ).toString();
 
     setLiquidationFee(updatedliquidationFee);
 
     // Get underlying safeguard
     const updatedLiquidationPenalty = (
-      await reserve.getLiquidationPenalty()
+      await lendingPool.getLiquidationPenalty()
     ).toString();
 
     setLiquidationPenalty(updatedLiquidationPenalty);
 
-    const updateReserveSupportedNFTs = await getSupportedNFTs(
+    const updatedPoolSupportedNFTs = await getLendingNFTCollections(
       chain.id,
       router.query.address
     );
-    setReserveSupportedNFTs(updateReserveSupportedNFTs);
+    setPoolSupportedNFTs(updatedPoolSupportedNFTs);
     //Stop loading
-    setLoadingReserve(false);
+    setLoadingPool(false);
   }
 
-  // Set the rest of the UI when we receive the reserve address
+  // Set the rest of the UI when we receive the lending pool address
   useEffect(() => {
     console.log("router", router.query.address);
     if (router.query.address != undefined && isConnected) {
       console.log(
-        "Got reserve address, setting the rest...",
+        "Got pool address, setting the rest...",
         router.query.address
       );
-      setLoadingReserve(true);
-      getReserveDetails();
+      setLoadingPool(true);
+      getLendingPoolDetails();
     }
   }, [isConnected, router.query.address]);
 
@@ -150,10 +150,10 @@ export default function LendingPool() {
       >
         <DepositLendingPool
           setVisibility={setVisibleDepositModal}
-          reserve={router.query.address}
+          pool={router.query.address}
           assetSymbol={assetSymbol}
           asset={asset}
-          updateUI={getReserveDetails}
+          updateUI={getLendingPoolDetails}
         />
       </StyledModal>
       <StyledModal
@@ -167,10 +167,10 @@ export default function LendingPool() {
       >
         <WithdrawLendingPool
           setVisibility={setVisibleWithdrawalModal}
-          reserve={router.query.address}
+          pool={router.query.address}
           assetSymbol={assetSymbol}
           asset={asset}
-          updateUI={getReserveDetails}
+          updateUI={getLendingPoolDetails}
         />
       </StyledModal>
       <div className="flex flex-row justify-center">
@@ -182,7 +182,7 @@ export default function LendingPool() {
             icon={<ChevronLeft fontSize="50px" />}
             onClick={async function () {
               Router.push({
-                pathname: "/reserves",
+                pathname: "/lendingPools",
               });
             }}
           />
@@ -231,7 +231,7 @@ export default function LendingPool() {
                     fontWeight: "bold",
                   }}
                 >
-                  My Reserve Balance
+                  My Pool Balance
                 </Box>
               </div>
               <div className="flex flex-col ml-1">
@@ -245,7 +245,7 @@ export default function LendingPool() {
               </div>
             </div>
             <div className="flex flex-row mx-2 mb-2">
-              {loadingReserve ? (
+              {loadingPool ? (
                 <Loading size={12} spinnerColor="#000000" />
               ) : (
                 <Box
@@ -318,7 +318,7 @@ export default function LendingPool() {
             </Box>
             <LinearProgressWithLabel value={utilizationRate / 100} />
           </div>
-          {loadingReserve ? (
+          {loadingPool ? (
             <div className="flex m-4">
               <Loading size={12} spinnerColor="#000000" />
             </div>
@@ -376,7 +376,7 @@ export default function LendingPool() {
               fontSize: "h6.fontSize",
             }}
           >
-            {Object.values(reserveSupportedNFTs).map((nft) => nft.name + " ")}
+            {Object.values(poolSupportedNFTs).map((nft) => nft.name + " ")}
           </Box>
         </div>
       </div>

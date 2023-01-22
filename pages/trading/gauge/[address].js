@@ -59,6 +59,7 @@ export default function TradingPoolGauge() {
     signerOrProvider: signer,
   });
 
+  // Update the UI
   async function updateUI() {
     // Set gauge details
     const lpTokenResponse = await gaugeProvider.lpToken();

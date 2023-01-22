@@ -37,103 +37,34 @@ export default function LendingPool() {
   const [loadingReserve, setLoadingReserve] = useState(false);
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
-  const [tvlSafeguard, setTVLSafeguard] = useState("0");
-  const [maximumUtilizationRate, setMaximumUtilizationRate] = useState("0");
-  const [liquidationFee, setLiquidationFee] = useState("0");
-  const [liquidationPenalty, setLiquidationPenalty] = useState("0");
-
   const provider = useProvider();
 
-  async function getReserveDetails() {
-    const reserve = new ethers.Contract(
-      router.query.address,
-      reserveContract.abi,
-      provider
-    );
+  const gaugeProvider = useContract({
+    contractInterface: tradingGaugeContract.abi,
+    addressOrName: router.query.address,
+    signerOrProvider: provider,
+  });
 
-    const updatedDebt = await reserve.getDebt();
-    console.log("Updated Debt:", updatedDebt);
-    setDebt(updatedDebt.toString());
+  const gaugeSigner = useContract({
+    contractInterface: tradingGaugeContract.abi,
+    addressOrName: router.query.address,
+    signerOrProvider: signer,
+  });
 
-    const updatedAsset = await reserve.asset();
-    console.log("Updated Asset:", updatedAsset);
-    setAsset(updatedAsset.toString());
+  async function updateUI() {
+    // Set gauge details
+    const lpTokenResponse = await gaugeProvider.lpToken();
+    setLPToken(lpTokenResponse.toString());
 
-    const assetContract = new ethers.Contract(updatedAsset, erc20, provider);
-    const updatedAssetSymbol = await assetContract.symbol();
-    console.log("Updated Asset Symbol:", updatedAssetSymbol);
-    setAssetSymbol(
-      updatedAssetSymbol.toString() == "WETH"
-        ? "ETH"
-        : updatedAssetSymbol.toString()
-    );
-
-    const updatedUnderlyingBalance = await reserve.getUnderlyingBalance();
-    console.log("Updated Underlying Balance:", updatedUnderlyingBalance);
-    setUnderlyingBalance(updatedUnderlyingBalance.toString());
-
-    const updatedUtilizationRate = await reserve.getUtilizationRate();
-    console.log("Updated Utilization Rate:", updatedUtilizationRate);
-    setUtilizationRate(updatedUtilizationRate.toNumber());
-
-    const updatedSupplyRate = await reserve.getSupplyRate();
-    console.log("Updated Supply Rate:", updatedSupplyRate);
-    setSupplyRate(updatedSupplyRate.toNumber());
-
-    const updatedBorrowRate = await reserve.getBorrowRate();
-    console.log("Updated Borrow Rate:", updatedBorrowRate);
-    setBorrowRate(updatedBorrowRate.toNumber());
-
-    const updatedMaxAmount = await reserve.maxWithdraw(address);
-    console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
-    setMaxAmount(updatedMaxAmount.toString());
-
-    const updatedUnderyingSafeguard = (
-      await reserve.getTVLSafeguard()
-    ).toString();
-
-    setTVLSafeguard(updatedUnderyingSafeguard);
-
-    // Get default maximum utilization rate
-    const updatedMaximumUtilizationRate = (
-      await reserve.getMaximumUtilizationRate()
-    ).toString();
-
-    setMaximumUtilizationRate(updatedMaximumUtilizationRate);
-
-    // Get protocol liquidation fee
-    const updatedliquidationFee = (
-      await reserve.getLiquidationFee()
-    ).toString();
-
-    setLiquidationFee(updatedliquidationFee);
-
-    // Get underlying safeguard
-    const updatedLiquidationPenalty = (
-      await reserve.getLiquidationPenalty()
-    ).toString();
-
-    setLiquidationPenalty(updatedLiquidationPenalty);
-
-    const updateReserveSupportedNFTs = await getLendingNFTCollections(
-      chain.id,
-      router.query.address
-    );
-    setReserveSupportedNFTs(updateReserveSupportedNFTs);
-    //Stop loading
-    setLoadingReserve(false);
+    const boostResponse = await gaugeProvider.userBoost(address);
+    setBoost(boostResponse.toNumber());
   }
 
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
     console.log("router", router.query.address);
     if (router.query.address != undefined && isConnected) {
-      console.log(
-        "Got reserve address, setting the rest...",
-        router.query.address
-      );
-      setLoadingReserve(true);
-      getReserveDetails();
+      updateUI();
     }
   }, [isConnected, router.query.address]);
 
@@ -378,91 +309,6 @@ export default function LendingPool() {
           >
             {Object.values(reserveSupportedNFTs).map((nft) => nft.name + " ")}
           </Box>
-        </div>
-      </div>
-      <div className="flex flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 bg-black/5 shadow-lg">
-        <div className="flex flex-col m-2 md:flex-row border-2 rounded-2xl">
-          <div className="flex flex-col m-4">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle2.fontSize",
-                fontWeight: "bold",
-              }}
-            >
-              Liquidation Penalty
-            </Box>
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle2.fontSize",
-              }}
-            >
-              {BigNumber.from(liquidationPenalty).div(100) + "%"}
-            </Box>
-          </div>
-          <div className="flex flex-col m-4">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle2.fontSize",
-                fontWeight: "bold",
-              }}
-            >
-              Protocol Liquidation Fee
-            </Box>
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle2.fontSize",
-              }}
-            >
-              {BigNumber.from(liquidationFee).div(100) + "%"}
-            </Box>
-          </div>
-        </div>
-        <div className="flex flex-col m-2 md:flex-row border-2 rounded-2xl">
-          <div className="flex flex-col m-4">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle2.fontSize",
-                fontWeight: "bold",
-              }}
-            >
-              Max Utilization Rate
-            </Box>
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle2.fontSize",
-              }}
-            >
-              {BigNumber.from(maximumUtilizationRate).div(100) + "%"}
-            </Box>
-          </div>
-          <div className="flex flex-col m-4">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle2.fontSize",
-                fontWeight: "bold",
-              }}
-            >
-              Underlying Safeguard
-            </Box>
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle2.fontSize",
-              }}
-            >
-              {formatUnits(BigNumber.from(underlyingBalance).add(debt), 18) +
-                " / " +
-                formatUnits(tvlSafeguard, 18) +
-                " WETH"}
-            </Box>
-          </div>
         </div>
       </div>
     </div>

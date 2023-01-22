@@ -62,21 +62,6 @@ export default function TradingPoolGauge() {
     const boostResponse = await gaugeProvider.userBoost(address);
     setBoost(boostResponse.toNumber());
 
-    const stakedLPsBalanceResponse = await gaugeProvider.balanceOf(address);
-    const stakedLPsAmount = stakedLPsBalanceResponse.toNumber();
-
-    // Get staked lp positions
-    const newStakedLps = [];
-
-    for (let i = 0; i < stakedLPsAmount; i++) {
-      const stakedLPResponse = await gaugeProvider.lpOfOwnerByIndex(address, i);
-      const stakedLP = stakedLPResponse.toNumber();
-
-      newStakedLps.push(stakedLP);
-    }
-
-    setStakedLPs(newStakedLps);
-
     // Get the claimable rewards
     const updatedClaimableRewards = await gaugeProvider.callStatic.claim({
       from: address,
@@ -217,7 +202,7 @@ export default function TradingPoolGauge() {
                       fontWeight: "bold",
                     }}
                   >
-                    {"Staked Amount: "}
+                    {"Staked: "}
                   </Box>
                 </div>
               </div>
@@ -235,7 +220,7 @@ export default function TradingPoolGauge() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-row items-center ">
+            <div className="flex flex-col md:flex-row items-center ">
               <div className="m-4">
                 <Button
                   customize={{
@@ -243,7 +228,23 @@ export default function TradingPoolGauge() {
                     fontSize: 20,
                     textColor: "white",
                   }}
-                  text="Stake in Gauge"
+                  text="Stake"
+                  theme="custom"
+                  size="large"
+                  radius="12"
+                  onClick={async function () {
+                    setVisibleStakeModal(true);
+                  }}
+                />
+              </div>
+              <div className="m-4">
+                <Button
+                  customize={{
+                    backgroundColor: "grey",
+                    fontSize: 20,
+                    textColor: "white",
+                  }}
+                  text="Unstake"
                   theme="custom"
                   size="large"
                   radius="12"

@@ -3,6 +3,7 @@ import { Button, Table, Skeleton } from "@web3uikit/core";
 import { getLendingPools } from "../helpers/getLendingPools.js";
 import { formatUnits } from "@ethersproject/units";
 import StyledModal from "../components/StyledModal";
+import { ethers } from "ethers";
 import CreateLendingPool from "../components/lending/CreateLendingPool";
 import { useAccount, useNetwork } from "wagmi";
 import { Tooltip } from "@web3uikit/core";
@@ -75,16 +76,32 @@ export default function LendingPools() {
             " " +
             underlyingSymbol}
         </Box>,
-        <Box
-          sx={{
-            fontFamily: "Monospace",
-            fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
-          }}
-          className="m-2"
-          key={"incentivized" + key}
-        >
-          {value.isIncentivized ? "Yes" : "No"}
-        </Box>,
+        <div className="m-1" key={"gauge" + key}>
+          <Button
+            text={
+              <Box
+                sx={{
+                  fontSize: {
+                    xs: "caption.fontSize",
+                    sm: "h6.fontSize",
+                  },
+                }}
+              >
+                {value.gauge != ethers.constants.AddressZero ? "Yes" : "No"}
+              </Box>
+            }
+            id={value.gauge}
+            disabled={value.gauge == ethers.constants.AddressZero}
+            onClick={async function () {
+              Router.push({
+                pathname: "/lending/gauge/[address]",
+                query: {
+                  address: value.gauge,
+                },
+              });
+            }}
+          />
+        </div>,
         <div key={"details" + key}>
           <Button
             customize={{
@@ -274,7 +291,7 @@ export default function LendingPools() {
                 </Tooltip>
               </div>
             </div>,
-            <div className="flex flex-row m-2" key="rewards">
+            <div className="flex flex-row m-2" key="gauge">
               <Box
                 sx={{
                   fontFamily: "Monospace",
@@ -285,11 +302,11 @@ export default function LendingPools() {
                 }}
                 key="4"
               >
-                Liquidation Rewards
+                Gauge
               </Box>
               <div className="flex flex-col ml-1">
                 <Tooltip
-                  content="Whether liquidations are incentivized through LE tokens."
+                  content="Whether this pool has a gauge."
                   position="bottom"
                   minWidth={250}
                 >

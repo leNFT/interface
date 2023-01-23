@@ -129,13 +129,7 @@ export default function StakeLendingGauge(props) {
       <div className="flex flex-row items-center justify-center m-8">
         {approved ? (
           <Button
-            text={
-              userLPs.length == 0
-                ? "No LPs to stake"
-                : selectedLP !== undefined
-                ? "Selected LP #" + selectedLP
-                : "Please select an LP to stake"
-            }
+            text={"Stake LP"}
             theme="secondary"
             isFullWidth
             loadingProps={{
@@ -144,11 +138,23 @@ export default function StakeLendingGauge(props) {
               direction: "right",
               size: "24",
             }}
+            disabled={!approved}
             loadingText=""
+            isLoading={stakeLoading}
             onClick={async function () {
-              setSelectingLP(!selectingLP);
+              try {
+                setStakeLoading(true);
+                console.log("signer.", signer);
+                const tx = await gaugeSigner.deposit(amount);
+                await tx.wait(1);
+                handleStakeSuccess();
+              } catch (error) {
+                console.log(error);
+              } finally {
+                setStakeLoading(false);
+              }
             }}
-          />
+          ></Button>
         ) : (
           <Button
             text="Approve LP"
@@ -186,35 +192,6 @@ export default function StakeLendingGauge(props) {
             }}
           ></Button>
         )}
-      </div>
-      <div className="flex flex-row items-center justify-center m-8">
-        <Button
-          text={"Stake LP"}
-          theme="secondary"
-          isFullWidth
-          loadingProps={{
-            spinnerColor: "#000000",
-            spinnerType: "loader",
-            direction: "right",
-            size: "24",
-          }}
-          disabled={!approved}
-          loadingText=""
-          isLoading={stakeLoading}
-          onClick={async function () {
-            try {
-              setStakeLoading(true);
-              console.log("signer.", signer);
-              const tx = await gaugeSigner.deposit(selectedLP);
-              await tx.wait(1);
-              handleStakeSuccess();
-            } catch (error) {
-              console.log(error);
-            } finally {
-              setStakeLoading(false);
-            }
-          }}
-        ></Button>
       </div>
     </div>
   );

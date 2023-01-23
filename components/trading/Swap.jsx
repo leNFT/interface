@@ -880,7 +880,7 @@ export default function Swap() {
               try {
                 const tx = await tokenContract.approve(
                   addresses.SwapRouter,
-                  "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+                  ethers.constants.MaxUint256
                 );
                 await tx.wait(1);
                 handleTokenApprovalSuccess();

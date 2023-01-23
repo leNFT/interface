@@ -6,14 +6,9 @@ import {
   useProvider,
   useSigner,
 } from "wagmi";
-import Box from "@mui/material/Box";
 import { BigNumber } from "@ethersproject/bignumber";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import { CardActionArea } from "@mui/material";
-import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
 import { formatUnits, parseUnits } from "@ethersproject/units";
-import { useNotification, Button } from "@web3uikit/core";
+import { useNotification, Button, Typography, Input } from "@web3uikit/core";
 import styles from "../../styles/Home.module.css";
 import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
@@ -22,7 +17,8 @@ import lendingGaugeContract from "../../contracts/LendingGauge.json";
 import erc20 from "../../contracts/erc20.json";
 
 export default function StakeLendingGauge(props) {
-  const [userBalance, setUserBalance] = useState(false);
+  const [amount, setAmount] = useState("0");
+  const [balance, setBalance] = useState("0");
   const [approved, setApproved] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [stakeLoading, setStakeLoading] = useState(false);
@@ -50,11 +46,11 @@ export default function StakeLendingGauge(props) {
 
   async function getUserBalance() {
     // Get lp positions
-    const updatedUserBalance = BigNumber.from(
+    const updatedBalance = BigNumber.from(
       await lpTokenProvider.balanceOf(address)
     ).toString();
-    setUserBalance(updatedUserBalance);
-    console.log("updatedUserBalance", updatedUserBalance);
+    setBalance(updatedBalance);
+    console.log("updatedBalance", updatedBalance);
   }
 
   async function getAllowance() {
@@ -77,6 +73,14 @@ export default function StakeLendingGauge(props) {
       getUserBalance();
     }
   }, [props.lpToken, props.gauge]);
+
+  function handleInputChange(e) {
+    if (e.target.value != "") {
+      setAmount(parseUnits(e.target.value, 18).toString());
+    } else {
+      setAmount("0");
+    }
+  }
 
   const handleStakeSuccess = async function () {
     props.updateUI();
@@ -101,6 +105,27 @@ export default function StakeLendingGauge(props) {
 
   return (
     <div className={styles.container}>
+      <div className="flex flex-row items-center justify-center">
+        <div className="flex flex-col">
+          <Typography variant="subtitle2">My Balance</Typography>
+          <Typography variant="body16">
+            {formatUnits(balance, 18) + " " + props.lpTokenSymbol}
+          </Typography>
+        </div>
+      </div>
+      <div className="flex flex-row items-center justify-center m-8">
+        <Input
+          label="Amount"
+          type="number"
+          step="any"
+          validation={{
+            numberMax: Number(formatUnits(balance, 18)),
+            numberMin: 0,
+          }}
+          disabled={!approved}
+          onChange={handleInputChange}
+        />
+      </div>
       <div className="flex flex-row items-center justify-center m-8">
         {approved ? (
           <Button
@@ -138,18 +163,18 @@ export default function StakeLendingGauge(props) {
             loadingText=""
             isLoading={approvalLoading}
             onClick={async function () {
-              const lpTokenSigner = new ethers.Contract(
-                props.lpToken,
-                erc20,
-                signer
-              );
               try {
                 setApprovalLoading(true);
                 console.log("signer.", signer);
+                const lpTokenSigner = new ethers.Contract(
+                  props.lpToken,
+                  erc20,
+                  signer
+                );
 
                 const tx = await lpTokenSigner.approve(
                   props.gauge,
-                  "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+                  ethers.constants.MaxUint256
                 );
                 await tx.wait(1);
                 handleApprovalSuccess();

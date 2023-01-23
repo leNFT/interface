@@ -21,6 +21,7 @@ import Router from "next/router";
 import { useRouter } from "next/router";
 import { ChevronLeft } from "@web3uikit/icons";
 import { ExternalLink } from "@web3uikit/icons";
+import erc20 from "../../../contracts/erc20.json";
 
 export default function TradingPoolGauge() {
   const { address, isConnected } = useAccount();
@@ -28,7 +29,9 @@ export default function TradingPoolGauge() {
   const router = useRouter();
   const { data: signer } = useSigner();
   const [lpToken, setLPToken] = useState("");
+  const [lpTokenSymbol, setLPTokenSymbol] = useState("");
   const [boost, setBoost] = useState(0);
+  const [stakedAmount, setStakedAmount] = useState("0");
   const [claimableRewards, setClaimableRewards] = useState("0");
   const [visibleStakeModal, setVisibleStakeModal] = useState(false);
   const [visibleUnstakeModal, setVisibleUnstakeModal] = useState(false);
@@ -59,8 +62,23 @@ export default function TradingPoolGauge() {
     const lpTokenResponse = await gaugeProvider.lpToken();
     setLPToken(lpTokenResponse.toString());
 
+    // Get the name of the LP token
+    const lpTokenProvider = new ethers.Contract(
+      lpTokenResponse.toString(),
+      erc20,
+      provider
+    );
+    const lpTokenSymbolResponse = await lpTokenProvider.symbol();
+    setLPTokenSymbol(lpTokenSymbolResponse.toString());
+
     const boostResponse = await gaugeProvider.userBoost(address);
     setBoost(boostResponse.toNumber());
+
+    // Get staked amount
+    const stakedAmount = BigNumber.from(
+      await gaugeProvider.balanceOf(address)
+    ).toString();
+    setStakedAmount(stakedAmount);
 
     // Get the claimable rewards
     const updatedClaimableRewards = await gaugeProvider.callStatic.claim({
@@ -101,6 +119,7 @@ export default function TradingPoolGauge() {
         <StakeLendingGauge
           setVisibility={setVisibleStakeModal}
           gauge={router.query.address}
+          lpTokenSymbol={lpTokenSymbol}
           lpToken={lpToken}
           updateUI={updateUI}
         />
@@ -184,7 +203,7 @@ export default function TradingPoolGauge() {
               </div>
               <div className="flex flex-col ml-1">
                 <Tooltip
-                  content="The sum of all your LPs in this pool"
+                  content="The amount of LP tokens you have staked in this gauge."
                   position="top"
                   minWidth={200}
                 >
@@ -201,7 +220,10 @@ export default function TradingPoolGauge() {
                     fontWeight: "bold",
                   }}
                 >
-                  {"Staked: "}
+                  {"Staked: " +
+                    formatUnits(stakedAmount, 18) +
+                    " " +
+                    lpTokenSymbol}
                 </Box>
               </div>
             </div>

@@ -38,6 +38,7 @@ export default function StakeTradingGauge(props) {
       ? contractAddresses[chain.id]
       : contractAddresses["1"];
 
+  console.log("props.lpToken", props.lpToken);
   const lpTokenProvider = useContract({
     contractInterface: erc721,
     addressOrName: props.lpToken,

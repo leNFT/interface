@@ -51,12 +51,12 @@ export default function Withdraw(props) {
   }
 
   useEffect(() => {
-    if (props.reserve && props.asset) {
-      console.log("Got reserve address, setting the rest...", props.reserve);
+    if (props.pool && props.asset) {
+      console.log("Got pool address, setting the rest...", props.pool);
       console.log(" props.asset", props.asset);
       updateMaxAmount();
     }
-  }, [props.reserve, props.asset]);
+  }, [props.pool, props.asset]);
 
   const handleWithdrawalSuccess = async function () {
     props.updateUI();
@@ -158,14 +158,11 @@ export default function Withdraw(props) {
                 if (props.assetSymbol == "ETH") {
                   console.log("Withdrawal ETH");
                   tx = await lendingMarketSigner.withdrawETH(
-                    props.reserve,
+                    props.pool,
                     amount
                   );
                 } else {
-                  tx = await lendingMarketSigner.withdraw(
-                    props.reserve,
-                    amount
-                  );
+                  tx = await lendingMarketSigner.withdraw(props.pool, amount);
                 }
                 await tx.wait(1);
                 handleWithdrawalSuccess();

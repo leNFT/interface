@@ -475,7 +475,7 @@ export default function RepayLoan(props) {
                 setApprovalLoading(true);
                 const tx = await tokenSigner.approve(
                   loan.reserve,
-                  "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+                  ethers.constants.MaxUint256
                 );
                 await tx.wait(1);
                 handleApprovalSuccess();

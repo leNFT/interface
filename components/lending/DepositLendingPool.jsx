@@ -51,9 +51,9 @@ export default function DepositLendingPool(props) {
   async function updateTokenBalance() {
     var updatedBalance;
 
-    console.log("props.assetSymbol1", props.assetSymbol);
+    console.log("props.assetSymbol", props.assetSymbol);
 
-    if (props.assetSymbol == "ETH") {
+    if (props.assetSymbol == "WETH") {
       console.log("props.assetSymbol", props.assetSymbol);
       updatedBalance = ethBalance.value.toString();
     } else {
@@ -65,7 +65,7 @@ export default function DepositLendingPool(props) {
   }
 
   async function getTokenAllowance() {
-    const allowance = await tokenProvider.allowance(address, props.reserve);
+    const allowance = await tokenProvider.allowance(address, props.pool);
 
     console.log("Got allowance:", allowance);
 
@@ -76,14 +76,14 @@ export default function DepositLendingPool(props) {
     }
   }
 
-  // Set the rest of the UI when we receive the reserve address
+  // Set the rest of the UI when we receive the pool address
   useEffect(() => {
-    if (props.reserve && props.asset && props.assetSymbol) {
-      console.log("Got reserve address, setting the rest...", props.reserve);
+    if (props.pool && props.asset && props.assetSymbol) {
+      console.log("Got pool address, setting the rest...", props.pool);
       getTokenAllowance();
       updateTokenBalance();
     }
-  }, [props.reserve, props.asset, props.assetSymbol]);
+  }, [props.pool, props.asset, props.assetSymbol]);
 
   const handleDepositSuccess = async function () {
     console.log("Deposited", amount);
@@ -92,7 +92,7 @@ export default function DepositLendingPool(props) {
     updateTokenBalance();
     dispatch({
       type: "success",
-      message: "Your tokens were deposited into the reserve.",
+      message: "Your tokens were deposited into the pool.",
       title: "Deposit Successful!",
       position: "topR",
     });
@@ -160,16 +160,16 @@ export default function DepositLendingPool(props) {
                   var tx;
                   if (props.assetSymbol == "ETH") {
                     console.log("Depositing ETH");
-                    tx = await wethGatewaySigner.depositETH(props.reserve, {
+                    tx = await wethGatewaySigner.depositETH(props.pool, {
                       value: amount,
                     });
                   } else {
-                    const reserve = new ethers.Contract(
-                      props.reserve,
-                      reserveContract.abi,
+                    const pool = new ethers.Contract(
+                      props.pool,
+                      lendingPoolContract.abi,
                       signer
                     );
-                    tx = await reserve.deposit(amount, address);
+                    tx = await pool.deposit(amount, address);
                   }
                   await tx.wait(1);
                   handleDepositSuccess();
@@ -213,8 +213,8 @@ export default function DepositLendingPool(props) {
                   signer
                 );
                 const tx = await underlyingAsset.approve(
-                  props.reserve,
-                  "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+                  props.pool,
+                  ethers.constants.MaxUint256
                 );
                 await tx.wait(1);
                 handleApprovalSuccess();

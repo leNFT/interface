@@ -130,7 +130,7 @@ export default function TradingPoolGauge() {
             icon={<ChevronLeft fontSize="50px" />}
             onClick={async function () {
               Router.push({
-                pathname: "/tradingPools",
+                pathname: "/lendingPools",
               });
             }}
           />
@@ -167,168 +167,166 @@ export default function TradingPoolGauge() {
           />
         </div>
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">
-        <div className="flex flex-col m-8 lg:mx-16">
-          <div className="flex flex-col items-center p-4 rounded-3xl min-w-[280px] m-2 bg-black/5 shadow-lg">
-            <div className="flex flex-col m-4 rounded-2xl">
-              <div className="flex flex-row m-2">
-                <div className="flex flex-col">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "h6.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    My Gauge Info
-                  </Box>
-                </div>
-                <div className="flex flex-col ml-1">
-                  <Tooltip
-                    content="The sum of all your LPs in this pool"
-                    position="top"
-                    minWidth={200}
-                  >
-                    <HelpCircle fontSize="20px" color="#000000" />
-                  </Tooltip>
-                </div>
+      <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl m-2 md:m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">
+        <div className="flex flex-col items-center p-4 rounded-3xl min-w-[280px] m-8 bg-black/5 shadow-lg">
+          <div className="flex flex-col m-4 rounded-2xl">
+            <div className="flex flex-row m-2">
+              <div className="flex flex-col">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "h6.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  My Gauge Info
+                </Box>
               </div>
-              <div className="flex flex-row m-2">
-                <div className="flex flex-col">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "h5.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {"Staked: "}
-                  </Box>
-                </div>
-              </div>
-              <div className="flex flex-row m-2">
-                <div className="flex flex-col">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "h5.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {boost / 10000 + "x Boost"}
-                  </Box>
-                </div>
+              <div className="flex flex-col ml-1">
+                <Tooltip
+                  content="The sum of all your LPs in this pool"
+                  position="top"
+                  minWidth={200}
+                >
+                  <HelpCircle fontSize="20px" color="#000000" />
+                </Tooltip>
               </div>
             </div>
-            <div className="flex flex-col md:flex-row items-center ">
-              <div className="m-4">
-                <Button
-                  customize={{
-                    backgroundColor: "grey",
-                    fontSize: 20,
-                    textColor: "white",
+            <div className="flex flex-row m-2">
+              <div className="flex flex-col">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "h5.fontSize",
+                    fontWeight: "bold",
                   }}
-                  text="Stake"
-                  theme="custom"
-                  size="large"
-                  radius="12"
-                  onClick={async function () {
-                    setVisibleStakeModal(true);
-                  }}
-                />
+                >
+                  {"Staked: "}
+                </Box>
               </div>
-              <div className="m-4">
-                <Button
-                  customize={{
-                    backgroundColor: "grey",
-                    fontSize: 20,
-                    textColor: "white",
+            </div>
+            <div className="flex flex-row m-2">
+              <div className="flex flex-col">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "h5.fontSize",
+                    fontWeight: "bold",
                   }}
-                  text="Unstake"
-                  theme="custom"
-                  size="large"
-                  radius="12"
-                  onClick={async function () {
-                    setVisibleStakeModal(true);
-                  }}
-                />
+                >
+                  {boost / 10000 + "x Boost"}
+                </Box>
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center rounded-3xl m-2 bg-black/5 shadow-lg">
-            <div className="flex flex-col m-4 rounded-2xl">
-              <div className="flex flex-row m-2">
-                <div className="flex flex-col">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "h6.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Claimable:
-                  </Box>
-                </div>
-                <div className="flex flex-col ml-1">
-                  <Tooltip
-                    content="The amount available to claim from this gauge"
-                    position="top"
-                    minWidth={200}
-                  >
-                    <HelpCircle fontSize="20px" color="#000000" />
-                  </Tooltip>
-                </div>
+          <div className="flex flex-col md:flex-row items-center ">
+            <div className="m-4">
+              <Button
+                customize={{
+                  backgroundColor: "grey",
+                  fontSize: 20,
+                  textColor: "white",
+                }}
+                text="Stake"
+                theme="custom"
+                size="large"
+                radius="12"
+                onClick={async function () {
+                  setVisibleStakeModal(true);
+                }}
+              />
+            </div>
+            <div className="m-4">
+              <Button
+                customize={{
+                  backgroundColor: "grey",
+                  fontSize: 20,
+                  textColor: "white",
+                }}
+                text="Unstake"
+                theme="custom"
+                size="large"
+                radius="12"
+                onClick={async function () {
+                  setVisibleUnstakeModal(true);
+                }}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col items-center rounded-3xl m-2 md:m-8 bg-black/5 shadow-lg">
+          <div className="flex flex-col m-4 rounded-2xl">
+            <div className="flex flex-row m-2">
+              <div className="flex flex-col">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "h6.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Claimable:
+                </Box>
               </div>
-              <div className="flex flex-row m-2">
-                <div className="flex flex-col">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "h6.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {formatUnits(claimableRewards, 18) + " LE"}
-                  </Box>
-                </div>
+              <div className="flex flex-col ml-1">
+                <Tooltip
+                  content="The amount available to claim from this gauge"
+                  position="top"
+                  minWidth={200}
+                >
+                  <HelpCircle fontSize="20px" color="#000000" />
+                </Tooltip>
               </div>
             </div>
-            <div className="flex flex-row items-center ">
-              <div className="mb-4">
-                <Button
-                  customize={{
-                    backgroundColor: "grey",
-                    fontSize: 20,
-                    textColor: "white",
+            <div className="flex flex-row m-2">
+              <div className="flex flex-col">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "h6.fontSize",
+                    fontWeight: "bold",
                   }}
-                  text="Claim"
-                  theme="custom"
-                  size="large"
-                  radius="12"
-                  loadingProps={{
-                    spinnerColor: "#000000",
-                    spinnerType: "loader",
-                    direction: "right",
-                    size: "24",
-                  }}
-                  disabled={BigNumber.from(claimableRewards).eq(0)}
-                  loadingText=""
-                  isLoading={clamingLoading}
-                  onClick={async function () {
-                    try {
-                      setClaimingLoading(true);
-                      console.log("signer.", signer);
-                      const tx = await gaugeSigner.claim();
-                      await tx.wait(1);
-                      handleClaimingSuccess();
-                    } catch (error) {
-                      console.log(error);
-                    } finally {
-                      setClaimingLoading(false);
-                    }
-                  }}
-                />
+                >
+                  {formatUnits(claimableRewards, 18) + " LE"}
+                </Box>
               </div>
+            </div>
+          </div>
+          <div className="flex flex-row items-center ">
+            <div className="mb-4">
+              <Button
+                customize={{
+                  backgroundColor: "grey",
+                  fontSize: 20,
+                  textColor: "white",
+                }}
+                text="Claim"
+                theme="custom"
+                size="large"
+                radius="12"
+                loadingProps={{
+                  spinnerColor: "#000000",
+                  spinnerType: "loader",
+                  direction: "right",
+                  size: "24",
+                }}
+                disabled={BigNumber.from(claimableRewards).eq(0)}
+                loadingText=""
+                isLoading={clamingLoading}
+                onClick={async function () {
+                  try {
+                    setClaimingLoading(true);
+                    console.log("signer.", signer);
+                    const tx = await gaugeSigner.claim();
+                    await tx.wait(1);
+                    handleClaimingSuccess();
+                  } catch (error) {
+                    console.log(error);
+                  } finally {
+                    setClaimingLoading(false);
+                  }
+                }}
+              />
             </div>
           </div>
         </div>

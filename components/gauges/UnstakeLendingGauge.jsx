@@ -9,9 +9,9 @@ import { useNotification, Button, Typography } from "@web3uikit/core";
 import styles from "../../styles/Home.module.css";
 import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
-import tradingGaugeContract from "../../contracts/TradingGauge.json";
+import lendingGaugeContract from "../../contracts/LendingGauge.json";
 
-export default function UnstakeTradingGauge(props) {
+export default function UnstakeLendingGauge(props) {
   const [unstakeLoading, setUnstakeLoading] = useState(false);
   const dispatch = useNotification();
   const { address, isConnected } = useAccount();
@@ -24,13 +24,13 @@ export default function UnstakeTradingGauge(props) {
       : contractAddresses["1"];
 
   const gaugeProvider = useContract({
-    contractInterface: tradingGaugeContract.abi,
+    contractInterface: lendingGaugeContract.abi,
     addressOrName: props.gauge,
     signerOrProvider: provider,
   });
 
   const gaugeSigner = useContract({
-    contractInterface: tradingGaugeContract.abi,
+    contractInterface: lendingGaugeContract.abi,
     addressOrName: props.gauge,
     signerOrProvider: signer,
   });

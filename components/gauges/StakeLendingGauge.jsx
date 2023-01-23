@@ -18,15 +18,13 @@ import styles from "../../styles/Home.module.css";
 import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import tradingGaugeContract from "../../contracts/TradingGauge.json";
-import erc721 from "../../contracts/erc721.json";
+import lendingGaugeContract from "../../contracts/LendingGauge.json";
+import erc20 from "../../contracts/erc20.json";
 
-export default function StakeTradingGauge(props) {
-  const [userLPs, setUserLPs] = useState([]);
-  const [selectedLP, setSelectedLP] = useState();
-  const [selectingLP, setSelectingLP] = useState(false);
-  const [approvedLP, setApprovedLP] = useState(false);
-  const [approvalLPLoading, setApprovalLPLoading] = useState(false);
+export default function StakeLendingGauge(props) {
+  const [userBalance, setUserBalance] = useState(false);
+  const [approved, setApproved] = useState(false);
+  const [approvalLoading, setApprovalLoading] = useState(false);
   const [stakeLoading, setStakeLoading] = useState(false);
   const dispatch = useNotification();
   const { address, isConnected } = useAccount();
@@ -39,45 +37,44 @@ export default function StakeTradingGauge(props) {
       : contractAddresses["1"];
 
   const lpTokenProvider = useContract({
-    contractInterface: erc721,
+    contractInterface: erc20,
     addressOrName: props.lpToken,
     signerOrProvider: provider,
   });
 
   const gaugeSigner = useContract({
-    contractInterface: tradingGaugeContract.abi,
+    contractInterface: lendingGaugeContract.abi,
     addressOrName: props.gauge,
     signerOrProvider: signer,
   });
 
-  async function getUserLPs() {
+  async function getUserBalance() {
     // Get lp positions
-    const addressNFTs = await getAddressNFTs(address, props.lpToken, chain.id);
-    setUserLPs(addressNFTs);
-    console.log("addressNFTs", addressNFTs);
+    const updatedUserBalance = BigNumber.from(
+      await lpTokenProvider.balanceOf(address)
+    ).toString();
+    setUserBalance(updatedUserBalance);
+    console.log("updatedUserBalance", updatedUserBalance);
   }
 
-  async function getLPAllowance() {
-    const allowed = await lpTokenProvider.isApprovedForAll(
-      address,
-      props.gauge
-    );
+  async function getAllowance() {
+    const allowance = await lpTokenProvider.allowance(address, props.gauge);
 
-    console.log("Got nft allowed:", allowed);
+    console.log("Got allowance:", allowance);
 
-    if (allowed) {
-      setApprovedLP(true);
+    if (!BigNumber.from(allowance).eq(BigNumber.from(0))) {
+      setApproved(true);
     } else {
-      setApprovedLP(false);
+      setApproved(false);
     }
   }
 
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
     if (props.lpToken && props.gauge) {
-      console.log("Got trading pool address, setting the rest...", props.pool);
-      getLPAllowance();
-      getUserLPs();
+      console.log("Got trading pool address...", props.gauge);
+      getAllowance();
+      getUserBalance();
     }
   }, [props.lpToken, props.gauge]);
 
@@ -92,8 +89,8 @@ export default function StakeTradingGauge(props) {
     });
   };
 
-  const handleLPApprovalSuccess = async function () {
-    setApprovedLP(true);
+  const handleApprovalSuccess = async function () {
+    setApproved(true);
     dispatch({
       type: "success",
       message: "You can now stake.",
@@ -105,7 +102,7 @@ export default function StakeTradingGauge(props) {
   return (
     <div className={styles.container}>
       <div className="flex flex-row items-center justify-center m-8">
-        {approvedLP ? (
+        {approved ? (
           <Button
             text={
               userLPs.length == 0
@@ -139,75 +136,32 @@ export default function StakeTradingGauge(props) {
               size: "24",
             }}
             loadingText=""
-            isLoading={approvalLPLoading}
+            isLoading={approvalLoading}
             onClick={async function () {
               const lpTokenSigner = new ethers.Contract(
                 props.lpToken,
-                erc721,
+                erc20,
                 signer
               );
               try {
-                setApprovalLPLoading(true);
+                setApprovalLoading(true);
                 console.log("signer.", signer);
 
-                const tx = await lpTokenSigner.setApprovalForAll(
+                const tx = await lpTokenSigner.approve(
                   props.gauge,
-                  true
+                  "115792089237316195423570985008687907853269984665640564039457584007913129639935"
                 );
                 await tx.wait(1);
-                handleLPApprovalSuccess();
+                handleApprovalSuccess();
               } catch (error) {
                 console.log(error);
               } finally {
-                setApprovalLPLoading(false);
+                setApprovalLoading(false);
               }
             }}
           ></Button>
         )}
       </div>
-      {selectingLP && userLPs.length > 0 && (
-        <div className="flex flex-row grid md:grid-cols-3 lg:grid-cols-4">
-          {userLPs.map((lp, _) => (
-            <div
-              key={BigNumber.from(lp.id.tokenId).toNumber()}
-              className="flex m-4 items-center justify-center max-w-[300px]"
-            >
-              <Card
-                sx={{
-                  borderRadius: 4,
-                  background:
-                    selectedLP == BigNumber.from(lp.id.tokenId).toNumber()
-                      ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
-                      : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
-                }}
-              >
-                <CardActionArea
-                  onClick={function () {
-                    if (
-                      selectedLP == BigNumber.from(lp.id.tokenId).toNumber()
-                    ) {
-                      setSelectedLP();
-                    } else {
-                      setSelectedLP(BigNumber.from(lp.id.tokenId).toNumber());
-                    }
-                  }}
-                >
-                  <CardContent>
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "caption",
-                      }}
-                    >
-                      {BigNumber.from(lp.id.tokenId).toNumber()}
-                    </Box>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            </div>
-          ))}
-        </div>
-      )}
       <div className="flex flex-row items-center justify-center m-8">
         <Button
           text={"Stake LP"}
@@ -219,7 +173,7 @@ export default function StakeTradingGauge(props) {
             direction: "right",
             size: "24",
           }}
-          disabled={!approvedLP}
+          disabled={!approved}
           loadingText=""
           isLoading={stakeLoading}
           onClick={async function () {

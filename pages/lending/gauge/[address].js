@@ -136,7 +136,7 @@ export default function TradingPoolGauge() {
         <UnstakeLendingGauge
           setVisibility={setVisibleUnstakeModal}
           gauge={router.query.address}
-          lpToken={lpToken}
+          lpTokenSymbol={lpTokenSymbol}
           updateUI={updateUI}
         />
       </StyledModal>

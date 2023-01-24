@@ -95,6 +95,7 @@ export default function WithdrawNativeToken(props) {
             }}
             loadingText=""
             isLoading={unlockLoading}
+            disabled={unlockTime == 0}
             onClick={async function () {
               try {
                 setUnlockLoading(true);

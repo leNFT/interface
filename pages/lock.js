@@ -13,6 +13,7 @@ import Vote from "../components/gauges/Vote";
 import { Input } from "@nextui-org/react";
 import { Button } from "@web3uikit/core";
 import LockNativeToken from "../components/LockNativeToken";
+import EditNativeTokenLock from "../components/EditNativeTokenLock";
 import contractAddresses from "../contractAddresses.json";
 import UnlockNativeToken from "../components/UnlockNativeToken";
 import votingEscrowContract from "../contracts/VotingEscrow.json";
@@ -30,7 +31,9 @@ export default function Lock() {
   const [visibleLockModal, setVisibleLockModal] = useState(false);
   const [visibleUnlockModal, setVisibleUnlockModal] = useState(false);
   const [visibleVoteModal, setVisibleVoteModal] = useState(false);
+  const [visibleEditLockModal, setVisibleEditLockModal] = useState(false);
   const [apr, setAPR] = useState("0");
+  const [unlockTime, setUnlockTime] = useState(0);
   const [claimingLoading, setClaimingLoading] = useState(false);
   const [claimableRewards, setClaimableRewards] = useState("0");
   const [selectedGauge, setSelectedGauge] = useState("");
@@ -68,6 +71,13 @@ export default function Lock() {
   });
 
   async function updateUI() {
+    const updatedUnlockTime = await votingEscrowProvider.locked(address);
+    console.log(
+      "updatedUnlockTime:",
+      BigNumber.from(updatedUnlockTime.end).toNumber()
+    );
+    setUnlockTime(BigNumber.from(updatedUnlockTime.end).toNumber());
+
     //Get the vote token Balance
     const updatedVoteTokenBalance = await votingEscrowProvider.balanceOf(
       address
@@ -173,6 +183,19 @@ export default function Lock() {
       </StyledModal>
       <StyledModal
         hasFooter={false}
+        title="Unlock LE"
+        isVisible={visibleUnlockModal}
+        onCloseButtonPressed={function () {
+          setVisibleUnlockModal(false);
+        }}
+      >
+        <EditNativeTokenLock
+          setVisibility={setVisibleEditLockModal}
+          updateUI={updateUI}
+        />
+      </StyledModal>
+      <StyledModal
+        hasFooter={false}
         title={"Vote for "}
         isVisible={visibleVoteModal}
         onCloseButtonPressed={function () {
@@ -200,40 +223,61 @@ export default function Lock() {
               </Box>
             </div>
             <div className="flex flex-col-reverse md:flex-row items-center justify-center">
-              <div className="flex flex-row md:flex-col items-center m-4 lg:ml-8">
-                <div className="flex flex-row m-2">
-                  <Button
-                    customize={{
-                      backgroundColor: "grey",
-                      fontSize: 16,
-                      textColor: "white",
-                    }}
-                    text="Lock"
-                    theme="custom"
-                    size="large"
-                    radius="12"
-                    onClick={async function () {
-                      setVisibleLockModal(true);
-                    }}
-                  />
+              {unlockTime < Date.now() / 1000 ? (
+                <div className="flex flex-row md:flex-col items-center m-4 lg:ml-8">
+                  <div className="flex flex-row m-2">
+                    <Button
+                      customize={{
+                        backgroundColor: "grey",
+                        fontSize: 16,
+                        textColor: "white",
+                      }}
+                      text="Lock"
+                      theme="custom"
+                      size="large"
+                      radius="12"
+                      onClick={async function () {
+                        setVisibleLockModal(true);
+                      }}
+                    />
+                  </div>
+                  <div className="flex flex-row m-2">
+                    <Button
+                      customize={{
+                        backgroundColor: "grey",
+                        fontSize: 16,
+                        textColor: "white",
+                      }}
+                      text="Unlock"
+                      theme="custom"
+                      size="large"
+                      radius="12"
+                      onClick={async function () {
+                        setVisibleUnlockModal(true);
+                      }}
+                    />
+                  </div>
                 </div>
-                <div className="flex flex-row m-2">
-                  <Button
-                    customize={{
-                      backgroundColor: "grey",
-                      fontSize: 16,
-                      textColor: "white",
-                    }}
-                    text="Unlock"
-                    theme="custom"
-                    size="large"
-                    radius="12"
-                    onClick={async function () {
-                      setVisibleUnlockModal(true);
-                    }}
-                  />
+              ) : (
+                <div className="flex flex-row md:flex-col items-center m-4 lg:ml-8">
+                  <div className="flex flex-row m-2">
+                    <Button
+                      customize={{
+                        backgroundColor: "grey",
+                        fontSize: 16,
+                        textColor: "white",
+                      }}
+                      text="Edit Lock"
+                      theme="custom"
+                      size="large"
+                      radius="12"
+                      onClick={async function () {
+                        setVisibleEditLockModal(true);
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
               <div className="flex flex-col m-4 lg:m-8">
                 <div className="flex flex-col m-2">
                   <div className="flex flex-row">
@@ -324,7 +368,7 @@ export default function Lock() {
                         fontWeight: "bold",
                       }}
                     >
-                      Used Voting Power
+                      My Used Voting Power
                     </Box>
                   </div>
                   <div className="flex flex-row">

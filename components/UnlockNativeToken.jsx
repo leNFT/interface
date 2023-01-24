@@ -14,8 +14,6 @@ import { useState, useEffect } from "react";
 import votingEscrowContract from "../contracts/VotingEscrow.json";
 
 export default function WithdrawNativeToken(props) {
-  const ONE_DAY = 86400;
-
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const [unlockTime, setUnlockTime] = useState(0);

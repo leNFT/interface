@@ -21,7 +21,7 @@ export default function Vote(props) {
   const [amount, setAmount] = useState("0");
   const [votingLoading, setVotingLoading] = useState(false);
   const [gaugeVotingPower, setGaugeVotingPower] = useState(0);
-  const [isGauge, setIsGauge] = useState(false);
+  const [freeVotingPower, setFreeVotePower] = useState(0);
 
   const addresses =
     chain && chain.id in contractAddresses
@@ -41,22 +41,30 @@ export default function Vote(props) {
     signerOrProvider: signer,
   });
 
-  async function getFreeVotingPower() {
+  async function getGaugeVotingPower() {
     const updatedGaugeVotingPower =
-      await gaugeControllerProvider.userGaugeVoteWeight(address, props.address);
-    setGaugeVotingPower(BigNumber.from(updatedGaugeVotingPower.toNumber()));
+      await gaugeControllerProvider.userGaugeVoteWeight(address, props.gauge);
+    setGaugeVotingPower(updatedGaugeVotingPower.toNumber());
+  }
+
+  async function getFreeVotingPower() {
+    //Get the vote token Balance
+    const updatedVotePower = await gaugeControllerProvider.voteUserPower(
+      address
+    );
+    setFreeVotePower(10000 - updatedVotePower.toNumber());
   }
 
   useEffect(() => {
-    if (isConnected && props.address) {
+    if (isConnected && props.gauge) {
       getFreeVotingPower();
+      getGaugeVotingPower();
     }
-  }, [isConnected, props.address]);
+  }, [isConnected, props.gauge]);
 
   const handleVoteSuccess = async function (amount) {
     console.log("Voted", amount);
-    props.updateUI();
-    props.updateGaugeDetails(props.address);
+    props.updateGaugeDetails(props.gauge);
     props.setVisibility(false);
     dispatch({
       type: "success",
@@ -90,7 +98,7 @@ export default function Vote(props) {
             type="number"
             step="any"
             validation={{
-              numberMax: Number(formatUnits(0, 18)),
+              numberMax: freeVotingPower / 100,
               numberMin: 0,
             }}
             onChange={handleInputChange}
@@ -101,7 +109,6 @@ export default function Vote(props) {
             text="Vote"
             theme="secondary"
             isFullWidth
-            disabled={!isGauge}
             loadingProps={{
               spinnerColor: "#000000",
               spinnerType: "loader",
@@ -114,7 +121,7 @@ export default function Vote(props) {
               try {
                 setVotingLoading(true);
                 const tx = await gaugeControllerSigner.vote(
-                  props.address,
+                  props.gauge,
                   amount
                 );
                 await tx.wait(1);

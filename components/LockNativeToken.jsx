@@ -14,6 +14,7 @@ import {
   Typography,
   DatePicker,
 } from "@web3uikit/core";
+import { ethers } from "ethers";
 import contractAddresses from "../contractAddresses.json";
 import { useState, useEffect } from "react";
 import votingEscrowContract from "../contracts/VotingEscrow.json";
@@ -26,7 +27,7 @@ export default function LockNativeToken(props) {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const [amount, setAmount] = useState("0");
-  const [locked, setLocked] = useState();
+  const [balance, setBalance] = useState("0");
   const [approved, setApproved] = useState(false);
   const [lockedLoading, setLockedLoading] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
@@ -62,10 +63,20 @@ export default function LockNativeToken(props) {
     signerOrProvider: signer,
   });
 
-  async function getLocked() {
-    const updatedLocked = await votingEscrowProvider.locked(address);
-    console.log("Updated LOcked:", updatedLocked);
-    setLocked(updatedLocked);
+  async function getTokenBalance() {
+    const updatedBalance = await nativeTokenProvider.balanceOf(address);
+
+    console.log("Updated Balance:", updatedBalance);
+    setBalance(updatedBalance.toString());
+  }
+
+  async function getUnlockTime() {
+    const updatedUnlockTime = await votingEscrowProvider.locked(address);
+    console.log(
+      "updatedUnlockTime:",
+      BigNumber.from(updatedUnlockTime.end).toNumber()
+    );
+    setUnlockTime(BigNumber.from(updatedUnlockTime.end).toNumber());
   }
 
   async function getTokenAllowance() {
@@ -83,7 +94,8 @@ export default function LockNativeToken(props) {
   useEffect(() => {
     if (isConnected) {
       getTokenAllowance();
-      getLocked();
+      getTokenBalance();
+      getUnlockTime();
     }
   }, [isConnected]);
 
@@ -128,6 +140,14 @@ export default function LockNativeToken(props) {
 
   return (
     <div>
+      <div className="flex flex-row items-center justify-center">
+        <div className="flex flex-col">
+          <Typography variant="subtitle2">My Balance</Typography>
+          <Typography variant="body16">
+            {formatUnits(balance, 18) + " LE"}
+          </Typography>
+        </div>
+      </div>
       <div className="flex flex-row items-center justify-center m-8">
         <Input
           label="Amount"

@@ -19,7 +19,7 @@ import votingEscrowContract from "../contracts/VotingEscrow.json";
 import feeDistributorContract from "../contracts/FeeDistributor.json";
 import gaugeControllerContract from "../contracts/GaugeController.json";
 import Box from "@mui/material/Box";
-import { BigNumber } from "ethers";
+import { BigNumber, ethers } from "ethers";
 
 export default function Lock() {
   const { isConnected, address } = useAccount();
@@ -90,14 +90,33 @@ export default function Lock() {
   }
 
   async function updateGaugeDetails(gauge) {
+    // Check if the gauge address is valid
+    if (!ethers.utils.isAddress(gauge)) {
+      console.log("Invalid Gauge Address");
+      setSelectedGauge("");
+      return;
+    }
+
     console.log("Updating Gauge Details");
     // Get the voting power details for the pool
     const gaugeWeight = await gaugeControllerProvider.getGaugeWeight(gauge);
-    const totalWeight = await gaugeControllerProvider.getTotalWeight(gauge);
+    const totalWeight = await gaugeControllerProvider.getTotalWeight();
+    const isGauge = await gaugeControllerProvider.isGauge(gauge);
 
-    setGaugeVotingPower(
-      BigNumber.from(gaugeWeight).mul(10000).div(totalWeight)
-    );
+    if (isGauge) {
+      setSelectedGauge(gauge);
+      if (!totalWeight.eq(0)) {
+        setGaugeVotingPower(
+          BigNumber.from(gaugeWeight).mul(10000).div(totalWeight)
+        );
+      } else {
+        setGaugeVotingPower(0);
+        console.log("totalWeight is 0");
+      }
+    } else {
+      setSelectedGauge("");
+      console.log("Gauge not found");
+    }
   }
 
   useEffect(() => {
@@ -160,7 +179,11 @@ export default function Lock() {
           setVisibleVoteModal(false);
         }}
       >
-        <Vote setVisibility={setVisibleVoteModal} updateUI={updateUI} />
+        <Vote
+          setVisibility={setVisibleVoteModal}
+          gauge={selectedGauge}
+          updateGaugeDetails={updateGaugeDetails}
+        />
       </StyledModal>
       <div className="flex flex-col items-center">
         <div className="flex flex-col max-w-[100%] lg:flex-row justify-center items-center">
@@ -311,7 +334,7 @@ export default function Lock() {
                         fontSize: "subtitle1.fontSize",
                       }}
                     >
-                      {votePower / 10000 + " %"}
+                      {votePower / 100 + " %"}
                     </Box>
                   </div>
                 </div>
@@ -337,7 +360,7 @@ export default function Lock() {
                         textColor: "white",
                       }}
                       text="Vote"
-                      disabled={false}
+                      disabled={!selectedGauge}
                       theme="custom"
                       size="large"
                       radius="12"

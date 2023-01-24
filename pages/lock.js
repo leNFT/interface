@@ -183,10 +183,10 @@ export default function Lock() {
       </StyledModal>
       <StyledModal
         hasFooter={false}
-        title="Unlock LE"
+        title="Edit Lock"
         isVisible={visibleEditLockModal}
         onCloseButtonPressed={function () {
-          setVisibleUnlockModal(false);
+          setVisibleEditLockModal(false);
         }}
       >
         <EditNativeTokenLock
@@ -209,7 +209,7 @@ export default function Lock() {
         />
       </StyledModal>
       <div className="flex flex-col items-center">
-        <div className="flex flex-col max-w-[100%] lg:flex-row justify-center items-center">
+        <div className="flex flex-col max-w-[100%] justify-center items-center">
           <div className="flex flex-col border-4 m-4 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
             <div className="flex flex-row items-center justify-center py-4 px-8 m-8 mb-4 text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
               <Box

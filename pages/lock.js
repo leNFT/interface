@@ -184,7 +184,7 @@ export default function Lock() {
       <StyledModal
         hasFooter={false}
         title="Unlock LE"
-        isVisible={visibleUnlockModal}
+        isVisible={visibleEditLockModal}
         onCloseButtonPressed={function () {
           setVisibleUnlockModal(false);
         }}

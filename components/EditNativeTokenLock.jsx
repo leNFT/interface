@@ -29,7 +29,10 @@ export default function EditNativeTokenLock(props) {
   const [amount, setAmount] = useState("0");
   const [balance, setBalance] = useState("0");
   const [approved, setApproved] = useState(false);
-  const [lockedLoading, setLockedLoading] = useState(false);
+  const [increaseUnlocktimeLoading, setIncreaseUnlocktimeLoading] =
+    useState(false);
+  const [increaseLockAmountLoading, setIncreaseLockAmountLoading] =
+    useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [unlockTime, setUnlockTime] = useState(0);
 
@@ -99,14 +102,24 @@ export default function EditNativeTokenLock(props) {
     }
   }, [isConnected]);
 
-  const handleLockedSuccess = async function () {
-    console.log("Locked", amount);
+  const handleIncreseLockAmountSuccess = async function () {
     props.updateUI();
     props.setVisibility(false);
     dispatch({
       type: "success",
-      message: "Your LE tokens were locked in the escrow contract.",
-      title: "Lock Successful!",
+      message: "You increased your lock amount.",
+      title: "Increase Lock Amount Successful!",
+      position: "topR",
+    });
+  };
+
+  const handleIncreseUnlocktimeSuccess = async function () {
+    props.updateUI();
+    props.setVisibility(false);
+    dispatch({
+      type: "success",
+      message: "You increased your unlock time.",
+      title: "Increase Unlock Time Successful!",
       position: "topR",
     });
   };
@@ -148,7 +161,7 @@ export default function EditNativeTokenLock(props) {
           </Typography>
         </div>
       </div>
-      <div className="flex flex-row items-center justify-center m-8">
+      <div className="flex flex-row items-center justify-center m-8 md:m-16">
         <Input
           label="Amount"
           type="number"
@@ -160,25 +173,74 @@ export default function EditNativeTokenLock(props) {
           disabled={!approved}
           onChange={handleAmountChange}
         />
+        {approved ? (
+          <div className="mx-4">
+            <Button
+              text="Increase Lock Amount"
+              theme="secondary"
+              isFullWidth
+              loadingProps={{
+                spinnerColor: "#000000",
+                spinnerType: "loader",
+                direction: "right",
+                size: "24",
+              }}
+              loadingText=""
+              isLoading={increaseLockAmountLoading}
+              onClick={async function () {
+                try {
+                  setIncreaseLockAmountLoading(true);
+                  console.log("amount", amount);
+                  console.log("addresses.VotingEscrow", addresses.VotingEscrow);
+                  const tx = await votingEscrowSigner.increaseAmount(amount);
+                  await tx.wait(1);
+                  handleIncreseLockAmountSuccess();
+                } catch (error) {
+                  console.log(error);
+                } finally {
+                  setIncreaseLockAmountLoading(false);
+                }
+              }}
+            ></Button>
+          </div>
+        ) : (
+          <div className="mx-4">
+            <Button
+              text="Approve"
+              theme="secondary"
+              isFullWidth
+              loadingProps={{
+                spinnerColor: "#000000",
+                spinnerType: "loader",
+                direction: "right",
+                size: "24",
+              }}
+              loadingText=""
+              isLoading={approvalLoading}
+              onClick={async function () {
+                try {
+                  setApprovalLoading(true);
+                  const tx = await nativeTokenSigner.approve(
+                    addresses.VotingEscrow,
+                    ethers.constants.MaxUint256
+                  );
+                  await tx.wait(1);
+                  handleApprovalSuccess();
+                } catch (error) {
+                  console.log(error);
+                } finally {
+                  setApprovalLoading(false);
+                }
+              }}
+            ></Button>
+          </div>
+        )}
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center m-8">
-        <div className="m-4">
-          <Box
-            sx={{
-              fontFamily: "Monospace",
-              fontSize: "subtitle1.fontSize",
-              fontWeight: "bold",
-            }}
-          >
-            Unlock Time:
-          </Box>
-        </div>
+      <div className="flex flex-col md:flex-row items-center justify-center m-8 md:m-16">
         <DatePicker id="date-picker" onChange={handleUnlockTimeChange} />
-      </div>
-      {approved ? (
-        <div className="my-4 md:m-8">
+        <div className="mx-4">
           <Button
-            text="Lock"
+            text="Increase Unlock Time"
             theme="secondary"
             isFullWidth
             loadingProps={{
@@ -188,59 +250,25 @@ export default function EditNativeTokenLock(props) {
               size: "24",
             }}
             loadingText=""
-            isLoading={lockedLoading}
+            isLoading={increaseUnlocktimeLoading}
             onClick={async function () {
               try {
-                setLockedLoading(true);
-                console.log("amount", amount);
+                setIncreaseUnlocktimeLoading(true);
                 console.log("unlockTime", unlockTime);
-                console.log("addresses.VotingEscrow", addresses.VotingEscrow);
-                const tx = await votingEscrowSigner.createLock(
-                  amount,
+                const tx = await votingEscrowSigner.increaseUnlockTime(
                   unlockTime
                 );
                 await tx.wait(1);
-                handleLockedSuccess();
+                handleIncreseUnlocktimeSuccess();
               } catch (error) {
                 console.log(error);
               } finally {
-                setLockedLoading(false);
+                setIncreaseUnlocktimeLoading(false);
               }
             }}
           ></Button>
         </div>
-      ) : (
-        <div className="m-8 mt-2">
-          <Button
-            text="Approve"
-            theme="secondary"
-            isFullWidth
-            loadingProps={{
-              spinnerColor: "#000000",
-              spinnerType: "loader",
-              direction: "right",
-              size: "24",
-            }}
-            loadingText=""
-            isLoading={approvalLoading}
-            onClick={async function () {
-              try {
-                setApprovalLoading(true);
-                const tx = await nativeTokenSigner.approve(
-                  addresses.VotingEscrow,
-                  ethers.constants.MaxUint256
-                );
-                await tx.wait(1);
-                handleApprovalSuccess();
-              } catch (error) {
-                console.log(error);
-              } finally {
-                setApprovalLoading(false);
-              }
-            }}
-          ></Button>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

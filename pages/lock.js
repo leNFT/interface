@@ -37,9 +37,8 @@ export default function Lock() {
   const [claimingLoading, setClaimingLoading] = useState(false);
   const [claimableRewards, setClaimableRewards] = useState("0");
   const [selectedGauge, setSelectedGauge] = useState("");
-  const [gaugeVotingPower, setGaugeVotingPower] = useState(0);
-
-  const [votePower, setVotePower] = useState("0");
+  const [gaugeVotes, setGaugeVotes] = useState("0");
+  const [totalVotes, setTotalVotes] = useState("0");
 
   const addresses =
     chain && chain.id in contractAddresses
@@ -85,10 +84,10 @@ export default function Lock() {
     setVoteTokenBalance(updatedVoteTokenBalance.toString());
 
     //Get the vote token Balance
-    const updatedVotePower = await gaugeControllerProvider.voteUserPower(
+    const updatedVotePower = await gaugeControllerProvider.userVoteWeight(
       address
     );
-    setVotePower(updatedVotePower.toString());
+    setTotalVotes(updatedVotePower.toString());
 
     // Get the claimable rewards
     const updatedClaimableRewards =
@@ -108,21 +107,15 @@ export default function Lock() {
     }
 
     console.log("Updating Gauge Details");
-    // Get the voting power details for the pool
-    const gaugeWeight = await gaugeControllerProvider.getGaugeWeight(gauge);
-    const totalWeight = await gaugeControllerProvider.getTotalWeight();
+    // Check if the address is a gauge
     const isGauge = await gaugeControllerProvider.isGauge(gauge);
 
     if (isGauge) {
       setSelectedGauge(gauge);
-      if (!totalWeight.eq(0)) {
-        setGaugeVotingPower(
-          BigNumber.from(gaugeWeight).mul(10000).div(totalWeight)
-        );
-      } else {
-        setGaugeVotingPower(0);
-        console.log("totalWeight is 0");
-      }
+      // Get the number of votes for the gauge
+      const updatedGaugeVotes =
+        await gaugeControllerProvider.userVoteWeightForGauge(address, gauge);
+      setGaugeVotes(updatedGaugeVotes.toString());
     } else {
       setSelectedGauge("");
       console.log("Gauge not found");
@@ -196,7 +189,7 @@ export default function Lock() {
       </StyledModal>
       <StyledModal
         hasFooter={false}
-        title={"Vote for "}
+        title={"Vote for Gauge"}
         isVisible={visibleVoteModal}
         onCloseButtonPressed={function () {
           setVisibleVoteModal(false);
@@ -368,7 +361,7 @@ export default function Lock() {
                         fontWeight: "bold",
                       }}
                     >
-                      My Used Voting Power
+                      Used Votes
                     </Box>
                   </div>
                   <div className="flex flex-row">
@@ -378,7 +371,7 @@ export default function Lock() {
                         fontSize: "subtitle1.fontSize",
                       }}
                     >
-                      {votePower / 100 + " %"}
+                      {formatUnits(totalVotes, 18) + " veLE"}
                     </Box>
                   </div>
                 </div>
@@ -425,7 +418,7 @@ export default function Lock() {
                             fontWeight: "bold",
                           }}
                         >
-                          Voting Power
+                          Gauge Votes
                         </Box>
                       </div>
                       <div className="flex flex-row">
@@ -435,7 +428,7 @@ export default function Lock() {
                             fontSize: "subtitle1.fontSize",
                           }}
                         >
-                          {gaugeVotingPower / 1000 + " %"}
+                          {formatUnits(gaugeVotes, 18) + " veLE"}
                         </Box>
                       </div>
                     </div>

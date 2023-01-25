@@ -17,7 +17,11 @@ import { Input } from "@nextui-org/react";
 import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
 import { getTradingNFTCollections } from "../../helpers/getTradingNFTCollections.js";
 import { getBuyQuote } from "../../helpers/getBuyQuote.js";
+import { getBuyExactQuote } from "../../helpers/getBuyExactQuote.js";
 import Chip from "@mui/material/Chip";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import { CardActionArea } from "@mui/material";
 import { formatUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
 import { useState, useEffect } from "react";
@@ -28,10 +32,13 @@ import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json"
 import tradingPoolContract from "../../contracts/TradingPool.json";
 
 export default function Buy() {
+  const SELECTED_COLOR = "#d2c6d2";
   const { chain } = useNetwork();
   const { address, isConnected } = useAccount();
   const provider = useProvider();
-  const [userNFTs, setUserNFTs] = useState([]);
+  const [availableNFTs, setAvailableNFTs] = useState([]);
+  const [selectingNFTs, setSelectingNFTs] = useState(false);
+  const [selectedNFTs, setSelectedNFTs] = useState([]);
   const [tradingCollections, setTradingCollections] = useState([]);
   const { data: signer } = useSigner();
   const [approvedToken, setApprovedToken] = useState(false);
@@ -56,10 +63,10 @@ export default function Buy() {
     signerOrProvider: provider,
   });
 
-  async function getUserNFTs(collection) {
+  async function getAvailableNFTs(pool, collection) {
     // Get user NFT assets
-    const addressNFTs = await getAddressNFTs(address, collection, chain.id);
-    setUserNFTs(addressNFTs);
+    const addressNFTs = await getAddressNFTs(pool, collection, chain.id);
+    setAvailableNFTs(addressNFTs);
   }
 
   async function getTradingCollections() {
@@ -79,6 +86,7 @@ export default function Buy() {
     getNFTName(collection);
     getTokenAllowance(updatedPool);
     setPoolAddress(updatedPool);
+    getAvailableNFTs(updatedPool, collection);
   }
 
   async function getPriceQuote(amount) {
@@ -94,8 +102,26 @@ export default function Buy() {
     }
     setAmount(newBuyQuote.lps.length);
     console.log("newBuyQuote", newBuyQuote);
+    // Fill the selected NFTs array
+    var newSelectedNFTs = [];
+    if (selectingNFTs) {
+      // Remove any NFTs that can't be sold as per the quote
+      newSelectedNFTs = selectedNFTs.slice(
+        newBuyQuote.lps.length - selectedNFTs.length
+      );
+    } else {
+      for (let index = 0; index < newBuyQuote.lps.length; index++) {
+        if (index > availableNFTs.length) {
+          break;
+        }
+        newSelectedNFTs.push(
+          BigNumber.from(availableNFTs[index].id.tokenId).toNumber()
+        );
+      }
+    }
+    console.log("newSelectedNFTs", newSelectedNFTs);
+    setSelectedNFTs(newSelectedNFTs);
   }
-
   async function getNFTName(collection) {
     console.log("nftAddress", nftAddress);
     const nftContract = new ethers.Contract(collection, erc721, provider);
@@ -174,7 +200,6 @@ export default function Buy() {
     console.log("handleNFTAddressChange", value);
     if (ethers.utils.isAddress(value)) {
       setNFTAddress(value);
-      getUserNFTs(value);
       getTradingPoolAddress(value);
     } else if (
       tradingCollections
@@ -185,7 +210,6 @@ export default function Buy() {
         (collection) => collection.contractMetadata.name == value
       ).address;
       setNFTAddress(nftAddress);
-      getUserNFTs(nftAddress);
       getTradingPoolAddress(nftAddress);
     } else {
       console.log("Invalid NFT Address");
@@ -324,7 +348,91 @@ export default function Buy() {
               css={{ textAlignLast: "center" }}
             />
           </div>
+          <div className="flex flex-row">
+            <div className="flex flex-col text-center justify-center m-2">
+              OR
+            </div>
+            <div className="flex flex-col text-center justify-center m-2">
+              <Button
+                primary
+                size="medium"
+                color={SELECTED_COLOR}
+                onClick={() => {
+                  // Reset selected NFTs
+                  setSelectedNFTs([]);
+                  setSelectingNFTs(!selectingNFTs);
+                }}
+                disabled={!nftAddress}
+                label={
+                  <div className="flex">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle2.fontSize",
+                        fontWeight: "bold",
+                        letterSpacing: 2,
+                      }}
+                    >
+                      Select NFTs
+                    </Box>
+                  </div>
+                }
+              />
+            </div>
+          </div>
         </div>
+        {selectingNFTs && (
+          <div className="flex flex-row m-4 grid md:grid-cols-3 lg:grid-cols-4">
+            {availableNFTs.map((nft, _) => (
+              <div
+                key={BigNumber.from(nft.id.tokenId).toNumber()}
+                className="flex m-2 items-center justify-center max-w-[300px]"
+              >
+                <Card
+                  sx={{
+                    borderRadius: 4,
+                    background: selectedNFTs.find(
+                      (element) =>
+                        element == BigNumber.from(nft.id.tokenId).toNumber()
+                    )
+                      ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
+                      : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
+                  }}
+                >
+                  <CardActionArea
+                    onClick={function () {
+                      //If it's selected we unselect and if its unselected we select
+                      var newSelectedNFTs = selectedNFTs.slice();
+                      var index = newSelectedNFTs.findIndex(
+                        (element) =>
+                          element == BigNumber.from(nft.id.tokenId).toNumber()
+                      );
+                      if (index == -1) {
+                        newSelectedNFTs.push(
+                          BigNumber.from(nft.id.tokenId).toNumber()
+                        );
+                      } else {
+                        newSelectedNFTs.splice(index, 1);
+                      }
+                      getBuySelectedPriceQuote(newSelectedNFTs);
+                    }}
+                  >
+                    <CardContent>
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "caption",
+                        }}
+                      >
+                        {BigNumber.from(nft.id.tokenId).toNumber()}
+                      </Box>
+                    </CardContent>
+                  </CardActionArea>
+                </Card>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
       <div className="flex flex-row w-9/12 m-4 justify-center items-center">
         <Divider style={{ width: "100%" }}>

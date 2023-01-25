@@ -97,40 +97,25 @@ export default function Sell() {
     }
     setAmount(newSellQuote.lps.length);
     console.log("newSellQuote", newSellQuote);
-    // Get an amount of random NFTs to sell
+    // Fill the selected NFTs array
     var newSelectedNFTs = [];
-    for (let index = 0; index < newSellQuote.lps.length; index++) {
-      if (index > userNFTs.length) {
-        break;
-      }
-      newSelectedNFTs.push(
-        BigNumber.from(userNFTs[index].id.tokenId).toNumber()
+    if (selectingNFTs) {
+      // Remove any NFTs that can't be sold as per the quote
+      newSelectedNFTs = selectedNFTs.slice(
+        newSellQuote.lps.length - selectedNFTs.length
       );
+    } else {
+      for (let index = 0; index < newSellQuote.lps.length; index++) {
+        if (index > userNFTs.length) {
+          break;
+        }
+        newSelectedNFTs.push(
+          BigNumber.from(userNFTs[index].id.tokenId).toNumber()
+        );
+      }
     }
     console.log("newSelectedNFTs", newSelectedNFTs);
     setSelectedNFTs(newSelectedNFTs);
-  }
-
-  async function getSellSelectedPriceQuote(selected) {
-    const newSellQuote = await getSellQuote(
-      chain.id,
-      selected.length,
-      poolAddress
-    );
-    setPriceQuote(newSellQuote);
-    if (newSellQuote.lps.length < selected.length) {
-      dispatch({
-        type: "warning",
-        message: "Can only sell " + newSellQuote.lps.length + " NFTs",
-        title: "Maximum is " + newSellQuote.lps.length,
-        position: "topR",
-      });
-    }
-    setAmount(newSellQuote.lps.length);
-    console.log("amoutn", newSellQuote.lps.length);
-    console.log("new selected:", selected.slice(0, newSellQuote.lps.length));
-    setSelectedNFTs(selected.slice(0, newSellQuote.lps.length));
-    console.log("newSellQuote", newSellQuote);
   }
 
   // Runs once
@@ -357,7 +342,6 @@ export default function Sell() {
               css={{ textAlignLast: "center" }}
             />
           </div>
-
           <div className="flex flex-row">
             <div className="flex flex-col text-center justify-center m-2">
               OR

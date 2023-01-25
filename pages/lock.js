@@ -203,8 +203,8 @@ export default function Lock() {
       </StyledModal>
       <div className="flex flex-col items-center">
         <div className="flex flex-col max-w-[100%] justify-center items-center">
-          <div className="flex flex-col border-4 m-4 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
-            <div className="flex flex-row items-center justify-center py-4 px-8 m-8 mb-4 text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
+          <div className="flex flex-col border-4 p-4 m-4 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
+            {/* <div className="flex flex-row items-center justify-center py-4 px-8 m-8 mb-4 text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
               <Box
                 sx={{
                   fontFamily: "Monospace",
@@ -214,7 +214,7 @@ export default function Lock() {
               >
                 {"Vault APR = " + apr + "%"}
               </Box>
-            </div>
+            </div> */}
             <div className="flex flex-col-reverse md:flex-row items-center justify-center">
               {unlockTime < Date.now() / 1000 ? (
                 <div className="flex flex-row md:flex-col items-center m-4 lg:ml-8">

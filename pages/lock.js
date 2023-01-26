@@ -36,9 +36,9 @@ export default function Lock() {
   const [unlockTime, setUnlockTime] = useState(0);
   const [claimingLoading, setClaimingLoading] = useState(false);
   const [claimableRewards, setClaimableRewards] = useState("0");
-  const [selectedGauge, setSelectedGauge] = useState("");
-  const [gaugeVotes, setGaugeVotes] = useState("0");
-  const [totalVotes, setTotalVotes] = useState("0");
+  const [selectedGauge, setSelectedGauge] = useState();
+  const [gaugeVoteRatio, setGaugeVoteRatio] = useState("0");
+  const [totalVoteRatio, setTotalVoteRatio] = useState("0");
 
   const addresses =
     chain && chain.id in contractAddresses
@@ -84,10 +84,12 @@ export default function Lock() {
     setVoteTokenBalance(updatedVoteTokenBalance.toString());
 
     //Get the vote token Balance
-    const updatedVotePower = await gaugeControllerProvider.userVoteWeight(
+    const updatedVoteRatio = await gaugeControllerProvider.userVoteRatio(
       address
     );
-    setTotalVotes(updatedVotePower.toString());
+    console.log("address", address);
+    console.log("updatedVoteRatio", updatedVoteRatio.toString());
+    setTotalVoteRatio(updatedVoteRatio.toString());
 
     // Get the claimable rewards
     const updatedClaimableRewards =
@@ -113,9 +115,10 @@ export default function Lock() {
     if (isGauge) {
       setSelectedGauge(gauge);
       // Get the number of votes for the gauge
-      const updatedGaugeVotes =
-        await gaugeControllerProvider.userVoteWeightForGauge(address, gauge);
-      setGaugeVotes(updatedGaugeVotes.toString());
+      const updatedGaugeVoteRatio =
+        await gaugeControllerProvider.userVoteRatioForGauge(address, gauge);
+      console.log("updatedgaugeVoteRatio", updatedGaugeVoteRatio.toString());
+      setGaugeVoteRatio(updatedGaugeVoteRatio.toString());
     } else {
       setSelectedGauge("");
       console.log("Gauge not found");
@@ -133,6 +136,8 @@ export default function Lock() {
     console.log("newGauge", newGauge);
     if (newGauge) {
       updateGaugeDetails(newGauge);
+    } else {
+      setSelectedGauge();
     }
   };
 
@@ -371,14 +376,14 @@ export default function Lock() {
                         fontSize: "subtitle1.fontSize",
                       }}
                     >
-                      {formatUnits(totalVotes, 18) + " veLE"}
+                      {totalVoteRatio / 100 + " %"}
                     </Box>
                   </div>
                 </div>
               </div>
             </div>
             <div className="flex flex-col justify-center items-center m-8 mt-0 p-4 rounded-3xl bg-black/5 shadow-lg">
-              <div className="flex flex-row m-8">
+              <div className="flex flex-row mt-8">
                 <Input
                   bordered
                   aria-label="Gauge Address"
@@ -386,6 +391,17 @@ export default function Lock() {
                   placeholder="Gauge Address"
                   onChange={handleGaugeChange}
                 />
+              </div>
+              <div className="flex flex-row mb-8 mt-1">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "caption.fontSize",
+                  }}
+                >
+                  {selectedGauge !== undefined &&
+                    (selectedGauge == "" ? "No gauge selected" : "Gauge found")}
+                </Box>
               </div>
               <div className="flex flex-col-reverse md:flex-row">
                 <div className="flex flex-col justify-center m-4">
@@ -428,7 +444,7 @@ export default function Lock() {
                             fontSize: "subtitle1.fontSize",
                           }}
                         >
-                          {formatUnits(gaugeVotes, 18) + " veLE"}
+                          {gaugeVoteRatio / 100 + " %"}
                         </Box>
                       </div>
                     </div>

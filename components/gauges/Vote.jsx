@@ -11,6 +11,7 @@ import {
   useSigner,
 } from "wagmi";
 import gaugeControllerContract from "../../contracts/GaugeController.json";
+import votingEscrowContract from "../../contracts/VotingEscrow.json";
 import { useState, useEffect } from "react";
 
 export default function Vote(props) {
@@ -20,8 +21,8 @@ export default function Vote(props) {
   const { data: signer } = useSigner();
   const [amount, setAmount] = useState("0");
   const [votingLoading, setVotingLoading] = useState(false);
-  const [gaugeVotingPower, setGaugeVotingPower] = useState(0);
-  const [freeVotingPower, setFreeVotePower] = useState(0);
+  const [gaugeVoteRatio, setGaugeVoteRatio] = useState(0);
+  const [freeVoteRatio, setFreeVoteRatio] = useState(0);
 
   const addresses =
     chain && chain.id in contractAddresses
@@ -41,24 +42,36 @@ export default function Vote(props) {
     signerOrProvider: signer,
   });
 
-  async function getGaugeVotingPower() {
-    const updatedGaugeVotingPower =
-      await gaugeControllerProvider.userGaugeVoteWeight(address, props.gauge);
-    setGaugeVotingPower(updatedGaugeVotingPower.toNumber());
+  const votingEscrowProvider = useContract({
+    contractInterface: votingEscrowContract.abi,
+    addressOrName: addresses.VotingEscrow,
+    signerOrProvider: provider,
+  });
+
+  async function getGaugeVoteRatio() {
+    const updatedGaugeVoteRatio =
+      await gaugeControllerProvider.userVoteWeightForGauge(
+        address,
+        props.gauge
+      );
+    setGaugeVoteRatio(updatedGaugeVoteRatio.toNumber());
   }
 
-  async function getFreeVotingPower() {
+  async function getFreeVoteRatio() {
     //Get the vote token Balance
-    const updatedVotePower = await gaugeControllerProvider.voteUserPower(
+    const updatedVoteRatio = await gaugeControllerProvider.userVoteRatio(
       address
     );
-    setFreeVotePower(10000 - updatedVotePower.toNumber());
+    console.log("address", address);
+    console.log("updatedVoteRatio", updatedVoteRatio.toString());
+
+    setFreeVoteRatio(BigNumber.from(10000).sub(updatedVoteRatio).toNumber());
   }
 
   useEffect(() => {
     if (isConnected && props.gauge) {
-      getFreeVotingPower();
-      getGaugeVotingPower();
+      getFreeVoteRatio();
+      getGaugeVoteRatio();
     }
   }, [isConnected, props.gauge]);
 
@@ -86,25 +99,25 @@ export default function Vote(props) {
     <div className={styles.container}>
       <div className="flex flex-row items-center justify-center m-8">
         <div className="flex flex-col">
-          <Typography variant="subtitle2">My Gauge Voting Power</Typography>
-          <Typography variant="body16">{gaugeVotingPower / 100} %</Typography>
+          <Typography variant="subtitle2">My Free Votes</Typography>
+          <Typography variant="body16">{freeVoteRatio / 1000} %</Typography>
         </div>
       </div>
       <div className="flex flex-col items-center justify-center m-8 mt-12">
-        <div className="flex flex-col max-w-[250px]">
+        <div className="flex max-w-[250px] m-4">
           <Input
             label="Amount (%)"
             placeholder="0"
             type="number"
             step="any"
             validation={{
-              numberMax: freeVotingPower / 100,
+              numberMax: freeVoteRatio / 100,
               numberMin: 0,
             }}
             onChange={handleInputChange}
           />
         </div>
-        <div className="m-4">
+        <div className="flex w-full m-4">
           <Button
             text="Vote"
             theme="secondary"

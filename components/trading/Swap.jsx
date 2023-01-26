@@ -10,7 +10,6 @@ import {
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
-import { getAddressNFTCollections } from "../../helpers/getAddressNFTCollections.js";
 import Box from "@mui/material/Box";
 import Image from "next/image";
 import { getTradingNFTCollections } from "../../helpers/getTradingNFTCollections.js";
@@ -40,6 +39,7 @@ export default function Swap() {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const { address, isConnected } = useAccount();
+  const [availableBuyPoolNFTs, setAvailableBuyPoolNFTs] = useState([]);
   const [tradingCollections, setTradingCollections] = useState([]);
   const [approvedToken, setApprovedToken] = useState(false);
   const [approvedNFT, setApprovedNFT] = useState(false);
@@ -79,6 +79,12 @@ export default function Swap() {
     addressOrName: addresses.SwapRouter,
     signerOrProvider: signer,
   });
+
+  async function getAvailableNFTs(pool, collection) {
+    // Get user NFT assets
+    const addressNFTs = await getAddressNFTs(pool, collection, chain.id);
+    setAvailableBuyPoolNFTs(addressNFTs);
+  }
 
   async function getTradingCollections() {
     // Get user NFT assets
@@ -127,6 +133,7 @@ export default function Swap() {
     if (buyAmount && sellAmount && buyPoolAddress && sellPoolAddress) {
       var newSwapQuote;
       if (selectingBuyNFTs) {
+        console.log("selectedBuyNFTs", selectedBuyNFTs);
         newSwapQuote = await getSwapExactQuote(
           chain.id,
           selectedBuyNFTs,
@@ -134,6 +141,7 @@ export default function Swap() {
           buyPoolAddress,
           sellPoolAddress
         );
+        console.log("getSwapExactQuote", newSwapQuote);
       } else {
         newSwapQuote = await getSwapQuote(
           chain.id,
@@ -142,31 +150,57 @@ export default function Swap() {
           buyPoolAddress,
           sellPoolAddress
         );
+        console.log("newSwapQuote", newSwapQuote);
       }
-
       setPriceQuote(newSwapQuote);
-      setBuyAmount(newSwapQuote.buyLps.length);
-      console.log("newSellQuote", newSellQuote);
+
+      setSellAmount(newSwapQuote.sellLps.length);
       // Fill the selected NFTs array
-      var newSelectedNFTs = [];
-      if (selectingNFTs) {
+      var newSelectedSellNFTs = [];
+      if (selectingSellNFTs) {
         // Remove any NFTs that can't be sold as per the quote
-        newSelectedNFTs = selectedNFTs.slice(
-          newSellQuote.lps.length - selectedNFTs.length
+        newSelectedSellNFTs = selectedSellNFTs.slice(
+          0,
+          newSwapQuote.sellLps.length
         );
       } else {
-        for (let index = 0; index < newSellQuote.lps.length; index++) {
+        for (let index = 0; index < newSwapQuote.sellLps.length; index++) {
           if (index > userNFTs.length) {
             break;
           }
-          newSelectedNFTs.push(
+          newSelectedSellNFTs.push(
             BigNumber.from(userNFTs[index].id.tokenId).toNumber()
           );
         }
       }
-      console.log("newSelectedNFTs", newSelectedNFTs);
-      setSelectedNFTs(newSelectedNFTs);
-      setSellAmount(newSelectedNFTs.length);
+      if (newSelectedSellNFTs.length != selectedSellNFTs.length) {
+        console.log("newSelectedNFTs", newSelectedSellNFTs);
+        setSelectedSellNFTs(newSelectedSellNFTs);
+      }
+
+      setBuyAmount(newSwapQuote.buyLps.length);
+      // Fill the selected NFTs array
+      var newSelectedBuyNFTs = [];
+      if (selectingBuyNFTs) {
+        // Remove any NFTs that can't be sold as per the quote
+        newSelectedBuyNFTs = selectedBuyNFTs.slice(
+          0,
+          newSwapQuote.buyLps.length
+        );
+      } else {
+        for (let index = 0; index < newSwapQuote.buyLps.length; index++) {
+          if (index > availableBuyPoolNFTs.length) {
+            break;
+          }
+          newSelectedBuyNFTs.push(
+            BigNumber.from(availableBuyPoolNFTs[index].id.tokenId).toNumber()
+          );
+        }
+      }
+      if (newSelectedBuyNFTs.length != selectedBuyNFTs.length) {
+        console.log("newSelectedBuyNFTs", newSelectedBuyNFTs);
+        setSelectedBuyNFTs(newSelectedBuyNFTs);
+      }
     }
   }
 
@@ -226,6 +260,7 @@ export default function Swap() {
     getBuyNFTName(collection);
     setBuyPoolAddress(updatedPool);
     getPriceQuote(buyAmount, sellAmount, updatedPool, sellPoolAddress);
+    getAvailableNFTs(updatedPool, collection);
   }
 
   useEffect(() => {
@@ -234,6 +269,30 @@ export default function Swap() {
       getTokenAllowance();
     }
   }, [isConnected, address]);
+
+  useEffect(() => {
+    setBuyAmount(selectedBuyNFTs.length);
+    if (sellAmount && buyPoolAddress && sellPoolAddress) {
+      getPriceQuote(
+        selectedBuyNFTs.length,
+        sellAmount,
+        buyPoolAddress,
+        sellPoolAddress
+      );
+    }
+  }, [selectedBuyNFTs]);
+
+  useEffect(() => {
+    setSellAmount(selectedSellNFTs.length);
+    if (buyAmount && buyPoolAddress && sellPoolAddress) {
+      getPriceQuote(
+        buyAmount,
+        selectedSellNFTs.length,
+        buyPoolAddress,
+        sellPoolAddress
+      );
+    }
+  }, [selectedSellNFTs]);
 
   const handleTokenApprovalSuccess = async function () {
     setApprovedToken(true);
@@ -502,8 +561,8 @@ export default function Swap() {
                   color={SELECTED_COLOR}
                   onClick={() => {
                     // Reset selected NFTs
-                    setSelectedNFTs([]);
-                    setSelectingNFTs(!selectingNFTs);
+                    setSelectedSellNFTs([]);
+                    setSelectingSellNFTs(!selectingSellNFTs);
                   }}
                   disabled={!sellNFTAddress}
                   label={
@@ -557,12 +616,7 @@ export default function Swap() {
                         } else {
                           newSelectedSellNFTs.splice(index, 1);
                         }
-                        getPriceQuote(
-                          buyAmount,
-                          newSelectedSellNFTs.length,
-                          buyPoolAddress,
-                          sellPoolAddress
-                        );
+                        setSelectedSellNFTs(newSelectedSellNFTs);
                       }}
                     >
                       <CardContent>
@@ -756,7 +810,7 @@ export default function Swap() {
           </div>
           {selectingBuyNFTs && (
             <div className="flex flex-row m-4 grid md:grid-cols-3 lg:grid-cols-4">
-              {nftsToBuy.map((nft, _) => (
+              {availableBuyPoolNFTs.map((nft, _) => (
                 <div
                   key={BigNumber.from(nft.id.tokenId).toNumber()}
                   className="flex m-2 items-center justify-center max-w-[300px]"
@@ -764,7 +818,7 @@ export default function Swap() {
                   <Card
                     sx={{
                       borderRadius: 4,
-                      background: selectedNFTs.find(
+                      background: selectedBuyNFTs.find(
                         (element) =>
                           element == BigNumber.from(nft.id.tokenId).toNumber()
                       )
@@ -787,12 +841,7 @@ export default function Swap() {
                         } else {
                           newSelectedBuyNFTs.splice(index, 1);
                         }
-                        getPriceQuote(
-                          newSelectedBuyNFTs.length,
-                          sellAmount,
-                          buyPoolAddress,
-                          sellPoolAddress
-                        );
+                        setSelectedBuyNFTs(newSelectedBuyNFTs);
                       }}
                     >
                       <CardContent>
@@ -857,10 +906,11 @@ export default function Swap() {
             clickable={buyNFTAddress != ""}
             target="_blank"
             href={
-              buyNFTAddress != "" &&
-              (chain.id == 1
-                ? "https://etherscan.io/address/" + buyNFTAddress
-                : "https://goerli.etherscan.io/address/" + buyNFTAddress)
+              buyNFTAddress != ""
+                ? chain.id == 1
+                  ? "https://etherscan.io/address/" + buyNFTAddress
+                  : "https://goerli.etherscan.io/address/" + buyNFTAddress
+                : ""
             }
           />
         </Divider>
@@ -941,7 +991,7 @@ export default function Swap() {
             fill="horizontal"
             size="large"
             color="#063970"
-            loading={tokenApprovalLoading}
+            loading={tokenApprovalLoading.toString()}
             onClick={async function () {
               setTokenApprovalLoading(true);
               const tokenContract = new ethers.Contract(
@@ -992,7 +1042,7 @@ export default function Swap() {
                 sellPoolAddress,
                 priceQuote.exampleBuyNFTs,
                 priceQuote.buyPrice,
-                selectedNFTs,
+                selectedSellNFTs,
                 priceQuote.sellLps,
                 priceQuote.sellPrice,
               ]);
@@ -1002,7 +1052,7 @@ export default function Swap() {
                   sellPoolAddress,
                   priceQuote.exampleBuyNFTs,
                   priceQuote.buyPrice,
-                  selectedNFTs,
+                  selectedSellNFTs,
                   priceQuote.sellLps,
                   priceQuote.sellPrice
                 );

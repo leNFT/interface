@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 
 export async function getBuyExactQuote(chainId, nfts, pool) {
-  const serverAddress = "https://lenft-api-w27ha.ondigitalocean.app";
+  const serverAddress = "https://trade-router-absrz.ondigitalocean.app";
   const options = {
     method: "GET",
     headers: {

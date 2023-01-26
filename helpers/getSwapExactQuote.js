@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 
-export async function getSwapQuote(
+export async function getSwapExactQuote(
   chainId,
   buyNFTs,
   sellAmount,

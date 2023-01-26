@@ -111,9 +111,7 @@ export default function Buy() {
     var newSelectedNFTs = [];
     if (selectingNFTs) {
       // Remove any NFTs that can't be sold as per the quote
-      newSelectedNFTs = selectedNFTs.slice(
-        newBuyQuote.lps.length - selectedNFTs.length
-      );
+      newSelectedNFTs = selectedNFTs.slice(0, newBuyQuote.lps.length);
     } else {
       for (let index = 0; index < newBuyQuote.lps.length; index++) {
         if (index > availableNFTs.length) {
@@ -124,8 +122,10 @@ export default function Buy() {
         );
       }
     }
-    console.log("newSelectedNFTs", newSelectedNFTs);
-    setSelectedNFTs(newSelectedNFTs);
+    if (newSelectedNFTs.length != selectedNFTs.length) {
+      console.log("newSelectedNFTs", newSelectedNFTs);
+      setSelectedNFTs(newSelectedNFTs);
+    }
   }
   async function getNFTName(collection) {
     console.log("nftAddress", nftAddress);
@@ -168,6 +168,13 @@ export default function Buy() {
     console.log("useEffect called");
   }, [isConnected, chain]);
 
+  useEffect(() => {
+    if (nftAddress && poolAddress) {
+      setAmount(selectedNFTs.length);
+      getPriceQuote(selectedNFTs.length);
+    }
+  }, [selectedNFTs]);
+
   const handleTokenApprovalSuccess = async function () {
     setApprovedToken(true);
     dispatch({
@@ -188,6 +195,7 @@ export default function Buy() {
   };
 
   const handleAmountInputChange = (event) => {
+    setSelectingNFTs(false);
     console.log("handleAmountInputChange", event.target.value);
     try {
       if (event.target.value && nftAddress) {
@@ -419,7 +427,8 @@ export default function Buy() {
                       } else {
                         newSelectedNFTs.splice(index, 1);
                       }
-                      getPriceQuote(newSelectedNFTs.length);
+                      console.log(newSelectedNFTs);
+                      setSelectedNFTs(newSelectedNFTs);
                     }}
                   >
                     <CardContent>

@@ -84,26 +84,28 @@ export default function Sell() {
     setPoolAddress(updatedPool);
   }
 
-  async function getPriceQuote(amount) {
-    const newSellQuote = await getSellQuote(chain.id, amount, poolAddress);
+  async function getPriceQuote(quotedAmount) {
+    const newSellQuote = await getSellQuote(
+      chain.id,
+      quotedAmount,
+      poolAddress
+    );
     setPriceQuote(newSellQuote);
-    if (newSellQuote.lps.length < amount) {
+    if (newSellQuote.lps.length < quotedAmount) {
       dispatch({
         type: "warning",
         message: "Can only sell " + newSellQuote.lps.length + " NFTs",
         title: "Maximum is " + newSellQuote.lps.length,
         position: "topR",
       });
+      setAmount(newSellQuote.lps.length);
     }
-    setAmount(newSellQuote.lps.length);
     console.log("newSellQuote", newSellQuote);
     // Fill the selected NFTs array
     var newSelectedNFTs = [];
     if (selectingNFTs) {
       // Remove any NFTs that can't be sold as per the quote
-      newSelectedNFTs = selectedNFTs.slice(
-        newSellQuote.lps.length - selectedNFTs.length
-      );
+      newSelectedNFTs = selectedNFTs.slice(0, newSellQuote.lps.length);
     } else {
       for (let index = 0; index < newSellQuote.lps.length; index++) {
         if (index > userNFTs.length) {
@@ -114,8 +116,10 @@ export default function Sell() {
         );
       }
     }
-    console.log("newSelectedNFTs", newSelectedNFTs);
-    setSelectedNFTs(newSelectedNFTs);
+    if (newSelectedNFTs.length != selectedNFTs.length) {
+      console.log("newSelectedNFTs", newSelectedNFTs);
+      setSelectedNFTs(newSelectedNFTs);
+    }
   }
 
   // Runs once
@@ -127,8 +131,16 @@ export default function Sell() {
     console.log("useEffect called");
   }, [isConnected, chain]);
 
+  useEffect(() => {
+    if (nftAddress && poolAddress) {
+      setAmount(selectedNFTs.length);
+      getPriceQuote(selectedNFTs.length);
+    }
+  }, [selectedNFTs]);
+
   const handleAmountInputChange = (event) => {
     console.log("handleAmountInputChange", event.target.value);
+    setSelectingNFTs(false);
     try {
       if (event.target.value && nftAddress) {
         getPriceQuote(event.target.value);
@@ -408,7 +420,8 @@ export default function Sell() {
                       } else {
                         newSelectedNFTs.splice(index, 1);
                       }
-                      getSellSelectedPriceQuote(newSelectedNFTs);
+                      console.log(newSelectedNFTs);
+                      setSelectedNFTs(newSelectedNFTs);
                     }}
                   >
                     <CardContent>

@@ -110,7 +110,7 @@ export default function TradingPools() {
               fontSize: 16,
               textColor: "white",
             }}
-            text="Options"
+            text="Deposit"
             theme="custom"
             id={key}
             radius="12"

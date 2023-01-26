@@ -1,5 +1,5 @@
 import styles from "../styles/Home.module.css";
-import { Button, Table, Skeleton } from "@web3uikit/core";
+import { Button, Table, Skeleton, LinkTo } from "@web3uikit/core";
 import { getLendingPools } from "../helpers/getLendingPools.js";
 import { formatUnits } from "@ethersproject/units";
 import StyledModal from "../components/StyledModal";
@@ -37,6 +37,27 @@ export default function LendingPools() {
 
     for (const [key, value] of Object.entries(lendingPools)) {
       newTableData.push([
+        <LinkTo
+          key={"link" + key}
+          type="external"
+          iconLayout="none"
+          text={
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
+              }}
+              className="m-2"
+            >
+              {key.slice(0, 4) + ".." + key.slice(-3)}
+            </Box>
+          }
+          address={
+            chain.id == 1
+              ? "https://etherscan.io/address/" + key
+              : "https://goerli.etherscan.io/address/" + key
+          }
+        ></LinkTo>,
         <Box
           sx={{
             fontFamily: "Monospace",
@@ -123,28 +144,6 @@ export default function LendingPools() {
             }}
           />
         </div>,
-        <div key={"externalLink" + key}>
-          <Button
-            size="small md:large"
-            color="#eae5ea"
-            iconLayout="icon-only"
-            id={key}
-            icon={<ExternalLink fontSize="30px" />}
-            onClick={async function (event) {
-              if (chain.id == 1) {
-                window.open(
-                  "https://etherscan.io/address/" + event.target.id,
-                  "_blank"
-                );
-              } else if (chain.id == 5) {
-                window.open(
-                  "https://goerli.etherscan.io/address/" + event.target.id,
-                  "_blank"
-                );
-              }
-            }}
-          />
-        </div>,
       ]);
     }
 
@@ -209,6 +208,21 @@ export default function LendingPools() {
           customNoDataText="No lending pools found."
           data={tableData}
           header={[
+            <div key="address" className="flex flex-row m-2">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: {
+                    xs: "caption.fontSize",
+                    sm: "subtitle1.fontSize",
+                  },
+                }}
+                className=""
+                key="1"
+              >
+                Address
+              </Box>
+            </div>,
             <div key="assets" className="flex flex-row m-2">
               <Box
                 sx={{
@@ -314,7 +328,6 @@ export default function LendingPools() {
                 </Tooltip>
               </div>
             </div>,
-            "",
             "",
           ]}
           isLoading={loadingTableData}

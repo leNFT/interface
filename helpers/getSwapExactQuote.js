@@ -28,10 +28,10 @@ export async function getSwapQuote(
     "&sellPool=" +
     sellPool;
   console.log(requestURL);
-  const swapQuoteResponse = await fetch(requestURL, options).catch((err) =>
+  const swapExactQuoteResponse = await fetch(requestURL, options).catch((err) =>
     console.error(err)
   );
-  const swapQuote = await swapQuoteResponse.json();
+  const swapExactQuote = await swapExactQuoteResponse.json();
 
-  return swapQuote;
+  return swapExactQuote;
 }

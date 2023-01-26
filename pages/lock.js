@@ -401,10 +401,11 @@ export default function Lock() {
                       fontSize: "caption.fontSize",
                     }}
                   >
-                    {selectedGauge !== undefined &&
-                      (selectedGauge == ""
-                        ? "No gauge selected"
-                        : "Gauge found")}
+                    {selectedGauge !== undefined
+                      ? selectedGauge == ""
+                        ? "Gauge not found"
+                        : "Gauge found"
+                      : "Select a gauge"}
                   </Box>
                 </div>
               </div>

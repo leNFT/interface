@@ -37,8 +37,8 @@ export default function Lock() {
   const [claimingLoading, setClaimingLoading] = useState(false);
   const [claimableRewards, setClaimableRewards] = useState("0");
   const [selectedGauge, setSelectedGauge] = useState();
-  const [gaugeVoteRatio, setGaugeVoteRatio] = useState("0");
-  const [totalVoteRatio, setTotalVoteRatio] = useState("0");
+  const [gaugeVoteRatio, setGaugeVoteRatio] = useState(0);
+  const [totalVoteRatio, setTotalVoteRatio] = useState(0);
 
   const addresses =
     chain && chain.id in contractAddresses
@@ -105,6 +105,7 @@ export default function Lock() {
     if (!ethers.utils.isAddress(gauge)) {
       console.log("Invalid Gauge Address");
       setSelectedGauge("");
+      setGaugeVoteRatio(0);
       return;
     }
 
@@ -118,9 +119,10 @@ export default function Lock() {
       const updatedGaugeVoteRatio =
         await gaugeControllerProvider.userVoteRatioForGauge(address, gauge);
       console.log("updatedgaugeVoteRatio", updatedGaugeVoteRatio.toString());
-      setGaugeVoteRatio(updatedGaugeVoteRatio.toString());
+      setGaugeVoteRatio(updatedGaugeVoteRatio.toNumber());
     } else {
       setSelectedGauge("");
+      setGaugeVoteRatio(0);
       console.log("Gauge not found");
     }
   }
@@ -151,7 +153,7 @@ export default function Lock() {
   };
 
   return (
-    <div className={styles.container}>
+    <div>
       <StyledModal
         hasFooter={false}
         title="Lock LE"
@@ -355,8 +357,8 @@ export default function Lock() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center justify-center border-4 m-4 md:m-8 rounded-3xl bg-black/5 shadow-lg">
-            <div className="flex flex-col md:flex-row min-w-[85%] items-center mx-4 my-2 justify-center">
+          <div className="flex flex-col md:flex-row items-center justify-center border-4 m-4 md:m-8 rounded-3xl bg-black/5 shadow-lg">
+            <div className="flex flex-col md:flex-row items-center mb:m-4 justify-center">
               <div className="flex flex-row m-4">
                 <div className="flex flex-col m-4">
                   <div className="flex flex-row">
@@ -383,8 +385,8 @@ export default function Lock() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col justify-center items-center m-8 mt-0 p-4 rounded-3xl bg-black/5 shadow-lg">
-              <div className="flex flex-row mt-8">
+            <div className="flex flex-col justify-center items-center m-8 p-4 rounded-3xl bg-black/5 shadow-lg">
+              <div className="flex flex-col items-center m-4 mb-8">
                 <Input
                   bordered
                   aria-label="Gauge Address"
@@ -392,17 +394,19 @@ export default function Lock() {
                   placeholder="Gauge Address"
                   onChange={handleGaugeChange}
                 />
-              </div>
-              <div className="flex flex-row mb-8 mt-1">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "caption.fontSize",
-                  }}
-                >
-                  {selectedGauge !== undefined &&
-                    (selectedGauge == "" ? "No gauge selected" : "Gauge found")}
-                </Box>
+                <div className="flex flex-row mt-1">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "caption.fontSize",
+                    }}
+                  >
+                    {selectedGauge !== undefined &&
+                      (selectedGauge == ""
+                        ? "No gauge selected"
+                        : "Gauge found")}
+                  </Box>
+                </div>
               </div>
               <div className="flex flex-col-reverse md:flex-row">
                 <div className="flex flex-col justify-center m-4">
@@ -431,11 +435,11 @@ export default function Lock() {
                         <Box
                           sx={{
                             fontFamily: "Monospace",
-                            fontSize: "h6.fontSize",
+                            fontSize: "subtitle1.fontSize",
                             fontWeight: "bold",
                           }}
                         >
-                          Gauge Votes
+                          My Gauge Votes
                         </Box>
                       </div>
                       <div className="flex flex-row">

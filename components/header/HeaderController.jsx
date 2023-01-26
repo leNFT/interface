@@ -3,7 +3,7 @@ import LendingHeader from "./LendingHeader";
 import TradeHeader from "./TradeHeader";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { BannerStrip } from "@web3uikit/core";
-import { Reload } from "@web3uikit/icons";
+import { Reload, Roadmap } from "@web3uikit/icons";
 import Box from "@mui/material/Box";
 import { useAccount, useNetwork } from "wagmi";
 import { useSwitchNetwork } from "wagmi";
@@ -35,21 +35,34 @@ export default function HeaderController() {
 
   return (
     <div>
-      {chain && isConnected && chain.id != 5 && (
+      {chain && isConnected && (
         <div className="mb-6">
           <BannerStrip
             buttonDisplayed
             buttonConfig={{
               onClick: function noRefCheck() {
-                switchNetwork(5);
+                if (chain.id == 1) {
+                  switchNetwork(5);
+                } else if (chain.id == 5) {
+                  Router.push({
+                    pathname: "/test",
+                  });
+                }
               },
               iconLayout: "icon-only",
-              icon: (
-                <Reload fontSize="28px" color="#000000" title="Reload Icon" />
-              ),
+              icon:
+                chain.id == 1 ? (
+                  <Reload fontSize="28px" color="#000000" title="Reload Icon" />
+                ) : (
+                  <Roadmap fontSize="28px" color="#000000" title="Help Icon" />
+                ),
             }}
-            text="leNFT is only live on the Goerli testnet. Change networks to use the beta."
-            type="warning"
+            text={
+              chain.id == 1
+                ? "leNFT is only live on the Goerli testnet. Change networks to use the beta."
+                : "Follow the flag to mint testnet assets"
+            }
+            type={chain.id == 1 ? "warning" : "success"}
           />
         </div>
       )}

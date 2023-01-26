@@ -90,7 +90,12 @@ export default function Buy() {
   }
 
   async function getPriceQuote(amount) {
-    const newBuyQuote = await getBuyQuote(chain.id, amount, poolAddress);
+    var newBuyQuote;
+    if (selectingNFTs) {
+      newBuyQuote = await getBuyExactQuote(chain.id, selectedNFTs, poolAddress);
+    } else {
+      newBuyQuote = await getBuyQuote(chain.id, amount, poolAddress);
+    }
     setPriceQuote(newBuyQuote);
     if (newBuyQuote.lps.length < amount) {
       dispatch({

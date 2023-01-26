@@ -16,6 +16,7 @@ import Image from "next/image";
 import { getTradingNFTCollections } from "../../helpers/getTradingNFTCollections.js";
 import Chip from "@mui/material/Chip";
 import { ethers } from "ethers";
+import { getSwapExactQuote } from "../../helpers/getSwapExactQuote.js";
 import { getSwapQuote } from "../../helpers/getSwapQuote.js";
 import { Input } from "@nextui-org/react";
 import { Button, Select } from "grommet";
@@ -39,6 +40,7 @@ export default function Swap() {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const { address, isConnected } = useAccount();
+  const [tradingCollections, setTradingCollections] = useState([]);
   const [approvedToken, setApprovedToken] = useState(false);
   const [approvedNFT, setApprovedNFT] = useState(false);
   const [sellNFTAddress, setSellNFTAddress] = useState("");
@@ -47,10 +49,11 @@ export default function Swap() {
   const [buyPoolAddress, setBuyPoolAddress] = useState("");
   const [buyAmount, setBuyAmount] = useState(0);
   const [sellAmount, setSellAmount] = useState(0);
-  const [selectingNFTs, setSelectingNFTs] = useState(false);
-  const [selectedNFTs, setSelectedNFTs] = useState([]);
-  const [nftsToSell, setNFTsToSell] = useState([]);
-  const [tradingCollections, setTradingCollections] = useState([]);
+  const [selectingBuyNFTs, setSelectingBuyNFTs] = useState(false);
+  const [selectedBuyNFTs, setSelectedBuyNFTs] = useState([]);
+  const [selectingSellNFTs, setSelectingSellNFTs] = useState(false);
+  const [selectedSellNFTs, setSelectedSellNFTs] = useState([]);
+  const [userNFTs, setUserNFTs] = useState([]);
   const [priceQuote, setPriceQuote] = useState();
   const [swapLoading, setSwapLoading] = useState(false);
   const [tokenApprovalLoading, setTokenApprovalLoading] = useState(false);
@@ -122,26 +125,44 @@ export default function Swap() {
   ) {
     console.log("Getting swap quote");
     if (buyAmount && sellAmount && buyPoolAddress && sellPoolAddress) {
-      const newSwapQuote = await getSwapQuote(
-        chain.id,
-        buyAmount,
-        sellAmount,
-        buyPoolAddress,
-        sellPoolAddress
-      );
+      var newSwapQuote;
+      if (selectingBuyNFTs) {
+        newSwapQuote = await getSwapExactQuote(
+          chain.id,
+          selectedBuyNFTs,
+          sellAmount,
+          buyPoolAddress,
+          sellPoolAddress
+        );
+      } else {
+        newSwapQuote = await getSwapQuote(
+          chain.id,
+          buyAmount,
+          sellAmount,
+          buyPoolAddress,
+          sellPoolAddress
+        );
+      }
+
       setPriceQuote(newSwapQuote);
       setBuyAmount(newSwapQuote.buyLps.length);
-      console.log("newSwapQuote", newSwapQuote);
-
-      // Get an amount of random NFTs to sell
+      console.log("newSellQuote", newSellQuote);
+      // Fill the selected NFTs array
       var newSelectedNFTs = [];
-      for (let index = 0; index < newSwapQuote.sellLps.length; index++) {
-        if (index > nftsToSell.length - 1) {
-          break;
-        }
-        newSelectedNFTs.push(
-          BigNumber.from(nftsToSell[index].id.tokenId).toNumber()
+      if (selectingNFTs) {
+        // Remove any NFTs that can't be sold as per the quote
+        newSelectedNFTs = selectedNFTs.slice(
+          newSellQuote.lps.length - selectedNFTs.length
         );
+      } else {
+        for (let index = 0; index < newSellQuote.lps.length; index++) {
+          if (index > userNFTs.length) {
+            break;
+          }
+          newSelectedNFTs.push(
+            BigNumber.from(userNFTs[index].id.tokenId).toNumber()
+          );
+        }
       }
       console.log("newSelectedNFTs", newSelectedNFTs);
       setSelectedNFTs(newSelectedNFTs);
@@ -149,37 +170,11 @@ export default function Swap() {
     }
   }
 
-  async function getSellSelectedPriceQuote(
-    buyAmount,
-    selectedNFTs,
-    buyPoolAddress,
-    sellPoolAddress
-  ) {
-    console.log("Getting sell seleted swap quote");
-    if (buyAmount && selectedNFTs && buyPoolAddress && sellPoolAddress) {
-      const newSwapQuote = await getSwapQuote(
-        chain.id,
-        buyAmount,
-        selectedNFTs.length,
-        buyPoolAddress,
-        sellPoolAddress
-      );
-
-      console.log("newSwapQuote", newSwapQuote);
-      setPriceQuote(newSwapQuote);
-      setSellAmount(newSwapQuote.sellLps.length);
-      setSelectedNFTs(selectedNFTs.slice(0, newSwapQuote.sellLps.length));
-    } else {
-      setSellAmount(selectedNFTs.length);
-      setSelectedNFTs(selectedNFTs);
-    }
-  }
-
-  async function getUserSellCollectionNFTs(collection) {
+  async function getCollectionNFTs(collection) {
     // Get user NFT assets
     const addressNFTs = await getAddressNFTs(address, collection, chain.id);
     console.log("addressNsellCollectionNFTs", addressNFTs);
-    setNFTsToSell(addressNFTs);
+    setUserNFTs(addressNFTs);
   }
 
   async function getSellNFTName(collection) {
@@ -273,7 +268,7 @@ export default function Swap() {
     console.log("handleSellNFTAddressChange", value);
     if (ethers.utils.isAddress(value)) {
       setSellNFTAddress(value);
-      getUserSellCollectionNFTs(value);
+      getCollectionNFTs(value);
       getSellTradingPoolAddress(value);
     } else if (
       tradingCollections
@@ -284,7 +279,7 @@ export default function Swap() {
         (collection) => collection.contractMetadata.name == value
       ).address;
       setSellNFTAddress(nftAddress);
-      getUserSellCollectionNFTs(nftAddress);
+      getCollectionNFTs(nftAddress);
       getSellTradingPoolAddress(nftAddress);
     } else {
       console.log("Invalid NFT Address");
@@ -529,9 +524,9 @@ export default function Swap() {
               </div>
             </div>
           </div>
-          {selectingNFTs && (
+          {selectingSellNFTs && (
             <div className="flex flex-row m-4 grid md:grid-cols-3 lg:grid-cols-4">
-              {nftsToSell.map((nft, _) => (
+              {userNFTs.map((nft, _) => (
                 <div
                   key={BigNumber.from(nft.id.tokenId).toNumber()}
                   className="flex m-2 items-center justify-center max-w-[300px]"
@@ -539,7 +534,7 @@ export default function Swap() {
                   <Card
                     sx={{
                       borderRadius: 4,
-                      background: selectedNFTs.find(
+                      background: selectedSellNFTs.find(
                         (element) =>
                           element == BigNumber.from(nft.id.tokenId).toNumber()
                       )
@@ -550,21 +545,21 @@ export default function Swap() {
                     <CardActionArea
                       onClick={function () {
                         //If it's selected we unselect and if its unselected we select
-                        var newSelectedNFTs = selectedNFTs.slice();
-                        var index = newSelectedNFTs.findIndex(
+                        var newSelectedSellNFTs = selectedSellNFTs.slice();
+                        var index = newSelectedSellNFTs.findIndex(
                           (element) =>
                             element == BigNumber.from(nft.id.tokenId).toNumber()
                         );
                         if (index == -1) {
-                          newSelectedNFTs.push(
+                          newSelectedSellNFTs.push(
                             BigNumber.from(nft.id.tokenId).toNumber()
                           );
                         } else {
-                          newSelectedNFTs.splice(index, 1);
+                          newSelectedSellNFTs.splice(index, 1);
                         }
-                        getSellSelectedPriceQuote(
+                        getPriceQuote(
                           buyAmount,
-                          newSelectedNFTs,
+                          newSelectedSellNFTs.length,
                           buyPoolAddress,
                           sellPoolAddress
                         );
@@ -792,9 +787,9 @@ export default function Swap() {
                         } else {
                           newSelectedBuyNFTs.splice(index, 1);
                         }
-                        getSellSelectedPriceQuote(
-                          buyAmount,
-                          newSelectedNFTs,
+                        getPriceQuote(
+                          newSelectedBuyNFTs.length,
+                          sellAmount,
                           buyPoolAddress,
                           sellPoolAddress
                         );

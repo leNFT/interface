@@ -44,10 +44,7 @@ export default function Vote(props) {
 
   async function getGaugeVoteRatio() {
     const updatedGaugeVoteRatio =
-      await gaugeControllerProvider.userVoteWeightForGauge(
-        address,
-        props.gauge
-      );
+      await gaugeControllerProvider.userVoteRatioForGauge(address, props.gauge);
     setGaugeVoteRatio(updatedGaugeVoteRatio.toNumber());
   }
 

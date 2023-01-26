@@ -382,6 +382,7 @@ export default function Swap() {
   };
 
   const handleSellAmountInputChange = (event) => {
+    setSelectingSellNFTs(false);
     console.log("handleAmountInputChange", event.target.value);
     try {
       setSellAmount(event.target.value);
@@ -398,6 +399,7 @@ export default function Swap() {
   };
 
   const handleBuyAmountInputChange = (event) => {
+    setSelectingBuyNFTs(false);
     console.log("handleAmountInputChange", event.target.value);
     try {
       setBuyAmount(event.target.value);
@@ -1040,7 +1042,7 @@ export default function Swap() {
               console.log([
                 buyPoolAddress,
                 sellPoolAddress,
-                priceQuote.exampleBuyNFTs,
+                selectingBuyNFTs ? selectingBuyNFTs : priceQuote.exampleBuyNFTs,
                 priceQuote.buyPrice,
                 selectedSellNFTs,
                 priceQuote.sellLps,
@@ -1050,7 +1052,9 @@ export default function Swap() {
                 let tx = await swapRouterSigner.swap(
                   buyPoolAddress,
                   sellPoolAddress,
-                  priceQuote.exampleBuyNFTs,
+                  selectingBuyNFTs
+                    ? selectingBuyNFTs
+                    : priceQuote.exampleBuyNFTs,
                   priceQuote.buyPrice,
                   selectedSellNFTs,
                   priceQuote.sellLps,

@@ -42,12 +42,6 @@ export default function Vote(props) {
     signerOrProvider: signer,
   });
 
-  const votingEscrowProvider = useContract({
-    contractInterface: votingEscrowContract.abi,
-    addressOrName: addresses.VotingEscrow,
-    signerOrProvider: provider,
-  });
-
   async function getGaugeVoteRatio() {
     const updatedGaugeVoteRatio =
       await gaugeControllerProvider.userVoteWeightForGauge(
@@ -77,6 +71,7 @@ export default function Vote(props) {
 
   const handleVoteSuccess = async function (amount) {
     console.log("Voted", amount);
+    props.updateUI();
     props.updateGaugeDetails(props.gauge);
     props.setVisibility(false);
     dispatch({
@@ -100,7 +95,7 @@ export default function Vote(props) {
       <div className="flex flex-row items-center justify-center m-8">
         <div className="flex flex-col">
           <Typography variant="subtitle2">My Free Votes</Typography>
-          <Typography variant="body16">{freeVoteRatio / 1000} %</Typography>
+          <Typography variant="body16">{freeVoteRatio / 100} %</Typography>
         </div>
       </div>
       <div className="flex flex-col items-center justify-center m-8 mt-12">

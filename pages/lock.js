@@ -203,6 +203,7 @@ export default function Lock() {
         <Vote
           setVisibility={setVisibleVoteModal}
           gauge={selectedGauge}
+          updateUI={updateUI}
           updateGaugeDetails={updateGaugeDetails}
         />
       </StyledModal>

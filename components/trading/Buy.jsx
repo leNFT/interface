@@ -419,7 +419,7 @@ export default function Buy() {
                       } else {
                         newSelectedNFTs.splice(index, 1);
                       }
-                      getBuySelectedPriceQuote(newSelectedNFTs);
+                      getPriceQuote(newSelectedNFTs.length);
                     }}
                   >
                     <CardContent>

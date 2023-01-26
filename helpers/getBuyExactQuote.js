@@ -11,7 +11,7 @@ export async function getBuyExactQuote(chainId, nfts, pool) {
 
   const requestURL =
     serverAddress +
-    "/api/buyExact?nfts=" +
+    "/buyExact?nfts=" +
     nfts +
     "&pool=" +
     pool +

@@ -169,7 +169,7 @@ export default function Buy() {
   }, [isConnected, chain]);
 
   useEffect(() => {
-    if (nftAddress && poolAddress) {
+    if (nftAddress && poolAddress && selectedNFTs.length > 0) {
       setAmount(selectedNFTs.length);
       getPriceQuote(selectedNFTs.length);
     }
@@ -550,7 +550,7 @@ export default function Buy() {
               try {
                 const tx = await tradingPool.buy(
                   address,
-                  priceQuote.exampleNFTs,
+                  selectingNFTs ? selectedNFTs : priceQuote.exampleNFTs,
                   priceQuote.price
                 );
                 await tx.wait(1);

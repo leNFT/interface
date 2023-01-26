@@ -1042,7 +1042,7 @@ export default function Swap() {
               console.log([
                 buyPoolAddress,
                 sellPoolAddress,
-                selectingBuyNFTs ? selectingBuyNFTs : priceQuote.exampleBuyNFTs,
+                selectingBuyNFTs ? selectedBuyNFTs : priceQuote.exampleBuyNFTs,
                 priceQuote.buyPrice,
                 selectedSellNFTs,
                 priceQuote.sellLps,
@@ -1053,7 +1053,7 @@ export default function Swap() {
                   buyPoolAddress,
                   sellPoolAddress,
                   selectingBuyNFTs
-                    ? selectingBuyNFTs
+                    ? selectedBuyNFTs
                     : priceQuote.exampleBuyNFTs,
                   priceQuote.buyPrice,
                   selectedSellNFTs,

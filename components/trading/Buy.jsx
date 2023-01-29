@@ -286,7 +286,7 @@ export default function Buy() {
           renderInput={(params) => (
             <TextField
               {...params}
-              label="Token"
+              label="NFT Name or Address"
               sx={{
                 "& label": {
                   paddingLeft: (theme) => theme.spacing(2),

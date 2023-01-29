@@ -50,7 +50,7 @@ export default function Genesis() {
     const updatedCap = await genesisNFTProvider.getCap();
     setCap(updatedCap.toNumber());
     // Get price
-    const updatedPrice = await genesisNFTProvider.getETHPrice();
+    const updatedPrice = await genesisNFTProvider.getPrice();
     console.log("updatedPrice", updatedPrice);
     setPrice(updatedPrice.toString());
   }

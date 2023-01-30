@@ -931,7 +931,7 @@ export default function Swap() {
             fontWeight: "bold",
           }}
         >
-          {sellPoolAddress == buyPoolAddress
+          {sellPoolAddress == buyPoolAddress && sellPoolAddress != ""
             ? "Please select two different collections"
             : priceQuote &&
               (BigNumber.from(priceQuote.buyPrice).gt(priceQuote.sellPrice)

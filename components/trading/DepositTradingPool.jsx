@@ -20,6 +20,7 @@ import {
   Typography,
   Select,
 } from "@web3uikit/core";
+import { Dropdown } from "@nextui-org/react";
 import styles from "../../styles/Home.module.css";
 import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
@@ -152,18 +153,6 @@ export default function DepositTradingPool(props) {
     }
   }
 
-  function handleCurveChange(e) {
-    if (e.id != "") {
-      if (e.id == "exponential") {
-        setCurve(e.id);
-      } else if (e.id == "linear") {
-        setCurve(e.id);
-      }
-    } else {
-      setCurve("");
-    }
-  }
-
   function handleInitialPriceChange(e) {
     if (e.target.value != "") {
       setInitialPrice(parseUnits(e.target.value, 18));
@@ -187,24 +176,28 @@ export default function DepositTradingPool(props) {
     console.log("newDelta;", e.target.value);
   }
 
+  function handleCurveChange(e) {
+    setCurve(e);
+  }
+
   return (
     <div className={styles.container}>
       <div className="flex flex-row items-center justify-center m-8">
-        <Select
-          defaultOptionIndex={0}
-          label="Curve"
-          onChange={handleCurveChange}
-          options={[
-            {
-              id: "exponential",
-              label: "Exponential",
-            },
-            {
-              id: "linear",
-              label: "Linear",
-            },
-          ]}
-        />
+        <Dropdown>
+          <Dropdown.Button flat>
+            {curve && curve.replace(/^./, curve[0].toUpperCase())}
+          </Dropdown.Button>
+          <Dropdown.Menu
+            aria-label="Static Actions"
+            selectionMode="single"
+            onAction={handleCurveChange}
+            disallowEmptySelection
+            selectedKeys={[curve]}
+          >
+            <Dropdown.Item key="exponential">Exponential</Dropdown.Item>
+            <Dropdown.Item key="linear">Linear</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       </div>
       <div className="flex flex-row items-center justify-center m-8">
         <Input

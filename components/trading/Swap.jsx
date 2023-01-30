@@ -130,7 +130,13 @@ export default function Swap() {
     sellPoolAddress
   ) {
     console.log("Getting swap quote");
-    if (buyAmount && sellAmount && buyPoolAddress && sellPoolAddress) {
+    if (
+      buyAmount &&
+      sellAmount &&
+      buyPoolAddress &&
+      sellPoolAddress &&
+      buyPoolAddress != sellPoolAddress
+    ) {
       var newSwapQuote;
       if (selectingBuyNFTs) {
         console.log("selectedBuyNFTs", selectedBuyNFTs);
@@ -917,31 +923,37 @@ export default function Swap() {
           />
         </Divider>
       </div>
-      {priceQuote && (
-        <div className="flex flex-row w-full justify-center m-4">
-          <Box
-            sx={{
-              fontFamily: "Monospace",
-              fontSize: "h6.fontSize",
-              fontWeight: "bold",
-            }}
-          >
-            {BigNumber.from(priceQuote.buyPrice).gt(priceQuote.sellPrice)
-              ? "You pay: " +
-                formatUnits(
-                  BigNumber.from(priceQuote.buyPrice).sub(priceQuote.sellPrice),
-                  18
-                ) +
-                " WETH"
-              : "You receive: " +
-                formatUnits(
-                  BigNumber.from(priceQuote.sellPrice).sub(priceQuote.buyPrice),
-                  18
-                ) +
-                " WETH"}
-          </Box>
-        </div>
-      )}
+      <div className="flex flex-row w-full justify-center m-4">
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: "h6.fontSize",
+            fontWeight: "bold",
+          }}
+        >
+          {sellPoolAddress == buyPoolAddress
+            ? "Please select two different collections"
+            : priceQuote &&
+              (BigNumber.from(priceQuote.buyPrice).gt(priceQuote.sellPrice)
+                ? "You pay: " +
+                  formatUnits(
+                    BigNumber.from(priceQuote.buyPrice).sub(
+                      priceQuote.sellPrice
+                    ),
+                    18
+                  ) +
+                  " WETH"
+                : "You receive: " +
+                  formatUnits(
+                    BigNumber.from(priceQuote.sellPrice).sub(
+                      priceQuote.buyPrice
+                    ),
+                    18
+                  ) +
+                  " WETH")}
+        </Box>
+      </div>
+
       <div className="flex flex-row mt-8 mb-2 w-8/12 md:w-6/12">
         {!approvedNFT ? (
           <Button

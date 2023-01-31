@@ -284,7 +284,7 @@ export default function Sell() {
                 "& label": {
                   paddingLeft: (theme) => theme.spacing(2),
                   fontFamily: "Monospace",
-                  fontSize: "h6.fontSize",
+                  fontSize: "subtitle1.fontSize",
                 },
                 "& input": {
                   paddingLeft: (theme) => theme.spacing(3.5),
@@ -388,7 +388,7 @@ export default function Sell() {
           </div>
         </div>
         {selectingNFTs && (
-          <div className="flex flex-row m-4 grid md:grid-cols-3 lg:grid-cols-4">
+          <div className="flex flex-row m-4 grid md:grid-cols-3 lg:grid-cols-4 overflow-auto max-h-[24rem]">
             {userNFTs.map((nft, _) => (
               <div
                 key={BigNumber.from(nft.id.tokenId).toNumber()}
@@ -435,7 +435,7 @@ export default function Sell() {
                         />
                       ) : (
                         <Box
-                          className="flex m-2 justify-center items-center w-[40px] md:w-[80px] h-[40px] md:h-[80px]"
+                          className="flex m-2 justify-center items-center w-[100px] h-[100px]"
                           sx={{
                             fontFamily: "Monospace",
                             fontSize: "caption",

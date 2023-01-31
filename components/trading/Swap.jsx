@@ -17,10 +17,9 @@ import Chip from "@mui/material/Chip";
 import { ethers } from "ethers";
 import { getSwapExactQuote } from "../../helpers/getSwapExactQuote.js";
 import { getSwapQuote } from "../../helpers/getSwapQuote.js";
-import { Input } from "@nextui-org/react";
+import { Input, Loading } from "@nextui-org/react";
 import { Button, Select } from "grommet";
 import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import { CardActionArea } from "@mui/material";
 import { formatUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
@@ -55,6 +54,7 @@ export default function Swap() {
   const [selectedSellNFTs, setSelectedSellNFTs] = useState([]);
   const [userNFTs, setUserNFTs] = useState([]);
   const [priceQuote, setPriceQuote] = useState();
+  const [loadingPriceQuote, setLoadingPriceQuote] = useState(false);
   const [swapLoading, setSwapLoading] = useState(false);
   const [tokenApprovalLoading, setTokenApprovalLoading] = useState(false);
   const [nftApprovalLoading, setNFTApprovalLoading] = useState(false);
@@ -136,6 +136,7 @@ export default function Swap() {
     sellPoolAddress
   ) {
     console.log("Getting swap quote");
+
     if (
       buyAmount &&
       sellAmount &&
@@ -143,6 +144,8 @@ export default function Swap() {
       sellPoolAddress &&
       buyPoolAddress != sellPoolAddress
     ) {
+      setPriceQuote();
+      setLoadingPriceQuote(true);
       var newSwapQuote;
       if (selectingBuyNFTs) {
         console.log("selectedBuyNFTs", selectedBuyNFTs);
@@ -165,6 +168,7 @@ export default function Swap() {
         console.log("newSwapQuote", newSwapQuote);
       }
       setPriceQuote(newSwapQuote);
+      setLoadingPriceQuote(false);
 
       setSellAmount(newSwapQuote.sellLps.length);
       // Fill the selected NFTs array
@@ -213,6 +217,8 @@ export default function Swap() {
         console.log("newSelectedBuyNFTs", newSelectedBuyNFTs);
         setSelectedBuyNFTs(newSelectedBuyNFTs);
       }
+    } else {
+      setPriceQuote();
     }
   }
 
@@ -510,7 +516,7 @@ export default function Swap() {
                     "& label": {
                       paddingLeft: (theme) => theme.spacing(2),
                       fontFamily: "Monospace",
-                      fontSize: "h6.fontSize",
+                      fontSize: "subtitle1.fontSize",
                     },
                     "& input": {
                       paddingLeft: (theme) => theme.spacing(3.5),
@@ -615,7 +621,7 @@ export default function Swap() {
                 </div>
               </div>
               {selectingSellNFTs && (
-                <div className="flex flex-row m-4 grid md:grid-cols-3 lg:grid-cols-4">
+                <div className="flex flex-row m-4 grid grid-cols-3 lg:grid-cols-4 overflow-auto max-h-[24rem]">
                   {userNFTs.map((nft, _) => (
                     <div
                       key={BigNumber.from(nft.id.tokenId).toNumber()}
@@ -663,7 +669,7 @@ export default function Swap() {
                               />
                             ) : (
                               <Box
-                                className="flex m-2 justify-center items-center w-[40px] md:w-[80px] h-[40px] md:h-[80px]"
+                                className="flex m-2 justify-center items-center w-[100px] h-[100px]"
                                 sx={{
                                   fontFamily: "Monospace",
                                   fontSize: "caption",
@@ -762,7 +768,7 @@ export default function Swap() {
                     "& label": {
                       paddingLeft: (theme) => theme.spacing(2),
                       fontFamily: "Monospace",
-                      fontSize: "h6.fontSize",
+                      fontSize: "subtitle1.fontSize",
                     },
                     "& input": {
                       paddingLeft: (theme) => theme.spacing(3.5),
@@ -867,7 +873,7 @@ export default function Swap() {
                 </div>
               </div>
               {selectingBuyNFTs && (
-                <div className="flex flex-row m-4 grid grid-cols-3 lg:grid-cols-4">
+                <div className="flex flex-row m-4 grid grid-cols-3 lg:grid-cols-4 overflow-auto max-h-[24rem]">
                   {availableBuyPoolNFTs.map((nft, _) => (
                     <div
                       key={BigNumber.from(nft.id.tokenId).toNumber()}
@@ -915,7 +921,7 @@ export default function Swap() {
                               />
                             ) : (
                               <Box
-                                className="flex m-2 justify-center items-center w-[40px] md:w-[80px] h-[40px] md:h-[80px]"
+                                className="flex m-2 justify-center items-center w-[100px] h-[100px]"
                                 sx={{
                                   fontFamily: "Monospace",
                                   fontSize: "caption",
@@ -944,6 +950,7 @@ export default function Swap() {
           )}
         </div>
       </div>
+      {loadingPriceQuote && <Loading className="m-12" size="xl" />}
       {priceQuote && (
         <div className="flex flex-col items-center text-center justify-center p-4 m-4 mb-0 rounded-3xl bg-black/5 shadow-lg">
           <Box

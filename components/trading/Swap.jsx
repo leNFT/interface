@@ -953,7 +953,7 @@ export default function Swap() {
       </div>
       {loadingPriceQuote && <Loading className="m-12" size="xl" />}
       {priceQuote && (
-        <div className="flex flex-col items-center text-center justify-center p-4 m-4 mb-0 rounded-3xl bg-black/5 shadow-lg">
+        <div className="flex flex-col items-center text-center justify-center p-4 m-4 rounded-3xl bg-black/5 shadow-lg">
           <Box
             className="mb-4"
             sx={{
@@ -1081,7 +1081,7 @@ export default function Swap() {
           )}
         </div>
       )}
-      <div className="flex flex-row mt-10 mb-2 w-8/12 md:w-6/12">
+      <div className="flex flex-row m-6 w-8/12 md:w-6/12">
         {!approvedNFT ? (
           <Button
             primary

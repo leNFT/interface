@@ -1,7 +1,7 @@
 import { useNotification } from "@web3uikit/core";
 import contractAddresses from "../../contractAddresses.json";
 import { Button } from "grommet";
-import { Input } from "@nextui-org/react";
+import { Input, Loading } from "@nextui-org/react";
 import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
 import { getTradingNFTCollections } from "../../helpers/getTradingNFTCollections.js";
 import { ethers } from "ethers";
@@ -40,6 +40,7 @@ export default function Sell() {
   const [nftAddress, setNFTAddress] = useState("");
   const [poolAddress, setPoolAddress] = useState("");
   const [amount, setAmount] = useState(0);
+  const [loadingPriceQuote, setLoadingPriceQuote] = useState(false);
   const [selectingNFTs, setSelectingNFTs] = useState(false);
   const [selectedNFTs, setSelectedNFTs] = useState([]);
   const [userNFTs, setUserNFTs] = useState([]);
@@ -461,45 +462,68 @@ export default function Sell() {
           </div>
         )}
       </div>
-      <div className="flex flex-row w-9/12 justify-center m-4 items-center">
-        <Divider style={{ width: "100%" }}>
-          {nftName && (
-            <Chip
-              label={
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle2.fontSize",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {nftName ? amount + " " + nftName : "?"}
-                </Box>
-              }
-              variant="outlined"
-              component="a"
-              clickable
-              target="_blank"
-              href={
-                chain.id == 1
-                  ? "https://etherscan.io/address/" + nftAddress
-                  : "https://goerli.etherscan.io/address/" + nftAddress
-              }
-            />
-          )}
-        </Divider>
-      </div>
+      {loadingPriceQuote && <Loading className="m-12" size="xl" />}
       {priceQuote && (
-        <div className="flex flex-row justify-center items-center text-center">
+        <div className="flex flex-col items-center text-center justify-center p-4 m-4 rounded-3xl bg-black/5 shadow-lg">
           <Box
+            className="mb-4"
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "subtitle2.fontSize",
+              fontWeight: "bold",
+            }}
+          >
+            Your price quote
+          </Box>
+          <div className="flex flex-row w-full justify-center items-center m-2">
+            <Divider style={{ width: "100%" }}>
+              {nftName && (
+                <Chip
+                  label={
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle2.fontSize",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {nftName ? amount + " " + nftName : "?"}
+                    </Box>
+                  }
+                  variant="outlined"
+                  component="a"
+                  clickable
+                  target="_blank"
+                  href={
+                    chain.id == 1
+                      ? "https://etherscan.io/address/" + nftAddress
+                      : "https://goerli.etherscan.io/address/" + nftAddress
+                  }
+                />
+              )}
+            </Divider>
+          </div>
+          <Box
+            className="m-4"
             sx={{
               fontFamily: "Monospace",
               fontSize: "h6.fontSize",
               fontWeight: "bold",
             }}
           >
-            {"Price: " + formatUnits(priceQuote.price, 18) + " WETH"}
+            {formatUnits(priceQuote.price, 18)} WETH
           </Box>
+          {priceQuote.priceImpact && (
+            <Box
+              className="m-1"
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle1.fontSize",
+              }}
+            >
+              Price Impact: {priceQuote.priceImpact / 100}%
+            </Box>
+          )}
         </div>
       )}
       <div className="flex flex-row m-6 w-8/12 md:w-6/12">

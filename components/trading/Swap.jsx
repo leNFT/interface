@@ -337,6 +337,7 @@ export default function Swap() {
 
   const handleSellNFTAddressChange = (_event, value) => {
     console.log("handleSellNFTAddressChange", value);
+    setSellAmount(0);
     if (ethers.utils.isAddress(value)) {
       setSellNFTAddress(value);
       getCollectionNFTs(value);
@@ -367,6 +368,7 @@ export default function Swap() {
 
   const handleBuyNFTAddressChange = (_event, value) => {
     console.log("handleBuyNFTAddressChange", value);
+    setBuyAmount(0);
     if (ethers.utils.isAddress(value)) {
       setBuyNFTAddress(value);
       getBuyTradingPoolAddress(value);
@@ -942,72 +944,72 @@ export default function Swap() {
           )}
         </div>
       </div>
-      <div className="flex flex-row w-full justify-center items-center">
-        <Divider style={{ width: "100%" }}>
-          <Chip
-            label={
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "subtitle2.fontSize",
-                  fontWeight: "bold",
-                }}
-              >
-                {sellNFTName ? sellAmount + " " + sellNFTName : "?"}
-              </Box>
-            }
-            variant="outlined"
-            component="a"
-            clickable={sellNFTAddress != ""}
-            target="_blank"
-            href={
-              sellNFTAddress != ""
-                ? chain.id == 1
-                  ? "https://etherscan.io/address/" + sellNFTAddress
-                  : "https://goerli.etherscan.io/address/" + sellNFTAddress
-                : ""
-            }
-          />
-          <ArrowForwardOutlinedIcon className="mx-1" />
-          <Chip
-            label={
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "subtitle2.fontSize",
-                  fontWeight: "bold",
-                }}
-              >
-                {buyNFTName ? buyAmount + " " + buyNFTName : "?"}
-              </Box>
-            }
-            variant="outlined"
-            component="a"
-            clickable={buyNFTAddress != ""}
-            target="_blank"
-            href={
-              buyNFTAddress != ""
-                ? chain.id == 1
-                  ? "https://etherscan.io/address/" + buyNFTAddress
-                  : "https://goerli.etherscan.io/address/" + buyNFTAddress
-                : ""
-            }
-          />
-        </Divider>
-      </div>
       {priceQuote && (
         <div className="flex flex-col items-center text-center justify-center p-4 m-4 mb-0 rounded-3xl bg-black/5 shadow-lg">
           <Box
-            className="mb-2"
+            className="mb-4"
             sx={{
               fontFamily: "Monospace",
               fontSize: "subtitle2.fontSize",
               fontWeight: "bold",
             }}
           >
-            Got a price quote!
+            Your price quote
           </Box>
-          <div className="flex flex-row">
+          <div className="flex flex-row w-full justify-center items-center m-2">
+            <Divider style={{ width: "100%" }}>
+              <Chip
+                label={
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {sellNFTName ? sellAmount + " " + sellNFTName : "?"}
+                  </Box>
+                }
+                variant="outlined"
+                component="a"
+                clickable={sellNFTAddress != ""}
+                target="_blank"
+                href={
+                  sellNFTAddress != ""
+                    ? chain.id == 1
+                      ? "https://etherscan.io/address/" + sellNFTAddress
+                      : "https://goerli.etherscan.io/address/" + sellNFTAddress
+                    : ""
+                }
+              />
+              <ArrowForwardOutlinedIcon className="mx-1" />
+              <Chip
+                label={
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {buyNFTName ? buyAmount + " " + buyNFTName : "?"}
+                  </Box>
+                }
+                variant="outlined"
+                component="a"
+                clickable={buyNFTAddress != ""}
+                target="_blank"
+                href={
+                  buyNFTAddress != ""
+                    ? chain.id == 1
+                      ? "https://etherscan.io/address/" + buyNFTAddress
+                      : "https://goerli.etherscan.io/address/" + buyNFTAddress
+                    : ""
+                }
+              />
+            </Divider>
+          </div>
+          <div className="flex flex-row m-2">
             <Box
               className="m-2"
               sx={{
@@ -1103,7 +1105,7 @@ export default function Swap() {
             fill="horizontal"
             size="large"
             color="#063970"
-            loading={tokenApprovalLoading.toString()}
+            disabled={tokenApprovalLoading}
             onClick={async function () {
               setTokenApprovalLoading(true);
               const tokenContract = new ethers.Contract(
@@ -1144,7 +1146,7 @@ export default function Swap() {
             primary
             fill="horizontal"
             size="large"
-            disabled={swapLoading}
+            disabled={swapLoading || !priceQuote}
             color="#063970"
             onClick={async function () {
               if (

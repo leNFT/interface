@@ -22,6 +22,7 @@ export default function GenesisMint(props) {
   const { data: signer } = useSigner();
   const [mintingLoading, setMintingLoading] = useState(false);
   const [rewards, setRewards] = useState("0");
+  const [gettingRewards, setGettingRewards] = useState(false);
   const [locktimeDays, setLocktimeDays] = useState(14);
 
   const addresses =
@@ -50,6 +51,10 @@ export default function GenesisMint(props) {
   }
 
   useEffect(() => {
+    updateMintInfo();
+  }, [locktimeDays]);
+
+  useEffect(() => {
     if (isConnected) {
       updateMintInfo();
     }
@@ -68,8 +73,8 @@ export default function GenesisMint(props) {
   };
 
   function handleInputChange(_, newValue) {
+    console.log("locktimeDays: ", newValue);
     setLocktimeDays(newValue);
-    updateMintInfo();
   }
 
   return (
@@ -85,7 +90,7 @@ export default function GenesisMint(props) {
       <div className="flex flex-row items-center justify-center m-4 text-center">
         <div className="flex flex-col">
           <Typography variant="subtitle2">Token ID</Typography>
-          <Typography variant="body16">{props.mintCount}</Typography>
+          <Typography variant="body16">{props.mintCount + 1}</Typography>
         </div>
       </div>
       <div className="flex flex-col p-2 border-4 rounded-3xl">
@@ -104,7 +109,7 @@ export default function GenesisMint(props) {
         <div className="flex flex-row items-center justify-center p-4">
           <Slider
             valueLabelDisplay="auto"
-            onChange={handleInputChange}
+            onChangeCommitted={handleInputChange}
             min={0}
             step={1}
             max={120}

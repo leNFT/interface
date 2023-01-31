@@ -1019,7 +1019,7 @@ export default function Swap() {
           </div>
           <div className="flex flex-row m-4 items-left">
             <Box
-              className="m-1"
+              className="m-2"
               sx={{
                 fontFamily: "Monospace",
                 fontSize: "h6.fontSize",
@@ -1032,7 +1032,7 @@ export default function Swap() {
               }}
             >
               {BigNumber.from(priceQuote.buyPrice).gt(priceQuote.sellPrice)
-                ? "-" +
+                ? "− " +
                   formatUnits(
                     BigNumber.from(priceQuote.buyPrice).sub(
                       priceQuote.sellPrice
@@ -1040,7 +1040,7 @@ export default function Swap() {
                     18
                   ) +
                   " WETH"
-                : "+" +
+                : "＋ " +
                   formatUnits(
                     BigNumber.from(priceQuote.sellPrice).sub(
                       priceQuote.buyPrice

@@ -1,5 +1,6 @@
-import { useNotification, Typography } from "@web3uikit/core";
+import { useNotification, Typography, Tooltip } from "@web3uikit/core";
 import contractAddresses from "../../contractAddresses.json";
+import { HelpCircle } from "@web3uikit/icons";
 import {
   useAccount,
   useNetwork,
@@ -1016,19 +1017,9 @@ export default function Swap() {
               />
             </Divider>
           </div>
-          <div className="flex flex-row m-2">
+          <div className="flex flex-row m-4 items-left">
             <Box
-              className="m-2"
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "h6.fontSize",
-                fontWeight: "bold",
-              }}
-            >
-              Change:
-            </Box>
-            <Box
-              className="m-2"
+              className="m-1"
               sx={{
                 fontFamily: "Monospace",
                 fontSize: "h6.fontSize",
@@ -1058,7 +1049,36 @@ export default function Swap() {
                   ) +
                   " WETH"}
             </Box>
+            <Tooltip
+              content="The 'change' resulting from the swap. Negative you pay, positive you receive."
+              position="right"
+              minWidth={200}
+            >
+              <HelpCircle fontSize="20px" color="#000000" />
+            </Tooltip>
           </div>
+          {priceQuote.buyPriceImpact && (
+            <Box
+              className="m-1"
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle1.fontSize",
+              }}
+            >
+              Buy Side Impact: {priceQuote.buyPriceImpact / 100}%
+            </Box>
+          )}
+          {priceQuote.sellPriceImpact && (
+            <Box
+              className="m-1"
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle1.fontSize",
+              }}
+            >
+              Sell Side Impact: {priceQuote.sellPriceImpact / 100}%
+            </Box>
+          )}
         </div>
       )}
       <div className="flex flex-row mt-10 mb-2 w-8/12 md:w-6/12">

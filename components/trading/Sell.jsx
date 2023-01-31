@@ -424,8 +424,28 @@ export default function Sell() {
                       setSelectedNFTs(newSelectedNFTs);
                     }}
                   >
-                    <CardContent>
+                    <div className="flex flex-col items-center p-1">
+                      {nft.metadata.image ? (
+                        <Image
+                          loader={() => nft.metadata.image}
+                          src={nft.metadata.image}
+                          height="100"
+                          width="100"
+                          className="rounded-xl"
+                        />
+                      ) : (
+                        <Box
+                          className="flex m-2 justify-center items-center w-[40px] md:w-[80px] h-[40px] md:h-[80px]"
+                          sx={{
+                            fontFamily: "Monospace",
+                            fontSize: "caption",
+                          }}
+                        >
+                          No Image
+                        </Box>
+                      )}
                       <Box
+                        className="mt-1"
                         sx={{
                           fontFamily: "Monospace",
                           fontSize: "caption",
@@ -433,7 +453,7 @@ export default function Sell() {
                       >
                         {BigNumber.from(nft.id.tokenId).toNumber()}
                       </Box>
-                    </CardContent>
+                    </div>
                   </CardActionArea>
                 </Card>
               </div>

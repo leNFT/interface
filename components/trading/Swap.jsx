@@ -85,6 +85,7 @@ export default function Swap() {
     // Get user NFT assets
     const addressNFTs = await getAddressNFTs(pool, collection, chain.id);
     setAvailableBuyPoolNFTs(addressNFTs);
+    console.log("availableBuyPoolNFTs", addressNFTs);
   }
 
   async function getTradingCollections() {
@@ -649,8 +650,28 @@ export default function Swap() {
                             setSelectedSellNFTs(newSelectedSellNFTs);
                           }}
                         >
-                          <CardContent>
+                          <div className="flex flex-col items-center p-1">
+                            {nft.metadata.image ? (
+                              <Image
+                                loader={() => nft.metadata.image}
+                                src={nft.metadata.image}
+                                height="100"
+                                width="100"
+                                className="rounded-xl"
+                              />
+                            ) : (
+                              <Box
+                                className="flex m-2 justify-center items-center w-[40px] md:w-[80px] h-[40px] md:h-[80px]"
+                                sx={{
+                                  fontFamily: "Monospace",
+                                  fontSize: "caption",
+                                }}
+                              >
+                                No Image
+                              </Box>
+                            )}
                             <Box
+                              className="mt-1"
                               sx={{
                                 fontFamily: "Monospace",
                                 fontSize: "caption",
@@ -658,7 +679,7 @@ export default function Swap() {
                             >
                               {BigNumber.from(nft.id.tokenId).toNumber()}
                             </Box>
-                          </CardContent>
+                          </div>
                         </CardActionArea>
                       </Card>
                     </div>
@@ -844,7 +865,7 @@ export default function Swap() {
                 </div>
               </div>
               {selectingBuyNFTs && (
-                <div className="flex flex-row m-4 grid md:grid-cols-3 lg:grid-cols-4">
+                <div className="flex flex-row m-4 grid grid-cols-3 lg:grid-cols-4">
                   {availableBuyPoolNFTs.map((nft, _) => (
                     <div
                       key={BigNumber.from(nft.id.tokenId).toNumber()}
@@ -881,8 +902,28 @@ export default function Swap() {
                             setSelectedBuyNFTs(newSelectedBuyNFTs);
                           }}
                         >
-                          <CardContent>
+                          <div className="flex flex-col items-center p-1">
+                            {nft.metadata.image ? (
+                              <Image
+                                loader={() => nft.metadata.image}
+                                src={nft.metadata.image}
+                                height="100"
+                                width="100"
+                                className="rounded-xl"
+                              />
+                            ) : (
+                              <Box
+                                className="flex m-2 justify-center items-center w-[40px] md:w-[80px] h-[40px] md:h-[80px]"
+                                sx={{
+                                  fontFamily: "Monospace",
+                                  fontSize: "caption",
+                                }}
+                              >
+                                No Image
+                              </Box>
+                            )}
                             <Box
+                              className="mt-1"
                               sx={{
                                 fontFamily: "Monospace",
                                 fontSize: "caption",
@@ -890,7 +931,7 @@ export default function Swap() {
                             >
                               {BigNumber.from(nft.id.tokenId).toNumber()}
                             </Box>
-                          </CardContent>
+                          </div>
                         </CardActionArea>
                       </Card>
                     </div>

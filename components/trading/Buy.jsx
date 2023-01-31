@@ -483,7 +483,7 @@ export default function Buy() {
               fontWeight: "bold",
             }}
           >
-            Your price quote
+            Your buy quote
           </Box>
           <div className="flex flex-row w-full justify-center items-center m-2">
             <Divider style={{ width: "100%" }}>

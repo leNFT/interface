@@ -962,7 +962,7 @@ export default function Swap() {
               fontWeight: "bold",
             }}
           >
-            Your price quote
+            Your swap quote
           </Box>
           <div className="flex flex-row w-full justify-center items-center m-2">
             <Divider style={{ width: "100%" }}>

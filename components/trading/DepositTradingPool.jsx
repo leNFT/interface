@@ -106,7 +106,7 @@ export default function DepositTradingPool(props) {
 
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
-    if (props.pool && props.token && props.nft) {
+    if (props.pool && props.token && props.nft && isConnected) {
       console.log("Got trading pool address, setting the rest...", props.pool);
       getTokenAllowance();
       getNFTAllowance();
@@ -199,7 +199,7 @@ export default function DepositTradingPool(props) {
           </Dropdown.Menu>
         </Dropdown>
       </div>
-      <div className="flex flex-row items-center justify-center m-8">
+      <div className="flex flex-row items-center justify-center m-12">
         <Input
           label={
             curve == "exponential"
@@ -210,32 +210,38 @@ export default function DepositTradingPool(props) {
           }
           type="number"
           step="any"
+          placeholder="0"
+          description="The LP price change after each buy/sell"
           validation={{
             numberMin: 0,
           }}
           onChange={handleDeltaChange}
         />
       </div>
-      <div className="flex flex-row items-center justify-center m-8">
+      <div className="flex flex-row items-center justify-center m-12">
         <Input
           label="Initial Price"
           type="number"
+          placeholder="> 0"
           step="any"
+          description="The initial price of the LP"
           validation={{
             numberMin: 0,
           }}
           onChange={handleInitialPriceChange}
         />
       </div>
-      <div className="flex flex-row items-center justify-center m-8">
+      <div className="flex flex-row items-center justify-center m-12">
         {approvedToken ? (
           <Input
-            label="Token Amount"
+            label="WETH Amount"
             type="number"
+            placeholder="0"
             step="any"
             validation={{
               numberMin: 0,
             }}
+            description="Amount of WETH to deposit alongside the NFTs."
             disabled={!approvedToken}
             onChange={handleTokenAmountChange}
           />

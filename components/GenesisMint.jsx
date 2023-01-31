@@ -22,7 +22,6 @@ export default function GenesisMint(props) {
   const { data: signer } = useSigner();
   const [mintingLoading, setMintingLoading] = useState(false);
   const [rewards, setRewards] = useState("0");
-  const [gettingRewards, setGettingRewards] = useState(false);
   const [locktimeDays, setLocktimeDays] = useState(14);
 
   const addresses =
@@ -62,6 +61,8 @@ export default function GenesisMint(props) {
 
   const handleMintingSuccess = async function () {
     console.log("Minted");
+    // Reset fields
+    setLocktimeDays(14);
     props.setVisibility(false);
     props.updateUI();
     dispatch({

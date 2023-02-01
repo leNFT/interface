@@ -37,6 +37,7 @@ export default function TradingPools() {
     var newTableData = [];
 
     for (const [key, value] of Object.entries(tradingPools)) {
+      console.log("pushed: key", key);
       newTableData.push([
         value.nft.image != "" && (
           <Image
@@ -126,6 +127,7 @@ export default function TradingPools() {
 
   useEffect(() => {
     if (isConnected) {
+      console.log("updateTableData()");
       updateTableData();
     }
   }, [isConnected]);

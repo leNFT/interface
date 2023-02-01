@@ -7,12 +7,14 @@ import {
   useSigner,
   useProvider,
 } from "wagmi";
+import Box from "@mui/material/Box";
 import { formatUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
 import { useState, useEffect } from "react";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
+import { ethers } from "ethers";
 import Select from "@mui/material/Select";
 import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json";
 
@@ -22,8 +24,9 @@ export default function CreateTradingPool(props) {
   const { data: signer } = useSigner();
   const [creatingLoading, setCreatingLoading] = useState(false);
   const [collection, setCollection] = useState("");
-  const [asset, setAsset] = useState("");
+
   const provider = useProvider();
+  const [errorMessage, setErrorMessage] = useState("");
   const [swapFee, setSwapFee] = useState("0");
 
   const dispatch = useNotification();
@@ -32,6 +35,7 @@ export default function CreateTradingPool(props) {
     chain && chain.id in contractAddresses
       ? contractAddresses[chain.id]
       : contractAddresses["1"];
+  const [asset, setAsset] = useState(addresses.ETH.address);
 
   const factorySigner = useContract({
     contractInterface: tradingPoolFactoryContract.abi,
@@ -72,7 +76,28 @@ export default function CreateTradingPool(props) {
     });
   };
 
+  async function getErrorMessage(collection) {
+    if (collection == "") {
+      setErrorMessage("");
+      return;
+    }
+
+    if (ethers.utils.isAddress(collection)) {
+      const pool = (
+        await factoryProvider.getTradingPool(collection, asset)
+      ).toString();
+      console.log("pool", pool);
+      if (pool != ethers.constants.AddressZero) {
+        setErrorMessage("Pool already exists!");
+        return;
+      }
+    } else {
+      setErrorMessage("Invalid Address!");
+    }
+  }
+
   function handleCollectionChange(e) {
+    getErrorMessage(e.target.value);
     setCollection(e.target.value);
   }
 
@@ -90,8 +115,9 @@ export default function CreateTradingPool(props) {
           </div>
         </div>
       </div>
-      <div className="flex flex-row items-center justify-center mt-8 mb-2 mx-2 md:mx-8">
+      <div className="flex flex-col items-center justify-center mt-8 mb-2 mx-2 md:mx-8">
         <Input
+          description="The address of the pool's NFT collection."
           width="100%"
           label="Collection Address"
           type="text"
@@ -109,13 +135,23 @@ export default function CreateTradingPool(props) {
             onChange={handleAssetChange}
             className="rounded-2xl"
           >
-            <MenuItem value={"0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6"}>
-              Ethereum (ETH)
-            </MenuItem>
+            <MenuItem value={addresses.ETH.address}>Ethereum (ETH)</MenuItem>
           </Select>
         </FormControl>
       </div>
-
+      {errorMessage && (
+        <Box
+          className="flex flex-col items-center text-red-500 mb-4"
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: "caption.fontSize",
+            fontWeight: "bold",
+            letterSpacing: 1,
+          }}
+        >
+          {errorMessage}
+        </Box>
+      )}
       <div className="flex flex-row items-center justify-center m-8 mt-2">
         <Button
           text="Create Trading Pool"
@@ -127,7 +163,7 @@ export default function CreateTradingPool(props) {
             direction: "right",
             size: "24",
           }}
-          disabled={!collection || !asset}
+          disabled={!collection || !asset || !errorMessage}
           loadingText=""
           isLoading={creatingLoading}
           onClick={async function () {

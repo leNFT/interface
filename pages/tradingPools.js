@@ -65,7 +65,7 @@ export default function TradingPools() {
           className="m-2"
           key={"nft" + key}
         >
-          {value.nft.name}
+          {value.nft.amount + " " + value.nft.name}
         </Box>,
         <Box
           sx={{
@@ -75,7 +75,9 @@ export default function TradingPools() {
           className="m-2"
           key={"token" + key}
         >
-          {value.token.name}
+          {Number(formatUnits(value.token.amount, 18)).toFixed(2) +
+            " " +
+            value.token.name}
         </Box>,
         <div className="m-1" key={"gauge" + key}>
           <Button
@@ -230,7 +232,7 @@ export default function TradingPools() {
                 </Tooltip>
               </div>
             </div>,
-            <div className="flex flex-row m-2" key="rates">
+            <div className="flex flex-row m-2" key="token">
               <Box
                 sx={{
                   fontFamily: "Monospace",
@@ -279,7 +281,7 @@ export default function TradingPools() {
             "",
           ]}
           isLoading={loadingTableData}
-          isColumnSortable={[false, true, false, true, false, false]}
+          isColumnSortable={[false, true, true, true, false]}
           onPageNumberChanged={function noRefCheck() {}}
           onRowClick={function noRefCheck() {}}
           pageSize={5}

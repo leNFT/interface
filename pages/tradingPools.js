@@ -58,6 +58,7 @@ export default function TradingPools() {
           width="80"
           loading="eager"
           className="rounded-xl"
+          key={"image" + key}
         />,
         <Box
           sx={{

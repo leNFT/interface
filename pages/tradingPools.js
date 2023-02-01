@@ -100,12 +100,13 @@ export default function TradingPools() {
         <div key={"details" + key}>
           <Button
             customize={{
-              backgroundColor: "blue",
-              fontSize: 16,
+              backgroundColor: "grey",
+              fontSize: 18,
               textColor: "white",
             }}
             text="Deposit"
             theme="custom"
+            size="large"
             id={key}
             radius="12"
             onClick={async function (event) {

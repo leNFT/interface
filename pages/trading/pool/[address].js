@@ -183,7 +183,7 @@ export default function TradingPool() {
                     fontWeight: "bold",
                   }}
                 >
-                  My LP Positions
+                  Total Liquidity Provided:
                 </Box>
               </div>
               <div className="flex flex-col ml-1">
@@ -242,65 +242,72 @@ export default function TradingPool() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col border-4 border-slate-400 rounded-2xl p-8 m-8 lg:py-16 lg:px-16">
-          {loadingTradingPool ? (
-            <div className="flex m-4">
-              <Loading size={12} spinnerColor="#000000" />
-            </div>
-          ) : (
-            <div>
-              {lpPositions.length == 0 ? (
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                  }}
-                >
-                  <div>{"No LP Positions found"}</div>
-                </Box>
-              ) : (
-                <div className="flex grid grid-cols-1 md:grid-cols-2 gap-2">
-                  {lpPositions.map((data) => (
-                    <div
-                      key={data.id}
-                      className="flex m-4 items-center justify-center max-w-[300px]"
-                    >
-                      <Card
-                        sx={{
-                          borderRadius: 4,
-                          background:
-                            "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
-                        }}
+        <div className="flex flex-col items-center">
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "subtitle2.fontSize",
+            }}
+          >
+            my LP Positions
+          </Box>
+          <div className="flex flex-col border-4 border-slate-400 rounded-2xl mt-0 p-12 m-8 lg:py-16 lg:px-16">
+            {loadingTradingPool ? (
+              <div className="flex m-4">
+                <Loading size={12} spinnerColor="#000000" />
+              </div>
+            ) : (
+              <div>
+                {lpPositions.length == 0 ? (
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle1.fontSize",
+                    }}
+                  >
+                    <div>{"No LP Positions found"}</div>
+                  </Box>
+                ) : (
+                  <div className="flex grid md:grid-cols-2 lg:grid-cols-3 gap-1">
+                    {lpPositions.map((data) => (
+                      <div
+                        key={data.id}
+                        className="flex items-center justify-center max-w-[300px]"
                       >
-                        <CardActionArea
-                          onClick={function () {
-                            setSelectedLP(data.id);
-                            setVisibleWithdrawalModal(true);
+                        <Card
+                          sx={{
+                            borderRadius: 4,
+                            background:
+                              "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                           }}
                         >
-                          <CardContent>
-                            <Box
-                              sx={{
-                                fontFamily: "Monospace",
-                                fontSize: "subtitle1.fontSize",
-                              }}
-                            >
-                              <div className="flex flex-col items-center text-center">
-                                <div>{"LP Position"}</div>
-                                <div>
-                                  {"#" + BigNumber.from(data.id).toNumber()}
+                          <CardActionArea
+                            onClick={function () {
+                              setSelectedLP(data.id);
+                              setVisibleWithdrawalModal(true);
+                            }}
+                          >
+                            <CardContent>
+                              <Box
+                                sx={{
+                                  fontFamily: "Monospace",
+                                  fontSize: "subtitle1.fontSize",
+                                }}
+                              >
+                                <div className="flex flex-col items-center justify-center text-center">
+                                  {"LP " + BigNumber.from(data.id).toNumber()}
                                 </div>
-                              </div>
-                            </Box>
-                          </CardContent>
-                        </CardActionArea>
-                      </Card>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+                              </Box>
+                            </CardContent>
+                          </CardActionArea>
+                        </Card>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -38,14 +38,16 @@ export default function TradingPools() {
 
     for (const [key, value] of Object.entries(tradingPools)) {
       newTableData.push([
-        <Image
-          loader={() => value.nft.image}
-          src={value.nft.image}
-          height="80"
-          width="80"
-          className="rounded-xl"
-          key={"image" + key}
-        />,
+        value.nft.image != "" && (
+          <Image
+            loader={() => value.nft.image}
+            src={value.nft.image}
+            height="80"
+            width="80"
+            className="rounded-xl"
+            key={"image" + key}
+          />
+        ),
         <Box
           sx={{
             fontFamily: "Monospace",
@@ -219,7 +221,7 @@ export default function TradingPools() {
               </Box>
               <div className="flex flex-col ml-1">
                 <Tooltip
-                  content="Token in this pool."
+                  content="Tokens in this pool."
                   position="bottom"
                   minWidth={170}
                 >

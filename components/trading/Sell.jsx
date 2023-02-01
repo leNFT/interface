@@ -254,19 +254,19 @@ export default function Sell() {
               <div className="flex w-3/12 h-[50px]">
                 {tradingCollections.find(
                   (collection) => collection.contractMetadata.name == option
-                ).media.raw && (
+                ).media.gateway && (
                   <Image
                     loader={() =>
                       tradingCollections.find(
                         (collection) =>
                           collection.contractMetadata.name == option
-                      ).media.thumbnail
+                      ).media.gateway
                     }
                     src={
                       tradingCollections.find(
                         (collection) =>
                           collection.contractMetadata.name == option
-                      ).media.thumbnail
+                      ).media.gateway
                     }
                     height="50"
                     width="50"

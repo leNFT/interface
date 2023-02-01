@@ -241,7 +241,7 @@ export default function DepositTradingPool(props) {
             validation={{
               numberMin: 0,
             }}
-            description="Amount of WETH to deposit alongside the NFTs."
+            description="Amount of WETH to deposit."
             disabled={!approvedToken}
             onChange={handleTokenAmountChange}
           />

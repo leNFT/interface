@@ -176,7 +176,12 @@ export default function Swap() {
       ) {
         dispatch({
           type: "warning",
-          message: "Not enough liquidity for swap.",
+          message:
+            newSwapQuote.buyLps.length < buyAmount
+              ? "Pool only has " +
+                newSwapQuote.buyLps.length +
+                " NFTs left to sell"
+              : "Pool can only buy " + newSwapQuote.sellLps.length + " NFTs",
           title: "Swap Quote Warning",
           position: "topR",
         });

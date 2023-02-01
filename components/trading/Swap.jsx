@@ -139,8 +139,8 @@ export default function Swap() {
     console.log("Getting swap quote");
 
     if (
-      buyAmount &&
-      sellAmount &&
+      buyAmount > 0 &&
+      sellAmount > 0 &&
       buyPoolAddress &&
       sellPoolAddress &&
       buyPoolAddress != sellPoolAddress
@@ -168,9 +168,26 @@ export default function Swap() {
         );
         console.log("newSwapQuote", newSwapQuote);
       }
-      setPriceQuote(newSwapQuote);
-      setLoadingPriceQuote(false);
 
+      // Warn user if the quote is couldnt be fully generated
+      if (
+        newSwapQuote.sellLps.length < sellAmount ||
+        newSwapQuote.buyLps.length < buyAmount
+      ) {
+        dispatch({
+          type: "warning",
+          message: "Not enough liquidity for swap.",
+          title: "Swap Quote Warning",
+          position: "topR",
+        });
+      } else if (
+        newSwapQuote.sellLps.length > 0 &&
+        newSwapQuote.buyLps.length > 0
+      ) {
+        setPriceQuote(newSwapQuote);
+      }
+
+      setLoadingPriceQuote(false);
       setSellAmount(newSwapQuote.sellLps.length);
       // Fill the selected NFTs array
       var newSelectedSellNFTs = [];

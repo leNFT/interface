@@ -23,6 +23,7 @@ export default function GenesisMint(props) {
   const [mintingLoading, setMintingLoading] = useState(false);
   const [rewards, setRewards] = useState("0");
   const [locktimeDays, setLocktimeDays] = useState(14);
+  const [sliderValue, setSliderValue] = useState(14);
 
   const addresses =
     chain && chain.id in contractAddresses
@@ -73,9 +74,14 @@ export default function GenesisMint(props) {
     });
   };
 
-  function handleInputChange(_, newValue) {
+  function handleSliderCommitedChange(_, newValue) {
     console.log("locktimeDays: ", newValue);
     setLocktimeDays(newValue);
+  }
+
+  function handleSliderChange(_, newValue) {
+    console.log("locktimeDays: ", newValue);
+    setSliderValue(newValue);
   }
 
   return (
@@ -109,9 +115,11 @@ export default function GenesisMint(props) {
         </div>
         <div className="flex flex-row items-center justify-center p-4">
           <Slider
+            value={sliderValue}
             valueLabelDisplay="auto"
-            onChangeCommitted={handleInputChange}
-            min={0}
+            onChangeCommitted={handleSliderCommitedChange}
+            onChange={handleSliderChange}
+            min={14}
             step={1}
             max={120}
           />

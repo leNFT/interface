@@ -226,7 +226,7 @@ export default function DepositTradingPool(props) {
           step="any"
           description="The initial price of the LP"
           validation={{
-            numberMin: 0,
+            numberMin: formatUnits("1", 18),
           }}
           onChange={handleInitialPriceChange}
         />
@@ -412,6 +412,14 @@ export default function DepositTradingPool(props) {
           isLoading={depositLoading}
           onClick={async function () {
             try {
+              if (initialPrice == 0) {
+                dispatch({
+                  type: "error",
+                  message: "Your initial price should be greater than 1e-18",
+                  title: "Initial Price",
+                  position: "topR",
+                });
+              }
               setDepositLoading(true);
               console.log("signer.", signer);
               var tx;

@@ -74,7 +74,7 @@ export default function GenesisMint(props) {
       type: "success",
       message: "You have minted your Genesis NFT.",
       title: "Mint Successful!",
-      position: "topR",
+      position: "bottomR",
     });
   };
 
@@ -148,7 +148,7 @@ export default function GenesisMint(props) {
                 type: "error",
                 message: "Insufficient balance.",
                 title: "Error",
-                position: "topR",
+                position: "bottomR",
               });
               return;
             }

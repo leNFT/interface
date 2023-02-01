@@ -70,7 +70,7 @@ export default function WithdrawTradingPool(props) {
       type: "success",
       message: "Your LP was successfully removed from the pool.",
       title: "Removal Successful!",
-      position: "topR",
+      position: "bottomR",
     });
   };
 

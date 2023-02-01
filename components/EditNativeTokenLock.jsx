@@ -109,7 +109,7 @@ export default function EditNativeTokenLock(props) {
       type: "success",
       message: "You increased your lock amount.",
       title: "Increase Lock Amount Successful!",
-      position: "topR",
+      position: "bottomR",
     });
   };
 
@@ -120,7 +120,7 @@ export default function EditNativeTokenLock(props) {
       type: "success",
       message: "You increased your unlock time.",
       title: "Increase Unlock Time Successful!",
-      position: "topR",
+      position: "bottomR",
     });
   };
 
@@ -130,7 +130,7 @@ export default function EditNativeTokenLock(props) {
       type: "success",
       message: "You can now lock tokens in the escrow contract.",
       title: "Approval Successful!",
-      position: "topR",
+      position: "bottomR",
     });
   };
 

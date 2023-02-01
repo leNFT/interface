@@ -210,7 +210,7 @@ export default function RepayLoan(props) {
       type: "success",
       message: "Your NFT will be available shortly.",
       title: "Repay Successful!",
-      position: "topR",
+      position: "bottomR",
     });
   };
 
@@ -221,7 +221,7 @@ export default function RepayLoan(props) {
       type: "success",
       message: "Your loan was partially repaid.",
       title: "Repay Successful!",
-      position: "topR",
+      position: "bottomR",
     });
   };
 
@@ -231,7 +231,7 @@ export default function RepayLoan(props) {
       type: "success",
       message: "You can now deposit.",
       title: "Approval Successful!",
-      position: "topR",
+      position: "bottomR",
     });
   };
 
@@ -452,7 +452,7 @@ export default function RepayLoan(props) {
                   type: "error",
                   message: "Amount is bigger than balance",
                   title: "Error",
-                  position: "topR",
+                  position: "bottomR",
                 });
               }
             }}

@@ -59,7 +59,7 @@ export default function UnstakeLendingGauge(props) {
       type: "success",
       message: "Your LP was successfully unstaked from the gauge.",
       title: "Removal Successful!",
-      position: "topR",
+      position: "bottomR",
     });
   };
 

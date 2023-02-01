@@ -101,7 +101,7 @@ export default function CreateLendingPool(props) {
       type: "success",
       message: "You have create a new lending pool.",
       title: "Create Successful!",
-      position: "topR",
+      position: "bottomR",
     });
   };
 

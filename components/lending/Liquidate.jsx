@@ -142,7 +142,7 @@ export default function Liquidate(props) {
       type: "success",
       message: "The loan was liquidated.",
       title: "Liquidation Successful!",
-      position: "topR",
+      position: "bottomR",
     });
   };
 
@@ -153,7 +153,7 @@ export default function Liquidate(props) {
       type: "success",
       message: "You can now liquidate the loan.",
       title: "Liquidation Approval Successful!",
-      position: "topR",
+      position: "bottomR",
     });
   };
 

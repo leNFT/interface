@@ -148,7 +148,7 @@ export default function Lock() {
       type: "success",
       message: "You claimed your rewards",
       title: "Claim Successful!",
-      position: "topR",
+      position: "bottomR",
     });
   };
 

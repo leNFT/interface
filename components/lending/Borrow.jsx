@@ -255,7 +255,7 @@ export default function Borrow(props) {
       type: "success",
       message: "Newly created loans can take up to 5 minutes to appear.",
       title: "Loan Created!",
-      position: "topR",
+      position: "bottomR",
     });
   };
 
@@ -265,7 +265,7 @@ export default function Borrow(props) {
       type: "success",
       message: "You can now borrow using this asset.",
       title: "Approval Successful!",
-      position: "topR",
+      position: "bottomR",
     });
   };
 
@@ -505,7 +505,7 @@ export default function Borrow(props) {
                     type: "error",
                     message: "Amount too big!",
                     title: "Error",
-                    position: "topR",
+                    position: "bottomR",
                     icon: "bell",
                   });
                 }

@@ -89,7 +89,7 @@ export default function StakeLendingGauge(props) {
       type: "success",
       message: "Your LP was staked in the gauge.",
       title: "Stake Successful!",
-      position: "topR",
+      position: "bottomR",
     });
   };
 
@@ -99,7 +99,7 @@ export default function StakeLendingGauge(props) {
       type: "success",
       message: "You can now stake.",
       title: "Approval Successful!",
-      position: "topR",
+      position: "bottomR",
     });
   };
 

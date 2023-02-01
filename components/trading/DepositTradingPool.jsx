@@ -127,7 +127,7 @@ export default function DepositTradingPool(props) {
       type: "success",
       message: "Your tokens were deposited into the reserve.",
       title: "Deposit Successful!",
-      position: "topR",
+      position: "bottomR",
     });
   };
 
@@ -137,7 +137,7 @@ export default function DepositTradingPool(props) {
       type: "success",
       message: "You can now deposit.",
       title: "Approval Successful!",
-      position: "topR",
+      position: "bottomR",
     });
   };
 
@@ -147,7 +147,7 @@ export default function DepositTradingPool(props) {
       type: "success",
       message: "You can now deposit.",
       title: "Approval Successful!",
-      position: "topR",
+      position: "bottomR",
     });
   };
 
@@ -422,7 +422,7 @@ export default function DepositTradingPool(props) {
                   type: "error",
                   message: "Your initial price should be greater than 1e-18",
                   title: "Initial Price",
-                  position: "topR",
+                  position: "bottomR",
                 });
               }
               setDepositLoading(true);

@@ -183,6 +183,9 @@ export default function Buy() {
     if (nftAddress && poolAddress && selectedNFTs.length > 0) {
       setAmount(selectedNFTs.length);
       getPriceQuote(selectedNFTs.length);
+    } else {
+      setAmount(0);
+      setPriceQuote();
     }
   }, [selectedNFTs]);
 

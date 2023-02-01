@@ -8,9 +8,11 @@ import { useAccount, useNetwork } from "wagmi";
 import { Tooltip } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Router from "next/router";
 import { ethers } from "ethers";
 import { ExternalLink } from "@web3uikit/icons";
+import { getNFTImage } from "../helpers/getNFTImage";
 import Box from "@mui/material/Box";
 
 export default function TradingPools() {
@@ -35,28 +37,20 @@ export default function TradingPools() {
     var newTableData = [];
 
     for (const [key, value] of Object.entries(tradingPools)) {
+      // Get NFT collection thumbnail
+      var thumbnail =
+        "https://github.com/leNFT/interface/blob/main/public/icon.png?raw=true";
+      thumbnail = await getNFTImage(key, 0, chain.id);
+      console.log("Thumbnail", thumbnail);
       newTableData.push([
-        <LinkTo
-          key={"link" + key}
-          type="external"
-          iconLayout="none"
-          text={
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
-              }}
-              className="m-2"
-            >
-              {key.slice(0, 4) + ".." + key.slice(-3)}
-            </Box>
-          }
-          address={
-            chain.id == 1
-              ? "https://etherscan.io/address/" + key
-              : "https://goerli.etherscan.io/address/" + key
-          }
-        ></LinkTo>,
+        <Image
+          loader={() => thumbnail}
+          src={thumbnail}
+          height="100"
+          width="100"
+          loading="eager"
+          className="rounded-3xl"
+        />,
         <Box
           sx={{
             fontFamily: "Monospace",

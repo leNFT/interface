@@ -101,7 +101,7 @@ export default function Sell() {
           type: "warning",
           message: "Can only sell " + newSellQuote.lps.length + " NFTs",
           title: "Maximum is " + newSellQuote.lps.length,
-          position: "bottomR",
+          position: "bottomL",
         });
         setAmount(newSellQuote.lps.length);
       }
@@ -168,7 +168,7 @@ export default function Sell() {
       type: "success",
       message: "You just approved your NFTs.",
       title: "Approval Successful!",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 
@@ -177,7 +177,7 @@ export default function Sell() {
       type: "success",
       message: "Your just sold.",
       title: "Sell Successful!",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 

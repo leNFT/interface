@@ -150,7 +150,7 @@ export default function Lend() {
       type: "warning",
       message: assetName + " is not supported by leNFT.",
       title: "Unsupported Asset",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 

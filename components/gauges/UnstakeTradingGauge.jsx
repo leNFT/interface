@@ -44,7 +44,7 @@ export default function UnstakeTradingGauge(props) {
       type: "success",
       message: "Your LP was successfully unstaked from the gauge.",
       title: "Removal Successful!",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 

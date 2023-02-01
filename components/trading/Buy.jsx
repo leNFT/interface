@@ -111,7 +111,7 @@ export default function Buy() {
           type: "warning",
           message: "Can only buy " + newBuyQuote.lps.length + " NFTs",
           title: "Maximum is " + newBuyQuote.lps.length,
-          position: "bottomR",
+          position: "bottomL",
         });
       }
       setAmount(newBuyQuote.lps.length);
@@ -195,7 +195,7 @@ export default function Buy() {
       type: "success",
       message: "You just approved your tokens.",
       title: "Approval Successful!",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 
@@ -204,7 +204,7 @@ export default function Buy() {
       type: "success",
       message: "You just bought.",
       title: "Buy Successful!",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 

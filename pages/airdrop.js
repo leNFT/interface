@@ -77,7 +77,7 @@ export default function Airdrop() {
       type: "success",
       message: "You just minted your airdrop tokens.",
       title: "Minting Successful!",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 

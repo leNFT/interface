@@ -107,7 +107,7 @@ export default function LockNativeToken(props) {
       type: "success",
       message: "Your LE tokens were locked in the escrow contract.",
       title: "Lock Successful!",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 
@@ -117,7 +117,7 @@ export default function LockNativeToken(props) {
       type: "success",
       message: "You can now lock tokens in the escrow contract.",
       title: "Approval Successful!",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 

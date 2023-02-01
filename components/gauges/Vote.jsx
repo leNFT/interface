@@ -75,7 +75,7 @@ export default function Vote(props) {
       type: "success",
       message: "You have voted.",
       title: "Vote Successful!",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 

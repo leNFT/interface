@@ -62,7 +62,7 @@ export default function GenesisBurn(props) {
       type: "success",
       message: "You have burned your Genesis NFT.",
       title: "Burn Successful!",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 

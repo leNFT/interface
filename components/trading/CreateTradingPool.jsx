@@ -72,7 +72,7 @@ export default function CreateTradingPool(props) {
       type: "success",
       message: "You have create a new trading pool.",
       title: "Create Successful!",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 

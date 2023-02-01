@@ -61,7 +61,7 @@ export default function WithdrawNativeToken(props) {
       type: "success",
       message: "Please wait for transaction confirmation.",
       title: "Withdrawal Successful!",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 

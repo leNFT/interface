@@ -66,7 +66,7 @@ export default function Withdraw(props) {
       type: "success",
       message: "Tokens are now back in your wallet.",
       title: "Withdrawal Successful! ",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 
@@ -176,7 +176,7 @@ export default function Withdraw(props) {
                 type: "error",
                 message: "Amount is bigger than max permited withdrawal",
                 title: "Error",
-                position: "bottomR",
+                position: "bottomL",
               });
             }
           }}

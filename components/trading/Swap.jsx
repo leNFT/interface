@@ -183,7 +183,7 @@ export default function Swap() {
                 " NFTs left to sell"
               : "Pool can only buy " + newSwapQuote.sellLps.length + " NFTs",
           title: "Swap Quote Warning",
-          position: "bottomR",
+          position: "bottomL",
         });
       } else if (
         newSwapQuote.sellLps.length > 0 &&
@@ -341,7 +341,7 @@ export default function Swap() {
       type: "success",
       message: "You just approved your tokens.",
       title: "Approval Successful!",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 
@@ -351,7 +351,7 @@ export default function Swap() {
       type: "success",
       message: "You just approved your NFTs.",
       title: "Approval Successful!",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 
@@ -360,7 +360,7 @@ export default function Swap() {
       type: "success",
       message: "You just swapped your NFTs.",
       title: "Swap Successful!",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 
@@ -1209,7 +1209,7 @@ export default function Swap() {
                   type: "warning",
                   message: "Not enough WETH to pay for swap",
                   title: "Error",
-                  position: "bottomR",
+                  position: "bottomL",
                 });
                 return;
               }

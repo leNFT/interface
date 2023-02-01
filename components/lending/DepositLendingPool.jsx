@@ -94,7 +94,7 @@ export default function DepositLendingPool(props) {
       type: "success",
       message: "Your tokens were deposited into the pool.",
       title: "Deposit Successful!",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 
@@ -104,7 +104,7 @@ export default function DepositLendingPool(props) {
       type: "success",
       message: "You can now deposit.",
       title: "Approval Successful!",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 
@@ -183,7 +183,7 @@ export default function DepositLendingPool(props) {
                   type: "error",
                   message: "Amount is bigger than balance",
                   title: "Error",
-                  position: "bottomR",
+                  position: "bottomL",
                 });
               }
             }}

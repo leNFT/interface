@@ -16,8 +16,9 @@ import {
 } from "@web3uikit/core";
 
 import tokenOracleContract from "../../contracts/TokenOracle.json";
-import reserveContract from "../../contracts/Reserve.json";
+import lendingPoolContract from "../../contracts/LendingPool.json";
 import genesisNFTContract from "../../contracts/GenesisNFT.json";
+import lendingMarketContract from "../../contracts/LendingMarket.json";
 import erc721 from "../../contracts/erc721.json";
 import Image from "next/image";
 import { Divider, Switch } from "@mui/material";
@@ -44,7 +45,7 @@ export default function Borrow(props) {
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [loadingMaxAmount, setLoadingMaxAmount] = useState(false);
   const [loadingBorrowRate, setLoadingBorrowRate] = useState(false);
-  const [reserveAddress, setReserveAddress] = useState("");
+  const [lendingPoolAddress, setLendingPoolAddress] = useState("");
   const [borrowLoading, setBorrowLoading] = useState(false);
   const [borrowRate, setBorrowRate] = useState(0);
   const { address, isConnected } = useAccount();
@@ -63,12 +64,6 @@ export default function Borrow(props) {
     contractInterface: wethGatewayContract.abi,
     addressOrName: addresses.WETHGateway,
     signerOrProvider: signer,
-  });
-
-  const nativeTokenVaultProvider = useContract({
-    contractInterface: nativeTokenVaultContract.abi,
-    addressOrName: addresses.NativeTokenVault,
-    signerOrProvider: provider,
   });
 
   const assetCollectionSigner = useContract({
@@ -95,21 +90,21 @@ export default function Borrow(props) {
     signerOrProvider: provider,
   });
 
-  const marketSigner = useContract({
-    contractInterface: marketContract.abi,
+  const lendingMarketSigner = useContract({
+    contractInterface: lendingMarketContract.abi,
     addressOrName: addresses.LendingMarket,
     signerOrProvider: signer,
   });
 
-  const marketProvider = useContract({
-    contractInterface: marketContract.abi,
+  const lendingMarketProvider = useContract({
+    contractInterface: lendingMarketContract.abi,
     addressOrName: addresses.LendingMarket,
     signerOrProvider: provider,
   });
 
-  const reserve = useContract({
-    contractInterface: reserveContract.abi,
-    addressOrName: reserveAddress,
+  const lendingPool = useContract({
+    contractInterface: lendingPoolContract.abi,
+    addressOrName: lendingPoolAddress,
     signerOrProvider: provider,
   });
 
@@ -119,13 +114,14 @@ export default function Borrow(props) {
     signerOrProvider: provider,
   });
 
-  async function getReserve() {
-    const updatedReserveAddress = await marketProvider.getReserve(
-      props.token_address,
-      addresses[borrowAsset].address
-    );
-    setReserveAddress(updatedReserveAddress);
-    console.log("updatedReserveAddress", updatedReserveAddress);
+  async function getLendingPool() {
+    const updatedLendingPoolAddress =
+      await lendingMarketProvider.getLendingPool(
+        props.token_address,
+        addresses[borrowAsset].address
+      );
+    setLendingPoolAddress(updatedLendingPoolAddress);
+    console.log("updatedLendingPoolAddress", updatedLendingPoolAddress);
   }
 
   async function getGenesisNFT() {
@@ -155,8 +151,8 @@ export default function Borrow(props) {
     setApproved(approval == addresses.LendingMarket);
   }
 
-  async function updateReserveBorrowRate() {
-    const updatedBorrowRate = (await reserve.getBorrowRate()).toNumber();
+  async function updateLendingPoolBorrowRate() {
+    const updatedBorrowRate = (await lendingPool.getBorrowRate()).toNumber();
 
     setBorrowRate(updatedBorrowRate);
     setLoadingBorrowRate(false);
@@ -178,24 +174,13 @@ export default function Borrow(props) {
     console.log("maxCollateralization updated", updatedMaxCollateralization);
     setMaxCollateralization(updatedMaxCollateralization);
 
-    //Get vote collaterization boost
-    const voteCollaterizationBoost = await nativeTokenVaultProvider.getLTVBoost(
-      address,
-      props.token_address
-    );
-
     //Get genesis boost
     var genesisBoostAmount = "0";
     console.log("updatemaxamountgenesisBoost", genesisBoost);
     if (genesisBoost) {
       genesisBoostAmount = await genesisNFTProvider.getLTVBoost();
     }
-
-    // Update boost state variable
-    const updatedCollaterizationBoost =
-      voteCollaterizationBoost.add(genesisBoostAmount);
-    console.log("updatedCollaterizationBoost", updatedCollaterizationBoost);
-    setCollateralizationBoost(updatedCollaterizationBoost);
+    setCollateralizationBoost(genesisBoostAmount);
 
     // Get max amount borrowable
     const tokenETHPrice = (
@@ -203,7 +188,7 @@ export default function Borrow(props) {
     ).toString();
     console.log("tokenETHPrice", tokenETHPrice);
     const maxCollateralization = BigNumber.from(updatedMaxCollateralization)
-      .add(updatedCollaterizationBoost)
+      .add(genesisBoostAmount)
       .mul(priceResponse.price)
       .div(10000)
       .mul(tokenETHPrice)
@@ -211,12 +196,14 @@ export default function Borrow(props) {
       .div(2)
       .toString();
     console.log("maxCollateralization", maxCollateralization);
-    const reserveUnderlying = (await reserve.getUnderlyingBalance()).toString();
-    console.log("reserveUnderlying", reserveUnderlying);
+    const lendingPoolUnderlying = (
+      await lendingPool.getUnderlyingBalance()
+    ).toString();
+    console.log("lendingPoolUnderlying", lendingPoolUnderlying);
     const updatedMaxAmount = BigNumber.from(maxCollateralization).gt(
-      BigNumber.from(reserveUnderlying)
+      BigNumber.from(lendingPoolUnderlying)
     )
-      ? reserveUnderlying
+      ? lendingPoolUnderlying
       : maxCollateralization;
     console.log("Updated Max Borrow Amount:", updatedMaxAmount);
     setMaxAmount(updatedMaxAmount);
@@ -225,15 +212,15 @@ export default function Borrow(props) {
   }
 
   useEffect(() => {
-    if (reserveAddress) {
+    if (lendingPoolAddress) {
       getTokenApproval();
       updateMaxBorrowAmount();
-      updateReserveBorrowRate();
+      updateLendingPoolBorrowRate();
     }
-  }, [reserveAddress, props.token_id]);
+  }, [lendingPoolAddress, props.token_id]);
 
   useEffect(() => {
-    if (reserveAddress) {
+    if (lendingPoolAddress) {
       updateMaxBorrowAmount();
     }
   }, [genesisBoost]);
@@ -242,8 +229,7 @@ export default function Borrow(props) {
     if (isConnected) {
       setLoadingMaxAmount(true);
       setLoadingBorrowRate(true);
-      console.log("Getting reserve", addresses[borrowAsset].address);
-      getReserve();
+      getLendingPool();
       getGenesisNFT();
     }
   }, [isConnected, borrowAsset]);
@@ -255,7 +241,7 @@ export default function Borrow(props) {
       type: "success",
       message: "Newly created loans can take up to 5 minutes to appear.",
       title: "Loan Created!",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 
@@ -265,7 +251,7 @@ export default function Borrow(props) {
       type: "success",
       message: "You can now borrow using this asset.",
       title: "Approval Successful!",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 
@@ -323,7 +309,7 @@ export default function Borrow(props) {
           <div className="flex flex-col justify-center">
             <div className="flex flex-row m-2">
               <div className="flex flex-col">
-                <Typography variant="subtitle2">Address</Typography>
+                <Typography variant="subtitle2">NFT Address</Typography>
                 <Typography variant="caption14">
                   <p className="break-all">{props.token_address}</p>
                 </Typography>
@@ -331,7 +317,7 @@ export default function Borrow(props) {
             </div>
             <div className="flex flex-row m-2">
               <div className="flex flex-col">
-                <Typography variant="subtitle2">Asset ID</Typography>
+                <Typography variant="subtitle2">Token ID</Typography>
                 <Typography variant="body16">{props.token_id}</Typography>
               </div>
             </div>
@@ -505,7 +491,7 @@ export default function Borrow(props) {
                     type: "error",
                     message: "Amount too big!",
                     title: "Error",
-                    position: "bottomR",
+                    position: "bottomL",
                     icon: "bell",
                   });
                 }

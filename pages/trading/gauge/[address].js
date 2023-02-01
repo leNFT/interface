@@ -104,7 +104,7 @@ export default function TradingPoolGauge() {
       type: "success",
       message: "You have claimed your rewards.",
       title: "Claim Successful!",
-      position: "bottomR",
+      position: "bottomL",
     });
   };
 

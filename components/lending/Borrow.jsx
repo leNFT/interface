@@ -41,7 +41,7 @@ export default function Borrow(props) {
   const [tokenPrice, setTokenPrice] = useState("0");
   const [maxCollateralization, setMaxCollateralization] = useState(0);
   const [collateralizationBoost, setCollateralizationBoost] = useState(0);
-  const [approved, setApproved] = useState(false);
+  const [nftApproved, setNFTApproved] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [loadingMaxAmount, setLoadingMaxAmount] = useState(false);
   const [loadingBorrowRate, setLoadingBorrowRate] = useState(false);
@@ -66,13 +66,13 @@ export default function Borrow(props) {
     signerOrProvider: signer,
   });
 
-  const assetCollectionSigner = useContract({
+  const nftSigner = useContract({
     contractInterface: erc721,
     addressOrName: props.token_address,
     signerOrProvider: signer,
   });
 
-  const assetCollectionProvider = useContract({
+  const nftProvider = useContract({
     contractInterface: erc721,
     addressOrName: props.token_address,
     signerOrProvider: provider,
@@ -146,9 +146,13 @@ export default function Borrow(props) {
     }
   }
 
-  async function getTokenApproval() {
-    const approval = await assetCollectionProvider.getApproved(props.token_id);
-    setApproved(approval == addresses.LendingMarket);
+  async function getNFTApproval() {
+    const approvedAddress = await nftProvider.getApproved(props.token_id);
+    setNFTApproved(
+      (approvedAddress == borrowAsset) == "ETH"
+        ? addresses.WETHGateway
+        : addresses.LendingMarket
+    );
   }
 
   async function updateLendingPoolBorrowRate() {
@@ -213,7 +217,7 @@ export default function Borrow(props) {
 
   useEffect(() => {
     if (lendingPoolAddress) {
-      getTokenApproval();
+      getNFTApproval();
       updateMaxBorrowAmount();
       updateLendingPoolBorrowRate();
     }
@@ -245,8 +249,8 @@ export default function Borrow(props) {
     });
   };
 
-  const handleApprovalSuccess = async function () {
-    setApproved(true);
+  const handleNFTApprovalSuccess = async function () {
+    setNFTApproved(true);
     dispatch({
       type: "success",
       message: "You can now borrow using this asset.",
@@ -427,11 +431,11 @@ export default function Borrow(props) {
               ),
               numberMin: 0,
             }}
-            disabled={!approved}
+            disabled={!nftApproved}
             onChange={handleInputChange}
           />
         </div>
-        {approved ? (
+        {nftApproved ? (
           <div className="flex min-w-full m-8 mt-2">
             <Button
               text="Create Loan"
@@ -515,14 +519,15 @@ export default function Borrow(props) {
               onClick={async function () {
                 try {
                   setApprovalLoading(true);
-                  const tx = await assetCollectionSigner.approve(
+                  console.log("borrowAsset", borrowAsset);
+                  const tx = await nftSigner.approve(
                     borrowAsset == "ETH"
                       ? addresses.WETHGateway
                       : addresses.LendingMarket,
                     props.token_id
                   );
                   await tx.wait(1);
-                  handleApprovalSuccess();
+                  handleNFTApprovalSuccess();
                 } catch (error) {
                   console.log(error);
                 } finally {

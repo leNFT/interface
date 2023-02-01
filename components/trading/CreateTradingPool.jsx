@@ -50,7 +50,7 @@ export default function CreateTradingPool(props) {
     const updatedSwapFee = (
       await factoryProvider.getDefaultSwapFee()
     ).toString();
-
+    console.log("swapFee", updatedSwapFee);
     setSwapFee(updatedSwapFee);
   }
 
@@ -85,9 +85,7 @@ export default function CreateTradingPool(props) {
         <div className="flex flex-col my-2 md:m-2">
           <div className="flex flex-col m-4">
             <Typography variant="subtitle2">Swap Fee</Typography>
-            <Typography variant="caption16">
-              {BigNumber.from(swapFee).div(100) + "%"}
-            </Typography>
+            <Typography variant="caption16">{swapFee / 100 + "%"}</Typography>
           </div>
         </div>
       </div>

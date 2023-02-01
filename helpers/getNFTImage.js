@@ -8,6 +8,15 @@ export async function getNFTImage(collection, tokenId, chainId) {
       Accept: "application/json",
     },
   };
+  console.log(
+    serverAddress +
+      "/api/nftImageURL?address=" +
+      collection +
+      "&tokenId=" +
+      tokenId +
+      "&chainId=" +
+      chainId
+  );
   const nftImageResponse = await fetch(
     serverAddress +
       "/api/nftImageURL?address=" +

@@ -35,21 +35,29 @@ export default function TradingPools() {
     const tradingPools = await getTradingPools(chain.id);
     console.log("TradingPools", tradingPools);
     var newTableData = [];
+    var thumbnails = {};
 
+    // Get NFT collection thumbnails
     for (const [key, value] of Object.entries(tradingPools)) {
       // Get NFT collection thumbnail
-      var thumbnail =
-        "https://github.com/leNFT/interface/blob/main/public/icon.png?raw=true";
-      thumbnail = await getNFTImage(key, 0, chain.id);
+      var thumbnail = await getNFTImage(value.nft.address, 1, chain.id);
+      if (thumbnail == "") {
+        thumbnail =
+          "https://github.com/leNFT/interface/blob/main/public/icon.png?raw=true";
+      }
+      thumbnails[key] = thumbnail;
       console.log("Thumbnail", thumbnail);
+    }
+
+    for (const [key, value] of Object.entries(tradingPools)) {
       newTableData.push([
         <Image
-          loader={() => thumbnail}
-          src={thumbnail}
-          height="100"
-          width="100"
+          loader={() => thumbnails[key]}
+          src={thumbnails[key]}
+          height="80"
+          width="80"
           loading="eager"
-          className="rounded-3xl"
+          className="rounded-xl"
         />,
         <Box
           sx={{
@@ -166,7 +174,8 @@ export default function TradingPools() {
           />
         </div>
         <Table
-          columnsConfig="2fr 2fr 2fr 2fr 0fr"
+          columnsConfig="1fr 2fr 2fr 2fr 0fr"
+          alignCellItems="center"
           tableBackgroundColor="white"
           customLoadingContent={
             <div
@@ -184,25 +193,7 @@ export default function TradingPools() {
           customNoDataText="No trading pools found."
           data={tableData}
           header={[
-            <div className="flex flex-row m-2" key="nft">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: {
-                    xs: "caption.fontSize",
-                    sm: "subtitle1.fontSize",
-                  },
-                }}
-                key="4"
-              >
-                Address
-              </Box>
-              <div className="flex flex-col ml-1">
-                <Tooltip content="Address of this pool" position="bottom">
-                  <HelpCircle fontSize="14px" color="#000000" />
-                </Tooltip>
-              </div>
-            </div>,
+            <div key="image"></div>,
             <div className="flex flex-row m-2" key="nft">
               <Box
                 sx={{

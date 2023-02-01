@@ -7,6 +7,7 @@ import {
   useAccount,
   useNetwork,
   useContract,
+  useBalance,
   useProvider,
   useSigner,
 } from "wagmi";
@@ -16,9 +17,12 @@ import genesisNFTContract from "../contracts/GenesisNFT.json";
 
 export default function GenesisMint(props) {
   const SECONDS_IN_DAY = 86400;
-  const { isConnected } = useAccount();
+  const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const provider = useProvider();
+  const { data: ethBalance } = useBalance({
+    addressOrName: address,
+  });
   const { data: signer } = useSigner();
   const [mintingLoading, setMintingLoading] = useState(false);
   const [rewards, setRewards] = useState("0");
@@ -139,6 +143,15 @@ export default function GenesisMint(props) {
           loadingText=""
           isLoading={mintingLoading}
           onClick={async function () {
+            if (ethBalance.value.lt(props.price)) {
+              dispatch({
+                type: "error",
+                message: "Insufficient balance.",
+                title: "Error",
+                position: "topR",
+              });
+              return;
+            }
             try {
               setMintingLoading(true);
               const tx = await genesisNFTSigner.mint(

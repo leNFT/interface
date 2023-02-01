@@ -288,7 +288,7 @@ export default function DepositTradingPool(props) {
       <div className="flex flex-row items-center justify-center m-8">
         {approvedNFT ? (
           <Button
-            text={"Selected " + nftAmount + " NFTs"}
+            text={nftAmount ? "Selected " + nftAmount + " NFTs" : "Select NFTs"}
             theme="secondary"
             isFullWidth
             loadingProps={{
@@ -395,7 +395,13 @@ export default function DepositTradingPool(props) {
       )}
       <div className="flex flex-row items-center justify-center m-8">
         <Button
-          text={"Deposit (" + tokenAmount + " tokens, " + nftAmount + " NFTs)"}
+          text={
+            "Deposit (" +
+            (tokenAmount ? tokenAmount : 0) +
+            " tokens, " +
+            (nftAmount ? nftAmount : 0) +
+            " NFTs)"
+          }
           theme="secondary"
           isFullWidth
           loadingProps={{
@@ -404,7 +410,9 @@ export default function DepositTradingPool(props) {
             direction: "right",
             size: "24",
           }}
-          disabled={!approvedToken || !approvedNFT}
+          disabled={
+            !approvedToken || !approvedNFT || (!tokenAmount && !nftAmount)
+          }
           loadingText=""
           isLoading={depositLoading}
           onClick={async function () {

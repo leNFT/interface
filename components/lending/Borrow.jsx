@@ -97,13 +97,13 @@ export default function Borrow(props) {
 
   const marketSigner = useContract({
     contractInterface: marketContract.abi,
-    addressOrName: addresses.Market,
+    addressOrName: addresses.LendingMarket,
     signerOrProvider: signer,
   });
 
   const marketProvider = useContract({
     contractInterface: marketContract.abi,
-    addressOrName: addresses.Market,
+    addressOrName: addresses.LendingMarket,
     signerOrProvider: provider,
   });
 
@@ -152,7 +152,7 @@ export default function Borrow(props) {
 
   async function getTokenApproval() {
     const approval = await assetCollectionProvider.getApproved(props.token_id);
-    setApproved(approval == addresses.Market);
+    setApproved(approval == addresses.LendingMarket);
   }
 
   async function updateReserveBorrowRate() {
@@ -532,7 +532,7 @@ export default function Borrow(props) {
                   const tx = await assetCollectionSigner.approve(
                     borrowAsset == "ETH"
                       ? addresses.WETHGateway
-                      : addresses.Market,
+                      : addresses.LendingMarket,
                     props.token_id
                   );
                   await tx.wait(1);

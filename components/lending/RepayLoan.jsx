@@ -60,7 +60,7 @@ export default function RepayLoan(props) {
 
   const market = useContract({
     contractInterface: marketContract.abi,
-    addressOrName: addresses.Market,
+    addressOrName: addresses.LendingMarket,
     signerOrProvider: signer,
   });
 

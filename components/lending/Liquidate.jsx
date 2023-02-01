@@ -83,7 +83,10 @@ export default function Liquidate(props) {
   });
 
   async function getWETHAllowance() {
-    const allowance = await wethProvider.allowance(address, addresses.Market);
+    const allowance = await wethProvider.allowance(
+      address,
+      addresses.LendingMarket
+    );
     console.log("Got allowance:", allowance);
     setAllowance(allowance.toString());
   }

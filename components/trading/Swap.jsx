@@ -367,6 +367,7 @@ export default function Swap() {
   const handleSellNFTAddressChange = (_event, value) => {
     console.log("handleSellNFTAddressChange", value);
     setSellAmount(0);
+    setSelectedSellNFTs([]);
     if (ethers.utils.isAddress(value)) {
       setSellNFTAddress(value);
       getCollectionNFTs(value);
@@ -398,6 +399,7 @@ export default function Swap() {
   const handleBuyNFTAddressChange = (_event, value) => {
     console.log("handleBuyNFTAddressChange", value);
     setBuyAmount(0);
+    setSelectedBuyNFTs([]);
     if (ethers.utils.isAddress(value)) {
       setBuyNFTAddress(value);
       getBuyTradingPoolAddress(value);

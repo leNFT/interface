@@ -91,46 +91,53 @@ export default function Buy() {
   }
 
   async function getPriceQuote(amount) {
-    setPriceQuote();
-    setLoadingPriceQuote(true);
-    var newBuyQuote;
-    if (selectingNFTs) {
-      newBuyQuote = await getBuyExactQuote(chain.id, selectedNFTs, poolAddress);
-    } else {
-      newBuyQuote = await getBuyQuote(chain.id, amount, poolAddress);
-    }
-    setPriceQuote(newBuyQuote);
-    setLoadingPriceQuote(false);
-    if (newBuyQuote.lps.length < amount) {
-      dispatch({
-        type: "warning",
-        message: "Can only buy " + newBuyQuote.lps.length + " NFTs",
-        title: "Maximum is " + newBuyQuote.lps.length,
-        position: "topR",
-      });
-    }
-    setAmount(newBuyQuote.lps.length);
-    console.log("newBuyQuote", newBuyQuote);
-    // Fill the selected NFTs array
-    var newSelectedNFTs = [];
-    if (selectingNFTs) {
-      // Remove any NFTs that can't be sold as per the quote
-      newSelectedNFTs = selectedNFTs.slice(0, newBuyQuote.lps.length);
-    } else {
-      for (let index = 0; index < newBuyQuote.lps.length; index++) {
-        if (index > availableNFTs.length) {
-          break;
-        }
-        newSelectedNFTs.push(
-          BigNumber.from(availableNFTs[index].id.tokenId).toNumber()
+    if (amount > 0) {
+      setPriceQuote();
+      setLoadingPriceQuote(true);
+      var newBuyQuote;
+      if (selectingNFTs) {
+        newBuyQuote = await getBuyExactQuote(
+          chain.id,
+          selectedNFTs,
+          poolAddress
         );
+      } else {
+        newBuyQuote = await getBuyQuote(chain.id, amount, poolAddress);
+      }
+      setPriceQuote(newBuyQuote);
+      setLoadingPriceQuote(false);
+      if (newBuyQuote.lps.length < amount) {
+        dispatch({
+          type: "warning",
+          message: "Can only buy " + newBuyQuote.lps.length + " NFTs",
+          title: "Maximum is " + newBuyQuote.lps.length,
+          position: "topR",
+        });
+      }
+      setAmount(newBuyQuote.lps.length);
+      console.log("newBuyQuote", newBuyQuote);
+      // Fill the selected NFTs array
+      var newSelectedNFTs = [];
+      if (selectingNFTs) {
+        // Remove any NFTs that can't be sold as per the quote
+        newSelectedNFTs = selectedNFTs.slice(0, newBuyQuote.lps.length);
+      } else {
+        for (let index = 0; index < newBuyQuote.lps.length; index++) {
+          if (index > availableNFTs.length) {
+            break;
+          }
+          newSelectedNFTs.push(
+            BigNumber.from(availableNFTs[index].id.tokenId).toNumber()
+          );
+        }
+      }
+      if (newSelectedNFTs.length != selectedNFTs.length) {
+        console.log("newSelectedNFTs", newSelectedNFTs);
+        setSelectedNFTs(newSelectedNFTs);
       }
     }
-    if (newSelectedNFTs.length != selectedNFTs.length) {
-      console.log("newSelectedNFTs", newSelectedNFTs);
-      setSelectedNFTs(newSelectedNFTs);
-    }
   }
+
   async function getNFTName(collection) {
     console.log("nftAddress", nftAddress);
     const nftContract = new ethers.Contract(collection, erc721, provider);
@@ -215,6 +222,9 @@ export default function Buy() {
 
   const handleNFTAddressChange = (_event, value) => {
     console.log("handleNFTAddressChange", value);
+    setAmount(0);
+    setSelectedNFTs([]);
+    setPriceQuote();
     if (ethers.utils.isAddress(value)) {
       setNFTAddress(value);
       getTradingPoolAddress(value);

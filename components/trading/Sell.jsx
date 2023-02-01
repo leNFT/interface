@@ -86,40 +86,45 @@ export default function Sell() {
   }
 
   async function getPriceQuote(quotedAmount) {
-    const newSellQuote = await getSellQuote(
-      chain.id,
-      quotedAmount,
-      poolAddress
-    );
-    setPriceQuote(newSellQuote);
-    if (newSellQuote.lps.length < quotedAmount) {
-      dispatch({
-        type: "warning",
-        message: "Can only sell " + newSellQuote.lps.length + " NFTs",
-        title: "Maximum is " + newSellQuote.lps.length,
-        position: "topR",
-      });
-      setAmount(newSellQuote.lps.length);
-    }
-    console.log("newSellQuote", newSellQuote);
-    // Fill the selected NFTs array
-    var newSelectedNFTs = [];
-    if (selectingNFTs) {
-      // Remove any NFTs that can't be sold as per the quote
-      newSelectedNFTs = selectedNFTs.slice(0, newSellQuote.lps.length);
-    } else {
-      for (let index = 0; index < newSellQuote.lps.length; index++) {
-        if (index > userNFTs.length) {
-          break;
-        }
-        newSelectedNFTs.push(
-          BigNumber.from(userNFTs[index].id.tokenId).toNumber()
-        );
+    if (quotedAmount > 0) {
+      setPriceQuote();
+      setLoadingPriceQuote(true);
+      const newSellQuote = await getSellQuote(
+        chain.id,
+        quotedAmount,
+        poolAddress
+      );
+      setPriceQuote(newSellQuote);
+      setLoadingPriceQuote(false);
+      if (newSellQuote.lps.length < quotedAmount) {
+        dispatch({
+          type: "warning",
+          message: "Can only sell " + newSellQuote.lps.length + " NFTs",
+          title: "Maximum is " + newSellQuote.lps.length,
+          position: "topR",
+        });
+        setAmount(newSellQuote.lps.length);
       }
-    }
-    if (newSelectedNFTs.length != selectedNFTs.length) {
-      console.log("newSelectedNFTs", newSelectedNFTs);
-      setSelectedNFTs(newSelectedNFTs);
+      console.log("newSellQuote", newSellQuote);
+      // Fill the selected NFTs array
+      var newSelectedNFTs = [];
+      if (selectingNFTs) {
+        // Remove any NFTs that can't be sold as per the quote
+        newSelectedNFTs = selectedNFTs.slice(0, newSellQuote.lps.length);
+      } else {
+        for (let index = 0; index < newSellQuote.lps.length; index++) {
+          if (index > userNFTs.length) {
+            break;
+          }
+          newSelectedNFTs.push(
+            BigNumber.from(userNFTs[index].id.tokenId).toNumber()
+          );
+        }
+      }
+      if (newSelectedNFTs.length != selectedNFTs.length) {
+        console.log("newSelectedNFTs", newSelectedNFTs);
+        setSelectedNFTs(newSelectedNFTs);
+      }
     }
   }
 
@@ -203,6 +208,9 @@ export default function Sell() {
 
   const handleNFTAddressChange = (_event, value) => {
     console.log("handleNFTAddressChange", value);
+    setAmount(0);
+    setSelectedNFTs([]);
+    setPriceQuote();
     if (ethers.utils.isAddress(value)) {
       setNFTAddress(value);
       getUserNFTs(value);

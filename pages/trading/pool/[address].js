@@ -251,7 +251,7 @@ export default function TradingPool() {
           >
             my LP Positions
           </Box>
-          <div className="flex flex-col border-4 border-slate-400 rounded-2xl mt-0 p-12 m-8 lg:py-16 lg:px-16">
+          <div className="flex flex-col border-4 border-slate-400 rounded-2xl mt-0 p-8 m-8 lg:p-16">
             {loadingTradingPool ? (
               <div className="flex m-4">
                 <Loading size={12} spinnerColor="#000000" />
@@ -268,7 +268,7 @@ export default function TradingPool() {
                     <div>{"No LP Positions found"}</div>
                   </Box>
                 ) : (
-                  <div className="flex grid md:grid-cols-2 lg:grid-cols-3 gap-1">
+                  <div className="flex grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {lpPositions.map((data) => (
                       <div
                         key={data.id}
@@ -294,7 +294,7 @@ export default function TradingPool() {
                                   fontSize: "subtitle1.fontSize",
                                 }}
                               >
-                                <div className="flex flex-col items-center justify-center text-center">
+                                <div className="flex flex-col items-center justify-center m-2 text-center">
                                   {"LP " + BigNumber.from(data.id).toNumber()}
                                 </div>
                               </Box>

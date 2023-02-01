@@ -32,9 +32,9 @@ import erc721 from "../../contracts/erc721.json";
 
 export default function DepositTradingPool(props) {
   const [curve, setCurve] = useState("exponential");
-  const [delta, setDelta] = useState("0");
-  const [initialPrice, setInitialPrice] = useState("0");
-  const [tokenAmount, setTokenAmount] = useState("0");
+  const [delta, setDelta] = useState("");
+  const [initialPrice, setInitialPrice] = useState("");
+  const [tokenAmount, setTokenAmount] = useState("");
   const [nftAmount, setNFTAmount] = useState(0);
   const [userNFTs, setUserNFTs] = useState([]);
   const [selectedNFTs, setSelectedNFTs] = useState([]);
@@ -43,13 +43,12 @@ export default function DepositTradingPool(props) {
   const [approvedNFT, setApprovedNFT] = useState(false);
   const [approvalNFTLoading, setApprovalNFTLoading] = useState(false);
   const [approvalTokenLoading, setApprovalTokenLoading] = useState(false);
-
+  const { address, isConnected } = useAccount();
+  const { data: signer } = useSigner();
   const [depositLoading, setDepositLoading] = useState(false);
   const dispatch = useNotification();
-  const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const provider = useProvider();
-  const { data: signer } = useSigner();
   const addresses =
     chain && chain.id in contractAddresses
       ? contractAddresses[chain.id]
@@ -115,6 +114,13 @@ export default function DepositTradingPool(props) {
   }, [props.pool, props.token, props.nft]);
 
   const handleDepositSuccess = async function () {
+    // Reset the UI
+    setSelectedNFTs([]);
+    setInitialPrice("");
+    setTokenAmount("");
+    setDelta("");
+    setNFTAmount(0);
+
     props.updateUI();
     props.setVisibility(false);
     dispatch({
@@ -147,7 +153,7 @@ export default function DepositTradingPool(props) {
 
   function handleTokenAmountChange(e) {
     if (e.target.value != "") {
-      setTokenAmount(parseUnits(e.target.value, 18).toString());
+      setTokenAmount(e.target.value);
     } else {
       setTokenAmount("0");
     }
@@ -155,25 +161,19 @@ export default function DepositTradingPool(props) {
 
   function handleInitialPriceChange(e) {
     if (e.target.value != "") {
-      setInitialPrice(parseUnits(e.target.value, 18));
       console.log("newInitialPrice", parseUnits(e.target.value, 18));
+      setInitialPrice(e.target.value);
     } else {
       setInitialPrice("0");
     }
   }
 
   function handleDeltaChange(e) {
-    var newDelta = 0;
     if (e.target.value != "") {
-      if (curve == "exponential") {
-        newDelta = e.target.value * 100;
-      } else if (curve == "linear") {
-        newDelta = parseUnits(e.target.value, 18);
-      }
+      setDelta(e.target.value);
+    } else {
+      setDelta("");
     }
-
-    setDelta(newDelta);
-    console.log("newDelta;", e.target.value);
   }
 
   function handleCurveChange(e) {
@@ -208,6 +208,7 @@ export default function DepositTradingPool(props) {
               ? "Delta (Amount)"
               : "Delta"
           }
+          value={delta}
           type="number"
           step="any"
           placeholder="0"
@@ -223,6 +224,7 @@ export default function DepositTradingPool(props) {
           label="Initial Price"
           type="number"
           placeholder="> 0"
+          value={initialPrice}
           step="any"
           description="The initial price of the LP"
           validation={{
@@ -237,6 +239,7 @@ export default function DepositTradingPool(props) {
             label="WETH Amount"
             type="number"
             placeholder="0"
+            value={tokenAmount}
             step="any"
             validation={{
               numberMin: 0,
@@ -392,13 +395,7 @@ export default function DepositTradingPool(props) {
       )}
       <div className="flex flex-row items-center justify-center m-8">
         <Button
-          text={
-            "Deposit (" +
-            formatUnits(tokenAmount, 18) +
-            " tokens, " +
-            nftAmount +
-            " NFTs)"
-          }
+          text={"Deposit (" + tokenAmount + " tokens, " + nftAmount + " NFTs)"}
           theme="secondary"
           isFullWidth
           loadingProps={{
@@ -422,33 +419,32 @@ export default function DepositTradingPool(props) {
               }
               setDepositLoading(true);
               console.log("signer.", signer);
-              var tx;
-              if (props.assetSymbol == "ETH") {
-                console.log("Depositing ETH");
-                tx = await wethGatewaySigner.depositETH(props.reserve, {
-                  value: amount,
-                });
-              } else {
-                const tradingPool = new ethers.Contract(
-                  props.pool,
-                  tradingPoolContract.abi,
-                  signer
-                );
-                var curveAddress = "";
-                if (curve == "exponential") {
-                  curveAddress = addresses.ExponentialCurve;
-                } else if (curve == "linear") {
-                  curveAddress = addresses.LinearCurve;
-                }
-                console.log("Adding LP");
-                tx = await tradingPool.addLiquidity(
-                  selectedNFTs,
-                  tokenAmount,
-                  curveAddress,
-                  delta,
-                  initialPrice
-                );
+
+              console.log("Creating trading pool", props.pool);
+              const tradingPool = new ethers.Contract(
+                props.pool,
+                tradingPoolContract.abi,
+                signer
+              );
+              var curveAddress = "";
+              var curveDelta = 0;
+              console.log("delta", delta);
+              if (curve == "exponential") {
+                curveAddress = addresses.ExponentialCurve;
+                curveDelta = delta * 100;
+              } else if (curve == "linear") {
+                curveAddress = addresses.LinearCurve;
+                curveDelta = parseUnits(delta, 18);
               }
+
+              const tx = await tradingPool.addLiquidity(
+                selectedNFTs,
+                parseUnits(tokenAmount, 18).toString(),
+                curveAddress,
+                curveDelta,
+                parseUnits(initialPrice, 18).toString()
+              );
+
               await tx.wait(1);
               handleDepositSuccess();
             } catch (error) {

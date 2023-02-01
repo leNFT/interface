@@ -35,28 +35,14 @@ export default function TradingPools() {
     const tradingPools = await getTradingPools(chain.id);
     console.log("TradingPools", tradingPools);
     var newTableData = [];
-    var thumbnails = {};
-
-    // Get NFT collection thumbnails
-    for (const [key, value] of Object.entries(tradingPools)) {
-      // Get NFT collection thumbnail
-      var thumbnail = await getNFTImage(value.nft.address, 1, chain.id);
-      if (thumbnail == "") {
-        thumbnail =
-          "https://github.com/leNFT/interface/blob/main/public/icon.png?raw=true";
-      }
-      thumbnails[key] = thumbnail;
-      console.log("Thumbnail", thumbnail);
-    }
 
     for (const [key, value] of Object.entries(tradingPools)) {
       newTableData.push([
         <Image
-          loader={() => thumbnails[key]}
-          src={thumbnails[key]}
+          loader={() => value.nft.image}
+          src={value.nft.image}
           height="80"
           width="80"
-          loading="eager"
           className="rounded-xl"
           key={"image" + key}
         />,
@@ -175,7 +161,7 @@ export default function TradingPools() {
           />
         </div>
         <Table
-          columnsConfig="1fr 2fr 2fr 2fr 0fr"
+          columnsConfig="1fr 2fr 2fr 1fr 0fr"
           alignCellItems="center"
           tableBackgroundColor="white"
           customLoadingContent={

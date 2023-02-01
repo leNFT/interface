@@ -62,6 +62,7 @@ export default function CreateTradingPool(props) {
 
   const handleCreateTradingPoolSuccess = async function () {
     props.updateUI();
+    setCollection("");
     props.setVisibility(false);
     dispatch({
       type: "success",
@@ -94,6 +95,7 @@ export default function CreateTradingPool(props) {
           width="100%"
           label="Collection Address"
           type="text"
+          value={collection}
           onChange={handleCollectionChange}
         />
       </div>

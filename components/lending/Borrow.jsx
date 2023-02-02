@@ -149,9 +149,8 @@ export default function Borrow(props) {
   async function getNFTApproval() {
     const approvedAddress = await nftProvider.getApproved(props.token_id);
     setNFTApproved(
-      (approvedAddress == borrowAsset) == "ETH"
-        ? addresses.WETHGateway
-        : addresses.LendingMarket
+      approvedAddress ==
+        (borrowAsset == "ETH" ? addresses.WETHGateway : addresses.LendingMarket)
     );
   }
 
@@ -296,7 +295,7 @@ export default function Borrow(props) {
             )}
             {genesisNFTId != 0 && (
               <div className="flex flex-row justify-center items-center">
-                <Typography variant="caption14">Genesis Boost:</Typography>
+                <Typography variant="caption14">Genesis NFT Boost: </Typography>
                 {loadingGenesisBoost ? (
                   <div className="m-3">
                     <Loading size={18} spinnerColor="#000000" />
@@ -463,6 +462,8 @@ export default function Borrow(props) {
                     );
                     var tx;
                     if (borrowAsset == "ETH") {
+                      console.log("request", requestID);
+                      console.log("priceSig", priceSig);
                       tx = await wethGatewaySigner.borrowETH(
                         amount,
                         props.token_address,

@@ -92,7 +92,7 @@ export default function DepositLendingPool(props) {
     updateTokenBalance();
     dispatch({
       type: "success",
-      message: "Your tokens were deposited into the pool.",
+      message: "Your tokens were deposited in the pool.",
       title: "Deposit Successful!",
       position: "bottomL",
     });

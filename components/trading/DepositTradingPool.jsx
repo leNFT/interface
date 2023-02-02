@@ -125,7 +125,7 @@ export default function DepositTradingPool(props) {
     props.setVisibility(false);
     dispatch({
       type: "success",
-      message: "Your tokens were deposited into the reserve.",
+      message: "Your tokens were deposited in the pool.",
       title: "Deposit Successful!",
       position: "bottomL",
     });

@@ -30,6 +30,7 @@ import {
   useSigner,
 } from "wagmi";
 import wethGatewayContract from "../../contracts/WETHGateway.json";
+import { ethers } from "ethers";
 
 export default function Borrow(props) {
   const PRICE_PRECISION = "1000000000000000000";
@@ -464,6 +465,10 @@ export default function Borrow(props) {
                     if (borrowAsset == "ETH") {
                       console.log("request", requestID);
                       console.log("priceSig", priceSig);
+                      console.log("amount", amount);
+                      console.log("props.token_address", props.token_address);
+                      console.log("props.token_id", props.token_id);
+                      console.log("genesisNFTId", genesisNFTId);
                       tx = await wethGatewaySigner.borrowETH(
                         amount,
                         props.token_address,
@@ -474,6 +479,7 @@ export default function Borrow(props) {
                       );
                       await tx.wait(1);
                     } else {
+                      console.log("Borrowing ERC20");
                       tx = await marketSigner.borrow(
                         addresses[borrowAsset].address,
                         amount,

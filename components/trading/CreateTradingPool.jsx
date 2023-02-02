@@ -77,10 +77,7 @@ export default function CreateTradingPool(props) {
   };
 
   async function getErrorMessage(collection) {
-    if (collection == "") {
-      setErrorMessage("");
-      return;
-    }
+    setErrorMessage("");
 
     if (ethers.utils.isAddress(collection)) {
       const pool = (
@@ -163,7 +160,7 @@ export default function CreateTradingPool(props) {
             direction: "right",
             size: "24",
           }}
-          disabled={!collection || !asset || !errorMessage}
+          disabled={!collection || !asset || errorMessage}
           loadingText=""
           isLoading={creatingLoading}
           onClick={async function () {

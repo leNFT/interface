@@ -62,6 +62,7 @@ export default function Lend() {
     // Get user NFT assets
     const addressNFTs = await getAddressNFTs(address, "", chain.id);
     const supportedNFTs = await getLendingNFTCollections(chain.id);
+
     console.log("supportedNFTs:", supportedNFTs);
     var updatedLoans = [];
     var updatedSupportedAssets = [];

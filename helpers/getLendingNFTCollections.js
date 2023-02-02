@@ -8,11 +8,17 @@ export async function getLendingNFTCollections(chainId, pool = "") {
       Accept: "application/json",
     },
   };
+  console.log(
+    serverAddress +
+      "/api/lendingNFTCollections?chainId=" +
+      chainId +
+      (pool != "" && "&pool=" + pool)
+  );
   const response = await fetch(
     serverAddress +
       "/api/lendingNFTCollections?chainId=" +
       chainId +
-      (pool != "" && "&pool=" + pool),
+      (pool != "" ? "&pool=" + pool : ""),
     options
   ).catch((err) => console.error(err));
   var collections = [];

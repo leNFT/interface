@@ -108,7 +108,7 @@ export default function TradingPool() {
     if (router.query.address != undefined && isConnected) {
       updateUI();
     }
-  }, [isConnected, router.query.address]);
+  }, [isConnected, router.query.address, address]);
 
   return (
     <div>

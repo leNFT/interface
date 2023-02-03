@@ -13,6 +13,7 @@ import CardContent from "@mui/material/CardContent";
 import { CardActionArea } from "@mui/material";
 import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
 import { formatUnits, parseUnits } from "@ethersproject/units";
+import Image from "next/image";
 import {
   useNotification,
   Button,
@@ -378,14 +379,36 @@ export default function DepositTradingPool(props) {
                   }}
                 >
                   <CardContent>
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "caption",
-                      }}
-                    >
-                      {BigNumber.from(nft.id.tokenId).toNumber()}
-                    </Box>
+                    <div className="flex flex-col items-center p-1">
+                      {nft.metadata.image ? (
+                        <Image
+                          loader={() => nft.metadata.image}
+                          src={nft.metadata.image}
+                          height="100"
+                          width="100"
+                          className="rounded-xl"
+                        />
+                      ) : (
+                        <Box
+                          className="flex m-2 justify-center items-center w-[100px] h-[100px]"
+                          sx={{
+                            fontFamily: "Monospace",
+                            fontSize: "caption",
+                          }}
+                        >
+                          No Image
+                        </Box>
+                      )}
+                      <Box
+                        className="mt-1"
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "caption",
+                        }}
+                      >
+                        {BigNumber.from(nft.id.tokenId).toNumber()}
+                      </Box>
+                    </div>
                   </CardContent>
                 </CardActionArea>
               </Card>

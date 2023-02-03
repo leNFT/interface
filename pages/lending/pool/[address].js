@@ -135,7 +135,7 @@ export default function LendingPool() {
       setLoadingPool(true);
       getLendingPoolDetails();
     }
-  }, [isConnected, router.query.address]);
+  }, [isConnected, router.query.address, address]);
 
   return (
     <div>
@@ -219,7 +219,51 @@ export default function LendingPool() {
           />
         </div>
       </div>
-      <div className="flex flex-col-reverse md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">
+      <div className="flex flex-row justify-center items-center mt-4">
+        <div className="flex flex-col justify-center items-center p-6 rounded-3xl m-2 lg:mx-8 bg-black/5 shadow-lg">
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "h5.fontSize",
+              fontWeight: "bold",
+            }}
+          >
+            Collections:
+          </Box>
+          <div className="mt-4">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "h6.fontSize",
+              }}
+            >
+              {Object.values(poolSupportedNFTs).map((nft) => nft.name + " ")}
+            </Box>
+          </div>
+        </div>
+        <div className="flex flex-col justify-center items-center p-6 rounded-3xl m-2 lg:mx-8 bg-black/5 shadow-lg">
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "h5.fontSize",
+              fontWeight: "bold",
+            }}
+          >
+            Assets:
+          </Box>
+          <div className="mt-4">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "h6.fontSize",
+              }}
+            >
+              {assetSymbol}
+            </Box>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col-reverse md:flex-row items-center justify-center p-4 rounded-3xl m-4 bg-black/5 shadow-lg">
         <div className="flex flex-col items-center p-4 rounded-3xl m-8 lg:m-16 bg-black/5 shadow-lg">
           <div className="flex flex-col m-4 rounded-2xl">
             <div className="flex flex-row m-2">
@@ -359,28 +403,7 @@ export default function LendingPool() {
           )}
         </div>
       </div>
-      <div className="flex flex-col justify-center items-center p-8 rounded-3xl m-8 lg:m-16 bg-black/5 shadow-lg">
-        <Box
-          sx={{
-            fontFamily: "Monospace",
-            fontSize: "h5.fontSize",
-            fontWeight: "bold",
-          }}
-        >
-          Supported NFTs:
-        </Box>
-        <div className="mt-4">
-          <Box
-            sx={{
-              fontFamily: "Monospace",
-              fontSize: "h6.fontSize",
-            }}
-          >
-            {Object.values(poolSupportedNFTs).map((nft) => nft.name + " ")}
-          </Box>
-        </div>
-      </div>
-      <div className="flex flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 bg-black/5 shadow-lg">
+      <div className="flex flex-row items-center justify-center p-4 rounded-3xl m-4 lg:m-8 bg-black/5 shadow-lg">
         <div className="flex flex-col m-2 md:flex-row border-2 rounded-2xl">
           <div className="flex flex-col m-4">
             <Box

@@ -470,6 +470,7 @@ export default function Borrow(props) {
                       console.log("props.token_address", props.token_address);
                       console.log("props.token_id", props.token_id);
                       console.log("genesisNFTId", genesisNFTId);
+                      console.log("wethGatewaySigner", wethGatewaySigner);
                       tx = await wethGatewaySigner.borrowETH(
                         amount,
                         props.token_address,

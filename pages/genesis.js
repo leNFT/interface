@@ -111,7 +111,7 @@ export default function Genesis() {
         />
       </StyledModal>
       <div className="flex flex-col items-center">
-        <div className="flex flex-col items-center justify-center border-4 m-2 md:m-8 rounded-3xl bg-black/5 shadow-lg">
+        <div className="flex flex-col items-center justify-center border-4 m-2 md:mt-8 rounded-3xl bg-black/5 shadow-lg">
           <div className="flex flex-row mt-4">
             <Box
               sx={{

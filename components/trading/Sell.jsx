@@ -150,15 +150,26 @@ export default function Sell() {
   const handleAmountInputChange = (event) => {
     console.log("handleAmountInputChange", event.target.value);
     setSelectingNFTs(false);
-    try {
-      if (event.target.value && nftAddress) {
-        getPriceQuote(event.target.value);
-      } else {
-        setPriceQuote();
-      }
+    if (event.target.value > userNFTs.length) {
+      setAmount(userNFTs.length);
+      dispatch({
+        type: "warning",
+        message: "You only own " + userNFTs.length + " " + nftName + "s",
+        title: "Amount too high!",
+        position: "bottomL",
+      });
+    } else {
       setAmount(event.target.value);
-    } catch (error) {
-      console.log(error);
+      try {
+        if (event.target.value && nftAddress) {
+          getPriceQuote(event.target.value);
+        } else {
+          setPriceQuote();
+        }
+        setAmount(event.target.value);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 

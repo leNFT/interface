@@ -170,18 +170,10 @@ export default function Swap() {
       }
 
       // Warn user if the quote is couldnt be fully generated
-      if (
-        newSwapQuote.sellLps.length < sellAmount ||
-        newSwapQuote.buyLps.length < buyAmount
-      ) {
+      if (newSwapQuote.sellLps.length < sellAmount) {
         dispatch({
           type: "warning",
-          message:
-            newSwapQuote.buyLps.length < buyAmount
-              ? "Pool only has " +
-                newSwapQuote.buyLps.length +
-                " NFTs left to sell"
-              : "Pool can only buy " + newSwapQuote.sellLps.length + " NFTs",
+          message: "Pool can only buy " + newSwapQuote.sellLps.length + " NFTs",
           title: "Swap Quote Warning",
           position: "bottomL",
         });
@@ -204,7 +196,7 @@ export default function Swap() {
         );
       } else {
         for (let index = 0; index < newSwapQuote.sellLps.length; index++) {
-          if (index > userNFTs.length) {
+          if (index >= userNFTs.length) {
             break;
           }
           newSelectedSellNFTs.push(
@@ -429,34 +421,59 @@ export default function Swap() {
   const handleSellAmountInputChange = (event) => {
     setSelectingSellNFTs(false);
     console.log("handleAmountInputChange", event.target.value);
-    try {
+    if (event.target.value > userNFTs.length) {
+      setSellAmount(userNFTs.length);
+      dispatch({
+        type: "warning",
+        message: "You only own " + userNFTs.length + " " + sellNFTName + "s",
+        title: "Amount too high!",
+        position: "bottomL",
+      });
+    } else {
       setSellAmount(event.target.value);
-      getPriceQuote(
-        buyAmount,
-        event.target.value,
-        buyPoolAddress,
-        sellPoolAddress
-      );
-    } catch (error) {
-      setPriceQuote();
-      console.log(error);
+      try {
+        getPriceQuote(
+          buyAmount,
+          event.target.value,
+          buyPoolAddress,
+          sellPoolAddress
+        );
+      } catch (error) {
+        setPriceQuote();
+        console.log(error);
+      }
     }
   };
 
   const handleBuyAmountInputChange = (event) => {
     setSelectingBuyNFTs(false);
     console.log("handleAmountInputChange", event.target.value);
-    try {
+    if (event.target.value > availableBuyPoolNFTs.length) {
+      setBuyAmount(availableBuyPoolNFTs.length);
+      dispatch({
+        type: "warning",
+        message:
+          "Pool only has " +
+          availableBuyPoolNFTs.length +
+          " " +
+          buyNFTName +
+          "s available",
+        title: "Amount too high!",
+        position: "bottomL",
+      });
+    } else {
       setBuyAmount(event.target.value);
-      getPriceQuote(
-        event.target.value,
-        sellAmount,
-        buyPoolAddress,
-        sellPoolAddress
-      );
-    } catch (error) {
-      setPriceQuote();
-      console.log(error);
+      try {
+        getPriceQuote(
+          event.target.value,
+          sellAmount,
+          buyPoolAddress,
+          sellPoolAddress
+        );
+      } catch (error) {
+        setPriceQuote();
+        console.log(error);
+      }
     }
   };
 

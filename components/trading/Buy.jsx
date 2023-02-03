@@ -106,14 +106,6 @@ export default function Buy() {
       }
       setPriceQuote(newBuyQuote);
       setLoadingPriceQuote(false);
-      if (newBuyQuote.lps.length < amount) {
-        dispatch({
-          type: "warning",
-          message: "Can only buy " + newBuyQuote.lps.length + " NFTs",
-          title: "Maximum is " + newBuyQuote.lps.length,
-          position: "bottomL",
-        });
-      }
       setAmount(newBuyQuote.lps.length);
       console.log("newBuyQuote", newBuyQuote);
       // Fill the selected NFTs array
@@ -211,15 +203,31 @@ export default function Buy() {
   const handleAmountInputChange = (event) => {
     setSelectingNFTs(false);
     console.log("handleAmountInputChange", event.target.value);
-    try {
-      if (event.target.value && nftAddress) {
-        getPriceQuote(event.target.value);
-      } else {
-        setPriceQuote();
-      }
+    if (event.target.value > availableNFTs.length) {
+      setAmount(availableNFTs.length);
+      dispatch({
+        type: "warning",
+        message:
+          "Pool only has " +
+          availableNFTs.length +
+          " " +
+          nftName +
+          "s available",
+        title: "Amount too high!",
+        position: "bottomL",
+      });
+    } else {
       setAmount(event.target.value);
-    } catch (error) {
-      console.log(error);
+      try {
+        if (event.target.value && nftAddress) {
+          getPriceQuote(event.target.value);
+        } else {
+          setPriceQuote();
+        }
+        setAmount(event.target.value);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 

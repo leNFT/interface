@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button, Tooltip, Loading, Typography } from "@web3uikit/core";
+import { Button, Tooltip, Loading, Typography, LinkTo } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
 import { BigNumber } from "@ethersproject/bignumber";
 import StyledModal from "../../../components/StyledModal";
@@ -15,6 +15,8 @@ import Card from "@mui/material/Card";
 import { CardActionArea } from "@mui/material";
 import CardContent from "@mui/material/CardContent";
 import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
+import erc721 from "../../../contracts/erc721.json";
+import erc20 from "../../../contracts/erc20.json";
 import Router from "next/router";
 import { useRouter } from "next/router";
 import { ChevronLeft } from "@web3uikit/icons";
@@ -33,6 +35,8 @@ export default function TradingPool() {
   const [visibleDepositModal, setVisibleDepositModal] = useState(false);
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
   const [loadingTradingPool, setLoadingTradingPool] = useState(true);
+  const [nftName, setNFTName] = useState("...");
+  const [tokenName, setTokenName] = useState("...");
   const provider = useProvider();
   const addresses =
     chain && chain.id in contractAddresses
@@ -50,8 +54,24 @@ export default function TradingPool() {
     const nftResponse = await pool.getNFT();
     setNFT(nftResponse.toString());
 
+    const nftContract = new ethers.Contract(
+      nftResponse.toString(),
+      erc721,
+      provider
+    );
+    const nftNameResponse = await nftContract.name();
+    setNFTName(nftNameResponse);
+
     const tokenResponse = await pool.getToken();
     setToken(tokenResponse.toString());
+
+    const tokenContract = new ethers.Contract(
+      tokenResponse.toString(),
+      erc20,
+      provider
+    );
+    const tokenNameResponse = await tokenContract.name();
+    setTokenName(tokenNameResponse);
 
     // Get lp positions
     const addressNFTs = await getAddressNFTs(
@@ -170,6 +190,56 @@ export default function TradingPool() {
             }}
           />
         </div>
+      </div>
+      <div className="flex flex-row justify-center items-center p-8 rounded-3xl m-8 lg:mx-16 bg-black/5 shadow-lg">
+        <LinkTo
+          type="external"
+          iconLayout="none"
+          text={
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: {
+                  xs: "caption.fontSize",
+                  sm: "h5.fontSize",
+                },
+              }}
+              className="m-2"
+            >
+              {nftName}
+            </Box>
+          }
+          address={
+            chain.id == 1
+              ? "https://etherscan.io/address/" + nft
+              : "https://goerli.etherscan.io/address/" + nft
+          }
+        ></LinkTo>
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: {
+              xs: "caption.fontSize",
+              sm: "h5.fontSize",
+            },
+            fontWeight: "bold",
+          }}
+        >
+          {" / "}
+        </Box>
+        <Box
+          className="m-2"
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: {
+              xs: "caption.fontSize",
+              sm: "h5.fontSize",
+            },
+            fontWeight: "bold",
+          }}
+        >
+          {tokenName}
+        </Box>
       </div>
       <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">
         <div className="flex flex-col items-center p-4 rounded-3xl m-8 lg:m-16 bg-black/5 shadow-lg">

@@ -645,80 +645,93 @@ export default function Swap() {
                   </div>
                 </div>
               </div>
-              {selectingSellNFTs && (
-                <div className="flex flex-row m-4 grid grid-cols-3 lg:grid-cols-4 overflow-auto max-h-[24rem]">
-                  {userNFTs.map((nft, _) => (
-                    <div
-                      key={BigNumber.from(nft.id.tokenId).toNumber()}
-                      className="flex m-2 items-center justify-center max-w-[300px]"
-                    >
-                      <Card
-                        sx={{
-                          borderRadius: 4,
-                          background: selectedSellNFTs.find(
-                            (element) =>
-                              element ==
-                              BigNumber.from(nft.id.tokenId).toNumber()
-                          )
-                            ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
-                            : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
-                        }}
+              {selectingSellNFTs &&
+                (userNFTs.length > 0 ? (
+                  <div className="flex flex-row m-4 grid grid-cols-3 lg:grid-cols-4 overflow-auto max-h-[24rem]">
+                    {userNFTs.map((nft, _) => (
+                      <div
+                        key={BigNumber.from(nft.id.tokenId).toNumber()}
+                        className="flex m-2 items-center justify-center max-w-[300px]"
                       >
-                        <CardActionArea
-                          onClick={function () {
-                            //If it's selected we unselect and if its unselected we select
-                            var newSelectedSellNFTs = selectedSellNFTs.slice();
-                            var index = newSelectedSellNFTs.findIndex(
+                        <Card
+                          sx={{
+                            borderRadius: 4,
+                            background: selectedSellNFTs.find(
                               (element) =>
                                 element ==
                                 BigNumber.from(nft.id.tokenId).toNumber()
-                            );
-                            if (index == -1) {
-                              newSelectedSellNFTs.push(
-                                BigNumber.from(nft.id.tokenId).toNumber()
-                              );
-                            } else {
-                              newSelectedSellNFTs.splice(index, 1);
-                            }
-                            setSelectedSellNFTs(newSelectedSellNFTs);
+                            )
+                              ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
+                              : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                           }}
                         >
-                          <div className="flex flex-col items-center p-1">
-                            {nft.metadata.image ? (
-                              <Image
-                                loader={() => nft.metadata.image}
-                                src={nft.metadata.image}
-                                height="100"
-                                width="100"
-                                className="rounded-xl"
-                              />
-                            ) : (
+                          <CardActionArea
+                            onClick={function () {
+                              //If it's selected we unselect and if its unselected we select
+                              var newSelectedSellNFTs =
+                                selectedSellNFTs.slice();
+                              var index = newSelectedSellNFTs.findIndex(
+                                (element) =>
+                                  element ==
+                                  BigNumber.from(nft.id.tokenId).toNumber()
+                              );
+                              if (index == -1) {
+                                newSelectedSellNFTs.push(
+                                  BigNumber.from(nft.id.tokenId).toNumber()
+                                );
+                              } else {
+                                newSelectedSellNFTs.splice(index, 1);
+                              }
+                              setSelectedSellNFTs(newSelectedSellNFTs);
+                            }}
+                          >
+                            <div className="flex flex-col items-center p-1">
+                              {nft.metadata.image ? (
+                                <Image
+                                  loader={() => nft.metadata.image}
+                                  src={nft.metadata.image}
+                                  height="100"
+                                  width="100"
+                                  className="rounded-xl"
+                                />
+                              ) : (
+                                <Box
+                                  className="flex m-2 justify-center items-center w-[100px] h-[100px]"
+                                  sx={{
+                                    fontFamily: "Monospace",
+                                    fontSize: "caption",
+                                  }}
+                                >
+                                  No Image
+                                </Box>
+                              )}
                               <Box
-                                className="flex m-2 justify-center items-center w-[100px] h-[100px]"
+                                className="mt-1"
                                 sx={{
                                   fontFamily: "Monospace",
                                   fontSize: "caption",
                                 }}
                               >
-                                No Image
+                                {BigNumber.from(nft.id.tokenId).toNumber()}
                               </Box>
-                            )}
-                            <Box
-                              className="mt-1"
-                              sx={{
-                                fontFamily: "Monospace",
-                                fontSize: "caption",
-                              }}
-                            >
-                              {BigNumber.from(nft.id.tokenId).toNumber()}
-                            </Box>
-                          </div>
-                        </CardActionArea>
-                      </Card>
-                    </div>
-                  ))}
-                </div>
-              )}
+                            </div>
+                          </CardActionArea>
+                        </Card>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                    }}
+                    className="flex mt-4 justify-center items-center text-center"
+                  >
+                    {"Couldn't find any " + sellNFTName + "'s in your wallet"}
+                  </Box>
+                ))}
             </div>
           )}
         </div>
@@ -897,80 +910,92 @@ export default function Swap() {
                   </div>
                 </div>
               </div>
-              {selectingBuyNFTs && (
-                <div className="flex flex-row m-4 grid grid-cols-3 lg:grid-cols-4 overflow-auto max-h-[24rem]">
-                  {availableBuyPoolNFTs.map((nft, _) => (
-                    <div
-                      key={BigNumber.from(nft.id.tokenId).toNumber()}
-                      className="flex m-2 items-center justify-center max-w-[300px]"
-                    >
-                      <Card
-                        sx={{
-                          borderRadius: 4,
-                          background: selectedBuyNFTs.find(
-                            (element) =>
-                              element ==
-                              BigNumber.from(nft.id.tokenId).toNumber()
-                          )
-                            ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
-                            : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
-                        }}
+              {selectingBuyNFTs &&
+                (availableBuyPoolNFTs.length > 0 ? (
+                  <div className="flex flex-row m-4 grid grid-cols-3 lg:grid-cols-4 overflow-auto max-h-[24rem]">
+                    {availableBuyPoolNFTs.map((nft, _) => (
+                      <div
+                        key={BigNumber.from(nft.id.tokenId).toNumber()}
+                        className="flex m-2 items-center justify-center max-w-[300px]"
                       >
-                        <CardActionArea
-                          onClick={function () {
-                            //If it's selected we unselect and if its unselected we select
-                            var newSelectedBuyNFTs = selectedBuyNFTs.slice();
-                            var index = newSelectedBuyNFTs.findIndex(
+                        <Card
+                          sx={{
+                            borderRadius: 4,
+                            background: selectedBuyNFTs.find(
                               (element) =>
                                 element ==
                                 BigNumber.from(nft.id.tokenId).toNumber()
-                            );
-                            if (index == -1) {
-                              newSelectedBuyNFTs.push(
-                                BigNumber.from(nft.id.tokenId).toNumber()
-                              );
-                            } else {
-                              newSelectedBuyNFTs.splice(index, 1);
-                            }
-                            setSelectedBuyNFTs(newSelectedBuyNFTs);
+                            )
+                              ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
+                              : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                           }}
                         >
-                          <div className="flex flex-col items-center p-1">
-                            {nft.metadata.image ? (
-                              <Image
-                                loader={() => nft.metadata.image}
-                                src={nft.metadata.image}
-                                height="100"
-                                width="100"
-                                className="rounded-xl"
-                              />
-                            ) : (
+                          <CardActionArea
+                            onClick={function () {
+                              //If it's selected we unselect and if its unselected we select
+                              var newSelectedBuyNFTs = selectedBuyNFTs.slice();
+                              var index = newSelectedBuyNFTs.findIndex(
+                                (element) =>
+                                  element ==
+                                  BigNumber.from(nft.id.tokenId).toNumber()
+                              );
+                              if (index == -1) {
+                                newSelectedBuyNFTs.push(
+                                  BigNumber.from(nft.id.tokenId).toNumber()
+                                );
+                              } else {
+                                newSelectedBuyNFTs.splice(index, 1);
+                              }
+                              setSelectedBuyNFTs(newSelectedBuyNFTs);
+                            }}
+                          >
+                            <div className="flex flex-col items-center p-1">
+                              {nft.metadata.image ? (
+                                <Image
+                                  loader={() => nft.metadata.image}
+                                  src={nft.metadata.image}
+                                  height="100"
+                                  width="100"
+                                  className="rounded-xl"
+                                />
+                              ) : (
+                                <Box
+                                  className="flex m-2 justify-center items-center w-[100px] h-[100px]"
+                                  sx={{
+                                    fontFamily: "Monospace",
+                                    fontSize: "caption",
+                                  }}
+                                >
+                                  No Image
+                                </Box>
+                              )}
                               <Box
-                                className="flex m-2 justify-center items-center w-[100px] h-[100px]"
+                                className="mt-1"
                                 sx={{
                                   fontFamily: "Monospace",
                                   fontSize: "caption",
                                 }}
                               >
-                                No Image
+                                {BigNumber.from(nft.id.tokenId).toNumber()}
                               </Box>
-                            )}
-                            <Box
-                              className="mt-1"
-                              sx={{
-                                fontFamily: "Monospace",
-                                fontSize: "caption",
-                              }}
-                            >
-                              {BigNumber.from(nft.id.tokenId).toNumber()}
-                            </Box>
-                          </div>
-                        </CardActionArea>
-                      </Card>
-                    </div>
-                  ))}
-                </div>
-              )}
+                            </div>
+                          </CardActionArea>
+                        </Card>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                    }}
+                    className="flex mt-4 justify-center items-center text-center"
+                  >
+                    {"Pool has no " + buyNFTName + "'s left."}
+                  </Box>
+                ))}
             </div>
           )}
         </div>

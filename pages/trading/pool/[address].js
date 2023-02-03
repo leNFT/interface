@@ -126,6 +126,7 @@ export default function TradingPool() {
           pool={router.query.address}
           token={token}
           nft={nft}
+          nftName={nftName}
           updateUI={updateUI}
         />
       </StyledModal>

@@ -23,6 +23,7 @@ import {
   useProvider,
   useSigner,
 } from "wagmi";
+import lendingMarketContract from "../../contracts/LendingMarket.json";
 import wethGatewayContract from "../../contracts/WETHGateway.json";
 
 const SECONDS_IN_YEAR = 31556926;
@@ -58,8 +59,8 @@ export default function RepayLoan(props) {
     signerOrProvider: signer,
   });
 
-  const market = useContract({
-    contractInterface: marketContract.abi,
+  const lendingMarket = useContract({
+    contractInterface: lendingMarketContract.abi,
     addressOrName: addresses.LendingMarket,
     signerOrProvider: signer,
   });
@@ -249,11 +250,6 @@ export default function RepayLoan(props) {
     <div className={styles.container}>
       <div className="flex flex-col xl:flex-row lg:m-8 justify-center">
         <div className="flex flex-col mb-4 lg:m-8 justify-center">
-          <div className="flex flex-row justify-center m-2">
-            <Typography variant="caption16">
-              {"Asset Pricing: " + formatUnits(tokenPrice, 18) + " ETH"}
-            </Typography>
-          </div>
           <div className="flex flex-row justify-center">
             {props.token_image ? (
               <Image
@@ -273,6 +269,11 @@ export default function RepayLoan(props) {
           <div className="flex flex-row justify-center">
             <Typography variant="caption18">
               {props.token_name + " #" + props.token_id}
+            </Typography>
+          </div>
+          <div className="flex flex-row justify-center m-2">
+            <Typography variant="caption16">
+              {"Asset Pricing: " + formatUnits(tokenPrice, 18) + " ETH"}
             </Typography>
           </div>
         </div>
@@ -434,7 +435,7 @@ export default function RepayLoan(props) {
                     });
                     await tx.wait(1);
                   } else {
-                    tx = await market.repay(props.loan_id, amount);
+                    tx = await lendingMarket.repay(props.loan_id, amount);
                     await tx.wait(1);
                   }
                   if (amount == debt) {

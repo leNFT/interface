@@ -23,7 +23,9 @@ export default function Withdraw(props) {
   const [maxAmount, setMaxAmount] = useState("0");
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
+  const [approved, setApproved] = useState(false);
   const { data: signer } = useSigner();
+  const [approvalLoading, setApprovalLoading] = useState(false);
   const provider = useProvider();
   const addresses =
     chain && chain.id in contractAddresses
@@ -63,11 +65,27 @@ export default function Withdraw(props) {
     setMaxAmount(updatedMaxAmount);
   }
 
+  async function getLendingPoolAllowance() {
+    const updatedAllowance = await lendingPoolSigner.allowance(
+      address,
+      addresses.WETHGateway
+    );
+
+    console.log("Updated Allowance:", updatedAllowance);
+
+    if (updatedAllowance.gt(0)) {
+      setApproved(true);
+    }
+  }
+
   useEffect(() => {
     if (props.pool && props.asset) {
       console.log("Got pool address, setting the rest...", props.pool);
       console.log(" props.asset", props.asset);
       updateMaxAmount();
+      if (props.assetSymbol == "ETH") {
+        getLendingPoolAllowance();
+      }
     }
   }, [props.pool, props.asset]);
 
@@ -79,6 +97,16 @@ export default function Withdraw(props) {
       type: "success",
       message: "Tokens are now back in your wallet.",
       title: "Withdrawal Successful! ",
+      position: "bottomL",
+    });
+  };
+
+  const handleApprovalSuccess = async function () {
+    setApproved(true);
+    dispatch({
+      type: "success",
+      message: "You can now withdraw you ETH.",
+      title: "Approval Successful!",
       position: "bottomL",
     });
   };
@@ -150,7 +178,7 @@ export default function Withdraw(props) {
           />
         </div>
       </div>
-      {true ? (
+      {props.assetSymbol != "ETH" || approved ? (
         <div className="m-8">
           <Button
             text="Withdraw"
@@ -210,21 +238,21 @@ export default function Withdraw(props) {
               size: "24",
             }}
             loadingText=""
-            isLoading={false}
+            isLoading={approvalLoading}
             onClick={async function () {
               try {
-                //setApprovalLoading(true);
+                setApprovalLoading(true);
                 console.log("signer.", signer);
                 const tx = await lendingPoolSigner.approve(
                   addresses.WETHGateway,
                   ethers.constants.MaxUint256
                 );
                 await tx.wait(1);
-                //handleApprovalSuccess();
+                handleApprovalSuccess();
               } catch (error) {
                 console.log(error);
               } finally {
-                //setApprovalLoading(false);
+                setApprovalLoading(false);
               }
             }}
           ></Button>

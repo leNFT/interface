@@ -14,7 +14,6 @@ import {
   Typography,
   Loading,
 } from "@web3uikit/core";
-
 import tokenOracleContract from "../../contracts/TokenOracle.json";
 import lendingPoolContract from "../../contracts/LendingPool.json";
 import genesisNFTContract from "../../contracts/GenesisNFT.json";
@@ -464,13 +463,6 @@ export default function Borrow(props) {
                     );
                     var tx;
                     if (borrowAsset == "ETH") {
-                      console.log("request", requestID);
-                      console.log("priceSig", priceSig);
-                      console.log("amount", amount);
-                      console.log("props.token_address", props.token_address);
-                      console.log("props.token_id", props.token_id);
-                      console.log("genesisNFTId", genesisNFTId);
-                      console.log("wethGatewaySigner", wethGatewaySigner);
                       tx = await wethGatewaySigner.borrowETH(
                         amount,
                         props.token_address,

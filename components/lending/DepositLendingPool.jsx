@@ -53,7 +53,7 @@ export default function DepositLendingPool(props) {
 
     console.log("props.assetSymbol", props.assetSymbol);
 
-    if (props.assetSymbol == "WETH") {
+    if (props.assetSymbol == "ETH") {
       console.log("props.assetSymbol", props.assetSymbol);
       updatedBalance = ethBalance.value.toString();
     } else {

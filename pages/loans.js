@@ -30,6 +30,7 @@ import erc721 from "../contracts/erc721.json";
 
 export default function Loans() {
   const [collectionLoans, setCollectionLoans] = useState([]);
+  const [selectedCollection, setSelectedCollection] = useState("");
   const [maxCollateralization, setMaxCollateralization] = useState("0");
   const [count, setCount] = useState(0);
   const [processedCount, setProcessedCount] = useState(0);
@@ -170,9 +171,11 @@ export default function Loans() {
       (collection) => collection.label == value
     );
     if (collectionAddress) {
+      setSelectedCollection(collectionAddress);
       setLoadingCollectionLoans(true);
       getCollectionLoans(collectionAddress.address);
     } else {
+      setSelectedCollection("");
       setCollectionLoans([]);
       setMaxCollateralization("0");
     }
@@ -194,44 +197,42 @@ export default function Loans() {
         />
       </StyledModal>
       <div className="flex flex-col md:flex-row items-center justify-center">
-        <div className="flex flex-col items-center justify-center">
-          <Autocomplete
-            disablePortal
-            ListboxProps={{
-              style: {
-                backgroundColor: "rgb(253, 241, 244)",
-                fontFamily: "Monospace",
-              },
-            }}
-            options={collections}
-            sx={{ minWidth: { xs: 260, sm: 350, md: 380 } }}
-            isOptionEqualToValue={(option, value) =>
-              option.address === value.address
-            }
-            onInputChange={handleCollectionChange}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Collection Search"
-                sx={{
-                  "& label": {
-                    paddingLeft: (theme) => theme.spacing(2),
-                    fontFamily: "Monospace",
-                  },
-                  "& input": {
-                    paddingLeft: (theme) => theme.spacing(3.5),
-                    fontFamily: "Monospace",
-                  },
-                  "& fieldset": {
-                    paddingLeft: (theme) => theme.spacing(2.5),
-                    borderRadius: "25px",
-                    fontFamily: "Monospace",
-                  },
-                }}
-              />
-            )}
-          />
-        </div>
+        <Autocomplete
+          disablePortal
+          ListboxProps={{
+            style: {
+              backgroundColor: "rgb(253, 241, 244)",
+              fontFamily: "Monospace",
+            },
+          }}
+          options={collections}
+          sx={{ minWidth: { xs: 260, sm: 350, md: 380 } }}
+          isOptionEqualToValue={(option, value) =>
+            option.address === value.address
+          }
+          onInputChange={handleCollectionChange}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Collection Search"
+              sx={{
+                "& label": {
+                  paddingLeft: (theme) => theme.spacing(2),
+                  fontFamily: "Monospace",
+                },
+                "& input": {
+                  paddingLeft: (theme) => theme.spacing(3.5),
+                  fontFamily: "Monospace",
+                },
+                "& fieldset": {
+                  paddingLeft: (theme) => theme.spacing(2.5),
+                  borderRadius: "25px",
+                  fontFamily: "Monospace",
+                },
+              }}
+            />
+          )}
+        />
         <div className="flex flex-col border-2 rounded-3xl my-8 md:my-0 md:ml-8 p-1">
           <div className="flex flex-row">
             <div className="flex flex-col m-4">
@@ -418,7 +419,9 @@ export default function Loans() {
                 fontSize: "h6.fontSize",
               }}
             >
-              Please select a supported collection with active loans.
+              {selectedCollection
+                ? "No loans found for this collection."
+                : "Please select a supported collection with active loans."}
             </Box>
           </div>
         )}

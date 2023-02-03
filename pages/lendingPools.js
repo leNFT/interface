@@ -126,12 +126,13 @@ export default function LendingPools() {
         <div key={"details" + key}>
           <Button
             customize={{
-              backgroundColor: "blue",
-              fontSize: 16,
+              backgroundColor: "grey",
+              fontSize: 18,
               textColor: "white",
             }}
-            text="Details"
+            text="Deposit"
             theme="custom"
+            size="large"
             id={key}
             radius="12"
             onClick={async function (event) {
@@ -192,6 +193,7 @@ export default function LendingPools() {
         <Table
           columnsConfig="2fr 2fr 2fr 2fr 1fr 0fr"
           tableBackgroundColor="white"
+          alignCellItems="center"
           customLoadingContent={
             <div
               style={{

@@ -8,6 +8,7 @@ import lendingPoolContract from "../../contracts/LendingPool.json";
 import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
 import lendingMarketContract from "../../contracts/LendingMarket.json";
+import wethGatewayContract from "../../contracts/WETHGateway.json";
 import {
   useAccount,
   useNetwork,
@@ -31,9 +32,21 @@ export default function Withdraw(props) {
 
   const dispatch = useNotification();
 
+  const wethGatewaySigner = useContract({
+    contractInterface: wethGatewayContract.abi,
+    addressOrName: addresses.WETHGateway,
+    signerOrProvider: signer,
+  });
+
   const lendingMarketSigner = useContract({
     contractInterface: lendingMarketContract.abi,
     addressOrName: addresses.LendingMarket,
+    signerOrProvider: signer,
+  });
+
+  const lendingPoolSigner = useContract({
+    contractInterface: lendingPoolContract.abi,
+    addressOrName: props.pool,
     signerOrProvider: signer,
   });
 
@@ -137,51 +150,86 @@ export default function Withdraw(props) {
           />
         </div>
       </div>
-      <div className="m-8">
-        <Button
-          text="Withdraw"
-          theme="secondary"
-          isFullWidth
-          loadingProps={{
-            spinnerColor: "#000000",
-            spinnerType: "loader",
-            direction: "right",
-            size: "24",
-          }}
-          loadingText=""
-          isLoading={withdrawalLoading}
-          onClick={async function () {
-            if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
-              try {
-                setWithdrawalLoading(true);
-                var tx;
-                if (props.assetSymbol == "ETH") {
-                  console.log("Withdrawal ETH");
-                  tx = await lendingMarketSigner.withdrawETH(
-                    props.pool,
-                    amount
-                  );
-                } else {
-                  tx = await lendingMarketSigner.withdraw(props.pool, amount);
+      {true ? (
+        <div className="m-8">
+          <Button
+            text="Withdraw"
+            theme="secondary"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
+            }}
+            loadingText=""
+            isLoading={withdrawalLoading}
+            onClick={async function () {
+              console.log("props.assetSymbol", props.assetSymbol);
+              if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
+                try {
+                  setWithdrawalLoading(true);
+                  var tx;
+                  if (props.assetSymbol == "ETH") {
+                    console.log("Withdrawal ETH: ", amount);
+                    tx = await wethGatewaySigner.withdrawETH(
+                      props.pool,
+                      amount
+                    );
+                  } else {
+                    tx = await lendingMarketSigner.withdraw(props.pool, amount);
+                  }
+                  await tx.wait(1);
+                  handleWithdrawalSuccess();
+                } catch (error) {
+                  console.log(error);
+                } finally {
+                  setWithdrawalLoading(false);
                 }
+              } else {
+                dispatch({
+                  type: "error",
+                  message: "Amount is bigger than max permited withdrawal",
+                  title: "Error",
+                  position: "bottomL",
+                });
+              }
+            }}
+          />
+        </div>
+      ) : (
+        <div className="m-8">
+          <Button
+            text="Approve"
+            theme="secondary"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
+            }}
+            loadingText=""
+            isLoading={false}
+            onClick={async function () {
+              try {
+                //setApprovalLoading(true);
+                console.log("signer.", signer);
+                const tx = await lendingPoolSigner.approve(
+                  addresses.WETHGateway,
+                  ethers.constants.MaxUint256
+                );
                 await tx.wait(1);
-                handleWithdrawalSuccess();
+                //handleApprovalSuccess();
               } catch (error) {
                 console.log(error);
               } finally {
-                setWithdrawalLoading(false);
+                //setApprovalLoading(false);
               }
-            } else {
-              dispatch({
-                type: "error",
-                message: "Amount is bigger than max permited withdrawal",
-                title: "Error",
-                position: "bottomL",
-              });
-            }
-          }}
-        />
-      </div>
+            }}
+          ></Button>
+        </div>
+      )}
     </div>
   );
 }

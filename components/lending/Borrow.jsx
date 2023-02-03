@@ -231,6 +231,7 @@ export default function Borrow(props) {
 
   useEffect(() => {
     if (isConnected) {
+      console.log("wethGateway", addresses.WETHGateway);
       setLoadingMaxAmount(true);
       setLoadingBorrowRate(true);
       getLendingPool();
@@ -487,7 +488,7 @@ export default function Borrow(props) {
                         props.token_id,
                         genesisNFTId,
                         requestID,
-                        priceSig
+                        priceSig.sig
                       );
                       await tx.wait(1);
                     }

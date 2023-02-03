@@ -90,16 +90,14 @@ export default function GenesisMint(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-row items-center justify-center m-4 text-center">
-        <div className="flex flex-col">
+      <div className="flex flex-col lg:flex-row items-center justify-center m-4 text-center">
+        <div className="flex flex-col m-2 lg:mx-8">
           <Typography variant="subtitle2">Price</Typography>
           <Typography variant="body16">
             {formatUnits(props.price, 18) + " ETH"}
           </Typography>
         </div>
-      </div>
-      <div className="flex flex-row items-center justify-center m-4 text-center">
-        <div className="flex flex-col">
+        <div className="flex flex-col m-2 lg:mx-8">
           <Typography variant="subtitle2">Token ID</Typography>
           <Typography variant="body16">{props.mintCount + 1}</Typography>
         </div>

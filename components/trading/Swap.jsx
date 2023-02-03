@@ -1185,7 +1185,7 @@ export default function Swap() {
                     letterSpacing: 2,
                   }}
                 >
-                  {"Approve Sell Side NFTs"}
+                  {"Approve NFTs"}
                 </Box>
               </div>
             }

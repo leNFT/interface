@@ -320,7 +320,7 @@ export default function TradingPool() {
           >
             my LP Positions
           </Box>
-          <div className="flex flex-col border-4 border-slate-400 rounded-2xl mt-0 p-8 m-8 lg:p-16">
+          <div className="flex flex-col border-4 border-slate-400 rounded-2xl mt-0 p-8 m-8 lg:p-16 w-11/12">
             {loadingTradingPool ? (
               <div className="flex m-4">
                 <Loading size={12} spinnerColor="#000000" />

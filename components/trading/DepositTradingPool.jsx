@@ -34,6 +34,7 @@ import erc721 from "../../contracts/erc721.json";
 export default function DepositTradingPool(props) {
   const [curve, setCurve] = useState("exponential");
   const [delta, setDelta] = useState("");
+  const [fee, setFee] = useState("");
   const [initialPrice, setInitialPrice] = useState("");
   const [tokenAmount, setTokenAmount] = useState("");
   const [nftAmount, setNFTAmount] = useState(0);
@@ -109,6 +110,7 @@ export default function DepositTradingPool(props) {
     setInitialPrice("");
     setTokenAmount("");
     setDelta("");
+    setFee("");
     setNFTAmount(0);
 
     props.updateUI();
@@ -156,15 +158,23 @@ export default function DepositTradingPool(props) {
     }
   }
 
+  function handleFeeChange(e) {
+    if (e.target.value != "") {
+      setFee(e.target.value);
+    } else {
+      setFee("");
+    }
+  }
+
   function handleCurveChange(e) {
     setCurve(e);
   }
 
   return (
     <div>
-      <div className="flex flex-row items-center justify-center m-8">
+      <div className="flex flex-row items-center justify-center m-4">
         <Box
-          className="flex m-4 justify-center items-center"
+          className="flex mx-4 justify-center items-center"
           sx={{
             fontFamily: "Monospace",
             fontSize: "subtitle2.fontSize",
@@ -235,6 +245,20 @@ export default function DepositTradingPool(props) {
           }}
           description="Amount of ETH to deposit."
           onChange={handleTokenAmountChange}
+        />
+      </div>
+      <div className="flex flex-row items-center justify-center m-12">
+        <Input
+          label="Fee %"
+          type="number"
+          placeholder="0"
+          value={fee}
+          step="any"
+          validation={{
+            numberMin: 0,
+          }}
+          description="Fee charged by your LP"
+          onChange={handleFeeChange}
         />
       </div>
       <div className="flex flex-row items-center justify-center m-8">
@@ -422,9 +446,10 @@ export default function DepositTradingPool(props) {
               const tx = await wethGatewaySigner.depositTradingPool(
                 props.pool,
                 selectedNFTs,
+                parseUnits(initialPrice, 18).toString(),
                 curveAddress,
                 curveDelta,
-                parseUnits(initialPrice, 18).toString(),
+                fee * 100,
                 {
                   value: parseUnits(tokenAmount, 18).toString(),
                 }

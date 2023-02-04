@@ -1160,84 +1160,82 @@ export default function Swap() {
             }
           />
         ) : (
-          priceQuote && (
-            <Button
-              primary
-              fill="horizontal"
-              size="large"
-              disabled={swapLoading || !priceQuote}
-              color="#063970"
-              onClick={async function () {
-                console.log("ethBalance: " + ethBalance);
-                if (
-                  BigNumber.from(priceQuote.buyPrice)
-                    .sub(priceQuote.sellPrice)
-                    .gt(ethBalance.value)
-                ) {
-                  dispatch({
-                    type: "warning",
-                    message: "Not enough ETH to pay for swap",
-                    title: "Error",
-                    position: "bottomL",
-                  });
-                  return;
-                }
-                setSwapLoading(true);
-                console.log("Swapping...");
-                var txValue = "0";
-                if (
-                  BigNumber.from(priceQuote.buyPrice)
-                    .sub(priceQuote.sellPrice)
-                    .gt(0)
-                ) {
-                  txValue = BigNumber.from(priceQuote.buyPrice)
-                    .sub(priceQuote.sellPrice)
-                    .toString();
-                  console.log("txValue: " + txValue);
-                }
-                try {
-                  let tx = await wethGatewaySigner.swap(
-                    buyPoolAddress,
-                    sellPoolAddress,
-                    selectingBuyNFTs
-                      ? selectedBuyNFTs
-                      : priceQuote.exampleBuyNFTs,
-                    priceQuote.buyPrice,
-                    selectedSellNFTs,
-                    priceQuote.sellLps,
-                    priceQuote.sellPrice,
-                    { value: txValue }
-                  );
-                  await tx.wait(1);
-                  handleSwapSuccess();
-                } catch (error) {
-                  console.log(error);
-                } finally {
-                  getPriceQuote(
-                    buyAmount,
-                    sellAmount,
-                    buyPoolAddress,
-                    sellPoolAddress
-                  );
-                  setSwapLoading(false);
-                }
-              }}
-              label={
-                <div className="flex justify-center">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle2.fontSize",
-                      fontWeight: "bold",
-                      letterSpacing: 2,
-                    }}
-                  >
-                    {"SWAP"}
-                  </Box>
-                </div>
+          <Button
+            primary
+            fill="horizontal"
+            size="large"
+            disabled={swapLoading || !priceQuote}
+            color="#063970"
+            onClick={async function () {
+              console.log("ethBalance: " + ethBalance);
+              if (
+                BigNumber.from(priceQuote.buyPrice)
+                  .sub(priceQuote.sellPrice)
+                  .gt(ethBalance.value)
+              ) {
+                dispatch({
+                  type: "warning",
+                  message: "Not enough ETH to pay for swap",
+                  title: "Error",
+                  position: "bottomL",
+                });
+                return;
               }
-            />
-          )
+              setSwapLoading(true);
+              console.log("Swapping...");
+              var txValue = "0";
+              if (
+                BigNumber.from(priceQuote.buyPrice)
+                  .sub(priceQuote.sellPrice)
+                  .gt(0)
+              ) {
+                txValue = BigNumber.from(priceQuote.buyPrice)
+                  .sub(priceQuote.sellPrice)
+                  .toString();
+                console.log("txValue: " + txValue);
+              }
+              try {
+                let tx = await wethGatewaySigner.swap(
+                  buyPoolAddress,
+                  sellPoolAddress,
+                  selectingBuyNFTs
+                    ? selectedBuyNFTs
+                    : priceQuote.exampleBuyNFTs,
+                  priceQuote.buyPrice,
+                  selectedSellNFTs,
+                  priceQuote.sellLps,
+                  priceQuote.sellPrice,
+                  { value: txValue }
+                );
+                await tx.wait(1);
+                handleSwapSuccess();
+              } catch (error) {
+                console.log(error);
+              } finally {
+                getPriceQuote(
+                  buyAmount,
+                  sellAmount,
+                  buyPoolAddress,
+                  sellPoolAddress
+                );
+                setSwapLoading(false);
+              }
+            }}
+            label={
+              <div className="flex justify-center">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle2.fontSize",
+                    fontWeight: "bold",
+                    letterSpacing: 2,
+                  }}
+                >
+                  {"SWAP"}
+                </Box>
+              </div>
+            }
+          />
         )}
       </div>
     </div>

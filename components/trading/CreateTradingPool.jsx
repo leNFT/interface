@@ -27,7 +27,6 @@ export default function CreateTradingPool(props) {
 
   const provider = useProvider();
   const [errorMessage, setErrorMessage] = useState("");
-  const [swapFee, setSwapFee] = useState("0");
 
   const dispatch = useNotification();
 
@@ -49,18 +48,8 @@ export default function CreateTradingPool(props) {
     signerOrProvider: provider,
   });
 
-  async function getTradingPoolDefaultValues() {
-    // Get swap fee
-    const updatedSwapFee = (
-      await factoryProvider.getDefaultSwapFee()
-    ).toString();
-    console.log("swapFee", updatedSwapFee);
-    setSwapFee(updatedSwapFee);
-  }
-
   useEffect(() => {
     if (isConnected) {
-      getTradingPoolDefaultValues();
     }
   }, [isConnected]);
 
@@ -104,14 +93,6 @@ export default function CreateTradingPool(props) {
 
   return (
     <div className="flex flex-col">
-      <div className="flex flex-col md:flex-row justify-center m-2 border-2 rounded-2xl max-w-lg self-center">
-        <div className="flex flex-col my-2 md:m-2">
-          <div className="flex flex-col m-4">
-            <Typography variant="subtitle2">Swap Fee</Typography>
-            <Typography variant="caption16">{swapFee / 100 + "%"}</Typography>
-          </div>
-        </div>
-      </div>
       <div className="flex flex-col items-center justify-center mt-8 mb-2 mx-2 md:mx-8">
         <Input
           description="The address of the pool's NFT collection."

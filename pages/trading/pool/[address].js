@@ -132,7 +132,6 @@ export default function TradingPool() {
       <StyledModal
         hasFooter={false}
         title={"Remove LP"}
-        width="50%"
         isVisible={visibleWithdrawalModal}
         onCloseButtonPressed={function () {
           setVisibleWithdrawalModal(false);

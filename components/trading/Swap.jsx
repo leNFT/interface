@@ -33,6 +33,7 @@ import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json"
 import swapRouterContract from "../../contracts/SwapRouter.json";
 import erc721 from "../../contracts/erc721.json";
 import erc20 from "../../contracts/erc20.json";
+import wethGateway from "../../contracts/WETHGateway.json";
 
 export default function Swap() {
   const SELECTED_COLOR = "#d2c6d2";
@@ -77,9 +78,9 @@ export default function Swap() {
     signerOrProvider: provider,
   });
 
-  const swapRouterSigner = useContract({
-    contractInterface: swapRouterContract.abi,
-    addressOrName: addresses.SwapRouter,
+  const wethGatewaySigner = useContract({
+    contractInterface: wethGateway.abi,
+    addressOrName: addresses.WETHGateway,
     signerOrProvider: signer,
   });
 
@@ -278,7 +279,6 @@ export default function Swap() {
   useEffect(() => {
     if (isConnected && address) {
       getTradingCollections(chain.id);
-      getTokenDetails();
     }
   }, [isConnected, address]);
 
@@ -1172,7 +1172,7 @@ export default function Swap() {
                 if (
                   BigNumber.from(priceQuote.buyPrice)
                     .sub(priceQuote.sellPrice)
-                    .gt(ethBalance)
+                    .gt(ethBalance.value)
                 ) {
                   dispatch({
                     type: "warning",
@@ -1193,6 +1193,7 @@ export default function Swap() {
                   txValue = BigNumber.from(priceQuote.buyPrice)
                     .sub(priceQuote.sellPrice)
                     .toString();
+                  console.log("txValue: " + txValue);
                 }
                 try {
                   let tx = await wethGatewaySigner.swap(

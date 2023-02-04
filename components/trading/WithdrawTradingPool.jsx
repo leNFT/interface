@@ -68,13 +68,13 @@ export default function WithdrawTradingPool(props) {
     if (props.pool !== undefined && props.lp !== undefined) {
       console.log("props.lp", props.lp);
       console.log("pool", props.pool);
-
       getLP();
     }
   }, [props.pool, props.lp]);
 
   const handleWithdrawSuccess = async function () {
     props.updateUI();
+    props.lp = undefined;
     props.setVisibility(false);
     dispatch({
       type: "success",
@@ -95,7 +95,7 @@ export default function WithdrawTradingPool(props) {
   };
 
   return (
-    <div className={styles.container}>
+    <div>
       <div className="flex flex-row items-center justify-center m-8">
         <Typography variant="subtitle1">{"LP #" + props.lp}</Typography>
       </div>
@@ -104,12 +104,12 @@ export default function WithdrawTradingPool(props) {
           {"LP Price: " + price + " ETH"}
         </Typography>
       </div>
-      <div className="flex flex-row items-center m-8">
+      <div className="flex flex-row items-center m-4">
         <Typography variant="subtitle2">
-          {formatUnits(tokenAmount, 18) + " Tokens"}
+          {formatUnits(tokenAmount, 18) + " ETH"}
         </Typography>
       </div>
-      <div className="flex flex-row items-center  m-8">
+      <div className="flex flex-row items-center  m-4">
         <Typography variant="subtitle2">
           {nfts.length + " NFTs: " + nfts.toString()}
         </Typography>
@@ -158,7 +158,7 @@ export default function WithdrawTradingPool(props) {
           ></Button>
         ) : (
           <Button
-            text="Approve Token"
+            text="Approve LP"
             theme="secondary"
             isFullWidth
             loadingProps={{
@@ -176,7 +176,7 @@ export default function WithdrawTradingPool(props) {
                 const pool = new ethers.Contract(
                   props.pool,
                   tradingPoolContract.abi,
-                  provider
+                  signer
                 );
                 const tx = await pool.approve(addresses.WETHGateway, props.lp);
                 await tx.wait(1);

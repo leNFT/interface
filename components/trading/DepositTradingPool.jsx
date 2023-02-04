@@ -167,7 +167,7 @@ export default function DepositTradingPool(props) {
           className="flex m-4 justify-center items-center"
           sx={{
             fontFamily: "Monospace",
-            fontSize: "caption",
+            fontSize: "subtitle2.fontSize",
             fontWeight: "bold",
           }}
         >

@@ -7,6 +7,7 @@ import {
   useContract,
   useSigner,
   useProvider,
+  useBalance,
 } from "wagmi";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
@@ -41,7 +42,6 @@ export default function Swap() {
   const { address, isConnected } = useAccount();
   const [availableBuyPoolNFTs, setAvailableBuyPoolNFTs] = useState([]);
   const [tradingCollections, setTradingCollections] = useState([]);
-  const [approvedToken, setApprovedToken] = useState(false);
   const [approvedNFT, setApprovedNFT] = useState(false);
   const [sellNFTAddress, setSellNFTAddress] = useState("");
   const [buyNFTAddress, setBuyNFTAddress] = useState("");
@@ -57,11 +57,12 @@ export default function Swap() {
   const [priceQuote, setPriceQuote] = useState();
   const [loadingPriceQuote, setLoadingPriceQuote] = useState(false);
   const [swapLoading, setSwapLoading] = useState(false);
-  const [tokenApprovalLoading, setTokenApprovalLoading] = useState(false);
   const [nftApprovalLoading, setNFTApprovalLoading] = useState(false);
   const [sellNFTName, setSellNFTName] = useState("");
   const [buyNFTName, setBuyNFTName] = useState("");
-  const [tokenBalance, setTokenBalance] = useState("");
+  const { data: ethBalance } = useBalance({
+    addressOrName: address,
+  });
 
   const dispatch = useNotification();
 
@@ -96,34 +97,12 @@ export default function Swap() {
     console.log("tradingCollections", tradingCollections);
   }
 
-  async function getTokenDetails() {
-    const tokenContract = new ethers.Contract(
-      addresses.ETH.address,
-      erc20,
-      provider
-    );
-
-    const allowance = await tokenContract.allowance(
-      address,
-      addresses.SwapRouter
-    );
-
-    console.log("Got allowance:", allowance);
-
-    if (!allowance.eq(BigNumber.from(0))) {
-      setApprovedToken(true);
-    } else {
-      setApprovedToken(false);
-    }
-
-    const balance = await tokenContract.balanceOf(address);
-
-    setTokenBalance(balance.toString());
-  }
-
-  async function getNFTAllowance(collection, pool) {
+  async function getNFTAllowance(collection) {
     const nftContract = new ethers.Contract(collection, erc721, provider);
-    const allowed = await nftContract.isApprovedForAll(address, pool);
+    const allowed = await nftContract.isApprovedForAll(
+      address,
+      addresses.WETHGateway
+    );
 
     console.log("Got nft allowed:", allowed);
 
@@ -326,16 +305,6 @@ export default function Swap() {
       );
     }
   }, [selectedSellNFTs]);
-
-  const handleTokenApprovalSuccess = async function () {
-    setApprovedToken(true);
-    dispatch({
-      type: "success",
-      message: "You just approved your tokens.",
-      title: "Approval Successful!",
-      position: "bottomL",
-    });
-  };
 
   const handleNFTApprovalSuccess = async function () {
     setApprovedNFT(true);
@@ -1164,7 +1133,7 @@ export default function Swap() {
               );
               try {
                 const tx = await nftContract.setApprovalForAll(
-                  sellPoolAddress,
+                  addresses.WETHGateway,
                   true
                 );
                 await tx.wait(1);
@@ -1190,123 +1159,84 @@ export default function Swap() {
               </div>
             }
           />
-        ) : priceQuote &&
-          BigNumber.from(priceQuote.buyPrice).gt(priceQuote.sellPrice) &&
-          !approvedToken ? (
-          <Button
-            primary
-            fill="horizontal"
-            size="large"
-            color="#063970"
-            disabled={tokenApprovalLoading}
-            onClick={async function () {
-              setTokenApprovalLoading(true);
-              const tokenContract = new ethers.Contract(
-                addresses.ETH.address,
-                erc20,
-                signer
-              );
-              try {
-                const tx = await tokenContract.approve(
-                  addresses.SwapRouter,
-                  ethers.constants.MaxUint256
-                );
-                await tx.wait(1);
-                handleTokenApprovalSuccess();
-              } catch (error) {
-                console.log(error);
-              } finally {
-                setTokenApprovalLoading(false);
-              }
-            }}
-            label={
-              <div className="flex justify-center">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle2.fontSize",
-                    fontWeight: "bold",
-                    letterSpacing: 2,
-                  }}
-                >
-                  {"Approve Change"}
-                </Box>
-              </div>
-            }
-          />
         ) : (
-          <Button
-            primary
-            fill="horizontal"
-            size="large"
-            disabled={swapLoading || !priceQuote}
-            color="#063970"
-            onClick={async function () {
-              if (
-                BigNumber.from(priceQuote.buyPrice)
-                  .sub(priceQuote.sellPrice)
-                  .gt(tokenBalance)
-              ) {
-                dispatch({
-                  type: "warning",
-                  message: "Not enough WETH to pay for swap",
-                  title: "Error",
-                  position: "bottomL",
-                });
-                return;
+          priceQuote && (
+            <Button
+              primary
+              fill="horizontal"
+              size="large"
+              disabled={swapLoading || !priceQuote}
+              color="#063970"
+              onClick={async function () {
+                console.log("ethBalance: " + ethBalance);
+                if (
+                  BigNumber.from(priceQuote.buyPrice)
+                    .sub(priceQuote.sellPrice)
+                    .gt(ethBalance)
+                ) {
+                  dispatch({
+                    type: "warning",
+                    message: "Not enough ETH to pay for swap",
+                    title: "Error",
+                    position: "bottomL",
+                  });
+                  return;
+                }
+                setSwapLoading(true);
+                console.log("Swapping...");
+                var txValue = "0";
+                if (
+                  BigNumber.from(priceQuote.buyPrice)
+                    .sub(priceQuote.sellPrice)
+                    .gt(0)
+                ) {
+                  txValue = BigNumber.from(priceQuote.buyPrice)
+                    .sub(priceQuote.sellPrice)
+                    .toString();
+                }
+                try {
+                  let tx = await wethGatewaySigner.swap(
+                    buyPoolAddress,
+                    sellPoolAddress,
+                    selectingBuyNFTs
+                      ? selectedBuyNFTs
+                      : priceQuote.exampleBuyNFTs,
+                    priceQuote.buyPrice,
+                    selectedSellNFTs,
+                    priceQuote.sellLps,
+                    priceQuote.sellPrice,
+                    { value: txValue }
+                  );
+                  await tx.wait(1);
+                  handleSwapSuccess();
+                } catch (error) {
+                  console.log(error);
+                } finally {
+                  getPriceQuote(
+                    buyAmount,
+                    sellAmount,
+                    buyPoolAddress,
+                    sellPoolAddress
+                  );
+                  setSwapLoading(false);
+                }
+              }}
+              label={
+                <div className="flex justify-center">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                      letterSpacing: 2,
+                    }}
+                  >
+                    {"SWAP"}
+                  </Box>
+                </div>
               }
-              setSwapLoading(true);
-              console.log("Swapping...");
-              console.log([
-                buyPoolAddress,
-                sellPoolAddress,
-                selectingBuyNFTs ? selectedBuyNFTs : priceQuote.exampleBuyNFTs,
-                priceQuote.buyPrice,
-                selectedSellNFTs,
-                priceQuote.sellLps,
-                priceQuote.sellPrice,
-              ]);
-              try {
-                let tx = await swapRouterSigner.swap(
-                  buyPoolAddress,
-                  sellPoolAddress,
-                  selectingBuyNFTs
-                    ? selectedBuyNFTs
-                    : priceQuote.exampleBuyNFTs,
-                  priceQuote.buyPrice,
-                  selectedSellNFTs,
-                  priceQuote.sellLps,
-                  priceQuote.sellPrice
-                );
-                await tx.wait(1);
-                handleSwapSuccess();
-              } catch (error) {
-                console.log(error);
-              } finally {
-                getPriceQuote(
-                  buyAmount,
-                  sellAmount,
-                  buyPoolAddress,
-                  sellPoolAddress
-                );
-                setSwapLoading(false);
-              }
-            }}
-            label={
-              <div className="flex justify-center">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle2.fontSize",
-                    fontWeight: "bold",
-                    letterSpacing: 2,
-                  }}
-                >
-                  {"SWAP"}
-                </Box>
-              </div>
-            }
-          />
+            />
+          )
         )}
       </div>
     </div>

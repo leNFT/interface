@@ -116,7 +116,6 @@ export default function TradingPool() {
         hasFooter={false}
         title={"Deposit LP"}
         isVisible={visibleDepositModal}
-        width="50%"
         onCloseButtonPressed={function () {
           setVisibleDepositModal(false);
         }}

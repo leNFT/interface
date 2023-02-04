@@ -161,8 +161,18 @@ export default function DepositTradingPool(props) {
   }
 
   return (
-    <div className={styles.container}>
+    <div>
       <div className="flex flex-row items-center justify-center m-8">
+        <Box
+          className="flex m-4 justify-center items-center"
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: "caption",
+            fontWeight: "bold",
+          }}
+        >
+          Price Curve:
+        </Box>
         <Dropdown>
           <Dropdown.Button flat>
             {curve && curve.replace(/^./, curve[0].toUpperCase())}
@@ -283,11 +293,11 @@ export default function DepositTradingPool(props) {
       </div>
       {selectingNFTs &&
         (userNFTs.length > 0 ? (
-          <div className="flex flex-row grid md:grid-cols-3 lg:grid-cols-4">
+          <div className="flex flex-row grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {userNFTs.map((nft, _) => (
               <div
                 key={BigNumber.from(nft.id.tokenId).toNumber()}
-                className="flex m-4 items-center justify-center max-w-[300px]"
+                className="flex items-center justify-center max-w-[300px]"
               >
                 <Card
                   sx={{
@@ -320,38 +330,36 @@ export default function DepositTradingPool(props) {
                       setSelectedNFTs(newSelectedNFTs);
                     }}
                   >
-                    <CardContent>
-                      <div className="flex flex-col items-center p-1">
-                        {nft.metadata.image ? (
-                          <Image
-                            loader={() => nft.metadata.image}
-                            src={nft.metadata.image}
-                            height="100"
-                            width="100"
-                            className="rounded-xl"
-                          />
-                        ) : (
-                          <Box
-                            className="flex m-2 justify-center items-center w-[100px] h-[100px]"
-                            sx={{
-                              fontFamily: "Monospace",
-                              fontSize: "caption",
-                            }}
-                          >
-                            No Image
-                          </Box>
-                        )}
+                    <div className="flex flex-col items-center p-1">
+                      {nft.metadata.image ? (
+                        <Image
+                          loader={() => nft.metadata.image}
+                          src={nft.metadata.image}
+                          height="100"
+                          width="100"
+                          className="rounded-xl"
+                        />
+                      ) : (
                         <Box
-                          className="mt-1"
+                          className="flex m-2 justify-center items-center w-[100px] h-[100px]"
                           sx={{
                             fontFamily: "Monospace",
                             fontSize: "caption",
                           }}
                         >
-                          {BigNumber.from(nft.id.tokenId).toNumber()}
+                          No Image
                         </Box>
-                      </div>
-                    </CardContent>
+                      )}
+                      <Box
+                        className="mt-1"
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "caption",
+                        }}
+                      >
+                        {BigNumber.from(nft.id.tokenId).toNumber()}
+                      </Box>
+                    </div>
                   </CardActionArea>
                 </Card>
               </div>

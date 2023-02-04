@@ -29,7 +29,7 @@ import Box from "@mui/material/Box";
 import { Button } from "grommet";
 import { Divider } from "@mui/material";
 import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json";
-import tradingPoolContract from "../../contracts/TradingPool.json";
+import wethGateway from "../../contracts/WETHGateway.json";
 
 export default function Buy() {
   const SELECTED_COLOR = "#d2c6d2";
@@ -62,6 +62,12 @@ export default function Buy() {
     contractInterface: tradingPoolFactoryContract.abi,
     addressOrName: addresses.TradingPoolFactory,
     signerOrProvider: provider,
+  });
+
+  const wethGatewaySigner = useContract({
+    contractInterface: wethGateway.abi,
+    addressOrName: addresses.WETHGateway,
+    signerOrProvider: signer,
   });
 
   async function getAvailableNFTs(pool, collection) {
@@ -554,7 +560,7 @@ export default function Buy() {
               fontWeight: "bold",
             }}
           >
-            {formatUnits(priceQuote.price, 18)} WETH
+            {formatUnits(priceQuote.price, 18)} ETH
           </Box>
           {priceQuote.priceImpact && (
             <Box
@@ -570,94 +576,47 @@ export default function Buy() {
         </div>
       )}
       <div className="flex flex-row m-6 w-8/12 md:w-6/12">
-        {!approvedToken ? (
-          <Button
-            primary
-            fill="horizontal"
-            size="large"
-            disabled={approvalLoading || !nftAddress}
-            color="#063970"
-            onClick={async function () {
-              setApprovalLoading(true);
-
-              const tokenContract = new ethers.Contract(
-                addresses.ETH.address,
-                erc20,
-                signer
-              );
-              try {
-                const tx = await tokenContract.approve(
-                  poolAddress,
-                  ethers.constants.MaxUint256
-                );
-                await tx.wait(1);
-                handleTokenApprovalSuccess();
-              } catch (error) {
-                console.log(error);
-              } finally {
-                setApprovalLoading(false);
-              }
-            }}
-            label={
-              <div className="flex justify-center">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle2.fontSize",
-                    fontWeight: "bold",
-                    letterSpacing: 2,
-                  }}
-                >
-                  {"Approve Token"}
-                </Box>
-              </div>
-            }
-          />
-        ) : (
-          <Button
-            primary
-            fill="horizontal"
-            size="large"
-            disabled={buyLoading}
-            color="#063970"
-            onClick={async function () {
-              setBuyLoading(true);
-              const tradingPool = new ethers.Contract(
+        <Button
+          primary
+          fill="horizontal"
+          size="large"
+          disabled={buyLoading}
+          color="#063970"
+          onClick={async function () {
+            setBuyLoading(true);
+            try {
+              const tx = await wethGatewaySigner.buy(
                 poolAddress,
-                tradingPoolContract.abi,
-                signer
+                selectingNFTs ? selectedNFTs : priceQuote.exampleNFTs,
+                priceQuote.price,
+                {
+                  value: priceQuote.price,
+                }
               );
-              try {
-                const tx = await tradingPool.buy(
-                  address,
-                  selectingNFTs ? selectedNFTs : priceQuote.exampleNFTs,
-                  priceQuote.price
-                );
-                await tx.wait(1);
-                handleBuySuccess();
-              } catch (error) {
-                console.log(error);
-              } finally {
-                getPriceQuote(amount);
-                setBuyLoading(false);
-              }
-            }}
-            label={
-              <div className="flex justify-center">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle2.fontSize",
-                    fontWeight: "bold",
-                    letterSpacing: 2,
-                  }}
-                >
-                  {"BUY " + amount + " " + (nftName ? nftName : "NFTs")}
-                </Box>
-              </div>
+              await tx.wait(1);
+              handleBuySuccess();
+            } catch (error) {
+              console.log(error);
+            } finally {
+              getPriceQuote(amount);
+              setBuyLoading(false);
             }
-          />
-        )}
+          }}
+          label={
+            <div className="flex justify-center">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle2.fontSize",
+                  fontWeight: "bold",
+                  letterSpacing: 2,
+                }}
+              >
+                {"BUY " + amount + " " + (nftName ? nftName : "NFTs")}
+              </Box>
+            </div>
+          }
+        />
       </div>
     </div>
   );

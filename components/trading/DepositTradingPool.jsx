@@ -80,20 +80,11 @@ export default function DepositTradingPool(props) {
     console.log(addressNFTs);
   }
 
-  async function getTokenAllowance() {
-    const allowance = await tokenProvider.allowance(address, props.pool);
-
-    console.log("Got allowance:", allowance);
-
-    if (!allowance.eq(BigNumber.from(0)) || props.assetSymbol == "ETH") {
-      setApprovedToken(true);
-    } else {
-      setApprovedToken(false);
-    }
-  }
-
   async function getNFTAllowance() {
-    const allowed = await nftProvider.isApprovedForAll(address, props.pool);
+    const allowed = await nftProvider.isApprovedForAll(
+      address,
+      addresses.WETHGateway
+    );
 
     console.log("Got nft allowed:", allowed);
 
@@ -108,7 +99,6 @@ export default function DepositTradingPool(props) {
   useEffect(() => {
     if (props.pool && props.token && props.nft && isConnected) {
       console.log("Got trading pool address, setting the rest...", props.pool);
-      getTokenAllowance();
       getNFTAllowance();
       getUserNFTs();
     }
@@ -245,7 +235,7 @@ export default function DepositTradingPool(props) {
             validation={{
               numberMin: 0,
             }}
-            description="Amount of WETH to deposit."
+            description="Amount of ETH to deposit."
             disabled={!approvedToken}
             onChange={handleTokenAmountChange}
           />
@@ -461,14 +451,7 @@ export default function DepositTradingPool(props) {
                 });
               }
               setDepositLoading(true);
-              console.log("signer.", signer);
-
-              console.log("Creating trading pool", props.pool);
-              const tradingPool = new ethers.Contract(
-                props.pool,
-                tradingPoolContract.abi,
-                signer
-              );
+              console.log("Depositing to trading pool", props.pool);
               var curveAddress = "";
               var curveDelta = 0;
               console.log("delta", delta);
@@ -479,15 +462,16 @@ export default function DepositTradingPool(props) {
                 curveAddress = addresses.LinearCurve;
                 curveDelta = parseUnits(delta, 18);
               }
-
-              const tx = await tradingPool.addLiquidity(
+              const tx = await wethGatewaySigner.depositTradingPool(
+                props.pool,
                 selectedNFTs,
-                parseUnits(tokenAmount, 18).toString(),
                 curveAddress,
                 curveDelta,
-                parseUnits(initialPrice, 18).toString()
+                parseUnits(initialPrice, 18).toString(),
+                {
+                  value: parseUnits(tokenAmount, 18).toString(),
+                }
               );
-
               await tx.wait(1);
               handleDepositSuccess();
             } catch (error) {

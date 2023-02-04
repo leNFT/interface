@@ -28,6 +28,7 @@ import Box from "@mui/material/Box";
 import erc721 from "../../contracts/erc721.json";
 import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json";
 import tradingPoolContract from "../../contracts/TradingPool.json";
+import wethGateway from "../../contracts/WETHGateway.json";
 
 export default function Sell() {
   const SELECTED_COLOR = "#d2c6d2";
@@ -62,6 +63,18 @@ export default function Sell() {
     signerOrProvider: provider,
   });
 
+  const wethGatewaySigner = useContract({
+    contractInterface: wethGateway.abi,
+    addressOrName: addresses.WETHGateway,
+    signerOrProvider: signer,
+  });
+
+  const wethGatewayProvider = useContract({
+    contractInterface: wethGateway.abi,
+    addressOrName: addresses.WETHGateway,
+    signerOrProvider: provider,
+  });
+
   async function getUserNFTs(collection) {
     // Get user NFT assets
     const addressNFTs = await getAddressNFTs(address, collection, chain.id);
@@ -80,7 +93,7 @@ export default function Sell() {
     ).toString();
 
     console.log("updatedpool", updatedPool);
-    getNFTAllowance(collection, updatedPool);
+    getNFTAllowance(collection);
     getNFTName(collection);
     setPoolAddress(updatedPool);
   }
@@ -192,10 +205,12 @@ export default function Sell() {
     });
   };
 
-  async function getNFTAllowance(collection, pool) {
-    console.log("nftAddress", nftAddress);
+  async function getNFTAllowance(collection) {
     const nftContract = new ethers.Contract(collection, erc721, provider);
-    const allowed = await nftContract.isApprovedForAll(address, pool);
+    const allowed = await nftContract.isApprovedForAll(
+      address,
+      addresses.WETHGateway
+    );
 
     console.log("Got nft allowed:", allowed);
 
@@ -577,7 +592,7 @@ export default function Sell() {
               );
               try {
                 const tx = await nftContract.setApprovalForAll(
-                  poolAddress,
+                  addresses.WETHGateway,
                   true
                 );
                 await tx.wait(1);
@@ -612,16 +627,11 @@ export default function Sell() {
             color="#063970"
             onClick={async function () {
               setSellLoading(true);
-              const tradingPool = new ethers.Contract(
-                poolAddress,
-                tradingPoolContract.abi,
-                signer
-              );
               try {
                 console.log("selectedNFTs", selectedNFTs);
                 console.log("priceQuote.lps", priceQuote.lps);
-                let tx = await tradingPool.sell(
-                  address,
+                let tx = await wethGatewaySigner.sell(
+                  poolAddress,
                   selectedNFTs,
                   priceQuote.lps,
                   priceQuote.price

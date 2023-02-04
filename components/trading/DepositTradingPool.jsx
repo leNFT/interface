@@ -6,6 +6,7 @@ import {
   useProvider,
   useSigner,
 } from "wagmi";
+import Link from "@mui/material/Link";
 import Box from "@mui/material/Box";
 import { BigNumber } from "@ethersproject/bignumber";
 import Card from "@mui/material/Card";
@@ -135,6 +136,7 @@ export default function DepositTradingPool(props) {
 
   function handleTokenAmountChange(e) {
     if (e.target.value != "") {
+      console.log("newTokenAmount", parseUnits(e.target.value, 18));
       setTokenAmount(e.target.value);
     } else {
       setTokenAmount("0");
@@ -172,7 +174,25 @@ export default function DepositTradingPool(props) {
 
   return (
     <div>
-      <div className="flex flex-row items-center justify-center m-4">
+      <div className="flex items-center justify-center flex-row">
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: "subtitle2.fontSize",
+          }}
+          className="border-b-2 border-pink-200"
+        >
+          <Link
+            href="https://lenft.gitbook.io/lenft-docs/fundamentals/trading-lp-parameters"
+            underline="none"
+            target="_blank"
+            color={"blue"}
+          >
+            {"Need help choosing your LP parameters?"}
+          </Link>
+        </Box>
+      </div>
+      <div className="flex flex-row items-center justify-center mt-8 m-4">
         <Box
           className="flex mx-4 justify-center items-center"
           sx={{
@@ -199,7 +219,7 @@ export default function DepositTradingPool(props) {
           </Dropdown.Menu>
         </Dropdown>
       </div>
-      <div className="flex flex-row items-center justify-center m-12">
+      <div className="flex flex-row items-center justify-center mt-8 m-12">
         <Input
           label={
             curve == "exponential"

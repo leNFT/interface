@@ -74,7 +74,6 @@ export default function WithdrawTradingPool(props) {
 
   const handleWithdrawSuccess = async function () {
     props.updateUI();
-    props.lp = undefined;
     props.setVisibility(false);
     dispatch({
       type: "success",

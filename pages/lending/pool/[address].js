@@ -1,5 +1,5 @@
 import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
-import { Button, Tooltip, Loading, Typography } from "@web3uikit/core";
+import { Button, Tooltip, Loading, Typography, LinkTo } from "@web3uikit/core";
 import { getLendingNFTCollections } from "../../../helpers/getLendingNFTCollections.js";
 import { HelpCircle } from "@web3uikit/icons";
 import { BigNumber } from "@ethersproject/bignumber";
@@ -119,6 +119,7 @@ export default function LendingPool() {
       chain.id,
       router.query.address
     );
+    console.log("Updated Pool Supported NFTs:", updatedPoolSupportedNFTs);
     setPoolSupportedNFTs(updatedPoolSupportedNFTs);
     //Stop loading
     setLoadingPool(false);
@@ -231,14 +232,32 @@ export default function LendingPool() {
             Collections:
           </Box>
           <div className="mt-4">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "h6.fontSize",
-              }}
-            >
-              {Object.values(poolSupportedNFTs).map((nft) => nft.name + " ")}
-            </Box>
+            {Object.entries(poolSupportedNFTs).map(([key, nft]) => (
+              <LinkTo
+                key={"link" + key}
+                type="external"
+                iconLayout="none"
+                text={
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: {
+                        xs: "caption.fontSize",
+                        sm: "h6.fontSize",
+                      },
+                    }}
+                    className="m-2"
+                  >
+                    {nft.name}
+                  </Box>
+                }
+                address={
+                  chain.id == 1
+                    ? "https://etherscan.io/address/" + key
+                    : "https://goerli.etherscan.io/address/" + key
+                }
+              ></LinkTo>
+            ))}
           </div>
         </div>
         <div className="flex flex-col justify-center items-center p-6 rounded-3xl m-2 lg:mx-8 bg-black/5 shadow-lg">

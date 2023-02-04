@@ -43,7 +43,6 @@ export default function DepositTradingPool(props) {
   const [approvedToken, setApprovedToken] = useState(false);
   const [approvedNFT, setApprovedNFT] = useState(false);
   const [approvalNFTLoading, setApprovalNFTLoading] = useState(false);
-  const [approvalTokenLoading, setApprovalTokenLoading] = useState(false);
   const { address, isConnected } = useAccount();
   const { data: signer } = useSigner();
   const [depositLoading, setDepositLoading] = useState(false);
@@ -124,16 +123,6 @@ export default function DepositTradingPool(props) {
 
   const handleNFTApprovalSuccess = async function () {
     setApprovedNFT(true);
-    dispatch({
-      type: "success",
-      message: "You can now deposit.",
-      title: "Approval Successful!",
-      position: "bottomL",
-    });
-  };
-
-  const handleTokenApprovalSuccess = async function () {
-    setApprovedToken(true);
     dispatch({
       type: "success",
       message: "You can now deposit.",
@@ -225,56 +214,18 @@ export default function DepositTradingPool(props) {
         />
       </div>
       <div className="flex flex-row items-center justify-center m-12">
-        {approvedToken ? (
-          <Input
-            label="WETH Amount"
-            type="number"
-            placeholder="0"
-            value={tokenAmount}
-            step="any"
-            validation={{
-              numberMin: 0,
-            }}
-            description="Amount of ETH to deposit."
-            disabled={!approvedToken}
-            onChange={handleTokenAmountChange}
-          />
-        ) : (
-          <Button
-            text="Approve Token"
-            theme="secondary"
-            isFullWidth
-            loadingProps={{
-              spinnerColor: "#000000",
-              spinnerType: "loader",
-              direction: "right",
-              size: "24",
-            }}
-            loadingText=""
-            isLoading={approvalTokenLoading}
-            onClick={async function () {
-              try {
-                setApprovalTokenLoading(true);
-                console.log("signer.", signer);
-                const tokenContract = new ethers.Contract(
-                  props.token,
-                  erc20,
-                  signer
-                );
-                const tx = await tokenContract.approve(
-                  props.pool,
-                  ethers.constants.MaxUint256
-                );
-                await tx.wait(1);
-                handleTokenApprovalSuccess();
-              } catch (error) {
-                console.log(error);
-              } finally {
-                setApprovalTokenLoading(false);
-              }
-            }}
-          ></Button>
-        )}
+        <Input
+          label="ETH Amount"
+          type="number"
+          placeholder="0"
+          value={tokenAmount}
+          step="any"
+          validation={{
+            numberMin: 0,
+          }}
+          description="Amount of ETH to deposit."
+          onChange={handleTokenAmountChange}
+        />
       </div>
       <div className="flex flex-row items-center justify-center m-8">
         {approvedNFT ? (
@@ -316,7 +267,7 @@ export default function DepositTradingPool(props) {
                   signer
                 );
                 const tx = await nftContract.setApprovalForAll(
-                  props.pool,
+                  addresses.WETHGateway,
                   true
                 );
                 await tx.wait(1);
@@ -435,9 +386,7 @@ export default function DepositTradingPool(props) {
             direction: "right",
             size: "24",
           }}
-          disabled={
-            !approvedToken || !approvedNFT || (!tokenAmount && !nftAmount)
-          }
+          disabled={!approvedNFT || (!tokenAmount && !nftAmount)}
           loadingText=""
           isLoading={depositLoading}
           onClick={async function () {

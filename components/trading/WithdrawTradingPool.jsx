@@ -20,6 +20,8 @@ export default function WithdrawTradingPool(props) {
   const [tokenAmount, setTokenAmount] = useState("0");
   const [nfts, setNFTs] = useState([]);
   const [price, setPrice] = useState(0);
+  const [approvedLP, setApprovedLP] = useState(false);
+  const [approvalLPLoading, setApprovalLPLoading] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
   const dispatch = useNotification();
   const { address, isConnected } = useAccount();
@@ -51,6 +53,14 @@ export default function WithdrawTradingPool(props) {
     setPrice(formatUnits(lpResponse.price.toString(), 18));
     setTokenAmount(lpResponse.tokenAmount.toString());
     setNFTs(lpResponse.nftIds);
+
+    // GEt allowance for LP token
+    const approvedResponse = await pool.getApproved(props.lp);
+    if (approvedResponse == addresses.WETHGateway) {
+      setApprovedLP(true);
+    } else {
+      setApprovedLP(false);
+    }
   }
 
   // Set the rest of the UI when we receive the reserve address
@@ -70,6 +80,16 @@ export default function WithdrawTradingPool(props) {
       type: "success",
       message: "Your LP was successfully removed from the pool.",
       title: "Removal Successful!",
+      position: "bottomL",
+    });
+  };
+
+  const handleLPApprovalSuccess = async function () {
+    setApprovedLP(true);
+    dispatch({
+      type: "success",
+      message: "Your LP was successfully approved.",
+      title: "Approval Successful!",
       position: "bottomL",
     });
   };
@@ -95,46 +115,80 @@ export default function WithdrawTradingPool(props) {
         </Typography>
       </div>
       <div className="flex flex-row items-center justify-center m-8">
-        <Button
-          text={"Remove LP"}
-          theme="secondary"
-          isFullWidth
-          loadingProps={{
-            spinnerColor: "#000000",
-            spinnerType: "loader",
-            direction: "right",
-            size: "24",
-          }}
-          loadingText=""
-          isLoading={withdrawLoading}
-          onClick={async function () {
-            try {
-              setWithdrawLoading(true);
-              console.log("signer.", signer);
-              var tx;
-              if (props.assetSymbol == "ETH") {
-                console.log("Depositing ETH");
-                tx = await wethGatewaySigner.depositETH(props.reserve, {
-                  value: amount,
-                });
-              } else {
-                const tradingPool = new ethers.Contract(
+        {approvedLP ? (
+          <Button
+            text={"Remove LP"}
+            theme="secondary"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
+            }}
+            loadingText=""
+            isLoading={withdrawLoading}
+            onClick={async function () {
+              try {
+                setWithdrawLoading(true);
+                console.log("signer.", signer);
+                var tx;
+                if (props.assetSymbol == "ETH") {
+                  console.log("Depositing ETH");
+                  tx = await wethGatewaySigner.depositETH(props.reserve, {
+                    value: amount,
+                  });
+                } else {
+                  const tradingPool = new ethers.Contract(
+                    props.pool,
+                    tradingPoolContract.abi,
+                    signer
+                  );
+                  console.log("Removing LP");
+                  tx = await tradingPool.removeLiquidity(props.lp);
+                }
+                await tx.wait(1);
+                handleWithdrawSuccess();
+              } catch (error) {
+                console.log(error);
+              } finally {
+                setWithdrawLoading(false);
+              }
+            }}
+          ></Button>
+        ) : (
+          <Button
+            text="Approve Token"
+            theme="secondary"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
+            }}
+            loadingText=""
+            isLoading={approvalLPLoading}
+            onClick={async function () {
+              try {
+                setApprovalLPLoading(true);
+                console.log("signer.", signer);
+                const pool = new ethers.Contract(
                   props.pool,
                   tradingPoolContract.abi,
-                  signer
+                  provider
                 );
-                console.log("Removing LP");
-                tx = await tradingPool.removeLiquidity(props.lp);
+                const tx = await pool.approve(addresses.WETHGateway, props.lp);
+                await tx.wait(1);
+                handleLPApprovalSuccess();
+              } catch (error) {
+                console.log(error);
+              } finally {
+                setApprovalLPLoading(false);
               }
-              await tx.wait(1);
-              handleWithdrawSuccess();
-            } catch (error) {
-              console.log(error);
-            } finally {
-              setWithdrawLoading(false);
-            }
-          }}
-        ></Button>
+            }}
+          ></Button>
+        )}
       </div>
     </div>
   );

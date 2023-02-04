@@ -110,7 +110,9 @@ export default function Buy() {
       } else {
         newBuyQuote = await getBuyQuote(chain.id, amount, poolAddress);
       }
-      setPriceQuote(newBuyQuote);
+      if (newBuyQuote.lps.length) {
+        setPriceQuote(newBuyQuote);
+      }
       setLoadingPriceQuote(false);
       setAmount(newBuyQuote.lps.length);
       console.log("newBuyQuote", newBuyQuote);
@@ -186,16 +188,6 @@ export default function Buy() {
       setPriceQuote();
     }
   }, [selectedNFTs]);
-
-  const handleTokenApprovalSuccess = async function () {
-    setApprovedToken(true);
-    dispatch({
-      type: "success",
-      message: "You just approved your tokens.",
-      title: "Approval Successful!",
-      position: "bottomL",
-    });
-  };
 
   const handleBuySuccess = async function () {
     dispatch({

@@ -67,9 +67,7 @@ export default function TradingPools() {
           className="m-2"
           key={"token" + key}
         >
-          {Number(formatUnits(value.token.amount, 18)).toFixed(2) +
-            " " +
-            value.token.name}
+          {Number(formatUnits(value.token.amount, 18)).toFixed(2) + " ETH"}
         </Box>,
         <div className="m-1" key={"gauge" + key}>
           <Button

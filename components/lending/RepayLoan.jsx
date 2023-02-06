@@ -9,7 +9,7 @@ import styles from "../../styles/Home.module.css";
 import { calculateHealthLevel } from "../../helpers/healthLevel.js";
 import { useState, useEffect } from "react";
 import loanCenterContract from "../../contracts/LoanCenter.json";
-import reserveContract from "../../contracts/Reserve.json";
+import lendingPoolContract from "../../contracts/LendingPool.json";
 import erc20 from "../../contracts/erc20.json";
 import Image from "next/image";
 import { ethers } from "ethers";
@@ -83,10 +83,10 @@ export default function RepayLoan(props) {
     signerOrProvider: provider,
   });
 
-  async function updateReserveAsset() {
+  async function updateLendingPoolAsset() {
     const reserve = new ethers.Contract(
       loan.reserve,
-      reserveContract.abi,
+      lendingPoolContract.abi,
       provider
     );
 
@@ -176,7 +176,7 @@ export default function RepayLoan(props) {
 
   useEffect(() => {
     if (loan) {
-      updateReserveAsset();
+      updateLendingPoolAsset();
     }
   }, [loan]);
 

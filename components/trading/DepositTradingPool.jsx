@@ -188,7 +188,7 @@ export default function DepositTradingPool(props) {
             target="_blank"
             color={"blue"}
           >
-            {"Need help choosing your LP parameters?"}
+            {"Need help choosing your LP's parameters?"}
           </Link>
         </Box>
       </div>

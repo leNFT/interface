@@ -50,7 +50,7 @@ export default function WithdrawTradingPool(props) {
     console.log("props.lp", props.lp);
     const lpResponse = await pool.getLP(props.lp);
     console.log("lpResponse", lpResponse);
-    setPrice(formatUnits(lpResponse.price.toString(), 18));
+    setPrice(formatUnits(lpResponse.spotPrice.toString(), 18));
     setTokenAmount(lpResponse.tokenAmount.toString());
     setNFTs(lpResponse.nftIds);
 
@@ -71,6 +71,11 @@ export default function WithdrawTradingPool(props) {
       getLP();
     }
   }, [props.pool, props.lp]);
+
+  // Close window on address change
+  useEffect(() => {
+    props.setVisibility(false);
+  }, [address]);
 
   const handleWithdrawSuccess = async function () {
     props.updateUI();

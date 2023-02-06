@@ -103,7 +103,7 @@ export default function DepositTradingPool(props) {
       getNFTAllowance();
       getUserNFTs();
     }
-  }, [props.pool, props.token, props.nft]);
+  }, [props.pool, props.token, props.nft, address]);
 
   const handleDepositSuccess = async function () {
     // Reset the UI

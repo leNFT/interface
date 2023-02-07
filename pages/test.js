@@ -13,9 +13,10 @@ import {
   useSigner,
 } from "wagmi";
 export default function Test() {
+  const { address, isConnected } = useAccount();
   const [mintingLoading, setMintingLoading] = useState(false);
   const [nativeTokenLoading, setNativeTokenLoading] = useState(false);
-  const { address } = useAccount();
+
   const { chain } = useNetwork();
   const { data: signer } = useSigner();
   const testNFTAddress = "0x0171dB1e3Cc005d2A6E0BA531509D007a5B8C1a8";

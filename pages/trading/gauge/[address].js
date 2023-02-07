@@ -40,42 +40,31 @@ export default function TradingPoolGauge() {
   const [visibleUnstakeModal, setVisibleUnstakeModal] = useState(false);
   const [loadingGauge, setLoadingGauge] = useState(false);
   const [clamingLoading, setClaimingLoading] = useState(false);
-
   const provider = useProvider();
-  const addresses =
-    isConnected && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["5"];
-
-  const gaugeProvider = useContract({
-    contractInterface: tradingGaugeContract.abi,
-    addressOrName: router.query.address,
-    signerOrProvider: provider,
-  });
-
-  const gaugeSigner = useContract({
-    contractInterface: tradingGaugeContract.abi,
-    addressOrName: router.query.address,
-    signerOrProvider: signer,
-  });
 
   // Update the UI
   async function updateUI() {
+    const gauge = new ethers.Contract(
+      router.query.address,
+      tradingGaugeContract.abi,
+      provider
+    );
+
     // Set gauge details
-    const lpTokenResponse = await gaugeProvider.lpToken();
+    const lpTokenResponse = await gauge.lpToken();
     setLPToken(lpTokenResponse.toString());
 
-    const boostResponse = await gaugeProvider.userBoost(address);
+    const boostResponse = await gauge.userBoost(address);
     setBoost(boostResponse.toNumber());
 
-    const stakedLPsBalanceResponse = await gaugeProvider.balanceOf(address);
+    const stakedLPsBalanceResponse = await gauge.balanceOf(address);
     const stakedLPsAmount = stakedLPsBalanceResponse.toNumber();
 
     // Get staked lp positions
     const newStakedLps = [];
 
     for (let i = 0; i < stakedLPsAmount; i++) {
-      const stakedLPResponse = await gaugeProvider.lpOfOwnerByIndex(address, i);
+      const stakedLPResponse = await gauge.lpOfOwnerByIndex(address, i);
       const stakedLP = stakedLPResponse.toNumber();
 
       newStakedLps.push(stakedLP);
@@ -84,7 +73,7 @@ export default function TradingPoolGauge() {
     setStakedLPs(newStakedLps);
 
     // Get the claimable rewards
-    const updatedClaimableRewards = await gaugeProvider.callStatic.claim({
+    const updatedClaimableRewards = await gauge.callStatic.claim({
       from: address,
     });
     console.log("updatedClaimableRewards", updatedClaimableRewards);
@@ -93,8 +82,7 @@ export default function TradingPoolGauge() {
 
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
-    console.log("router", router.query.address);
-    if (router.query.address != undefined && isConnected && address) {
+    if (router.query.address && isConnected && address) {
       updateUI();
     }
   }, [isConnected, router.query.address, address]);
@@ -321,10 +309,15 @@ export default function TradingPoolGauge() {
                   loadingText=""
                   isLoading={clamingLoading}
                   onClick={async function () {
+                    const gauge = new ethers.Contract(
+                      router.query.address,
+                      tradingGaugeContract.abi,
+                      signer
+                    );
                     try {
                       setClaimingLoading(true);
                       console.log("signer.", signer);
-                      const tx = await gaugeSigner.claim();
+                      const tx = await gauge.claim();
                       await tx.wait(1);
                       handleClaimingSuccess();
                     } catch (error) {

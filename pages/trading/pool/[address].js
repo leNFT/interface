@@ -14,7 +14,7 @@ import { ethers } from "ethers";
 import Card from "@mui/material/Card";
 import { CardActionArea } from "@mui/material";
 import CardContent from "@mui/material/CardContent";
-import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
+import { useAccount, useNetwork, useProvider } from "wagmi";
 import erc721 from "../../../contracts/erc721.json";
 import erc20 from "../../../contracts/erc20.json";
 import Router from "next/router";
@@ -107,7 +107,7 @@ export default function TradingPool() {
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
     console.log("router", router.query.address);
-    if (router.query.address != undefined) {
+    if (router.query.address) {
       updateUI();
     }
   }, [isConnected, router.query.address, address]);

@@ -339,7 +339,7 @@ export default function Lend() {
             )}
           </div>
           <div className="flex flex-col mt-8 rounded-3xl m-2 p-2 bg-black/5 shadow-lg">
-            <div className="flex flex-col md:flex-row justify-between p-8 pb-4">
+            <div className="flex flex-col md:flex-row justify-between p-8 pb-0">
               <div className="flex flex-col">
                 <Box
                   sx={{
@@ -362,7 +362,7 @@ export default function Lend() {
                         ? "You can use " +
                           supportedAssets.length +
                           " of your NFTs to borrow."
-                        : "This is where you can see your NFTs will appear."}
+                        : ""}
                     </div>
                   </Box>
                 </div>

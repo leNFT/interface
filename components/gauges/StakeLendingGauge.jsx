@@ -32,29 +32,20 @@ export default function StakeLendingGauge(props) {
       ? contractAddresses[chain.id]
       : contractAddresses["5"];
 
-  const lpTokenProvider = useContract({
-    contractInterface: erc20,
-    addressOrName: props.lpToken,
-    signerOrProvider: provider,
-  });
-
-  const gaugeSigner = useContract({
-    contractInterface: lendingGaugeContract.abi,
-    addressOrName: props.gauge,
-    signerOrProvider: signer,
-  });
-
   async function getUserBalance() {
+    const lpToken = new ethers.Contract(props.lpToken, erc20, provider);
     // Get lp positions
     const updatedBalance = BigNumber.from(
-      await lpTokenProvider.balanceOf(address)
+      await lpToken.balanceOf(address)
     ).toString();
     setBalance(updatedBalance);
     console.log("updatedBalance", updatedBalance);
   }
 
   async function getAllowance() {
-    const allowance = await lpTokenProvider.allowance(address, props.gauge);
+    const lpToken = new ethers.Contract(props.lpToken, erc20, provider);
+
+    const allowance = await lpToken.allowance(address, props.gauge);
 
     console.log("Got allowance:", allowance);
 
@@ -67,12 +58,12 @@ export default function StakeLendingGauge(props) {
 
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
-    if (props.lpToken && props.gauge) {
+    if (isConnected && props.lpToken && props.gauge) {
       console.log("Got trading pool address...", props.gauge);
       getAllowance();
       getUserBalance();
     }
-  }, [props.lpToken, props.gauge]);
+  }, [isConnected, props.lpToken, props.gauge]);
 
   function handleInputChange(e) {
     if (e.target.value != "") {
@@ -142,10 +133,15 @@ export default function StakeLendingGauge(props) {
             loadingText=""
             isLoading={stakeLoading}
             onClick={async function () {
+              const gauge = new ethers.Contract(
+                props.gauge,
+                lendingGaugeContract.abi,
+                provider
+              );
               try {
                 setStakeLoading(true);
                 console.log("signer.", signer);
-                const tx = await gaugeSigner.deposit(amount);
+                const tx = await gauge.deposit(amount);
                 await tx.wait(1);
                 handleStakeSuccess();
               } catch (error) {

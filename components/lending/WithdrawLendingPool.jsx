@@ -34,24 +34,6 @@ export default function Withdraw(props) {
 
   const dispatch = useNotification();
 
-  const wethGatewaySigner = useContract({
-    contractInterface: wethGatewayContract.abi,
-    addressOrName: addresses.WETHGateway,
-    signerOrProvider: signer,
-  });
-
-  const lendingMarketSigner = useContract({
-    contractInterface: lendingMarketContract.abi,
-    addressOrName: addresses.LendingMarket,
-    signerOrProvider: signer,
-  });
-
-  const lendingPoolSigner = useContract({
-    contractInterface: lendingPoolContract.abi,
-    addressOrName: props.pool,
-    signerOrProvider: signer,
-  });
-
   async function updateMaxAmount() {
     const lendingPool = new ethers.Contract(
       props.pool,
@@ -66,7 +48,12 @@ export default function Withdraw(props) {
   }
 
   async function getLendingPoolAllowance() {
-    const updatedAllowance = await lendingPoolSigner.allowance(
+    const lendingPool = new ethers.Contract(
+      props.pool,
+      lendingPoolContract.abi,
+      provider
+    );
+    const updatedAllowance = await lendingPool.allowance(
       address,
       addresses.WETHGateway
     );
@@ -79,7 +66,7 @@ export default function Withdraw(props) {
   }
 
   useEffect(() => {
-    if (props.pool && props.asset) {
+    if (isConnected && props.pool && props.asset) {
       console.log("Got pool address, setting the rest...", props.pool);
       console.log(" props.asset", props.asset);
       updateMaxAmount();
@@ -87,7 +74,7 @@ export default function Withdraw(props) {
         getLendingPoolAllowance();
       }
     }
-  }, [props.pool, props.asset]);
+  }, [isConnected, props.pool, props.asset]);
 
   const handleWithdrawalSuccess = async function () {
     props.updateUI();
@@ -193,6 +180,16 @@ export default function Withdraw(props) {
             loadingText=""
             isLoading={withdrawalLoading}
             onClick={async function () {
+              const wethGateway = new ethers.Contract(
+                addresses.WETHGateway,
+                wethGatewayContract.abi,
+                signer
+              );
+              const lendingMarket = new ethers.Contract(
+                addresses.LendingMarket,
+                lendingMarketContract.abi,
+                signer
+              );
               console.log("props.assetSymbol", props.assetSymbol);
               if (BigNumber.from(amount).lte(BigNumber.from(maxAmount))) {
                 try {
@@ -200,12 +197,9 @@ export default function Withdraw(props) {
                   var tx;
                   if (props.assetSymbol == "ETH") {
                     console.log("Withdrawal ETH: ", amount);
-                    tx = await wethGatewaySigner.withdrawETH(
-                      props.pool,
-                      amount
-                    );
+                    tx = await wethGateway.withdrawETH(props.pool, amount);
                   } else {
-                    tx = await lendingMarketSigner.withdraw(props.pool, amount);
+                    tx = await lendingMarket.withdraw(props.pool, amount);
                   }
                   await tx.wait(1);
                   handleWithdrawalSuccess();

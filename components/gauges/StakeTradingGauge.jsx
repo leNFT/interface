@@ -39,17 +39,6 @@ export default function StakeTradingGauge(props) {
       : contractAddresses["5"];
 
   console.log("props.lpToken", props.lpToken);
-  const lpTokenProvider = useContract({
-    contractInterface: erc721,
-    addressOrName: props.lpToken,
-    signerOrProvider: provider,
-  });
-
-  const gaugeSigner = useContract({
-    contractInterface: tradingGaugeContract.abi,
-    addressOrName: props.gauge,
-    signerOrProvider: signer,
-  });
 
   async function getUserLPs() {
     // Get lp positions
@@ -59,10 +48,9 @@ export default function StakeTradingGauge(props) {
   }
 
   async function getLPAllowance() {
-    const allowed = await lpTokenProvider.isApprovedForAll(
-      address,
-      props.gauge
-    );
+    const lpToken = new ethers.Contract(props.lpToken, erc20, provider);
+
+    const allowed = await lpToken.isApprovedForAll(address, props.gauge);
 
     console.log("Got nft allowed:", allowed);
 
@@ -75,12 +63,12 @@ export default function StakeTradingGauge(props) {
 
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
-    if (props.lpToken && props.gauge) {
+    if (isConnected && props.lpToken && props.gauge) {
       console.log("Got trading pool address, setting the rest...", props.pool);
       getLPAllowance();
       getUserLPs();
     }
-  }, [props.lpToken, props.gauge]);
+  }, [isConnected, props.lpToken, props.gauge]);
 
   const handleStakeSuccess = async function () {
     props.updateUI();
@@ -224,10 +212,15 @@ export default function StakeTradingGauge(props) {
           loadingText=""
           isLoading={stakeLoading}
           onClick={async function () {
+            const gauge = new ethers.Contract(
+              props.gauge,
+              tradingGaugeContract.abi,
+              signer
+            );
             try {
               setStakeLoading(true);
               console.log("signer.", signer);
-              const tx = await gaugeSigner.deposit(selectedLP);
+              const tx = await gauge.deposit(selectedLP);
               await tx.wait(1);
               handleStakeSuccess();
             } catch (error) {

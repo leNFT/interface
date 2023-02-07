@@ -26,27 +26,20 @@ export default function UnstakeLendingGauge(props) {
       ? contractAddresses[chain.id]
       : contractAddresses["5"];
 
-  const gaugeProvider = useContract({
-    contractInterface: lendingGaugeContract.abi,
-    addressOrName: props.gauge,
-    signerOrProvider: provider,
-  });
-
-  const gaugeSigner = useContract({
-    contractInterface: lendingGaugeContract.abi,
-    addressOrName: props.gauge,
-    signerOrProvider: signer,
-  });
-
   async function updateMaxAmount() {
-    const updatedMaxAmount = await gaugeProvider.balanceOf(address);
+    const gauge = new ethers.Contract(
+      props.gauge,
+      lendingGaugeContract.abi,
+      provider
+    );
+    const updatedMaxAmount = await gauge.balanceOf(address);
 
     console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
     setMaxAmount(updatedMaxAmount);
   }
 
   useEffect(() => {
-    if (props.gauge) {
+    if (isConnected && props.gauge) {
       console.log("Got gauge address, setting the rest...", props.gauge);
       updateMaxAmount();
     }
@@ -108,11 +101,16 @@ export default function UnstakeLendingGauge(props) {
           loadingText=""
           isLoading={unstakeLoading}
           onClick={async function () {
+            const gauge = new ethers.Contract(
+              props.gauge,
+              lendingGaugeContract.abi,
+              provider
+            );
             try {
               setUnstakeLoading(true);
-              console.log("gaugeSigner.", gaugeSigner);
+              console.log("gaugeSigner.", gauge);
               console.log("amount.", amount);
-              const tx = await gaugeSigner.withdraw(amount);
+              const tx = await gauge.withdraw(amount);
               await tx.wait(1);
               handleUnstakeSuccess();
             } catch (error) {

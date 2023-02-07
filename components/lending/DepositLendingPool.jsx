@@ -28,34 +28,20 @@ export default function DepositLendingPool(props) {
   const { chain } = useNetwork();
   const { data: signer } = useSigner();
   const provider = useProvider();
-  const { data: ethBalance } = useBalance({
-    addressOrName: address,
-  });
   const addresses =
     isConnected && chain.id in contractAddresses
       ? contractAddresses[chain.id]
       : contractAddresses["5"];
 
-  const wethGatewaySigner = useContract({
-    contractInterface: wethGatewayContract.abi,
-    addressOrName: addresses.WETHGateway,
-    signerOrProvider: signer,
-  });
-
-  const tokenProvider = useContract({
-    contractInterface: erc20,
-    addressOrName: props.asset,
-    signerOrProvider: provider,
-  });
-
   async function updateTokenBalance() {
+    const tokenProvider = new ethers.Contract(props.asset, erc20, provider);
     var updatedBalance;
 
     console.log("props.assetSymbol", props.assetSymbol);
 
     if (props.assetSymbol == "ETH") {
       console.log("props.assetSymbol", props.assetSymbol);
-      updatedBalance = ethBalance.value.toString();
+      updatedBalance = await provider.getBalance(address);
     } else {
       updatedBalance = await tokenProvider.balanceOf(address);
     }
@@ -65,6 +51,8 @@ export default function DepositLendingPool(props) {
   }
 
   async function getTokenAllowance() {
+    const tokenProvider = new ethers.Contract(props.asset, erc20, provider);
+
     const allowance = await tokenProvider.allowance(address, props.pool);
 
     console.log("Got allowance:", allowance);
@@ -78,12 +66,12 @@ export default function DepositLendingPool(props) {
 
   // Set the rest of the UI when we receive the pool address
   useEffect(() => {
-    if (props.pool && props.asset && props.assetSymbol) {
+    if (isConnected && props.pool && props.asset && props.assetSymbol) {
       console.log("Got pool address, setting the rest...", props.pool);
       getTokenAllowance();
       updateTokenBalance();
     }
-  }, [props.pool, props.asset, props.assetSymbol]);
+  }, [props.pool, props.asset, props.assetSymbol, isConnected]);
 
   const handleDepositSuccess = async function () {
     console.log("Deposited", amount);
@@ -154,13 +142,19 @@ export default function DepositLendingPool(props) {
             loadingText=""
             isLoading={depositLoading}
             onClick={async function () {
+              const wethGateway = new ethers.Contract(
+                addresses.WETHGateway,
+                wethGatewayContract.abi,
+                signer
+              );
+
               if (BigNumber.from(amount).lte(BigNumber.from(balance))) {
                 try {
                   setDepositLoading(true);
                   var tx;
                   if (props.assetSymbol == "ETH") {
                     console.log("Depositing ETH");
-                    tx = await wethGatewaySigner.depositETH(props.pool, {
+                    tx = await wethGateway.depositETH(props.pool, {
                       value: amount,
                     });
                   } else {

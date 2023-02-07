@@ -10,13 +10,7 @@ import StakeLendingGauge from "../../../components/gauges/StakeLendingGauge";
 import UnstakeLendingGauge from "../../../components/gauges/UnstakeLendingGauge";
 import Box from "@mui/material/Box";
 import { ethers } from "ethers";
-import {
-  useAccount,
-  useNetwork,
-  useContract,
-  useProvider,
-  useSigner,
-} from "wagmi";
+import { useAccount, useNetwork, useProvider, useSigner } from "wagmi";
 import Router from "next/router";
 import { useRouter } from "next/router";
 import { ChevronLeft } from "@web3uikit/icons";
@@ -37,30 +31,19 @@ export default function TradingPoolGauge() {
   const [visibleUnstakeModal, setVisibleUnstakeModal] = useState(false);
   const [loadingGauge, setLoadingGauge] = useState(false);
   const [clamingLoading, setClaimingLoading] = useState(false);
-
   const provider = useProvider();
-  const addresses =
-    isConnected && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["5"];
-
-  const gaugeProvider = useContract({
-    contractInterface: lendingGaugeContract.abi,
-    addressOrName: router.query.address,
-    signerOrProvider: provider,
-  });
-
-  const gaugeSigner = useContract({
-    contractInterface: lendingGaugeContract.abi,
-    addressOrName: router.query.address,
-    signerOrProvider: signer,
-  });
 
   // Update the UI
   async function updateUI() {
+    const gauge = new ethers.Contract(
+      router.query.address,
+      lendingGaugeContract.abi,
+      provider
+    );
     // Set gauge details
-    const lpTokenResponse = await gaugeProvider.lpToken();
+    const lpTokenResponse = await gauge.lpToken();
     setLPToken(lpTokenResponse.toString());
+    console.log("lpTokenResponse", lpTokenResponse.toString());
 
     // Get the name of the LP token
     const lpTokenProvider = new ethers.Contract(
@@ -71,27 +54,28 @@ export default function TradingPoolGauge() {
     const lpTokenSymbolResponse = await lpTokenProvider.symbol();
     setLPTokenSymbol(lpTokenSymbolResponse.toString());
 
-    const boostResponse = await gaugeProvider.userBoost(address);
-    setBoost(boostResponse.toNumber());
+    if (isConnected) {
+      const boostResponse = await gauge.userBoost(address);
+      setBoost(boostResponse.toNumber());
 
-    // Get staked amount
-    const stakedAmount = BigNumber.from(
-      await gaugeProvider.balanceOf(address)
-    ).toString();
-    setStakedAmount(stakedAmount);
+      // Get staked amount
+      const stakedAmount = BigNumber.from(
+        await gauge.balanceOf(address)
+      ).toString();
+      setStakedAmount(stakedAmount);
 
-    // Get the claimable rewards
-    const updatedClaimableRewards = await gaugeProvider.callStatic.claim({
-      from: address,
-    });
-    console.log("updatedClaimableRewards", updatedClaimableRewards);
-    setClaimableRewards(updatedClaimableRewards.toString());
+      // Get the claimable rewards
+      const updatedClaimableRewards = await gauge.callStatic.claim({
+        from: address,
+      });
+      console.log("updatedClaimableRewards", updatedClaimableRewards);
+      setClaimableRewards(updatedClaimableRewards.toString());
+    }
   }
 
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
-    console.log("router", router.query.address);
-    if (router.query.address != undefined && isConnected && address) {
+    if (router.query.address) {
       updateUI();
     }
   }, [isConnected, router.query.address, address]);
@@ -336,10 +320,15 @@ export default function TradingPoolGauge() {
                 loadingText=""
                 isLoading={clamingLoading}
                 onClick={async function () {
+                  const gauge = new ethers.Contract(
+                    router.query.address,
+                    lendingGaugeContract.abi,
+                    signer
+                  );
                   try {
                     setClaimingLoading(true);
                     console.log("signer.", signer);
-                    const tx = await gaugeSigner.claim();
+                    const tx = await gauge.claim();
                     await tx.wait(1);
                     handleClaimingSuccess();
                   } catch (error) {

@@ -22,6 +22,8 @@ import { ChevronLeft } from "@web3uikit/icons";
 import { ExternalLink } from "@web3uikit/icons";
 
 export default function LendingPool() {
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
   const router = useRouter();
   const [debt, setDebt] = useState("0");
   const [asset, setAsset] = useState("");
@@ -35,8 +37,6 @@ export default function LendingPool() {
   const [borrowRate, setBorrowRate] = useState(0);
   const [utilizationRate, setUtilizationRate] = useState(0);
   const [loadingPool, setLoadingPool] = useState(false);
-  const { address, isConnected } = useAccount();
-  const { chain } = useNetwork();
   const [tvlSafeguard, setTVLSafeguard] = useState("0");
   const [maximumUtilizationRate, setMaximumUtilizationRate] = useState("0");
   const [liquidationFee, setLiquidationFee] = useState("0");
@@ -128,8 +128,7 @@ export default function LendingPool() {
 
   // Set the rest of the UI when we receive the lending pool address
   useEffect(() => {
-    console.log("router", router.query.address);
-    if (router.query.address != undefined) {
+    if (router.query.address) {
       console.log(
         "Got pool address, setting the rest...",
         router.query.address

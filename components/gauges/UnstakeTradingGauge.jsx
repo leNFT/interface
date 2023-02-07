@@ -23,18 +23,6 @@ export default function UnstakeTradingGauge(props) {
       ? contractAddresses[chain.id]
       : contractAddresses["5"];
 
-  const gaugeProvider = useContract({
-    contractInterface: tradingGaugeContract.abi,
-    addressOrName: props.gauge,
-    signerOrProvider: provider,
-  });
-
-  const gaugeSigner = useContract({
-    contractInterface: tradingGaugeContract.abi,
-    addressOrName: props.gauge,
-    signerOrProvider: signer,
-  });
-
   useEffect(() => {}, []);
 
   const handleUnstakeSuccess = async function () {
@@ -67,11 +55,16 @@ export default function UnstakeTradingGauge(props) {
           loadingText=""
           isLoading={unstakeLoading}
           onClick={async function () {
+            const gauge = new ethers.Contract(
+              props.gauge,
+              tradingGaugeContract.abi,
+              signer
+            );
             try {
               setUnstakeLoading(true);
-              console.log("gaugeSigner.", gaugeSigner);
+              console.log("gaugeSigner.", gauge);
               console.log("props.selectedLP.", props.selectedLP);
-              const tx = await gaugeSigner.withdraw(props.selectedLP);
+              const tx = await gauge.withdraw(props.selectedLP);
               await tx.wait(1);
               handleUnstakeSuccess();
             } catch (error) {

@@ -63,41 +63,45 @@ export default function Home() {
         <div className={styles.main}>
           <div className={styles.indexDescribe}>
             <div className={styles.indexDescribeTitle}>
-              <a
-                href="/trade"
-                style={{
-                  textDecoration: "underline",
-                }}
-              >
-                swap
-              </a>
+              <Link href="/trade">
+                <a
+                  style={{
+                    textDecoration: "underline",
+                  }}
+                >
+                  swap
+                </a>
+              </Link>
               {", "}
-              <a
-                href="/buy"
-                style={{
-                  textDecoration: "underline",
-                }}
-              >
-                buy
-              </a>
+              <Link href="/trade">
+                <a
+                  style={{
+                    textDecoration: "underline",
+                  }}
+                >
+                  buy
+                </a>
+              </Link>
               {", "}
-              <a
-                href="/sell"
-                style={{
-                  textDecoration: "underline",
-                }}
-              >
-                sell
-              </a>
+              <Link href="/trade">
+                <a
+                  style={{
+                    textDecoration: "underline",
+                  }}
+                >
+                  sell
+                </a>{" "}
+              </Link>
               {" and "}
-              <a
-                href="/lend"
-                style={{
-                  textDecoration: "underline",
-                }}
-              >
-                borrow
-              </a>{" "}
+              <Link href="/trade">
+                <a
+                  style={{
+                    textDecoration: "underline",
+                  }}
+                >
+                  borrow
+                </a>
+              </Link>{" "}
               money using your NFTs.
             </div>
             <div className={styles.indexDescribeSubtitle}>

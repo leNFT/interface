@@ -1,37 +1,89 @@
 import styles from "../styles/Home.module.css";
-import { Github, Discord, Twitter, Book } from "@web3uikit/icons";
+import Box from "@mui/material/Box";
 
 export default function Footer() {
   return (
     <footer className={styles.footer}>
-      <a
-        href="http://discord.gg/hWyBHrUDAk"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <Discord fontSize="32px" color="#000000" title="Discord Icon" />
-      </a>
-      <a
-        href="https://twitter.com/lenftapp"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <Twitter fontSize="32px" color="#000000" title="Twitter Icon" />
-      </a>
-      <a
-        href="https://github.com/leNFT"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <Github fontSize="32px" color="#000000" title="Github Icon" />
-      </a>
-      <a
-        href="https://lenft.gitbook.io/lenft-docs/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <Book fontSize="32px" color="#000000" title="Book Icon" />
-      </a>
+      <div className="flex flex-row justify-evenly items-center w-full">
+        <div className="flex flex-col space-y-2 items-start">
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "subtitle1.fontSize",
+              fontWeight: "bold",
+            }}
+          >
+            Social
+          </Box>
+          <a
+            href="http://discord.gg/hWyBHrUDAk"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+              }}
+            >
+              Discord
+            </Box>
+          </a>
+          <a
+            href="https://twitter.com/lenftapp"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+              }}
+            >
+              Twitter
+            </Box>
+          </a>
+        </div>
+        <div className="flex flex-col space-y-2 items-start">
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "subtitle1.fontSize",
+              fontWeight: "bold",
+            }}
+          >
+            Developers
+          </Box>
+          <a
+            href="https://lenft.gitbook.io/lenft-docs/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+              }}
+            >
+              Docs
+            </Box>
+          </a>
+          <a
+            href="https://github.com/leNFT"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+              }}
+            >
+              Github
+            </Box>
+          </a>
+        </div>
+      </div>
     </footer>
   );
 }

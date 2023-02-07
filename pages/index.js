@@ -55,40 +55,95 @@ export default function Home() {
                   Docs
                 </a>
               </li>
-              <li className="px-8">
-                <Link href="/trade">
-                  <a>
-                    <Button
-                      primary
-                      size="medium"
-                      color="black"
-                      label={
-                        <Box
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "subtitle2.fontSize",
-                            fontWeight: "bold",
-                            letterSpacing: 4,
-                          }}
-                        >
-                          Launch App
-                        </Box>
-                      }
-                    />
-                  </a>
-                </Link>
-              </li>
             </ul>
           </nav>
         </div>
-
         <div className={styles.main}>
           <div className={styles.indexDescribe}>
             <div className={styles.indexDescribeTitle}>
-              swap, buy, sell and lend your NFTs.
+              <a
+                href="/trade"
+                style={{
+                  textDecoration: "underline",
+                }}
+              >
+                swap
+              </a>
+              {", "}
+              <a
+                href="/buy"
+                style={{
+                  textDecoration: "underline",
+                }}
+              >
+                buy
+              </a>
+              {", "}
+              <a
+                href="/sell"
+                style={{
+                  textDecoration: "underline",
+                }}
+              >
+                sell
+              </a>
+              {" and "}
+              <a
+                href="/lend"
+                style={{
+                  textDecoration: "underline",
+                }}
+              >
+                lend
+              </a>{" "}
+              your NFTs.
             </div>
-            <div className={styles.indexDescribeTitle}>
+            <div className={styles.indexDescribeSubtitle}>
               (beta live on goerli)
+            </div>
+            <div className="flex items-center m-16 space-x-8">
+              <Link href="/trade">
+                <a>
+                  <Button
+                    primary
+                    size="large"
+                    color="black"
+                    label={
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle2.fontSize",
+                          fontWeight: "bold",
+                          letterSpacing: 4,
+                        }}
+                      >
+                        Launch Trade
+                      </Box>
+                    }
+                  />
+                </a>
+              </Link>
+              <Link href="/lend">
+                <a>
+                  <Button
+                    primary
+                    size="large"
+                    color="black"
+                    label={
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle2.fontSize",
+                          fontWeight: "bold",
+                          letterSpacing: 4,
+                        }}
+                      >
+                        Launch Lend
+                      </Box>
+                    }
+                  />
+                </a>
+              </Link>
             </div>
             <div className={styles.indexDescribeSubtitle}>
               <li>Trade your NFTs</li>

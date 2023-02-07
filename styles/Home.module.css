@@ -18,7 +18,7 @@
   height: 100%;
   min-height: 100vh;
   padding: 2rem 4rem;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.8);
 }
 
 .mainInfo {
@@ -192,7 +192,7 @@
 }
 
 .indexDescribeSubtitle {
-  padding: 60px;
+  padding: 16px;
   font-weight: 800;
   font-size: 1.5rem;
 }
@@ -240,7 +240,7 @@
 
   .indexDescribeSubtitle {
     padding: 0;
-    margin-top: 64px;
+    margin-top: 32px;
     font-size: large;
   }
 

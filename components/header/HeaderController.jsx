@@ -18,22 +18,7 @@ export default function HeaderController() {
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
-  const [mode, setMode] = useState(router.pathname);
-
-  function handleModeChange(event) {
-    console.log(event.target.value);
-    setMode(event.target.value);
-
-    if (event.target.value == "/trade") {
-      Router.push({
-        pathname: "/trade",
-      });
-    } else {
-      Router.push({
-        pathname: "/lend",
-      });
-    }
-  }
+  const mode = router.pathname;
 
   return (
     <div>
@@ -70,52 +55,12 @@ export default function HeaderController() {
       )}
       <div className="p-4 pb-0 md:pb-2 mb-2 border-b-2 flex flex-row justify-between items-center">
         <div className="flex flex-row-reverse md:flex-row items-center">
-          <div className="flex flex-col items-center justify-content pr-4">
-            <ToggleButtonGroup
-              size="small"
-              color="warning"
-              exclusive
-              value={mode}
-              onChange={handleModeChange}
-            >
-              <ToggleButton
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: {
-                    xs: "caption.fontSize",
-                    lg: "subtitle2.fontSize",
-                  },
-                  fontWeight: "bold",
-                  letterSpacing: {
-                    xs: 2,
-                    md: 4,
-                  },
-                }}
-                value="/trade"
-              >
-                Trade
-              </ToggleButton>
-              <ToggleButton
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: {
-                    xs: "caption.fontSize",
-                    lg: "subtitle2.fontSize",
-                  },
-                  fontWeight: "bold",
-                  letterSpacing: {
-                    xs: 2,
-                    md: 4,
-                  },
-                }}
-                value="/lend"
-              >
-                Lend
-              </ToggleButton>
-            </ToggleButtonGroup>
-          </div>
           <div className="flex flex-row-reverse md:flex-row 2xl:flex-col items-center">
-            {mode == "trade" ? <TradeHeader /> : <LendingHeader />}
+            {mode == "/lend" || mode == "/lendingPools" ? (
+              <LendingHeader />
+            ) : (
+              <TradeHeader />
+            )}
           </div>
         </div>
         <div className="flex flex-col items-center px-8">

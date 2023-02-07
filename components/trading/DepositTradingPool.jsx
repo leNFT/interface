@@ -52,9 +52,9 @@ export default function DepositTradingPool(props) {
   const { chain } = useNetwork();
   const provider = useProvider();
   const addresses =
-    chain && chain.id in contractAddresses
+    isConnected && chain.id in contractAddresses
       ? contractAddresses[chain.id]
-      : contractAddresses["1"];
+      : contractAddresses["5"];
 
   const wethGatewaySigner = useContract({
     contractInterface: wethGatewayContract.abi,

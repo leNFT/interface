@@ -53,9 +53,9 @@ export default function Sell() {
   const dispatch = useNotification();
 
   const addresses =
-    chain && chain.id in contractAddresses
+    isConnected && chain.id in contractAddresses
       ? contractAddresses[chain.id]
-      : contractAddresses["1"];
+      : contractAddresses["5"];
 
   const factoryProvider = useContract({
     contractInterface: tradingPoolFactoryContract.abi,
@@ -77,12 +77,14 @@ export default function Sell() {
 
   async function getUserNFTs(collection) {
     // Get user NFT assets
-    const addressNFTs = await getAddressNFTs(address, collection, chain.id);
-    setUserNFTs(addressNFTs);
+    if (isConnected) {
+      const addressNFTs = await getAddressNFTs(address, collection, chain.id);
+      setUserNFTs(addressNFTs);
+    }
   }
-  async function getTradingCollections() {
+  async function getTradingCollections(chain) {
     // Get user NFT assets
-    const tradingCollections = await getTradingNFTCollections(chain.id);
+    const tradingCollections = await getTradingNFTCollections(chain);
     setTradingCollections(tradingCollections);
     console.log("tradingCollections", tradingCollections);
   }
@@ -103,7 +105,7 @@ export default function Sell() {
       setPriceQuote();
       setLoadingPriceQuote(true);
       const newSellQuote = await getSellQuote(
-        chain.id,
+        isConnected ? chain.id : 5,
         quotedAmount,
         poolAddress
       );
@@ -120,6 +122,8 @@ export default function Sell() {
       }
       console.log("newSellQuote", newSellQuote);
       // Fill the selected NFTs array
+      if (!isConnected) return;
+
       var newSelectedNFTs = [];
       if (selectingNFTs) {
         // Remove any NFTs that can't be sold as per the quote
@@ -143,10 +147,8 @@ export default function Sell() {
 
   // Runs once
   useEffect(() => {
-    if (isConnected) {
-      getTradingCollections(chain.id);
-      console.log("Web3 Enabled, ChainId:", chain.id);
-    }
+    getTradingCollections(isConnected ? chain.id : 5);
+
     console.log("useEffect called");
   }, [isConnected, chain]);
 
@@ -163,7 +165,7 @@ export default function Sell() {
   const handleAmountInputChange = (event) => {
     console.log("handleAmountInputChange", event.target.value);
     setSelectingNFTs(false);
-    if (event.target.value > userNFTs.length) {
+    if (isConnected & (event.target.value > userNFTs.length)) {
       setAmount(userNFTs.length);
       dispatch({
         type: "warning",
@@ -544,8 +546,10 @@ export default function Sell() {
                   clickable
                   target="_blank"
                   href={
-                    chain.id == 1
-                      ? "https://etherscan.io/address/" + nftAddress
+                    isConnected
+                      ? chain.id == 1
+                        ? "https://etherscan.io/address/" + nftAddress
+                        : "https://goerli.etherscan.io/address/" + nftAddress
                       : "https://goerli.etherscan.io/address/" + nftAddress
                   }
                 />
@@ -626,6 +630,15 @@ export default function Sell() {
             disabled={sellLoading}
             color="#063970"
             onClick={async function () {
+              if (!isConnected) {
+                dispatch({
+                  type: "info",
+                  message: "Connect your wallet first",
+                  title: "Connect",
+                  position: "bottomL",
+                });
+                return;
+              }
               setSellLoading(true);
               try {
                 console.log("selectedNFTs", selectedNFTs);

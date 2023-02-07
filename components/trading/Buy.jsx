@@ -54,9 +54,9 @@ export default function Buy() {
   const dispatch = useNotification();
 
   const addresses =
-    chain && chain.id in contractAddresses
+    isConnected && chain.id in contractAddresses
       ? contractAddresses[chain.id]
-      : contractAddresses["1"];
+      : contractAddresses["5"];
 
   const factoryProvider = useContract({
     contractInterface: tradingPoolFactoryContract.abi,
@@ -72,18 +72,23 @@ export default function Buy() {
 
   async function getAvailableNFTs(pool, collection) {
     // Get user NFT assets
-    const addressNFTs = await getAddressNFTs(pool, collection, chain.id);
+    const addressNFTs = await getAddressNFTs(
+      pool,
+      collection,
+      isConnected ? chain.id : 5
+    );
     setAvailableNFTs(addressNFTs);
   }
 
-  async function getTradingCollections() {
+  async function getTradingCollections(chain) {
     // Get user NFT assets
-    const tradingCollections = await getTradingNFTCollections(chain.id);
+    const tradingCollections = await getTradingNFTCollections(chain);
     setTradingCollections(tradingCollections);
     console.log("tradingCollections", tradingCollections);
   }
 
   async function getTradingPoolAddress(collection) {
+    console.log("Getting trading pool address for", collection);
     // Get trading pool for collection
     const updatedPool = (
       await factoryProvider.getTradingPool(collection, addresses.ETH.address)
@@ -91,9 +96,12 @@ export default function Buy() {
 
     console.log("updatedpool", updatedPool);
     getNFTName(collection);
-    getTokenAllowance(updatedPool);
     setPoolAddress(updatedPool);
     getAvailableNFTs(updatedPool, collection);
+
+    if (isConnected) {
+      getTokenAllowance(updatedPool);
+    }
   }
 
   async function getPriceQuote(amount) {
@@ -103,12 +111,16 @@ export default function Buy() {
       var newBuyQuote;
       if (selectingNFTs) {
         newBuyQuote = await getBuyExactQuote(
-          chain.id,
+          isConnected ? chain.id : 5,
           selectedNFTs,
           poolAddress
         );
       } else {
-        newBuyQuote = await getBuyQuote(chain.id, amount, poolAddress);
+        newBuyQuote = await getBuyQuote(
+          isConnected ? chain.id : 5,
+          amount,
+          poolAddress
+        );
       }
       if (newBuyQuote.lps.length) {
         setPriceQuote(newBuyQuote);
@@ -172,10 +184,8 @@ export default function Buy() {
 
   // Runs once
   useEffect(() => {
-    if (isConnected) {
-      getTradingCollections(chain.id);
-      console.log("Web3 Enabled, ChainId:", chain.id);
-    }
+    getTradingCollections(isConnected ? chain.id : 5);
+
     console.log("useEffect called");
   }, [isConnected, chain]);
 
@@ -536,8 +546,10 @@ export default function Buy() {
                   clickable
                   target="_blank"
                   href={
-                    chain.id == 1
-                      ? "https://etherscan.io/address/" + nftAddress
+                    isConnected
+                      ? chain.id == 1
+                        ? "https://etherscan.io/address/" + nftAddress
+                        : "https://goerli.etherscan.io/address/" + nftAddress
                       : "https://goerli.etherscan.io/address/" + nftAddress
                   }
                 />
@@ -575,6 +587,15 @@ export default function Buy() {
           disabled={buyLoading}
           color="#063970"
           onClick={async function () {
+            if (!isConnected) {
+              dispatch({
+                type: "info",
+                message: "Connect your wallet first",
+                title: "Connect",
+                position: "bottomL",
+              });
+              return;
+            }
             setBuyLoading(true);
             try {
               const tx = await wethGatewaySigner.buy(

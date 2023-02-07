@@ -39,9 +39,9 @@ export default function TradingPool() {
   const [tokenName, setTokenName] = useState("...");
   const provider = useProvider();
   const addresses =
-    chain && chain.id in contractAddresses
+    isConnected && chain.id in contractAddresses
       ? contractAddresses[chain.id]
-      : contractAddresses["1"];
+      : contractAddresses["5"];
 
   async function updateUI() {
     const pool = new ethers.Contract(
@@ -74,30 +74,32 @@ export default function TradingPool() {
     setTokenName(tokenNameResponse);
 
     // Get lp positions
-    const addressNFTs = await getAddressNFTs(
-      address,
-      router.query.address,
-      chain.id
-    );
-    const newLpPositions = [];
-    var newTotalNFTs = 0;
-    var newTotalTokenAmount = "0";
-    for (let i = 0; i < addressNFTs.length; i++) {
-      newLpPositions.push({
-        id: BigNumber.from(addressNFTs[i].id.tokenId).toNumber(),
-      });
+    if (address) {
+      const addressNFTs = await getAddressNFTs(
+        address,
+        router.query.address,
+        chain.id
+      );
+      const newLpPositions = [];
+      var newTotalNFTs = 0;
+      var newTotalTokenAmount = "0";
+      for (let i = 0; i < addressNFTs.length; i++) {
+        newLpPositions.push({
+          id: BigNumber.from(addressNFTs[i].id.tokenId).toNumber(),
+        });
 
-      const lp = await pool.getLP(addressNFTs[i].id.tokenId);
-      console.log("lp", lp);
-      newTotalNFTs += lp.nftIds.length;
-      newTotalTokenAmount = BigNumber.from(lp.tokenAmount)
-        .add(newTotalTokenAmount)
-        .toString();
+        const lp = await pool.getLP(addressNFTs[i].id.tokenId);
+        console.log("lp", lp);
+        newTotalNFTs += lp.nftIds.length;
+        newTotalTokenAmount = BigNumber.from(lp.tokenAmount)
+          .add(newTotalTokenAmount)
+          .toString();
+      }
+      setTotalNFTs(newTotalNFTs);
+      setTotalTokenAmount(newTotalTokenAmount);
+
+      setLpPositions(newLpPositions);
     }
-    setTotalNFTs(newTotalNFTs);
-    setTotalTokenAmount(newTotalTokenAmount);
-
-    setLpPositions(newLpPositions);
 
     setLoadingTradingPool(false);
   }
@@ -105,7 +107,7 @@ export default function TradingPool() {
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
     console.log("router", router.query.address);
-    if (router.query.address != undefined && isConnected) {
+    if (router.query.address != undefined) {
       updateUI();
     }
   }, [isConnected, router.query.address, address]);
@@ -209,8 +211,10 @@ export default function TradingPool() {
             </Box>
           }
           address={
-            chain.id == 1
-              ? "https://etherscan.io/address/" + nft
+            isConnected
+              ? chain.id == 1
+                ? "https://etherscan.io/address/" + nft
+                : "https://goerli.etherscan.io/address/" + nft
               : "https://goerli.etherscan.io/address/" + nft
           }
         ></LinkTo>

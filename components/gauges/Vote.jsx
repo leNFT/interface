@@ -25,9 +25,9 @@ export default function Vote(props) {
   const [freeVoteRatio, setFreeVoteRatio] = useState(0);
 
   const addresses =
-    chain && chain.id in contractAddresses
+    isConnected && chain.id in contractAddresses
       ? contractAddresses[chain.id]
-      : contractAddresses["1"];
+      : contractAddresses["5"];
   const dispatch = useNotification();
 
   const gaugeControllerProvider = useContract({

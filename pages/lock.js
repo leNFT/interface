@@ -41,9 +41,9 @@ export default function Lock() {
   const [totalVoteRatio, setTotalVoteRatio] = useState(0);
 
   const addresses =
-    chain && chain.id in contractAddresses
+    isConnected && chain.id in contractAddresses
       ? contractAddresses[chain.id]
-      : contractAddresses["1"];
+      : contractAddresses["5"];
 
   const votingEscrowProvider = useContract({
     contractInterface: votingEscrowContract.abi,

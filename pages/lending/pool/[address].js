@@ -41,7 +41,6 @@ export default function LendingPool() {
   const [maximumUtilizationRate, setMaximumUtilizationRate] = useState("0");
   const [liquidationFee, setLiquidationFee] = useState("0");
   const [liquidationPenalty, setLiquidationPenalty] = useState("0");
-
   const provider = useProvider();
 
   async function getLendingPoolDetails() {
@@ -84,9 +83,11 @@ export default function LendingPool() {
     console.log("Updated Borrow Rate:", updatedBorrowRate);
     setBorrowRate(updatedBorrowRate.toNumber());
 
-    const updatedMaxAmount = await lendingPool.maxWithdraw(address);
-    console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
-    setMaxAmount(updatedMaxAmount.toString());
+    if (address) {
+      const updatedMaxAmount = await lendingPool.maxWithdraw(address);
+      console.log("Updated Max Withdrawal Amount:", updatedMaxAmount);
+      setMaxAmount(updatedMaxAmount.toString());
+    }
 
     const updatedUnderyingSafeguard = (
       await lendingPool.getTVLSafeguard()
@@ -116,7 +117,7 @@ export default function LendingPool() {
     setLiquidationPenalty(updatedLiquidationPenalty);
 
     const updatedPoolSupportedNFTs = await getLendingNFTCollections(
-      chain.id,
+      isConnected ? chain.id : 5,
       router.query.address
     );
     console.log("Updated Pool Supported NFTs:", updatedPoolSupportedNFTs);
@@ -128,7 +129,7 @@ export default function LendingPool() {
   // Set the rest of the UI when we receive the lending pool address
   useEffect(() => {
     console.log("router", router.query.address);
-    if (router.query.address != undefined && isConnected) {
+    if (router.query.address != undefined) {
       console.log(
         "Got pool address, setting the rest...",
         router.query.address
@@ -252,8 +253,10 @@ export default function LendingPool() {
                   </Box>
                 }
                 address={
-                  chain.id == 1
-                    ? "https://etherscan.io/address/" + key
+                  isConnected
+                    ? chain.id == 1
+                      ? "https://etherscan.io/address/" + key
+                      : "https://goerli.etherscan.io/address/" + key
                     : "https://goerli.etherscan.io/address/" + key
                 }
               ></LinkTo>

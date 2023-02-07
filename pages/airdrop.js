@@ -30,9 +30,9 @@ export default function Airdrop() {
   const provider = useProvider();
 
   const addresses =
-    chain && chain.id in contractAddresses
+    isConnected && chain.id in contractAddresses
       ? contractAddresses[chain.id]
-      : contractAddresses["1"];
+      : contractAddresses["5"];
 
   const nativeTokenSigner = useContract({
     contractInterface: nativeTokenContract.abi,

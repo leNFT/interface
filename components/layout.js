@@ -40,31 +40,15 @@ export default function Layout({ children }) {
       </Head>
       <HeaderController />
       <main>
-        {isConnected ? (
-          supportedChains.includes(chain.id) ? (
-            <div className={styles.container}>
-              <div className={styles.main}>{children}</div>
+        <div className={styles.container}>
+          {isConnected && !supportedChains.includes(chain.id) ? (
+            <div className={styles.mainInfo}>
+              <Typography variant="h1">Chain ID not supported</Typography>
             </div>
           ) : (
-            <div className={styles.container}>
-              <div className={styles.mainInfo}>
-                <Typography variant="h1">Chain ID not supported</Typography>
-              </div>
-            </div>
-          )
-        ) : (
-          <div className={styles.container}>
-            <div className={styles.mainInfo}>
-              <div className="flex flex-col items-center space-y-8">
-                <Typography variant="subtitle1">
-                  you know the gist, wallet first, lenfting later
-                </Typography>
-
-                <ConnectButton />
-              </div>
-            </div>
-          </div>
-        )}
+            <div className={styles.main}>{children}</div>
+          )}
+        </div>
       </main>
       <Footer />
     </>

@@ -9,6 +9,8 @@ export async function getTradingPools(chainId) {
     },
   };
 
+  console.log(serverAddress + "/api/tradingPools?chainId=" + chainId);
+
   const tradingPoolsResponse = await fetch(
     serverAddress + "/api/tradingPools?chainId=" + chainId,
     options

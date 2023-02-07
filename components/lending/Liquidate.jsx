@@ -54,9 +54,9 @@ export default function Liquidate(props) {
   const provider = useProvider();
   const dispatch = useNotification();
   const addresses =
-    chain && chain.id in contractAddresses
+    isConnected && chain.id in contractAddresses
       ? contractAddresses[chain.id]
-      : contractAddresses["1"];
+      : contractAddresses["5"];
 
   const lendingMarketSigner = useContract({
     contractInterface: lendingMarketContract.abi,

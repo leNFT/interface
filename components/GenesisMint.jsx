@@ -30,9 +30,9 @@ export default function GenesisMint(props) {
   const [sliderValue, setSliderValue] = useState(14);
 
   const addresses =
-    chain && chain.id in contractAddresses
+    isConnected && chain.id in contractAddresses
       ? contractAddresses[chain.id]
-      : contractAddresses["1"];
+      : contractAddresses["5"];
   const dispatch = useNotification();
 
   const genesisNFTProvider = useContract({

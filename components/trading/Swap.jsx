@@ -68,9 +68,9 @@ export default function Swap() {
   const dispatch = useNotification();
 
   const addresses =
-    chain && chain.id in contractAddresses
+    isConnected && chain.id in contractAddresses
       ? contractAddresses[chain.id]
-      : contractAddresses["1"];
+      : contractAddresses["5"];
 
   const factoryProvider = useContract({
     contractInterface: tradingPoolFactoryContract.abi,
@@ -86,14 +86,18 @@ export default function Swap() {
 
   async function getAvailableNFTs(pool, collection) {
     // Get user NFT assets
-    const addressNFTs = await getAddressNFTs(pool, collection, chain.id);
+    const addressNFTs = await getAddressNFTs(
+      pool,
+      collection,
+      isConnected ? chain.id : 5
+    );
     setAvailableBuyPoolNFTs(addressNFTs);
     console.log("availableBuyPoolNFTs", addressNFTs);
   }
 
-  async function getTradingCollections() {
+  async function getTradingCollections(chain) {
     // Get user NFT assets
-    const tradingCollections = await getTradingNFTCollections(chain.id);
+    const tradingCollections = await getTradingNFTCollections(chain);
     setTradingCollections(tradingCollections);
     console.log("tradingCollections", tradingCollections);
   }
@@ -140,7 +144,7 @@ export default function Swap() {
         console.log("getSwapExactQuote", newSwapQuote);
       } else {
         newSwapQuote = await getSwapQuote(
-          chain.id,
+          isConnected ? chain.id : 5,
           buyAmount,
           sellAmount,
           buyPoolAddress,
@@ -219,7 +223,11 @@ export default function Swap() {
 
   async function getCollectionNFTs(collection) {
     // Get user NFT assets
-    const addressNFTs = await getAddressNFTs(address, collection, chain.id);
+    const addressNFTs = await getAddressNFTs(
+      address,
+      collection,
+      isConnected ? chain.id : 5
+    );
     console.log("addressNsellCollectionNFTs", addressNFTs);
     setUserNFTs(addressNFTs);
   }
@@ -259,8 +267,10 @@ export default function Swap() {
     console.log("updatedpool", updatedPool);
     getSellNFTName(collection);
     setSellPoolAddress(updatedPool);
-    getNFTAllowance(collection, updatedPool);
     getPriceQuote(buyAmount, sellAmount, buyPoolAddress, updatedPool);
+    if (isConnected) {
+      getNFTAllowance(collection, updatedPool);
+    }
   }
 
   async function getBuyTradingPoolAddress(collection) {
@@ -277,10 +287,8 @@ export default function Swap() {
   }
 
   useEffect(() => {
-    if (isConnected && address) {
-      getTradingCollections(chain.id);
-    }
-  }, [isConnected, address]);
+    getTradingCollections(isConnected ? chain.id : 5);
+  }, []);
 
   useEffect(() => {
     setBuyAmount(selectedBuyNFTs.length);
@@ -390,7 +398,7 @@ export default function Swap() {
   const handleSellAmountInputChange = (event) => {
     setSelectingSellNFTs(false);
     console.log("handleAmountInputChange", event.target.value);
-    if (event.target.value > userNFTs.length) {
+    if (isConnected && event.target.value > userNFTs.length) {
       setSellAmount(userNFTs.length);
       dispatch({
         type: "warning",
@@ -1018,11 +1026,14 @@ export default function Swap() {
                 clickable={sellNFTAddress != ""}
                 target="_blank"
                 href={
-                  sellNFTAddress != ""
-                    ? chain.id == 1
-                      ? "https://etherscan.io/address/" + sellNFTAddress
-                      : "https://goerli.etherscan.io/address/" + sellNFTAddress
-                    : ""
+                  isConnected
+                    ? sellNFTAddress != ""
+                      ? chain.id == 1
+                        ? "https://etherscan.io/address/" + sellNFTAddress
+                        : "https://goerli.etherscan.io/address/" +
+                          sellNFTAddress
+                      : ""
+                    : "https://goerli.etherscan.io/address/" + sellNFTAddress
                 }
               />
               <ArrowForwardOutlinedIcon className="mx-1" />
@@ -1043,11 +1054,14 @@ export default function Swap() {
                 clickable={buyNFTAddress != ""}
                 target="_blank"
                 href={
-                  buyNFTAddress != ""
-                    ? chain.id == 1
-                      ? "https://etherscan.io/address/" + buyNFTAddress
-                      : "https://goerli.etherscan.io/address/" + buyNFTAddress
-                    : ""
+                  isConnected
+                    ? buyNFTAddress != ""
+                      ? chain.id == 1
+                        ? "https://etherscan.io/address/" + sellNFTAddress
+                        : "https://goerli.etherscan.io/address/" +
+                          sellNFTAddress
+                      : ""
+                    : "https://goerli.etherscan.io/address/" + sellNFTAddress
                 }
               />
             </Divider>
@@ -1167,6 +1181,16 @@ export default function Swap() {
             disabled={swapLoading || !priceQuote}
             color="#063970"
             onClick={async function () {
+              if (!isConnected) {
+                dispatch({
+                  type: "info",
+                  message: "Connect your wallet first",
+                  title: "Connect",
+                  position: "bottomL",
+                });
+                return;
+              }
+
               console.log("ethBalance: " + ethBalance);
               if (
                 BigNumber.from(priceQuote.buyPrice)

@@ -32,7 +32,7 @@ export default function TradingPools() {
 
   async function updateTableData() {
     setLoadingTableData(true);
-    const tradingPools = await getTradingPools(chain.id);
+    const tradingPools = await getTradingPools(isConnected ? chain.id : 5);
     console.log("TradingPools", tradingPools);
     var newTableData = [];
 
@@ -125,10 +125,8 @@ export default function TradingPools() {
   }
 
   useEffect(() => {
-    if (isConnected) {
-      console.log("updateTableData()");
-      updateTableData();
-    }
+    console.log("updateTableData()");
+    updateTableData();
   }, [isConnected]);
 
   return (

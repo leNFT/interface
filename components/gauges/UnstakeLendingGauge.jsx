@@ -22,9 +22,9 @@ export default function UnstakeLendingGauge(props) {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const addresses =
-    chain && chain.id in contractAddresses
+    isConnected && chain.id in contractAddresses
       ? contractAddresses[chain.id]
-      : contractAddresses["1"];
+      : contractAddresses["5"];
 
   const gaugeProvider = useContract({
     contractInterface: lendingGaugeContract.abi,

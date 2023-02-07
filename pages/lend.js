@@ -27,7 +27,7 @@ import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 
 export default function Lend() {
   const SEARCH_PAGE_SIZE = 8;
-  const [loadingUI, setLoadingUI] = useState(true);
+  const [loadingUI, setLoadingUI] = useState(false);
   const [loans, setLoans] = useState([]);
   const [supportedAssets, setSupportedAssets] = useState([]);
   const [searchPage, setSearchPage] = useState(0);
@@ -45,9 +45,9 @@ export default function Lend() {
   const provider = useProvider();
   const dispatch = useNotification();
   const addresses =
-    chain && chain.id in contractAddresses
+    isConnected && chain.id in contractAddresses
       ? contractAddresses[chain.id]
-      : contractAddresses["1"];
+      : contractAddresses["5"];
 
   const loanCenter = useContract({
     contractInterface: loanCenterContract.abi,
@@ -232,7 +232,9 @@ export default function Lend() {
                     fontSize: "subtitle1.fontSize",
                   }}
                 >
-                  No active loans found.
+                  {isConnected
+                    ? "No active loans found."
+                    : "Connect wallet to view loans."}
                 </Box>
               </div>
             ) : (
@@ -356,9 +358,11 @@ export default function Lend() {
                     }}
                   >
                     <div className="text-sm text-center md:text-left md:text-md">
-                      {"You can use " +
-                        supportedAssets.length +
-                        " of your NFTs to borrow."}
+                      {isConnected
+                        ? "You can use " +
+                          supportedAssets.length +
+                          " of your NFTs to borrow."
+                        : "This is where you can see your NFTs will appear."}
                     </div>
                   </Box>
                 </div>

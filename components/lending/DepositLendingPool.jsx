@@ -32,9 +32,9 @@ export default function DepositLendingPool(props) {
     addressOrName: address,
   });
   const addresses =
-    chain && chain.id in contractAddresses
+    isConnected && chain.id in contractAddresses
       ? contractAddresses[chain.id]
-      : contractAddresses["1"];
+      : contractAddresses["5"];
 
   const wethGatewaySigner = useContract({
     contractInterface: wethGatewayContract.abi,

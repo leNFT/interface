@@ -30,7 +30,7 @@ export default function LendingPools() {
 
   async function updateTableData() {
     setLoadingTableData(true);
-    const lendingPools = await getLendingPools(chain.id);
+    const lendingPools = await getLendingPools(isConnected ? chain.id : 5);
     console.log("lendingPools", lendingPools);
     var newTableData = [];
     const underlyingSymbol = "WETH";
@@ -53,8 +53,10 @@ export default function LendingPools() {
             </Box>
           }
           address={
-            chain.id == 1
-              ? "https://etherscan.io/address/" + key
+            isConnected
+              ? chain.id == 1
+                ? "https://etherscan.io/address/" + key
+                : "https://goerli.etherscan.io/address/" + key
               : "https://goerli.etherscan.io/address/" + key
           }
         ></LinkTo>,
@@ -153,9 +155,7 @@ export default function LendingPools() {
   }
 
   useEffect(() => {
-    if (isConnected) {
-      updateTableData();
-    }
+    updateTableData();
   }, [isConnected]);
 
   return (

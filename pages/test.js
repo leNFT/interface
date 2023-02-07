@@ -21,9 +21,9 @@ export default function Test() {
   const testNFTAddress = "0x0171dB1e3Cc005d2A6E0BA531509D007a5B8C1a8";
 
   const addresses =
-    chain && chain.id in contractAddresses
+    isConnected && chain.id in contractAddresses
       ? contractAddresses[chain.id]
-      : contractAddresses["1"];
+      : contractAddresses["5"];
 
   const testNFTSigner = useContract({
     contractInterface: testNFTContract.abi,

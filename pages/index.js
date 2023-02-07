@@ -9,57 +9,6 @@ export default function Home() {
   return (
     <div className={styles.mainIndex}>
       <div className={styles.opac}>
-        <div className={styles.headerCenter}>
-          <div className={styles.headerLogo}>
-            <a>
-              <img
-                src="symbol-no-bg.png"
-                className={styles.headerLogoImg}
-              ></img>
-            </a>
-          </div>
-
-          <nav>
-            <ul id="main-nav" className={styles.nav}>
-              <li>
-                <a
-                  href="http://discord.gg/hWyBHrUDAk"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Discord
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://twitter.com/lenftapp"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Twitter
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://github.com/leNFT"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Github
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://lenft.gitbook.io/lenft-docs/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Docs
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
         <div className={styles.main}>
           <div className={styles.indexDescribe}>
             <div className={styles.indexDescribeTitle}>
@@ -161,6 +110,57 @@ export default function Home() {
               </Link>
             </div>
           </div>
+        </div>
+        <div className={styles.headerCenter}>
+          <div className={styles.headerLogo}>
+            <a>
+              <img
+                src="symbol-no-bg.png"
+                className={styles.headerLogoImg}
+              ></img>
+            </a>
+          </div>
+
+          <nav>
+            <ul id="main-nav" className={styles.nav}>
+              <li>
+                <a
+                  href="http://discord.gg/hWyBHrUDAk"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Discord
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://twitter.com/lenftapp"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Twitter
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://github.com/leNFT"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Github
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://lenft.gitbook.io/lenft-docs/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Docs
+                </a>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </div>

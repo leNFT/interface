@@ -1,6 +1,6 @@
 import styles from "../styles/Home.module.css";
 import Link from "next/link";
-import { Button } from "grommet";
+import { Button } from "@nextui-org/react";
 import Box from "@mui/material/Box";
 
 export default function Home() {
@@ -101,47 +101,37 @@ export default function Home() {
             <div className={styles.indexDescribeSubtitle}>
               (beta live on goerli)
             </div>
-            <div className="flex items-center m-16 space-x-8">
+            <div className="flex flex-col md:flex-row justify-start items-center m-8">
               <Link href="/trade">
                 <a>
-                  <Button
-                    primary
-                    size="large"
-                    color="black"
-                    label={
-                      <Box
-                        sx={{
-                          fontFamily: "Monospace",
-                          fontSize: "subtitle2.fontSize",
-                          fontWeight: "bold",
-                          letterSpacing: 4,
-                        }}
-                      >
-                        Launch Trade
-                      </Box>
-                    }
-                  />
+                  <Button color="gradient" size="xl" className="m-4">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle2.fontSize",
+                        fontWeight: "bold",
+                        letterSpacing: 4,
+                      }}
+                    >
+                      TRADE
+                    </Box>
+                  </Button>
                 </a>
               </Link>
               <Link href="/lend">
                 <a>
-                  <Button
-                    primary
-                    size="large"
-                    color="black"
-                    label={
-                      <Box
-                        sx={{
-                          fontFamily: "Monospace",
-                          fontSize: "subtitle2.fontSize",
-                          fontWeight: "bold",
-                          letterSpacing: 4,
-                        }}
-                      >
-                        Launch Lend
-                      </Box>
-                    }
-                  />
+                  <Button color="gradient" size="xl" className="m-4">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle2.fontSize",
+                        fontWeight: "bold",
+                        letterSpacing: 4,
+                      }}
+                    >
+                      LEND
+                    </Box>
+                  </Button>
                 </a>
               </Link>
             </div>

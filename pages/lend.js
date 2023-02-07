@@ -362,7 +362,7 @@ export default function Lend() {
                         ? "You can use " +
                           supportedAssets.length +
                           " of your NFTs to borrow."
-                        : ""}
+                        : "Connect wallet to view your NFTs."}
                     </div>
                   </Box>
                 </div>

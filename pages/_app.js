@@ -5,7 +5,11 @@ import { useRouter } from "next/router";
 import React from "react";
 import { NotificationProvider } from "@web3uikit/core";
 import "@rainbow-me/rainbowkit/styles.css";
-import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import {
+  getDefaultWallets,
+  RainbowKitProvider,
+  darkTheme,
+} from "@rainbow-me/rainbowkit";
 import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 import { alchemyProvider } from "wagmi/providers/alchemy";
@@ -36,7 +40,16 @@ function MyApp({ Component, pageProps }) {
   return (
     <NotificationProvider>
       <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider chains={chains}>
+        <RainbowKitProvider
+          chains={chains}
+          theme={darkTheme({
+            accentColor: "#cfc8c8",
+            accentColorForeground: "#474242",
+            borderRadius: "medium",
+            fontStack: "rounded",
+            overlayBlur: "large",
+          })}
+        >
           <LayoutComponent>
             <Component {...pageProps}></Component>
           </LayoutComponent>

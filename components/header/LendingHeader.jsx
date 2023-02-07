@@ -78,7 +78,7 @@ export default function LendingHeader() {
                     letterSpacing: 2,
                   }}
                 >
-                  Pools
+                  Lending Pools
                 </Box>
               ),
               onClick: () => {

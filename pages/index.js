@@ -2,6 +2,8 @@ import styles from "../styles/Home.module.css";
 import Link from "next/link";
 import { Button } from "@nextui-org/react";
 import Box from "@mui/material/Box";
+import { Trending } from "@web3uikit/icons";
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 
 export default function Home() {
   return (
@@ -94,9 +96,9 @@ export default function Home() {
                   textDecoration: "underline",
                 }}
               >
-                lend
+                borrow
               </a>{" "}
-              your NFTs.
+              money using your NFTs.
             </div>
             <div className={styles.indexDescribeSubtitle}>
               (beta live on goerli)
@@ -104,7 +106,12 @@ export default function Home() {
             <div className="flex flex-col md:flex-row justify-start items-center m-8">
               <Link href="/trade">
                 <a>
-                  <Button color="gradient" size="xl" className="m-4">
+                  <Button
+                    color="gradient"
+                    size="xl"
+                    className="m-4"
+                    icon={<Trending fontSize="25px" />}
+                  >
                     <Box
                       sx={{
                         fontFamily: "Monospace",
@@ -118,9 +125,14 @@ export default function Home() {
                   </Button>
                 </a>
               </Link>
-              <Link href="/lend">
+              <Link href="/borrow">
                 <a>
-                  <Button color="gradient" size="xl" className="m-4">
+                  <Button
+                    icon={<AccountBalanceIcon />}
+                    color="gradient"
+                    size="xl"
+                    className="m-4"
+                  >
                     <Box
                       sx={{
                         fontFamily: "Monospace",
@@ -129,7 +141,7 @@ export default function Home() {
                         letterSpacing: 4,
                       }}
                     >
-                      LEND
+                      BORROW
                     </Box>
                   </Button>
                 </a>
@@ -137,7 +149,7 @@ export default function Home() {
             </div>
             <div className={styles.indexDescribeSubtitle}>
               <li>Trade your NFTs</li>
-              <li>Borrow money using your NFTs</li>
+              <li>Borrow money with your NFTs as collateral</li>
               <li>Earn interest on your ETH</li>
               <li>Bring liquidity into your NFT&apos;s ecosystem</li>
             </div>

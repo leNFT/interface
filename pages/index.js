@@ -102,7 +102,7 @@ export default function Home() {
                   borrow
                 </a>
               </Link>{" "}
-              with your NFTs.
+              using your NFTs.
             </div>
             <div className={styles.indexDescribeSubtitle}>
               (beta live on goerli)
@@ -112,18 +112,20 @@ export default function Home() {
                 <a>
                   <Button
                     color="gradient"
+                    size="xl"
                     rounded
                     shadow
-                    size="xl"
+                    ghost
+                    bordered
                     className="m-4"
                     icon={<Trending fontSize="25px" />}
                   >
                     <Box
                       sx={{
                         fontFamily: "Monospace",
-                        fontSize: "subtitle2.fontSize",
+                        fontSize: "h6.fontSize",
                         fontWeight: "bold",
-                        letterSpacing: 4,
+                        letterSpacing: 6,
                       }}
                     >
                       TRADE
@@ -137,6 +139,8 @@ export default function Home() {
                     icon={<AccountBalanceIcon />}
                     rounded
                     shadow
+                    ghost
+                    bordered
                     color="gradient"
                     size="xl"
                     className="m-4"
@@ -144,9 +148,9 @@ export default function Home() {
                     <Box
                       sx={{
                         fontFamily: "Monospace",
-                        fontSize: "subtitle2.fontSize",
+                        fontSize: "h6.fontSize",
                         fontWeight: "bold",
-                        letterSpacing: 4,
+                        letterSpacing: 6,
                       }}
                     >
                       BORROW

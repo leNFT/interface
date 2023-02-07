@@ -93,7 +93,7 @@ export default function Home() {
                 </a>
               </Link>
               {" and "}
-              <Link href="/trade">
+              <Link href="/lend">
                 <a
                   style={{
                     textDecoration: "underline",
@@ -102,7 +102,7 @@ export default function Home() {
                   borrow
                 </a>
               </Link>{" "}
-              using your NFTs.
+              with your NFTs.
             </div>
             <div className={styles.indexDescribeSubtitle}>
               (beta live on goerli)
@@ -112,6 +112,8 @@ export default function Home() {
                 <a>
                   <Button
                     color="gradient"
+                    rounded
+                    shadow
                     size="xl"
                     className="m-4"
                     icon={<Trending fontSize="25px" />}
@@ -129,10 +131,12 @@ export default function Home() {
                   </Button>
                 </a>
               </Link>
-              <Link href="/borrow">
+              <Link href="/lend">
                 <a>
                   <Button
                     icon={<AccountBalanceIcon />}
+                    rounded
+                    shadow
                     color="gradient"
                     size="xl"
                     className="m-4"

@@ -445,7 +445,7 @@ export default function Lend() {
                               }}
                             >
                               <div className="flex flex-col mt-2 items-center text-center">
-                                <div>{data.contractMetadata.name}</div>
+                                <div>{data.contractMetadata.symbol}</div>
                                 <div>
                                   {"#" +
                                     BigNumber.from(data.id.tokenId).toNumber()}
@@ -558,7 +558,7 @@ export default function Lend() {
                             >
                               <div className="flex flex-col mt-4 items-center text-center">
                                 <div>
-                                  {unsupportedAsset.contractMetadata.name}
+                                  {unsupportedAsset.contractMetadata.symbol}
                                 </div>
                                 <div>
                                   {"#" +

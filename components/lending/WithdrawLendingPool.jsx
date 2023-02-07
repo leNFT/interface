@@ -197,7 +197,10 @@ export default function Withdraw(props) {
                   var tx;
                   if (props.assetSymbol == "ETH") {
                     console.log("Withdrawal ETH: ", amount);
-                    tx = await wethGateway.withdrawETH(props.pool, amount);
+                    tx = await wethGateway.withdrawLendingPool(
+                      props.pool,
+                      amount
+                    );
                   } else {
                     tx = await lendingMarket.withdraw(props.pool, amount);
                   }

@@ -154,7 +154,7 @@ export default function DepositLendingPool(props) {
                   var tx;
                   if (props.assetSymbol == "ETH") {
                     console.log("Depositing ETH");
-                    tx = await wethGateway.depositETH(props.pool, {
+                    tx = await wethGateway.depositLendingPool(props.pool, {
                       value: amount,
                     });
                   } else {

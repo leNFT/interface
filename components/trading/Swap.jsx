@@ -469,7 +469,7 @@ export default function Swap() {
           </Box>
         </div>
       )}
-      <div className="flex flex-col md:flex-row items-center justify-center m-4">
+      <div className="flex flex-col lg:flex-row items-center justify-center m-4">
         <div className="flex flex-col items-center text-center justify-center p-8 m-4 rounded-3xl bg-black/5 shadow-lg">
           <div className="flex flex-col mb-2">
             <Box
@@ -729,10 +729,10 @@ export default function Swap() {
             </div>
           )}
         </div>
-        <div className="hidden md:flex items-center m-2">
+        <div className="hidden lg:flex items-center m-2">
           <ArrowForwardOutlinedIcon />
         </div>
-        <div className="flex md:hidden items-center m-2">
+        <div className="flex lg:hidden items-center m-2">
           <ArrowDownwardOutlinedIcon />
         </div>
         <div className="flex flex-col items-center text-center justify-center p-8 m-4 rounded-3xl bg-black/5 shadow-lg">

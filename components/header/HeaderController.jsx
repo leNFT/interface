@@ -11,18 +11,20 @@ import { useState, useEffect } from "react";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Router from "next/router";
+import { useRouter } from "next/router";
 
 export default function HeaderController() {
+  const router = useRouter();
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
-  const [mode, setMode] = useState("trade");
+  const [mode, setMode] = useState(router.pathname);
 
   function handleModeChange(event) {
     console.log(event.target.value);
     setMode(event.target.value);
 
-    if (event.target.value == "trade") {
+    if (event.target.value == "/trade") {
       Router.push({
         pathname: "/trade",
       });
@@ -89,7 +91,7 @@ export default function HeaderController() {
                     md: 4,
                   },
                 }}
-                value="trade"
+                value="/trade"
               >
                 Trade
               </ToggleButton>
@@ -106,7 +108,7 @@ export default function HeaderController() {
                     md: 4,
                   },
                 }}
-                value="lend"
+                value="/lend"
               >
                 Lend
               </ToggleButton>

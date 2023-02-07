@@ -189,7 +189,7 @@ export default function Lend() {
   }
 
   return (
-    <div className={styles.container}>
+    <div>
       {loadingUI ? (
         <div className="flex flex-col items-center justify-center m-16">
           <div className="flex flex-row m-2">
@@ -211,7 +211,7 @@ export default function Lend() {
         </div>
       ) : (
         <div>
-          <div className="flex flex-col mb-8 rounded-3xl m-2 p-2 bg-black/5 shadow-lg">
+          <div className="flex flex-col m-4 sm:m-8 md:mx-16 rounded-3xl p-2 bg-black/5 shadow-lg">
             <div className="p-8">
               <Box
                 sx={{
@@ -338,7 +338,7 @@ export default function Lend() {
               </div>
             )}
           </div>
-          <div className="flex flex-col mt-8 rounded-3xl m-2 p-2 bg-black/5 shadow-lg">
+          <div className="flex flex-col m-4 mt-8 sm:m-8 md:mx-16 rounded-3xl p-2 bg-black/5 shadow-lg">
             <div className="flex flex-col md:flex-row justify-between p-8 pb-0">
               <div className="flex flex-col">
                 <Box

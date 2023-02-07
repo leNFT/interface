@@ -90,7 +90,7 @@ export default function Home() {
                   }}
                 >
                   sell
-                </a>{" "}
+                </a>
               </Link>
               {" and "}
               <Link href="/trade">
@@ -102,7 +102,7 @@ export default function Home() {
                   borrow
                 </a>
               </Link>{" "}
-              money using your NFTs.
+              using your NFTs.
             </div>
             <div className={styles.indexDescribeSubtitle}>
               (beta live on goerli)

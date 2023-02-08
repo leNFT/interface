@@ -279,17 +279,6 @@ export default function Sell() {
     <div className="flex flex-col items-center">
       <div className="flex flex-col m-4">
         <div className="flex flex-row items-center space-x-2 mx-2">
-          {collectionThumbnailURL && (
-            <Image
-              loader={() => collectionThumbnailURL}
-              src={collectionThumbnailURL}
-              alt="NFT Thumbnail"
-              height="60"
-              width="60"
-              priority={true}
-              className="rounded-xl"
-            />
-          )}
           <Autocomplete
             autoComplete
             freeSolo
@@ -303,7 +292,7 @@ export default function Sell() {
             options={tradingCollections.map(
               (option) => option.contractMetadata.name
             )}
-            sx={{ minWidth: { xs: 260, sm: 300, md: 380 } }}
+            sx={{ minWidth: { xs: 215, sm: 300, md: 380 } }}
             onInputChange={handleNFTAddressChange}
             renderOption={(props, option, state) => (
               <div className="flex flex-row m-4" {...props}>
@@ -356,6 +345,18 @@ export default function Sell() {
               />
             )}
           />
+          {collectionThumbnailURL && (
+            <div className="flex ml-4">
+              <Image
+                loader={() => collectionThumbnailURL}
+                src={collectionThumbnailURL}
+                alt="NFT Thumbnail"
+                height="60"
+                width="60"
+                className="rounded-xl"
+              />
+            </div>
+          )}
         </div>
         {nftAddress && (
           <div className="flex flex-row mt-1 justify-center">

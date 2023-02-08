@@ -506,18 +506,8 @@ export default function Swap() {
               From
             </Box>
           </div>
-          <div className="flex flex-col m-4">
+          <div className="flex flex-col my-4">
             <div className="flex flex-row items-center space-x-4">
-              {sellCollectionThumbnailURL && (
-                <Image
-                  loader={() => sellCollectionThumbnailURL}
-                  src={sellCollectionThumbnailURL}
-                  alt="NFT Thumbnail"
-                  height="60"
-                  width="60"
-                  className="rounded-xl"
-                />
-              )}
               <Autocomplete
                 autoComplete
                 freeSolo
@@ -532,7 +522,7 @@ export default function Swap() {
                   (option) => option.contractMetadata.name
                 )}
                 sx={{
-                  minWidth: { xs: 200, sm: 250, md: 270, lg: 260, xl: 280 },
+                  minWidth: { xs: 180, sm: 250, md: 270, lg: 260, xl: 280 },
                 }}
                 onInputChange={handleSellNFTAddressChange}
                 renderOption={(props, option, state) => (
@@ -587,6 +577,18 @@ export default function Swap() {
                   />
                 )}
               />
+              {sellCollectionThumbnailURL && (
+                <div className="flex ml-4">
+                  <Image
+                    loader={() => sellCollectionThumbnailURL}
+                    src={sellCollectionThumbnailURL}
+                    alt="NFT Thumbnail"
+                    height="60"
+                    width="60"
+                    className="rounded-xl"
+                  />
+                </div>
+              )}
             </div>
             {sellNFTAddress && (
               <div className="flex flex-row mt-1 justify-center">
@@ -786,18 +788,8 @@ export default function Swap() {
               To
             </Box>
           </div>
-          <div className="flex flex-col m-4">
+          <div className="flex flex-col my-4">
             <div className="flex flex-row items-center space-x-4">
-              {buyCollectionThumbnailURL && (
-                <Image
-                  loader={() => buyCollectionThumbnailURL}
-                  src={buyCollectionThumbnailURL}
-                  alt="NFT Thumbnail"
-                  height="60"
-                  width="60"
-                  className="rounded-xl"
-                />
-              )}
               <Autocomplete
                 autoComplete
                 freeSolo
@@ -867,6 +859,18 @@ export default function Swap() {
                   />
                 )}
               />
+              {buyCollectionThumbnailURL && (
+                <div className="flex ml-4">
+                  <Image
+                    loader={() => buyCollectionThumbnailURL}
+                    src={buyCollectionThumbnailURL}
+                    alt="NFT Thumbnail"
+                    height="60"
+                    width="60"
+                    className="rounded-xl"
+                  />
+                </div>
+              )}
             </div>
             {buyPoolAddress && (
               <div className="flex flex-row mt-1 justify-center">

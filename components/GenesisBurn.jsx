@@ -99,7 +99,7 @@ export default function GenesisBurn(props) {
           onClick={async function () {
             try {
               setBurningLoading(true);
-              const tx = await genesisNFTSigner.burn(props.tokenId);
+              const tx = await genesisNFTSigner.burn([props.tokenId]);
               await tx.wait(1);
               await handleBurnSuccess();
             } catch (error) {

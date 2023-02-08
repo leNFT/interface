@@ -89,7 +89,7 @@ export default function GenesisMint(props) {
   }
 
   return (
-    <div className={styles.container}>
+    <div className="flex flex-col w-full items-center">
       <div className="flex flex-col lg:flex-row items-center justify-center m-4 text-center">
         <div className="flex flex-col m-2 lg:mx-8">
           <Typography variant="subtitle2">Price</Typography>
@@ -102,7 +102,7 @@ export default function GenesisMint(props) {
           <Typography variant="body16">{props.mintCount + 1}</Typography>
         </div>
       </div>
-      <div className="flex flex-col p-2 border-4 rounded-3xl">
+      <div className="flex flex-col p-2 border-4 rounded-3xl w-full md:w-8/12">
         <div className="flex flex-col md:flex-row items-center justify-center mt-2 text-center">
           <div className="flex flex-col m-2 md:m-4">
             <Typography variant="subtitle2">Lock Time</Typography>
@@ -127,7 +127,7 @@ export default function GenesisMint(props) {
           />
         </div>
       </div>
-      <div className="flex flex-row items-center justify-center m-8">
+      <div className="flex flex-row items-center justify-center m-8 px-8 w-full">
         <Button
           text="MINT"
           theme="secondary"
@@ -153,8 +153,8 @@ export default function GenesisMint(props) {
             try {
               setMintingLoading(true);
               const tx = await genesisNFTSigner.mint(
-                locktimeDays * SECONDS_IN_DAY,
-                genesisNFTURIs[props.mintCount],
+                [locktimeDays * SECONDS_IN_DAY],
+                [genesisNFTURIs[props.mintCount]],
                 { value: props.price }
               );
               await tx.wait(1);

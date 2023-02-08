@@ -4,6 +4,7 @@ import { Button } from "grommet";
 import { Input, Loading } from "@nextui-org/react";
 import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
 import { getTradingNFTCollections } from "../../helpers/getTradingNFTCollections.js";
+import { getNFTImage } from "../../helpers/getNFTImage.js";
 import { ethers } from "ethers";
 import Chip from "@mui/material/Chip";
 import Card from "@mui/material/Card";
@@ -49,6 +50,7 @@ export default function Sell() {
   const [sellLoading, setSellLoading] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [nftName, setNFTName] = useState("");
+  const [collectionThumbnailURL, setCollectionThumbnailURL] = useState("");
 
   const dispatch = useNotification();
 
@@ -67,12 +69,6 @@ export default function Sell() {
     contractInterface: wethGateway.abi,
     addressOrName: addresses.WETHGateway,
     signerOrProvider: signer,
-  });
-
-  const wethGatewayProvider = useContract({
-    contractInterface: wethGateway.abi,
-    addressOrName: addresses.WETHGateway,
-    signerOrProvider: provider,
   });
 
   async function getUserNFTs(collection) {
@@ -98,6 +94,12 @@ export default function Sell() {
     getNFTAllowance(collection);
     getNFTName(collection);
     setPoolAddress(updatedPool);
+  }
+
+  async function getCollectionThumbnailURL(collection) {
+    const updatedURL = await getNFTImage(collection, 1, chain.id);
+    console.log("updatedURL", updatedURL);
+    setCollectionThumbnailURL(updatedURL);
   }
 
   async function getPriceQuote(quotedAmount) {
@@ -244,6 +246,7 @@ export default function Sell() {
     setPriceQuote();
     if (ethers.utils.isAddress(value)) {
       setNFTAddress(value);
+      getCollectionThumbnailURL(value);
       getUserNFTs(value);
       getTradingPoolAddress(value);
     } else if (
@@ -256,6 +259,7 @@ export default function Sell() {
       ).address;
       setNFTAddress(nftAddress);
       getUserNFTs(nftAddress);
+      getCollectionThumbnailURL(nftAddress);
       getTradingPoolAddress(nftAddress);
     } else {
       console.log("Invalid NFT Address");
@@ -265,6 +269,7 @@ export default function Sell() {
         setNFTAddress("0x");
       }
       setPriceQuote();
+      setCollectionThumbnailURL("");
       setPoolAddress("");
       setNFTName("");
     }
@@ -273,72 +278,84 @@ export default function Sell() {
   return (
     <div className="flex flex-col items-center">
       <div className="flex flex-col m-4">
-        <Autocomplete
-          autoComplete
-          freeSolo
-          disablePortal
-          ListboxProps={{
-            style: {
-              backgroundColor: "rgb(253, 241, 244)",
-              fontFamily: "Monospace",
-            },
-          }}
-          options={tradingCollections.map(
-            (option) => option.contractMetadata.name
-          )}
-          sx={{ minWidth: { xs: 240, sm: 300, md: 380 } }}
-          onInputChange={handleNFTAddressChange}
-          renderOption={(props, option, state) => (
-            <div className="flex flex-row m-4" {...props}>
-              <div className="flex w-3/12 h-[50px]">
-                {tradingCollections.find(
-                  (collection) => collection.contractMetadata.name == option
-                ).media.gateway && (
-                  <Image
-                    loader={() =>
-                      tradingCollections.find(
-                        (collection) =>
-                          collection.contractMetadata.name == option
-                      ).media.gateway
-                    }
-                    src={
-                      tradingCollections.find(
-                        (collection) =>
-                          collection.contractMetadata.name == option
-                      ).media.gateway
-                    }
-                    height="50"
-                    width="50"
-                    className="rounded-xl"
-                  />
-                )}
-              </div>
-              <div className="flex mx-2">{option}</div>
-            </div>
-          )}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="NFT Name or Address"
-              sx={{
-                "& label": {
-                  paddingLeft: (theme) => theme.spacing(2),
-                  fontFamily: "Monospace",
-                  fontSize: "subtitle1.fontSize",
-                },
-                "& input": {
-                  paddingLeft: (theme) => theme.spacing(3.5),
-                  fontFamily: "Monospace",
-                },
-                "& fieldset": {
-                  paddingLeft: (theme) => theme.spacing(2.5),
-                  borderRadius: "20px",
-                  fontFamily: "Monospace",
-                },
-              }}
+        <div className="flex flex-row items-center space-x-2">
+          {collectionThumbnailURL && (
+            <Image
+              loader={() => collectionThumbnailURL}
+              src={collectionThumbnailURL}
+              alt="NFT Thumbnail"
+              height="60"
+              width="60"
+              className="rounded-xl"
             />
           )}
-        />
+          <Autocomplete
+            autoComplete
+            freeSolo
+            disablePortal
+            ListboxProps={{
+              style: {
+                backgroundColor: "rgb(253, 241, 244)",
+                fontFamily: "Monospace",
+              },
+            }}
+            options={tradingCollections.map(
+              (option) => option.contractMetadata.name
+            )}
+            sx={{ minWidth: { xs: 220, sm: 300, md: 380 } }}
+            onInputChange={handleNFTAddressChange}
+            renderOption={(props, option, state) => (
+              <div className="flex flex-row m-4" {...props}>
+                <div className="flex w-3/12 h-[50px]">
+                  {tradingCollections.find(
+                    (collection) => collection.contractMetadata.name == option
+                  ).media.gateway && (
+                    <Image
+                      loader={() =>
+                        tradingCollections.find(
+                          (collection) =>
+                            collection.contractMetadata.name == option
+                        ).media.gateway
+                      }
+                      src={
+                        tradingCollections.find(
+                          (collection) =>
+                            collection.contractMetadata.name == option
+                        ).media.gateway
+                      }
+                      height="50"
+                      width="50"
+                      className="rounded-xl"
+                    />
+                  )}
+                </div>
+                <div className="flex mx-2">{option}</div>
+              </div>
+            )}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="NFT Name or Address"
+                sx={{
+                  "& label": {
+                    paddingLeft: (theme) => theme.spacing(2),
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                  },
+                  "& input": {
+                    paddingLeft: (theme) => theme.spacing(3.5),
+                    fontFamily: "Monospace",
+                  },
+                  "& fieldset": {
+                    paddingLeft: (theme) => theme.spacing(2.5),
+                    borderRadius: "20px",
+                    fontFamily: "Monospace",
+                  },
+                }}
+              />
+            )}
+          />
+        </div>
         {nftAddress && (
           <div className="flex flex-row mt-1 justify-center">
             <Box

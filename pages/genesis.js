@@ -83,7 +83,6 @@ export default function Genesis() {
         hasFooter={false}
         title={"Mint Genesis NFT"}
         isVisible={visibleMintModal}
-        width="50%"
         onCloseButtonPressed={function () {
           setVisibleMintModal(false);
         }}
@@ -99,7 +98,6 @@ export default function Genesis() {
         hasFooter={false}
         title={"Burn Genesis NFT"}
         isVisible={visibleBurnModal}
-        width="50%"
         onCloseButtonPressed={function () {
           setVisibleBurnModal(false);
         }}

@@ -532,7 +532,7 @@ export default function Swap() {
                   (option) => option.contractMetadata.name
                 )}
                 sx={{
-                  minWidth: { xs: 200, sm: 250, md: 270, lg: 280, xl: 300 },
+                  minWidth: { xs: 200, sm: 250, md: 270, lg: 260, xl: 280 },
                 }}
                 onInputChange={handleSellNFTAddressChange}
                 renderOption={(props, option, state) => (
@@ -812,7 +812,7 @@ export default function Swap() {
                   (option) => option.contractMetadata.name
                 )}
                 sx={{
-                  minWidth: { xs: 200, sm: 250, md: 270, lg: 280, xl: 300 },
+                  minWidth: { xs: 200, sm: 250, md: 270, lg: 260, xl: 280 },
                 }}
                 onInputChange={handleBuyNFTAddressChange}
                 renderOption={(props, option, state) => (

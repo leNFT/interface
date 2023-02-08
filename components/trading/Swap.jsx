@@ -1221,7 +1221,7 @@ export default function Swap() {
                     letterSpacing: 2,
                   }}
                 >
-                  {"Approve NFTs"}
+                  {sellNFTName ? "Approve " + sellNFTName : "Approve NFT"}
                 </Box>
               </div>
             }

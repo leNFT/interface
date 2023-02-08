@@ -284,7 +284,7 @@ export default function Buy() {
   return (
     <div className="flex flex-col items-center">
       <div className="flex flex-col m-4">
-        <div className="flex flex-row justify-center items-center space-x-2">
+        <div className="flex flex-row justify-center items-center space-x-2 mx-2">
           {collectionThumbnailURL && (
             <Image
               loader={() => collectionThumbnailURL}
@@ -308,7 +308,7 @@ export default function Buy() {
             options={tradingCollections.map(
               (option) => option.contractMetadata.name
             )}
-            sx={{ minWidth: { xs: 220, sm: 300, md: 380 } }}
+            sx={{ minWidth: { xs: 260, sm: 300, md: 380 } }}
             onInputChange={handleNFTAddressChange}
             renderOption={(props, option, state) => (
               <div className="flex flex-row m-4" {...props}>

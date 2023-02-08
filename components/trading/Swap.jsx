@@ -492,8 +492,8 @@ export default function Swap() {
           </Box>
         </div>
       )}
-      <div className="flex flex-col lg:flex-row items-center justify-center m-4">
-        <div className="flex flex-col items-center text-center justify-center p-8 m-4 rounded-3xl bg-black/5 shadow-lg">
+      <div className="flex flex-col lg:flex-row items-center justify-center m-2 md:m-8">
+        <div className="flex flex-col items-center text-center justify-center p-8 m-4 w-full rounded-3xl bg-black/5 shadow-lg">
           <div className="flex flex-col mb-2">
             <Box
               sx={{
@@ -532,7 +532,7 @@ export default function Swap() {
                   (option) => option.contractMetadata.name
                 )}
                 sx={{
-                  minWidth: { xs: 160, sm: 250, md: 270, lg: 280, xl: 330 },
+                  minWidth: { xs: 200, sm: 250, md: 270, lg: 280, xl: 330 },
                 }}
                 onInputChange={handleSellNFTAddressChange}
                 renderOption={(props, option, state) => (
@@ -773,7 +773,7 @@ export default function Swap() {
         <div className="flex lg:hidden items-center m-2">
           <ArrowDownwardOutlinedIcon />
         </div>
-        <div className="flex flex-col items-center text-center justify-center p-8 m-4 rounded-3xl bg-black/5 shadow-lg">
+        <div className="flex flex-col items-center text-center justify-center p-8 m-4 w-full rounded-3xl bg-black/5 shadow-lg">
           <div className="flex flex-col mb-2">
             <Box
               sx={{
@@ -812,7 +812,7 @@ export default function Swap() {
                   (option) => option.contractMetadata.name
                 )}
                 sx={{
-                  minWidth: { xs: 160, sm: 250, md: 270, lg: 280, xl: 330 },
+                  minWidth: { xs: 200, sm: 250, md: 270, lg: 280, xl: 330 },
                 }}
                 onInputChange={handleBuyNFTAddressChange}
                 renderOption={(props, option, state) => (

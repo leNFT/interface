@@ -13,6 +13,37 @@ export default function Footer() {
               fontWeight: "bold",
             }}
           >
+            Use leNFT
+          </Box>
+          <a href="/trade" target="_blank" rel="noopener noreferrer">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+              }}
+            >
+              Trade
+            </Box>
+          </a>
+          <a href="/lend" target="_blank" rel="noopener noreferrer">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+              }}
+            >
+              Borrow
+            </Box>
+          </a>
+        </div>
+        <div className="flex flex-col space-y-2 items-start">
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "subtitle1.fontSize",
+              fontWeight: "bold",
+            }}
+          >
             Social
           </Box>
           <a

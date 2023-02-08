@@ -130,7 +130,7 @@ export default function TradingPools() {
   }, [isConnected]);
 
   return (
-    <div className={styles.container}>
+    <div>
       <StyledModal
         hasFooter={false}
         title="Create Trading Pool"

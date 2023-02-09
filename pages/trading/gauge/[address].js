@@ -115,9 +115,16 @@ export default function TradingPoolGauge() {
     );
 
     // Get the total locked amount
-    const updatedTotalLocked = await gauge.balanceOf(address);
+    const updatedTotalLocked = await gauge.totalSupply();
     console.log("updatedTotalLocked", updatedTotalLocked.toString());
     setTotalLocked(updatedTotalLocked.toString());
+
+    // Get the previous gauge rewards
+    const previousGaugeRewards =
+      await gaugeControllerProvider.callStatic.getGaugeRewards(
+        router.query.address,
+        updatedEpoch.toNumber() == 0 ? 0 : updatedEpoch.toNumber() - 1
+      );
 
     if (
       nativeTokenPrice.toString() == "0" ||

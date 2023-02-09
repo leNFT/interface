@@ -20,7 +20,7 @@ export default function GenesisBurn(props) {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const [burningLoading, setBurningLoading] = useState(false);
-  const [unlockTimestamp, setUnlockTimestamp] = useState(0);
+  const [unlockTimestamp, setUnlockTimestamp] = useState("1707447529");
 
   const addresses =
     isConnected && chain.id in contractAddresses

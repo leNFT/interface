@@ -1,6 +1,7 @@
 import styles from "../styles/Home.module.css";
 import { formatUnits } from "@ethersproject/units";
 import StyledModal from "../components/StyledModal";
+import { getNativeTokenETHPrice } from "../helpers/getNativeTokenETHPrice.js";
 import { useState, useEffect } from "react";
 import {
   useAccount,
@@ -39,6 +40,8 @@ export default function Lock() {
   const [selectedGauge, setSelectedGauge] = useState();
   const [gaugeVoteRatio, setGaugeVoteRatio] = useState(0);
   const [totalVoteRatio, setTotalVoteRatio] = useState(0);
+  const [epoch, setEpoch] = useState(0);
+  const [totalLocked, setTotalLocked] = useState("0");
 
   const addresses =
     isConnected && chain.id in contractAddresses
@@ -91,6 +94,19 @@ export default function Lock() {
     console.log("updatedVoteRatio", updatedVoteRatio.toString());
     setTotalVoteRatio(updatedVoteRatio.toString());
 
+    // Get the current epoch
+    const updatedEpoch = await votingEscrowProvider.epoch(
+      Math.floor(Date.now() / 1000)
+    );
+    console.log("updatedEpoch", updatedEpoch.toNumber());
+    setEpoch(updatedEpoch.toNumber());
+
+    // Get the total locked amount
+    const updatedTotalLocked =
+      await votingEscrowProvider.callStatic.totalSupply();
+    console.log("updatedTotalLocked", updatedTotalLocked.toString());
+    setTotalLocked(updatedTotalLocked.toString());
+
     // Get the claimable rewards
     const updatedClaimableRewards =
       await feeDistributorProvider.callStatic.claim(addresses.ETH.address, {
@@ -98,6 +114,24 @@ export default function Lock() {
       });
     console.log("updatedClaimableRewards", updatedClaimableRewards);
     setClaimableRewards(updatedClaimableRewards.toString());
+
+    // Get the APR
+    const updatedTotalFees = await feeDistributorProvider.totalFeesAt(
+      addresses.ETH.address,
+      updatedEpoch.toNumber() == 0 ? 0 : updatedEpoch.toNumber() - 1
+    );
+    const nativeTokenPrice = await getNativeTokenETHPrice();
+    if (nativeTokenPrice == "0" || updatedTotalLocked.toString() == "0") {
+      setAPR(0);
+    } else {
+      setAPR(
+        BigNumber.from(updatedTotalFees)
+          .mul(100)
+          .div(updatedTotalLocked)
+          .div(nativeTokenPrice)
+          .toNumber()
+      );
+    }
   }
 
   async function updateGaugeDetails(gauge) {
@@ -211,15 +245,64 @@ export default function Lock() {
       </StyledModal>
       <div className="flex flex-col items-center">
         <div className="flex flex-row items-center justify-center py-4 px-8 m-8 mb-4 text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
-          <Box
-            sx={{
-              fontFamily: "Monospace",
-              fontSize: "h6.fontSize",
-              fontWeight: "bold",
-            }}
-          >
-            {"Vault APR = " + apr + "%"}
-          </Box>
+          <div className="flex flex-col items-start m-2 mx-4">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle1.fontSize",
+              }}
+            >
+              Epoch
+            </Box>
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "h4.fontSize",
+              }}
+            >
+              {epoch}
+            </Box>
+          </div>
+          <div className="flex flex-col items-end m-2 border-l-2 border-stone-600 p-6">
+            <div className="flex flex-col items-end text-right mb-4">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle2.fontSize",
+                  fontWeight: "bold",
+                }}
+              >
+                APR
+              </Box>
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle1.fontSize",
+                }}
+              >
+                {apr + " %"}
+              </Box>
+            </div>
+            <div className="flex flex-col items-end text-right mt-4">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle2.fontSize",
+                  fontWeight: "bold",
+                }}
+              >
+                Total Locked
+              </Box>
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle1.fontSize",
+                }}
+              >
+                {Number(formatUnits(totalLocked, 18)).toFixed() + " veLE"}
+              </Box>
+            </div>
+          </div>
         </div>
         <div className="flex flex-col lg:flex-row max-w-[100%] justify-center items-center">
           <div className="flex flex-col border-4 p-4 m-4 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">

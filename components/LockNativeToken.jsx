@@ -162,7 +162,7 @@ export default function LockNativeToken(props) {
         />
       </div>
       <div className="flex flex-col md:flex-row items-center justify-center m-8">
-        <div className="m-4">
+        <div className="flex flex-col m-4 items-center">
           <Box
             sx={{
               fontFamily: "Monospace",
@@ -171,6 +171,14 @@ export default function LockNativeToken(props) {
             }}
           >
             Unlock Time:
+          </Box>
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "caption.fontSize",
+            }}
+          >
+            (1 week to 4 years from today)
           </Box>
         </div>
         <DatePicker id="date-picker" onChange={handleUnlockTimeChange} />

@@ -32,6 +32,9 @@ export default function TradingPoolGauge() {
   const [loadingGauge, setLoadingGauge] = useState(false);
   const [clamingLoading, setClaimingLoading] = useState(false);
   const provider = useProvider();
+  const [epoch, setEpoch] = useState(0);
+  const [apr, setAPR] = useState("0");
+  const [totalLocked, setTotalLocked] = useState("0");
 
   // Update the UI
   async function updateUI() {

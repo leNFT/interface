@@ -33,7 +33,6 @@ export default function Lock() {
   const [visibleUnlockModal, setVisibleUnlockModal] = useState(false);
   const [visibleVoteModal, setVisibleVoteModal] = useState(false);
   const [visibleEditLockModal, setVisibleEditLockModal] = useState(false);
-  const [apr, setAPR] = useState("0");
   const [unlockTime, setUnlockTime] = useState(0);
   const [claimingLoading, setClaimingLoading] = useState(false);
   const [claimableRewards, setClaimableRewards] = useState("0");
@@ -41,6 +40,7 @@ export default function Lock() {
   const [gaugeVoteRatio, setGaugeVoteRatio] = useState(0);
   const [totalVoteRatio, setTotalVoteRatio] = useState(0);
   const [epoch, setEpoch] = useState(0);
+  const [apr, setAPR] = useState("0");
   const [totalLocked, setTotalLocked] = useState("0");
   const [tokenPrice, setTokenPrice] = useState("0");
 

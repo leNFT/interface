@@ -48,7 +48,7 @@ export default function StakeTradingGauge(props) {
   }
 
   async function getLPAllowance() {
-    const lpToken = new ethers.Contract(props.lpToken, erc20, provider);
+    const lpToken = new ethers.Contract(props.lpToken, erc721, provider);
 
     const allowed = await lpToken.isApprovedForAll(address, props.gauge);
 

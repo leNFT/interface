@@ -3,7 +3,7 @@ import { Button, Tooltip, Loading, Typography } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
 import { BigNumber } from "@ethersproject/bignumber";
 import StyledModal from "../../../components/StyledModal";
-import { formatUnits } from "@ethersproject/units";
+import { formatUnits, parseUnits } from "@ethersproject/units";
 import { getAddressNFTs } from "../../../helpers/getAddressNFTs.js";
 import contractAddresses from "../../../contractAddresses.json";
 import tradingGaugeContract from "../../../contracts/TradingGauge.json";
@@ -41,6 +41,9 @@ export default function TradingPoolGauge() {
   const [loadingGauge, setLoadingGauge] = useState(false);
   const [clamingLoading, setClaimingLoading] = useState(false);
   const provider = useProvider();
+  const [epoch, setEpoch] = useState(0);
+  const [apr, setAPR] = useState("0");
+  const [totalLocked, setTotalLocked] = useState("0");
 
   // Update the UI
   async function updateUI() {
@@ -177,217 +180,281 @@ export default function TradingPoolGauge() {
           />
         </div>
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">
-        <div className="flex flex-col m-8 lg:mx-16">
-          <div className="flex flex-col items-center p-4 rounded-3xl min-w-[280px] m-2 bg-black/5 shadow-lg">
-            <div className="flex flex-col m-4 rounded-2xl">
-              <div className="flex flex-row m-2">
-                <div className="flex flex-col">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "h6.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    My Gauge Info
-                  </Box>
-                </div>
-                <div className="flex flex-col ml-1">
-                  <Tooltip
-                    content="The sum of all your LPs in this pool"
-                    position="top"
-                    minWidth={200}
-                  >
-                    <HelpCircle fontSize="20px" color="#000000" />
-                  </Tooltip>
-                </div>
-              </div>
-              <div className="flex flex-row m-2">
-                <div className="flex flex-col">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "h5.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {stakedLPs.length + " staked LPs"}
-                  </Box>
-                </div>
-              </div>
-              <div className="flex flex-row m-2">
-                <div className="flex flex-col">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "h5.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {boost / 10000 + "x Boost"}
-                  </Box>
-                </div>
-              </div>
+      <div className="flex flex-col items-center">
+        <div className="flex flex-col py-4 px-8 m-8 mb-2 items-center justify-center text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
+          <div className="flex flex-row items-center justify-center">
+            <div className="flex flex-col items-start m-2 mx-4">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle1.fontSize",
+                }}
+              >
+                Epoch
+              </Box>
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "h4.fontSize",
+                }}
+              >
+                {epoch}
+              </Box>
             </div>
-            <div className="flex flex-row items-center ">
-              <div className="m-4">
-                <Button
-                  customize={{
-                    backgroundColor: "grey",
-                    fontSize: 20,
-                    textColor: "white",
+            <div className="flex flex-col items-end m-2 border-l-2 border-stone-600 p-6">
+              <div className="flex flex-col items-end text-right mb-4">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle2.fontSize",
+                    fontWeight: "bold",
                   }}
-                  text="Stake in Gauge"
-                  theme="custom"
-                  size="large"
-                  radius="12"
-                  onClick={async function () {
-                    setVisibleStakeModal(true);
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col items-center rounded-3xl m-2 bg-black/5 shadow-lg">
-            <div className="flex flex-col m-4 rounded-2xl">
-              <div className="flex flex-row m-2">
-                <div className="flex flex-col">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "h6.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Claimable:
-                  </Box>
-                </div>
-                <div className="flex flex-col ml-1">
-                  <Tooltip
-                    content="The amount available to claim from this gauge"
-                    position="top"
-                    minWidth={200}
-                  >
-                    <HelpCircle fontSize="20px" color="#000000" />
-                  </Tooltip>
-                </div>
-              </div>
-              <div className="flex flex-row m-2">
-                <div className="flex flex-col">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "h6.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {formatUnits(claimableRewards, 18) + " LE"}
-                  </Box>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-row items-center ">
-              <div className="mb-4">
-                <Button
-                  customize={{
-                    backgroundColor: "grey",
-                    fontSize: 20,
-                    textColor: "white",
-                  }}
-                  text="Claim"
-                  theme="custom"
-                  size="large"
-                  radius="12"
-                  loadingProps={{
-                    spinnerColor: "#000000",
-                    spinnerType: "loader",
-                    direction: "right",
-                    size: "24",
-                  }}
-                  disabled={BigNumber.from(claimableRewards).eq(0)}
-                  loadingText=""
-                  isLoading={clamingLoading}
-                  onClick={async function () {
-                    const gauge = new ethers.Contract(
-                      router.query.address,
-                      tradingGaugeContract.abi,
-                      signer
-                    );
-                    try {
-                      setClaimingLoading(true);
-                      console.log("signer.", signer);
-                      const tx = await gauge.claim();
-                      await tx.wait(1);
-                      handleClaimingSuccess();
-                    } catch (error) {
-                      console.log(error);
-                    } finally {
-                      setClaimingLoading(false);
-                    }
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col border-4 border-slate-400 rounded-2xl p-8 m-8 lg:py-16 lg:px-16">
-          {loadingGauge ? (
-            <div className="flex m-4">
-              <Loading size={12} spinnerColor="#000000" />
-            </div>
-          ) : (
-            <div>
-              {stakedLPs.length == 0 ? (
+                >
+                  APR
+                </Box>
                 <Box
                   sx={{
                     fontFamily: "Monospace",
                     fontSize: "subtitle1.fontSize",
                   }}
                 >
-                  <div>{"No LP Positions staked in this gauge."}</div>
+                  {apr + " %"}
                 </Box>
-              ) : (
-                <div className="flex grid grid-cols-1 md:grid-cols-2 gap-2">
-                  {stakedLPs.map((data) => (
-                    <div
-                      key={data}
-                      className="flex m-4 items-center justify-center max-w-[300px]"
+              </div>
+              <div className="flex flex-col items-end text-right mt-4">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle2.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Total Locked
+                </Box>
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                  }}
+                >
+                  {parseUnits(totalLocked, 18).toString()}
+                </Box>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">
+          <div className="flex flex-col m-8 lg:mx-16">
+            <div className="flex flex-col items-center p-4 rounded-3xl min-w-[280px] m-2 bg-black/5 shadow-lg">
+              <div className="flex flex-col m-4 rounded-2xl">
+                <div className="flex flex-row m-2">
+                  <div className="flex flex-col">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "h6.fontSize",
+                        fontWeight: "bold",
+                      }}
                     >
-                      <Card
-                        sx={{
-                          borderRadius: 4,
-                          background:
-                            "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
-                        }}
+                      My Gauge Info
+                    </Box>
+                  </div>
+                  <div className="flex flex-col ml-1">
+                    <Tooltip
+                      content="The sum of all your LPs in this pool"
+                      position="top"
+                      minWidth={200}
+                    >
+                      <HelpCircle fontSize="20px" color="#000000" />
+                    </Tooltip>
+                  </div>
+                </div>
+                <div className="flex flex-row m-2">
+                  <div className="flex flex-col">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "h5.fontSize",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {stakedLPs.length + " staked LPs"}
+                    </Box>
+                  </div>
+                </div>
+                <div className="flex flex-row m-2">
+                  <div className="flex flex-col">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "h5.fontSize",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {boost / 10000 + "x Boost"}
+                    </Box>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-row items-center ">
+                <div className="m-4">
+                  <Button
+                    customize={{
+                      backgroundColor: "grey",
+                      fontSize: 20,
+                      textColor: "white",
+                    }}
+                    text="Stake in Gauge"
+                    theme="custom"
+                    size="large"
+                    radius="12"
+                    onClick={async function () {
+                      setVisibleStakeModal(true);
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col items-center rounded-3xl m-2 bg-black/5 shadow-lg">
+              <div className="flex flex-col m-4 rounded-2xl">
+                <div className="flex flex-row m-2">
+                  <div className="flex flex-col">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "h6.fontSize",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Claimable:
+                    </Box>
+                  </div>
+                  <div className="flex flex-col ml-1">
+                    <Tooltip
+                      content="The amount available to claim from this gauge"
+                      position="top"
+                      minWidth={200}
+                    >
+                      <HelpCircle fontSize="20px" color="#000000" />
+                    </Tooltip>
+                  </div>
+                </div>
+                <div className="flex flex-row m-2">
+                  <div className="flex flex-col">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "h6.fontSize",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {formatUnits(claimableRewards, 18) + " LE"}
+                    </Box>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-row items-center ">
+                <div className="mb-4">
+                  <Button
+                    customize={{
+                      backgroundColor: "grey",
+                      fontSize: 20,
+                      textColor: "white",
+                    }}
+                    text="Claim"
+                    theme="custom"
+                    size="large"
+                    radius="12"
+                    loadingProps={{
+                      spinnerColor: "#000000",
+                      spinnerType: "loader",
+                      direction: "right",
+                      size: "24",
+                    }}
+                    disabled={BigNumber.from(claimableRewards).eq(0)}
+                    loadingText=""
+                    isLoading={clamingLoading}
+                    onClick={async function () {
+                      const gauge = new ethers.Contract(
+                        router.query.address,
+                        tradingGaugeContract.abi,
+                        signer
+                      );
+                      try {
+                        setClaimingLoading(true);
+                        console.log("signer.", signer);
+                        const tx = await gauge.claim();
+                        await tx.wait(1);
+                        handleClaimingSuccess();
+                      } catch (error) {
+                        console.log(error);
+                      } finally {
+                        setClaimingLoading(false);
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col border-4 border-slate-400 rounded-2xl p-8 m-8 lg:py-16 lg:px-16">
+            {loadingGauge ? (
+              <div className="flex m-4">
+                <Loading size={12} spinnerColor="#000000" />
+              </div>
+            ) : (
+              <div>
+                {stakedLPs.length == 0 ? (
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle1.fontSize",
+                    }}
+                  >
+                    <div>{"No LP Positions staked in this gauge."}</div>
+                  </Box>
+                ) : (
+                  <div className="flex grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {stakedLPs.map((data) => (
+                      <div
+                        key={data}
+                        className="flex m-4 items-center justify-center max-w-[300px]"
                       >
-                        <CardActionArea
-                          onClick={function () {
-                            setSelectedLP(data);
-                            setVisibleUnstakeModal(true);
+                        <Card
+                          sx={{
+                            borderRadius: 4,
+                            background:
+                              "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                           }}
                         >
-                          <CardContent>
-                            <Box
-                              sx={{
-                                fontFamily: "Monospace",
-                                fontSize: "subtitle1.fontSize",
-                              }}
-                            >
-                              <div className="flex flex-col mt-2 items-center text-center">
-                                <div>{"LP Position"}</div>
-                                <div>{"#" + data}</div>
-                              </div>
-                            </Box>
-                          </CardContent>
-                        </CardActionArea>
-                      </Card>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+                          <CardActionArea
+                            onClick={function () {
+                              setSelectedLP(data);
+                              setVisibleUnstakeModal(true);
+                            }}
+                          >
+                            <CardContent>
+                              <Box
+                                sx={{
+                                  fontFamily: "Monospace",
+                                  fontSize: "subtitle1.fontSize",
+                                }}
+                              >
+                                <div className="flex flex-col mt-2 items-center text-center">
+                                  <div>{"LP Position"}</div>
+                                  <div>{"#" + data}</div>
+                                </div>
+                              </Box>
+                            </CardContent>
+                          </CardActionArea>
+                        </Card>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

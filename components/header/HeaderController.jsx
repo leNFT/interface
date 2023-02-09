@@ -12,13 +12,17 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Router from "next/router";
 import { useRouter } from "next/router";
+var mode;
 
 export default function HeaderController() {
   const router = useRouter();
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
-  const mode = router.pathname;
+  console.log("router.locale", router);
+  if (router.pathname == "/lend" || router.pathname == "/trade") {
+    mode = router.pathname;
+  }
 
   return (
     <div>
@@ -56,11 +60,7 @@ export default function HeaderController() {
       <div className="p-4 pb-0 md:pb-2 mb-2 border-b-2 flex flex-row justify-between items-center">
         <div className="flex flex-row-reverse md:flex-row items-center">
           <div className="flex flex-row-reverse md:flex-row 2xl:flex-col items-center">
-            {mode == "/lend" || mode == "/lendingPools" ? (
-              <LendingHeader />
-            ) : (
-              <TradeHeader />
-            )}
+            {mode == "/lend" ? <LendingHeader /> : <TradeHeader />}
           </div>
         </div>
         <div className="flex flex-col items-center px-8">

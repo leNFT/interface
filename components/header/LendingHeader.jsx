@@ -60,6 +60,7 @@ export default function LendingHeader() {
               onClick: () => {
                 Router.push({
                   pathname: "/lend",
+                  options: { locale: "lend" },
                 });
               },
               icon: (
@@ -84,6 +85,7 @@ export default function LendingHeader() {
               onClick: () => {
                 Router.push({
                   pathname: "/lendingPools",
+                  options: { locale: "lend" },
                 });
               },
               icon: (
@@ -108,6 +110,7 @@ export default function LendingHeader() {
               onClick: () => {
                 Router.push({
                   pathname: "/loans",
+                  options: { locale: "lend" },
                 });
               },
               icon: (
@@ -132,6 +135,7 @@ export default function LendingHeader() {
               onClick: () => {
                 Router.push({
                   pathname: "/lock",
+                  options: { locale: "lend" },
                 });
               },
               icon: (

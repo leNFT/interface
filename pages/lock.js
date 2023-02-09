@@ -1,7 +1,6 @@
 import styles from "../styles/Home.module.css";
-import { formatUnits } from "@ethersproject/units";
+import { formatUnits, parseUnits } from "@ethersproject/units";
 import StyledModal from "../components/StyledModal";
-import { getNativeTokenETHPrice } from "../helpers/getNativeTokenETHPrice.js";
 import { useState, useEffect } from "react";
 import {
   useAccount,
@@ -20,6 +19,7 @@ import UnlockNativeToken from "../components/UnlockNativeToken";
 import votingEscrowContract from "../contracts/VotingEscrow.json";
 import feeDistributorContract from "../contracts/FeeDistributor.json";
 import gaugeControllerContract from "../contracts/GaugeController.json";
+import curvePoolContract from "../contracts/CurvePool.json";
 import Box from "@mui/material/Box";
 import { BigNumber, ethers } from "ethers";
 
@@ -42,6 +42,7 @@ export default function Lock() {
   const [totalVoteRatio, setTotalVoteRatio] = useState(0);
   const [epoch, setEpoch] = useState(0);
   const [totalLocked, setTotalLocked] = useState("0");
+  const [tokenPrice, setTokenPrice] = useState("0");
 
   const addresses =
     isConnected && chain.id in contractAddresses
@@ -69,6 +70,12 @@ export default function Lock() {
   const gaugeControllerProvider = useContract({
     contractInterface: gaugeControllerContract.abi,
     addressOrName: addresses.GaugeController,
+    signerOrProvider: provider,
+  });
+
+  const curvePoolProvider = useContract({
+    contractInterface: curvePoolContract.abi,
+    addressOrName: addresses.CurvePool,
     signerOrProvider: provider,
   });
 
@@ -120,15 +127,24 @@ export default function Lock() {
       addresses.ETH.address,
       updatedEpoch.toNumber() == 0 ? 0 : updatedEpoch.toNumber() - 1
     );
-    const nativeTokenPrice = await getNativeTokenETHPrice();
-    if (nativeTokenPrice == "0" || updatedTotalLocked.toString() == "0") {
+    const updateNativeTokenPrice = await curvePoolProvider.callStatic.get_dy(
+      1,
+      0,
+      parseUnits("1", 18).toString()
+    );
+    setTokenPrice(updateNativeTokenPrice.toString());
+
+    if (
+      updateNativeTokenPrice.toString() == "0" ||
+      updatedTotalLocked.toString() == "0"
+    ) {
       setAPR(0);
     } else {
       setAPR(
         BigNumber.from(updatedTotalFees)
           .mul(100)
           .div(updatedTotalLocked)
-          .div(nativeTokenPrice)
+          .div(updateNativeTokenPrice)
           .toNumber()
       );
     }
@@ -244,63 +260,75 @@ export default function Lock() {
         />
       </StyledModal>
       <div className="flex flex-col items-center">
-        <div className="flex flex-row items-center justify-center py-4 px-8 m-8 mb-4 text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
-          <div className="flex flex-col items-start m-2 mx-4">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle1.fontSize",
-              }}
-            >
-              Epoch
-            </Box>
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "h4.fontSize",
-              }}
-            >
-              {epoch}
-            </Box>
-          </div>
-          <div className="flex flex-col items-end m-2 border-l-2 border-stone-600 p-6">
-            <div className="flex flex-col items-end text-right mb-4">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "subtitle2.fontSize",
-                  fontWeight: "bold",
-                }}
-              >
-                APR
-              </Box>
+        <div className="flex flex-col py-4 px-8 m-8 mb-4 items-center justify-center text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "subtitle2.fontSize",
+              fontWeight: "bold",
+            }}
+            className="mb-2 border-2 border-stone-600 rounded-2xl p-2 px-4 w-fit"
+          >
+            {Number(formatUnits(tokenPrice, 18)).toFixed(5) + " LE / ETH"}
+          </Box>
+          <div className="flex flex-row items-center justify-center">
+            <div className="flex flex-col items-start m-2 mx-4">
               <Box
                 sx={{
                   fontFamily: "Monospace",
                   fontSize: "subtitle1.fontSize",
                 }}
               >
-                {apr + " %"}
+                Epoch
+              </Box>
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "h4.fontSize",
+                }}
+              >
+                {epoch}
               </Box>
             </div>
-            <div className="flex flex-col items-end text-right mt-4">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "subtitle2.fontSize",
-                  fontWeight: "bold",
-                }}
-              >
-                Total Locked
-              </Box>
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "subtitle1.fontSize",
-                }}
-              >
-                {Number(formatUnits(totalLocked, 18)).toFixed() + " veLE"}
-              </Box>
+            <div className="flex flex-col items-end m-2 border-l-2 border-stone-600 p-6">
+              <div className="flex flex-col items-end text-right mb-4">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle2.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  APR
+                </Box>
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                  }}
+                >
+                  {apr + " %"}
+                </Box>
+              </div>
+              <div className="flex flex-col items-end text-right mt-4">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle2.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Total Locked
+                </Box>
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                  }}
+                >
+                  {Number(formatUnits(totalLocked, 18)).toFixed() + " veLE"}
+                </Box>
+              </div>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { formatUnits } from "@ethersproject/units";
-import { useNotification, Button, Typography } from "@web3uikit/core";
+import { useNotification, Button, Typography, Input } from "@web3uikit/core";
 import styles from "../styles/Home.module.css";
 import genesisNFTURIs from "../genesisNFTURIs.json";
 import contractAddresses from "../contractAddresses.json";
@@ -14,6 +14,7 @@ import {
 import { useState, useEffect } from "react";
 import Slider from "@mui/material/Slider";
 import genesisNFTContract from "../contracts/GenesisNFT.json";
+import { BigNumber } from "@ethersproject/bignumber";
 
 export default function GenesisMint(props) {
   const SECONDS_IN_DAY = 86400;
@@ -23,11 +24,14 @@ export default function GenesisMint(props) {
   const { data: ethBalance } = useBalance({
     addressOrName: address,
   });
+  const [amount, setAmount] = useState(1);
   const { data: signer } = useSigner();
   const [mintingLoading, setMintingLoading] = useState(false);
   const [rewards, setRewards] = useState("0");
   const [locktimeDays, setLocktimeDays] = useState(14);
   const [sliderValue, setSliderValue] = useState(14);
+  const [mintIds, setMintIds] = useState([]);
+  const [mintPrice, setMintPrice] = useState("0");
 
   const addresses =
     isConnected && chain.id in contractAddresses
@@ -53,6 +57,18 @@ export default function GenesisMint(props) {
     );
     setRewards(updatedRewards.toString());
   }
+
+  useEffect(() => {
+    if (props.price) {
+      setMintPrice(props.price);
+    }
+  }, [props.price]);
+
+  useEffect(() => {
+    if (props.mintCount) {
+      setMintIds([props.mintCount + 1]);
+    }
+  }, [props.mintCount]);
 
   useEffect(() => {
     updateMintInfo();
@@ -88,19 +104,61 @@ export default function GenesisMint(props) {
     setSliderValue(newValue);
   }
 
+  const handleAmountChange = (event) => {
+    if (event.target.value == "") {
+      setMintIds([]);
+      setMintPrice("0");
+      return;
+    }
+
+    var updatedAmount;
+    if (props.mintCount + parseInt(event.target.value) > 9999) {
+      updatedAmount = 9999 - props.mintCount;
+    } else {
+      updatedAmount = event.target.value;
+    }
+
+    var updatedMintIds = [];
+    for (var i = 0; i < updatedAmount; i++) {
+      updatedMintIds[i] = props.mintCount + i + 1;
+    }
+
+    setMintIds(updatedMintIds);
+    setMintPrice(BigNumber.from(props.price).mul(updatedAmount).toString());
+    setAmount(updatedAmount);
+  };
+
   return (
     <div className="flex flex-col w-full items-center">
       <div className="flex flex-col lg:flex-row items-center justify-center m-4 text-center">
         <div className="flex flex-col m-2 lg:mx-8">
           <Typography variant="subtitle2">Price</Typography>
           <Typography variant="body16">
-            {formatUnits(props.price, 18) + " ETH"}
+            {formatUnits(mintPrice, 18) + " ETH"}
           </Typography>
         </div>
         <div className="flex flex-col m-2 lg:mx-8">
           <Typography variant="subtitle2">Token ID</Typography>
-          <Typography variant="body16">{props.mintCount + 1}</Typography>
+          <Typography variant="body16">
+            {amount < 4
+              ? mintIds.toString()
+              : mintIds.slice(0, 2) + "..." + mintIds.slice(-1)}
+          </Typography>
         </div>
+      </div>
+      <div className="flex flex-col items-center w-full justify-center m-4 mb-8">
+        <Input
+          label="Genesis NFTs to mint"
+          type="number"
+          value={amount}
+          placeholder="0"
+          step="any"
+          description=""
+          validation={{
+            numberMin: 0,
+          }}
+          onChange={handleAmountChange}
+        />
       </div>
       <div className="flex flex-col p-2 border-4 rounded-3xl w-full md:w-8/12">
         <div className="flex flex-col md:flex-row items-center justify-center mt-2 text-center">
@@ -127,6 +185,7 @@ export default function GenesisMint(props) {
           />
         </div>
       </div>
+
       <div className="flex flex-row items-center justify-center m-8 px-8 w-full">
         <Button
           text="MINT"
@@ -152,10 +211,21 @@ export default function GenesisMint(props) {
             }
             try {
               setMintingLoading(true);
+              console.log("Minting...");
+              console.log("mintIds: ", mintIds);
+              console.log(
+                "locktime: ",
+                mintIds.map(() => locktimeDays * SECONDS_IN_DAY)
+              );
+              console.log("amount: ", amount);
+              console.log(
+                "uris: ",
+                mintIds.map((id) => genesisNFTURIs[id])
+              );
               const tx = await genesisNFTSigner.mint(
-                [locktimeDays * SECONDS_IN_DAY],
-                [genesisNFTURIs[props.mintCount]],
-                { value: props.price }
+                mintIds.map(() => locktimeDays * SECONDS_IN_DAY),
+                mintIds.map((id) => genesisNFTURIs[id]),
+                { value: mintPrice }
               );
               await tx.wait(1);
               await handleMintingSuccess();

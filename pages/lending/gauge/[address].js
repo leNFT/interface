@@ -3,18 +3,28 @@ import { Button, Tooltip, Loading, Typography } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
 import { BigNumber } from "@ethersproject/bignumber";
 import StyledModal from "../../../components/StyledModal";
-import { formatUnits } from "@ethersproject/units";
+import { formatUnits, parseUnits } from "@ethersproject/units";
 import contractAddresses from "../../../contractAddresses.json";
+import votingEscrowContract from "../../../contracts/VotingEscrow.json";
+import gaugeControllerContract from "../../../contracts/GaugeController.json";
 import lendingGaugeContract from "../../../contracts/LendingGauge.json";
+import lendingPoolContract from "../../../contracts/LendingPool.json";
 import StakeLendingGauge from "../../../components/gauges/StakeLendingGauge";
 import UnstakeLendingGauge from "../../../components/gauges/UnstakeLendingGauge";
 import Box from "@mui/material/Box";
 import { ethers } from "ethers";
-import { useAccount, useNetwork, useProvider, useSigner } from "wagmi";
+import {
+  useAccount,
+  useNetwork,
+  useProvider,
+  useSigner,
+  useContract,
+} from "wagmi";
 import Router from "next/router";
 import { useRouter } from "next/router";
 import { ChevronLeft } from "@web3uikit/icons";
 import { ExternalLink } from "@web3uikit/icons";
+import curvePoolContract from "../../../contracts/CurvePool.json";
 import erc20 from "../../../contracts/erc20.json";
 
 export default function TradingPoolGauge() {
@@ -36,6 +46,29 @@ export default function TradingPoolGauge() {
   const [apr, setAPR] = useState("0");
   const [totalLocked, setTotalLocked] = useState("0");
 
+  const addresses =
+    isConnected && chain.id in contractAddresses
+      ? contractAddresses[chain.id]
+      : contractAddresses["5"];
+
+  const votingEscrowProvider = useContract({
+    contractInterface: votingEscrowContract.abi,
+    addressOrName: addresses.VotingEscrow,
+    signerOrProvider: provider,
+  });
+
+  const gaugeControllerProvider = useContract({
+    contractInterface: gaugeControllerContract.abi,
+    addressOrName: addresses.GaugeController,
+    signerOrProvider: provider,
+  });
+
+  const curvePoolProvider = useContract({
+    contractInterface: curvePoolContract.abi,
+    addressOrName: addresses.CurvePool,
+    signerOrProvider: provider,
+  });
+
   // Update the UI
   async function updateUI() {
     const gauge = new ethers.Contract(
@@ -56,6 +89,49 @@ export default function TradingPoolGauge() {
     );
     const lpTokenSymbolResponse = await lpTokenProvider.symbol();
     setLPTokenSymbol(lpTokenSymbolResponse.toString());
+
+    // Get the current epoch
+    const updatedEpoch = await votingEscrowProvider.epoch(
+      Math.floor(Date.now() / 1000)
+    );
+    console.log("updatedEpoch", updatedEpoch.toNumber());
+    setEpoch(updatedEpoch.toNumber());
+
+    // Get the total locked amount
+    const updatedTotalLocked = await gauge.totalSupply();
+    console.log("updatedTotalLocked", updatedTotalLocked.toString());
+    setTotalLocked(updatedTotalLocked.toString());
+
+    // Get the APR
+    const previousGaugeRewards =
+      await gaugeControllerProvider.callStatic.getGaugeRewards(
+        router.query.address,
+        updatedEpoch.toNumber() == 0 ? 0 : updatedEpoch.toNumber() - 1
+      );
+    const nativeTokenPrice = await curvePoolProvider.callStatic.get_dy(
+      1,
+      0,
+      parseUnits("1", 18).toString()
+    );
+
+    const lendingPool = new ethers.Contract(
+      lpTokenResponse.toString(),
+      lendingPoolContract.abi,
+      provider
+    );
+    const totalLocked = await lendingPool.maxWithdraw(router.query.address);
+
+    if (nativeTokenPrice.toString() == "0" || totalLocked.toString() == "0") {
+      setAPR(0);
+    } else {
+      setAPR(
+        BigNumber.from(previousGaugeRewards)
+          .mul(nativeTokenPrice)
+          .mul(100)
+          .div(updatedTotalLocked)
+          .toNumber()
+      );
+    }
 
     if (isConnected) {
       const boostResponse = await gauge.userBoost(address);
@@ -173,174 +249,238 @@ export default function TradingPoolGauge() {
           />
         </div>
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl m-2 md:m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">
-        <div className="flex flex-col items-center p-4 rounded-3xl min-w-[280px] m-8 bg-black/5 shadow-lg">
-          <div className="flex flex-col m-4 rounded-2xl">
-            <div className="flex flex-row m-2">
-              <div className="flex flex-col">
+      <div className="flex flex-col items-center">
+        <div className="flex flex-col py-4 px-8 m-8 mb-2 items-center justify-center text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
+          <div className="flex flex-row items-center justify-center">
+            <div className="flex flex-col items-start m-2 mx-4">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle1.fontSize",
+                }}
+              >
+                Epoch
+              </Box>
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "h4.fontSize",
+                }}
+              >
+                {epoch}
+              </Box>
+            </div>
+            <div className="flex flex-col items-end m-2 border-l-2 border-stone-600 p-6">
+              <div className="flex flex-col items-end text-right mb-4">
                 <Box
                   sx={{
                     fontFamily: "Monospace",
-                    fontSize: "h6.fontSize",
+                    fontSize: "subtitle2.fontSize",
                     fontWeight: "bold",
                   }}
                 >
-                  My Gauge Info
+                  APR
                 </Box>
-              </div>
-              <div className="flex flex-col ml-1">
-                <Tooltip
-                  content="The amount of LP tokens you have staked in this gauge."
-                  position="top"
-                  minWidth={200}
-                >
-                  <HelpCircle fontSize="20px" color="#000000" />
-                </Tooltip>
-              </div>
-            </div>
-            <div className="flex flex-row m-2">
-              <div className="flex flex-col">
                 <Box
                   sx={{
                     fontFamily: "Monospace",
-                    fontSize: "h5.fontSize",
-                    fontWeight: "bold",
+                    fontSize: "subtitle1.fontSize",
                   }}
                 >
-                  {"Staked: " +
-                    formatUnits(stakedAmount, 18) +
-                    " " +
-                    lpTokenSymbol}
+                  {apr + " %"}
                 </Box>
               </div>
-            </div>
-            <div className="flex flex-row m-2">
-              <div className="flex flex-col">
+              <div className="flex flex-col items-end text-right mt-4">
                 <Box
                   sx={{
                     fontFamily: "Monospace",
-                    fontSize: "h5.fontSize",
+                    fontSize: "subtitle2.fontSize",
                     fontWeight: "bold",
                   }}
                 >
-                  {boost / 10000 + "x Boost"}
+                  Total Locked
+                </Box>
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                  }}
+                >
+                  {parseUnits(totalLocked, 18).toString() + " " + lpTokenSymbol}
                 </Box>
               </div>
-            </div>
-          </div>
-          <div className="flex flex-col md:flex-row items-center ">
-            <div className="m-4">
-              <Button
-                customize={{
-                  backgroundColor: "grey",
-                  fontSize: 20,
-                  textColor: "white",
-                }}
-                text="Stake"
-                theme="custom"
-                size="large"
-                radius="12"
-                onClick={async function () {
-                  setVisibleStakeModal(true);
-                }}
-              />
-            </div>
-            <div className="m-4">
-              <Button
-                customize={{
-                  backgroundColor: "grey",
-                  fontSize: 20,
-                  textColor: "white",
-                }}
-                text="Unstake"
-                theme="custom"
-                size="large"
-                radius="12"
-                onClick={async function () {
-                  setVisibleUnstakeModal(true);
-                }}
-              />
             </div>
           </div>
         </div>
-        <div className="flex flex-col items-center rounded-3xl m-2 md:m-8 bg-black/5 shadow-lg">
-          <div className="flex flex-col m-4 rounded-2xl">
-            <div className="flex flex-row m-2">
-              <div className="flex flex-col">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "h6.fontSize",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Claimable:
-                </Box>
+        <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl m-2 md:m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">
+          <div className="flex flex-col items-center p-4 rounded-3xl min-w-[280px] m-8 bg-black/5 shadow-lg">
+            <div className="flex flex-col m-4 rounded-2xl">
+              <div className="flex flex-row m-2">
+                <div className="flex flex-col">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "h6.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    My Gauge Info
+                  </Box>
+                </div>
+                <div className="flex flex-col ml-1">
+                  <Tooltip
+                    content="The amount of LP tokens you have staked in this gauge."
+                    position="top"
+                    minWidth={200}
+                  >
+                    <HelpCircle fontSize="20px" color="#000000" />
+                  </Tooltip>
+                </div>
               </div>
-              <div className="flex flex-col ml-1">
-                <Tooltip
-                  content="The amount available to claim from this gauge"
-                  position="top"
-                  minWidth={200}
-                >
-                  <HelpCircle fontSize="20px" color="#000000" />
-                </Tooltip>
+              <div className="flex flex-row m-2">
+                <div className="flex flex-col">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "h5.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {"Staked: " +
+                      formatUnits(stakedAmount, 18) +
+                      " " +
+                      lpTokenSymbol}
+                  </Box>
+                </div>
+              </div>
+              <div className="flex flex-row m-2">
+                <div className="flex flex-col">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "h5.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {boost / 10000 + "x Boost"}
+                  </Box>
+                </div>
               </div>
             </div>
-            <div className="flex flex-row m-2">
-              <div className="flex flex-col">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "h6.fontSize",
-                    fontWeight: "bold",
+            <div className="flex flex-col md:flex-row items-center ">
+              <div className="m-4">
+                <Button
+                  customize={{
+                    backgroundColor: "grey",
+                    fontSize: 20,
+                    textColor: "white",
                   }}
-                >
-                  {formatUnits(claimableRewards, 18) + " LE"}
-                </Box>
+                  text="Stake"
+                  theme="custom"
+                  size="large"
+                  radius="12"
+                  onClick={async function () {
+                    setVisibleStakeModal(true);
+                  }}
+                />
+              </div>
+              <div className="m-4">
+                <Button
+                  customize={{
+                    backgroundColor: "grey",
+                    fontSize: 20,
+                    textColor: "white",
+                  }}
+                  text="Unstake"
+                  theme="custom"
+                  size="large"
+                  radius="12"
+                  onClick={async function () {
+                    setVisibleUnstakeModal(true);
+                  }}
+                />
               </div>
             </div>
           </div>
-          <div className="flex flex-row items-center ">
-            <div className="mb-4">
-              <Button
-                customize={{
-                  backgroundColor: "grey",
-                  fontSize: 20,
-                  textColor: "white",
-                }}
-                text="Claim"
-                theme="custom"
-                size="large"
-                radius="12"
-                loadingProps={{
-                  spinnerColor: "#000000",
-                  spinnerType: "loader",
-                  direction: "right",
-                  size: "24",
-                }}
-                disabled={BigNumber.from(claimableRewards).eq(0)}
-                loadingText=""
-                isLoading={clamingLoading}
-                onClick={async function () {
-                  const gauge = new ethers.Contract(
-                    router.query.address,
-                    lendingGaugeContract.abi,
-                    signer
-                  );
-                  try {
-                    setClaimingLoading(true);
-                    console.log("signer.", signer);
-                    const tx = await gauge.claim();
-                    await tx.wait(1);
-                    handleClaimingSuccess();
-                  } catch (error) {
-                    console.log(error);
-                  } finally {
-                    setClaimingLoading(false);
-                  }
-                }}
-              />
+          <div className="flex flex-col items-center rounded-3xl m-2 md:m-8 bg-black/5 shadow-lg">
+            <div className="flex flex-col m-4 rounded-2xl">
+              <div className="flex flex-row m-2">
+                <div className="flex flex-col">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "h6.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Claimable:
+                  </Box>
+                </div>
+                <div className="flex flex-col ml-1">
+                  <Tooltip
+                    content="The amount available to claim from this gauge"
+                    position="top"
+                    minWidth={200}
+                  >
+                    <HelpCircle fontSize="20px" color="#000000" />
+                  </Tooltip>
+                </div>
+              </div>
+              <div className="flex flex-row m-2">
+                <div className="flex flex-col">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "h6.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {formatUnits(claimableRewards, 18) + " LE"}
+                  </Box>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-row items-center ">
+              <div className="mb-4">
+                <Button
+                  customize={{
+                    backgroundColor: "grey",
+                    fontSize: 20,
+                    textColor: "white",
+                  }}
+                  text="Claim"
+                  theme="custom"
+                  size="large"
+                  radius="12"
+                  loadingProps={{
+                    spinnerColor: "#000000",
+                    spinnerType: "loader",
+                    direction: "right",
+                    size: "24",
+                  }}
+                  disabled={BigNumber.from(claimableRewards).eq(0)}
+                  loadingText=""
+                  isLoading={clamingLoading}
+                  onClick={async function () {
+                    const gauge = new ethers.Contract(
+                      router.query.address,
+                      lendingGaugeContract.abi,
+                      signer
+                    );
+                    try {
+                      setClaimingLoading(true);
+                      console.log("signer.", signer);
+                      const tx = await gauge.claim();
+                      await tx.wait(1);
+                      handleClaimingSuccess();
+                    } catch (error) {
+                      console.log(error);
+                    } finally {
+                      setClaimingLoading(false);
+                    }
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>

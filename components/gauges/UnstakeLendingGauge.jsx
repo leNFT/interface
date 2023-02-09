@@ -5,6 +5,7 @@ import {
   useProvider,
   useSigner,
 } from "wagmi";
+import { ethers } from "ethers";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { useNotification, Button, Typography, Input } from "@web3uikit/core";
 import styles from "../../styles/Home.module.css";

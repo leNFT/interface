@@ -6,6 +6,7 @@ import StyledModal from "../../../components/StyledModal";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { getAddressNFTs } from "../../../helpers/getAddressNFTs.js";
 import contractAddresses from "../../../contractAddresses.json";
+import votingEscrowContract from "../../../contracts/VotingEscrow.json";
 import tradingGaugeContract from "../../../contracts/TradingGauge.json";
 import StakeTradingGauge from "../../../components/gauges/StakeTradingGauge";
 import UnstakeTradingGauge from "../../../components/gauges/UnstakeTradingGauge";
@@ -22,6 +23,7 @@ import {
   useSigner,
 } from "wagmi";
 import Router from "next/router";
+import curvePoolContract from "../../../contracts/CurvePool.json";
 import { useRouter } from "next/router";
 import { ChevronLeft } from "@web3uikit/icons";
 import { ExternalLink } from "@web3uikit/icons";
@@ -44,6 +46,23 @@ export default function TradingPoolGauge() {
   const [epoch, setEpoch] = useState(0);
   const [apr, setAPR] = useState("0");
   const [totalLocked, setTotalLocked] = useState("0");
+
+  const addresses =
+    isConnected && chain.id in contractAddresses
+      ? contractAddresses[chain.id]
+      : contractAddresses["5"];
+
+  const votingEscrowProvider = useContract({
+    contractInterface: votingEscrowContract.abi,
+    addressOrName: addresses.VotingEscrow,
+    signerOrProvider: provider,
+  });
+
+  const curvePoolProvider = useContract({
+    contractInterface: curvePoolContract.abi,
+    addressOrName: addresses.CurvePool,
+    signerOrProvider: provider,
+  });
 
   // Update the UI
   async function updateUI() {
@@ -81,6 +100,39 @@ export default function TradingPoolGauge() {
     });
     console.log("updatedClaimableRewards", updatedClaimableRewards);
     setClaimableRewards(updatedClaimableRewards.toString());
+
+    // Get the current epoch
+    const updatedEpoch = await votingEscrowProvider.epoch(
+      Math.floor(Date.now() / 1000)
+    );
+    console.log("updatedEpoch", updatedEpoch.toNumber());
+    setEpoch(updatedEpoch.toNumber());
+
+    const nativeTokenPrice = await curvePoolProvider.callStatic.get_dy(
+      1,
+      0,
+      parseUnits("1", 18).toString()
+    );
+
+    // Get the total locked amount
+    const updatedTotalLocked = await gauge.balanceOf(address);
+    console.log("updatedTotalLocked", updatedTotalLocked.toString());
+    setTotalLocked(updatedTotalLocked.toString());
+
+    if (
+      nativeTokenPrice.toString() == "0" ||
+      updatedTotalLocked.toString() == "0"
+    ) {
+      setAPR(0);
+    } else {
+      setAPR(
+        BigNumber.from(previousGaugeRewards)
+          .mul(nativeTokenPrice)
+          .mul(100)
+          .div(updatedTotalLocked)
+          .toNumber()
+      );
+    }
   }
 
   // Set the rest of the UI when we receive the reserve address
@@ -237,7 +289,7 @@ export default function TradingPoolGauge() {
                     fontSize: "subtitle1.fontSize",
                   }}
                 >
-                  {parseUnits(totalLocked, 18).toString()}
+                  {totalLocked + " LPs"}
                 </Box>
               </div>
             </div>

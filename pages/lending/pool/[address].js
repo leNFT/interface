@@ -270,7 +270,7 @@ export default function LendingPool() {
               fontWeight: "bold",
             }}
           >
-            Assets:
+            Asset:
           </Box>
           <div className="mt-4">
             <Box

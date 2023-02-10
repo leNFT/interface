@@ -24,6 +24,8 @@ export default function HeaderController() {
     mode = router.pathname;
   }
 
+  console.log("mode", mode);
+
   return (
     <div>
       {chain && isConnected && (

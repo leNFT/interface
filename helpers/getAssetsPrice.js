@@ -20,7 +20,7 @@ export async function getAssetsPrice(
     requestId +
     "&collection=" +
     collection +
-    "&tokenId=" +
+    "&tokenIds=" +
     tokenIds.join(",") +
     "&chainId=" +
     chainId;

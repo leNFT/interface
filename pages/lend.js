@@ -1,6 +1,6 @@
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
-import { getAssetPrice } from "../helpers/getAssetsPrice.js";
+import { getAssetsPrice } from "../helpers/getAssetsPrice.js";
 import { getNFTImage } from "../helpers/getNFTImage.js";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
 import { getLendingNFTCollections } from "../helpers/getLendingNFTCollections.js";
@@ -95,11 +95,13 @@ export default function Lend() {
 
         console.log("debt", debt);
 
-        const tokenImage = await getNFTImage(
-          loan.nftAsset,
-          loan.nftTokenId,
-          chain.id
-        );
+        // Get NFT images
+        var tokenImages = [];
+        for (let j = 0; j < loan.nftTokenIds.length; j++) {
+          tokenImages.push(
+            await getNFTImage(loan.nftAsset, loan.nftTokenIds[j], chain.id)
+          );
+        }
 
         // Save relevant loan info
         updatedLoans.push({
@@ -107,12 +109,12 @@ export default function Lend() {
           tokenName: addressNFTs[i].title,
           tokenAddress: loan.nftAsset,
           tokenIds: loan.nftTokenIds,
-          tokenImage: tokenImage,
+          tokenImages: tokenImages,
           amount: loan.amount,
           boost: loan.boost,
           debt: debt,
           tokenPrice: (
-            await getAssetPrice(loan.nftAsset, loan.nftTokenId, chain.id)
+            await getAssetsPrice(loan.nftAsset, loan.nftTokenIds, chain.id)
           ).price,
           maxLTV: loan.maxLTV,
         });
@@ -294,10 +296,10 @@ export default function Lend() {
                         }}
                       >
                         <CardContent>
-                          {loan.tokenImage ? (
+                          {loan.tokenImages[0] ? (
                             <Image
-                              loader={() => loan.tokenImage}
-                              src={loan.tokenImage}
+                              loader={() => loan.tokenImages[0]}
+                              src={loan.tokenImages[0]}
                               height="200"
                               width="200"
                               className="rounded-3xl"
@@ -366,7 +368,7 @@ export default function Lend() {
                       token_name={selectedLoan.tokenName}
                       token_address={selectedLoan.tokenAddress}
                       token_ids={selectedLoan.tokenIds}
-                      token_image={selectedLoan.tokenImage}
+                      token_images={selectedLoan.tokenImages}
                       updateUI={setupUI}
                     />
                   </StyledModal>

@@ -148,25 +148,24 @@ export default function Borrow(props) {
   }
 
   async function updateLendingPoolBorrowRate() {
+    setLoadingBorrowRate(true);
     const updatedBorrowRate = (await lendingPool.getBorrowRate()).toNumber();
-
+    console.log("updatedBorrowRate", updatedBorrowRate);
     setBorrowRate(updatedBorrowRate);
     setLoadingBorrowRate(false);
   }
 
   async function updateMaxBorrowAmount() {
+    console.log("update max borrow amount");
     // Get token price
-    var priceSum = 0;
-    for (let i = 0; i < props.token_ids.length; i++) {
-      const priceResponse = await getAssetsPrice(
-        props.token_address,
-        props.token_ids[i],
-        chain.id
-      );
-      priceSum = BigNumber.from(priceSum).add(priceResponse.price).toString();
-    }
+    const priceResponse = await getAssetsPrice(
+      props.token_address,
+      props.token_ids,
+      chain.id
+    );
 
-    setTokenPrice(priceSum);
+    console.log("priceResponse", priceResponse);
+    setTokenPrice(priceResponse.price);
 
     //Get token max collateralization
     const updatedMaxCollateralization =
@@ -189,7 +188,7 @@ export default function Borrow(props) {
     console.log("tokenETHPrice", tokenETHPrice);
     const maxCollateralization = BigNumber.from(updatedMaxCollateralization)
       .add(genesisBoostAmount)
-      .mul(priceSum)
+      .mul(priceResponse.price)
       .div(10000)
       .mul(tokenETHPrice)
       .div(PRICE_PRECISION)
@@ -212,29 +211,30 @@ export default function Borrow(props) {
   }
 
   useEffect(() => {
-    if (lendingPoolAddress) {
+    if (lendingPoolAddress && props.token_address && props.token_ids) {
+      console.log("useEffect lendingPoolAddress", lendingPoolAddress);
       getNFTApproval();
       updateMaxBorrowAmount();
       updateLendingPoolBorrowRate();
     }
-  }, [lendingPoolAddress, props.token_id]);
+  }, [lendingPoolAddress]);
 
   useEffect(() => {
-    if (lendingPoolAddress) {
+    if (lendingPoolAddress && props.token_address && props.token_ids) {
       updateMaxBorrowAmount();
     }
-  }, [genesisBoost]);
+  }, [genesisBoost, props.token_ids]);
 
   useEffect(() => {
-    if (isConnected) {
+    if (isConnected && address && props.token_address && props.token_ids) {
       console.log("wethGateway", addresses.WETHGateway);
       setLoadingMaxAmount(true);
-      setLoadingBorrowRate(true);
+
       getLendingPool();
       getGenesisNFT();
       console.log("props.tokens_images", props.tokens_images);
     }
-  }, [isConnected, borrowAsset]);
+  }, [isConnected, borrowAsset, address, props.token_address, props.token_ids]);
 
   const handleBorrowSuccess = async function () {
     props.updateUI();
@@ -282,6 +282,7 @@ export default function Borrow(props) {
               {props.token_images.map((token_image) =>
                 token_image ? (
                   <Image
+                    key={token_image}
                     loader={() => token_image}
                     src={token_image}
                     height="200"
@@ -459,7 +460,7 @@ export default function Borrow(props) {
                     setBorrowLoading(true);
                     // Get updated price trusted server signature from server
                     const requestID = getNewRequestID();
-                    const priceSig = await getAssetPrice(
+                    const priceSig = await getAssetsPrice(
                       props.token_address,
                       props.token_ids,
                       chain.id,
@@ -467,7 +468,7 @@ export default function Borrow(props) {
                     );
                     var tx;
                     if (borrowAsset == "ETH") {
-                      tx = await wethGatewaySigner.borrowETH(
+                      tx = await wethGatewaySigner.borrow(
                         amount,
                         props.token_address,
                         props.token_ids,

@@ -14,7 +14,7 @@ import erc20 from "../../contracts/erc20.json";
 import Image from "next/image";
 import { ethers } from "ethers";
 import Countdown from "react-countdown";
-import { getAssetPrice } from "../../helpers/getAssetsPrice.js";
+import { getAssetsPrice } from "../../helpers/getAssetsPrice.js";
 import {
   useAccount,
   useNetwork,
@@ -84,18 +84,18 @@ export default function RepayLoan(props) {
   });
 
   async function updateLendingPoolAsset() {
-    const reserve = new ethers.Contract(
-      loan.reserve,
+    const pool = new ethers.Contract(
+      loan.pool,
       lendingPoolContract.abi,
       provider
     );
 
-    const updatedAsset = await reserve.asset();
+    const updatedAsset = await pool.asset();
     setAsset(updatedAsset);
   }
 
   async function getTokenAllowance() {
-    const allowance = await tokenProvider.allowance(address, loan.reserve);
+    const allowance = await tokenProvider.allowance(address, loan.pool);
 
     console.log("Got allowance:", allowance);
 
@@ -130,9 +130,9 @@ export default function RepayLoan(props) {
 
   async function getAssetPricing() {
     // Get token price
-    const updatedPrice = await getAssetPrice(
+    const updatedPrice = await getAssetsPrice(
       props.token_address,
-      props.token_id,
+      props.token_ids,
       chain.id
     );
 
@@ -250,30 +250,34 @@ export default function RepayLoan(props) {
     <div className={styles.container}>
       <div className="flex flex-col xl:flex-row lg:m-8 justify-center">
         <div className="flex flex-col mb-4 lg:m-8 justify-center">
-          <div className="flex flex-row justify-center">
-            {props.token_image ? (
-              <Image
-                loader={() => props.token_image}
-                src={props.token_image}
-                height="300"
-                width="300"
-                unoptimized={true}
-                className="rounded-3xl"
-              />
-            ) : (
-              <div className="flex items-center justify-center w-[300px] h-[300px]">
-                No Image
-              </div>
+          <div className="grid grid-cols-2 auto-rows-auto gap-2 content-around">
+            {props.token_images.map((token_image) =>
+              token_image ? (
+                <Image
+                  key={token_image}
+                  loader={() => token_image}
+                  src={token_image}
+                  height="200"
+                  width="200"
+                  loading="eager"
+                  className="rounded-3xl"
+                />
+              ) : (
+                <div className="flex items-center text-center justify-center w-[200px] h-[200px]">
+                  No Image
+                </div>
+              )
             )}
           </div>
-          <div className="flex flex-row justify-center">
+          <div className="flex flex-row justify-center mt-1">
             <Typography variant="caption18">
-              {props.token_name + " #" + props.token_id}
+              {props.token_ids.join(", ")}
             </Typography>
           </div>
-          <div className="flex flex-row justify-center m-2">
-            <Typography variant="caption16">
-              {"Asset Pricing: " + formatUnits(tokenPrice, 18) + " ETH"}
+          <div className="flex flex-row justify-center m-2 space-x-2">
+            <Typography variant="subtitle2">Assets Pricing: </Typography>
+            <Typography variant="body16">
+              {formatUnits(tokenPrice, 18) + " ETH"}
             </Typography>
           </div>
         </div>
@@ -363,7 +367,12 @@ export default function RepayLoan(props) {
                 <Typography variant="subtitle2">
                   Time until liquidation
                 </Typography>
-                <Countdown date={liquidationTimestamp} />,
+                {liquidationTimestamp <
+                Date.now() + SECONDS_IN_YEAR * 2 * 1000 ? (
+                  <Countdown date={liquidationTimestamp} />
+                ) : (
+                  "> 2 years"
+                )}
               </div>
             )}
           </div>
@@ -475,7 +484,7 @@ export default function RepayLoan(props) {
               try {
                 setApprovalLoading(true);
                 const tx = await tokenSigner.approve(
-                  loan.reserve,
+                  loan.pool,
                   ethers.constants.MaxUint256
                 );
                 await tx.wait(1);

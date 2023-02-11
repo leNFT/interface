@@ -444,7 +444,7 @@ export default function RepayLoan(props) {
                   if (symbol == "ETH") {
                     console.log("Repay ETH");
                     console.log("amount", amount);
-                    tx = await wethGatewaySigner.repayETH(props.loan_id, {
+                    tx = await wethGatewaySigner.repay(props.loan_id, {
                       value: amount,
                     });
                     await tx.wait(1);

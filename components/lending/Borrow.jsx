@@ -278,7 +278,12 @@ export default function Borrow(props) {
       <div className="flex flex-col justify-center items-center">
         <div className="flex flex-col lg:m-8 xl:flex-row justify-center items-center">
           <div className="flex flex-col items-center justify-center mb-8 lg:m-8">
-            <div className="grid grid-cols-2 auto-rows-auto gap-2 content-around">
+            <div
+              className={
+                "grid auto-rows-auto gap-2 " +
+                (props.token_images.length == 1 ? "grid-cols-1" : "grid-cols-2")
+              }
+            >
               {props.token_images.map((token_image) =>
                 token_image ? (
                   <Image

@@ -250,7 +250,12 @@ export default function RepayLoan(props) {
     <div className={styles.container}>
       <div className="flex flex-col xl:flex-row lg:m-8 justify-center">
         <div className="flex flex-col mb-4 lg:m-8 justify-center">
-          <div className="grid grid-cols-2 auto-rows-auto gap-2 content-around">
+          <div
+            className={
+              "grid auto-rows-auto gap-2 " +
+              (props.token_images.length == 1 ? "grid-cols-1" : "grid-cols-2")
+            }
+          >
             {props.token_images.map((token_image) =>
               token_image ? (
                 <Image

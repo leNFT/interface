@@ -406,7 +406,7 @@ export default function LendingPool() {
                     fontSize: "body1.fontSize",
                   }}
                 >
-                  Underlying:{" "}
+                  Available:{" "}
                   {formatUnits(underlyingBalance, 18) + " " + assetSymbol}
                 </Box>
               </div>

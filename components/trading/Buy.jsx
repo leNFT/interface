@@ -33,7 +33,6 @@ import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json"
 import wethGateway from "../../contracts/WETHGateway.json";
 
 export default function Buy() {
-  const SELECTED_COLOR = "#d2c6d2";
   const { chain } = useNetwork();
   const { address, isConnected } = useAccount();
   const provider = useProvider();
@@ -427,7 +426,7 @@ export default function Buy() {
               <Button
                 primary
                 size="medium"
-                color={SELECTED_COLOR}
+                color="#d2c6d2"
                 onClick={() => {
                   // Reset selected NFTs
                   setSelectedNFTs([]);

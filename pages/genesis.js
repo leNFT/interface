@@ -238,10 +238,10 @@ export default function Genesis() {
                             <Box
                               sx={{
                                 fontFamily: "Monospace",
-                                fontSize: "caption.fontSize",
+                                fontSize: 12,
                               }}
                             >
-                              Image Unavailable
+                              No Image
                             </Box>
                           </div>
                         )}

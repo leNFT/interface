@@ -1,5 +1,5 @@
 import contractAddresses from "../../contractAddresses.json";
-import { getAssetPrice } from "../../helpers/getAssetPrice.js";
+import { getAssetsPrice } from "../../helpers/getAssetsPrice.js";
 import { getNewRequestID } from "../../helpers/getNewRequestID.js";
 import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
 import { BigNumber } from "@ethersproject/bignumber";
@@ -64,18 +64,6 @@ export default function Borrow(props) {
     contractInterface: wethGatewayContract.abi,
     addressOrName: addresses.WETHGateway,
     signerOrProvider: signer,
-  });
-
-  const nftSigner = useContract({
-    contractInterface: erc721,
-    addressOrName: props.token_address,
-    signerOrProvider: signer,
-  });
-
-  const nftProvider = useContract({
-    contractInterface: erc721,
-    addressOrName: props.token_address,
-    signerOrProvider: provider,
   });
 
   const tokenOracle = useContract({
@@ -147,11 +135,16 @@ export default function Borrow(props) {
   }
 
   async function getNFTApproval() {
-    const approvedAddress = await nftProvider.getApproved(props.token_id);
-    setNFTApproved(
-      approvedAddress ==
-        (borrowAsset == "ETH" ? addresses.WETHGateway : addresses.LendingMarket)
+    const nftProvider = new ethers.Contract(
+      props.token_address,
+      erc721,
+      provider
     );
+    const newNFTApproved = await nftProvider.isApprovedForAll(
+      address,
+      borrowAsset == "ETH" ? addresses.WETHGateway : addresses.LendingMarket
+    );
+    setNFTApproved(newNFTApproved);
   }
 
   async function updateLendingPoolBorrowRate() {
@@ -163,13 +156,17 @@ export default function Borrow(props) {
 
   async function updateMaxBorrowAmount() {
     // Get token price
-    const priceResponse = await getAssetPrice(
-      props.token_address,
-      props.token_id,
-      chain.id
-    );
-    setTokenPrice(priceResponse.price);
-    console.log("price", priceResponse.price);
+    var priceSum = 0;
+    for (let i = 0; i < props.token_ids.length; i++) {
+      const priceResponse = await getAssetsPrice(
+        props.token_address,
+        props.token_ids[i],
+        chain.id
+      );
+      priceSum = BigNumber.from(priceSum).add(priceResponse.price).toString();
+    }
+
+    setTokenPrice(priceSum);
 
     //Get token max collateralization
     const updatedMaxCollateralization =
@@ -192,7 +189,7 @@ export default function Borrow(props) {
     console.log("tokenETHPrice", tokenETHPrice);
     const maxCollateralization = BigNumber.from(updatedMaxCollateralization)
       .add(genesisBoostAmount)
-      .mul(priceResponse.price)
+      .mul(priceSum)
       .div(10000)
       .mul(tokenETHPrice)
       .div(PRICE_PRECISION)
@@ -235,6 +232,7 @@ export default function Borrow(props) {
       setLoadingBorrowRate(true);
       getLendingPool();
       getGenesisNFT();
+      console.log("props.tokens_images", props.tokens_images);
     }
   }, [isConnected, borrowAsset]);
 
@@ -278,22 +276,26 @@ export default function Borrow(props) {
   return (
     <div className={styles.container}>
       <div className="flex flex-col justify-center items-center">
-        <div className="flex flex-col lg:m-8 xl:flex-row justify-center">
-          <div className="flex flex-col items-center justify-center mb-4 lg:m-8">
-            {props.token_image ? (
-              <Image
-                loader={() => props.token_image}
-                src={props.token_image}
-                height="300"
-                width="300"
-                loading="eager"
-                className="rounded-3xl"
-              />
-            ) : (
-              <div className="flex items-center justify-center w-[300px] h-[300px]">
-                Image Unavailable
-              </div>
-            )}
+        <div className="flex flex-col lg:m-8 xl:flex-row justify-center items-center">
+          <div className="flex flex-col items-center justify-center mb-8 lg:m-8">
+            <div className="grid grid-cols-2 auto-rows-auto gap-2 content-around">
+              {props.token_images.map((token_image) =>
+                token_image ? (
+                  <Image
+                    loader={() => token_image}
+                    src={token_image}
+                    height="200"
+                    width="200"
+                    loading="eager"
+                    className="rounded-3xl"
+                  />
+                ) : (
+                  <div className="flex items-center text-center justify-center w-[200px] h-[200px]">
+                    No Image
+                  </div>
+                )
+              )}
+            </div>
             {genesisNFTId != 0 && (
               <div className="flex flex-row justify-center items-center">
                 <Typography variant="caption14">Genesis NFT Boost: </Typography>
@@ -321,8 +323,10 @@ export default function Borrow(props) {
             </div>
             <div className="flex flex-row m-2">
               <div className="flex flex-col">
-                <Typography variant="subtitle2">Token ID</Typography>
-                <Typography variant="body16">{props.token_id}</Typography>
+                <Typography variant="subtitle2">Token IDs</Typography>
+                <Typography variant="body16">
+                  {props.token_ids.join(", ")}
+                </Typography>
               </div>
             </div>
             <div className="flex flex-row m-2">
@@ -385,7 +389,7 @@ export default function Borrow(props) {
             </div>
           </div>
         </div>
-        <div className="m-8 lg:hidden">
+        <div className="m-2 lg:m-8 lg:hidden">
           <Divider />
         </div>
         <div className="flex flex-col m-2 border-2 rounded-3xl max-w-max items-center p-2">
@@ -457,7 +461,7 @@ export default function Borrow(props) {
                     const requestID = getNewRequestID();
                     const priceSig = await getAssetPrice(
                       props.token_address,
-                      props.token_id,
+                      props.token_ids,
                       chain.id,
                       requestID
                     );
@@ -466,7 +470,7 @@ export default function Borrow(props) {
                       tx = await wethGatewaySigner.borrowETH(
                         amount,
                         props.token_address,
-                        props.token_id,
+                        props.token_ids,
                         genesisNFTId,
                         requestID,
                         priceSig.sig
@@ -478,7 +482,7 @@ export default function Borrow(props) {
                         addresses[borrowAsset].address,
                         amount,
                         props.token_address,
-                        props.token_id,
+                        props.token_ids,
                         genesisNFTId,
                         requestID,
                         priceSig.sig
@@ -519,13 +523,18 @@ export default function Borrow(props) {
               isLoading={approvalLoading}
               onClick={async function () {
                 try {
+                  const nftSigner = new ethers.Contract(
+                    props.token_address,
+                    erc721,
+                    signer
+                  );
                   setApprovalLoading(true);
                   console.log("borrowAsset", borrowAsset);
-                  const tx = await nftSigner.approve(
+                  const tx = await nftSigner.setApprovalForAll(
                     borrowAsset == "ETH"
                       ? addresses.WETHGateway
                       : addresses.LendingMarket,
-                    props.token_id
+                    true
                   );
                   await tx.wait(1);
                   handleNFTApprovalSuccess();

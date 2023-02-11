@@ -37,7 +37,6 @@ import erc20 from "../../contracts/erc20.json";
 import wethGateway from "../../contracts/WETHGateway.json";
 
 export default function Swap() {
-  const SELECTED_COLOR = "#d2c6d2";
   const { chain } = useNetwork();
   const provider = useProvider();
   const { data: signer } = useSigner();
@@ -654,7 +653,7 @@ export default function Swap() {
                     <Button
                       primary
                       size="medium"
-                      color={SELECTED_COLOR}
+                      color="#d2c6d2"
                       onClick={() => {
                         // Reset selected NFTs
                         setSelectedSellNFTs([]);

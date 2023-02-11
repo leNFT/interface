@@ -14,7 +14,7 @@ import erc20 from "../../contracts/erc20.json";
 import Image from "next/image";
 import { ethers } from "ethers";
 import Countdown from "react-countdown";
-import { getAssetPrice } from "../../helpers/getAssetPrice.js";
+import { getAssetPrice } from "../../helpers/getAssetsPrice.js";
 import {
   useAccount,
   useNetwork,
@@ -262,7 +262,7 @@ export default function RepayLoan(props) {
               />
             ) : (
               <div className="flex items-center justify-center w-[300px] h-[300px]">
-                Image Unavailable
+                No Image
               </div>
             )}
           </div>

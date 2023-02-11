@@ -1,8 +1,8 @@
 import fetch from "node-fetch";
 
-export async function getAssetPrice(
+export async function getAssetsPrice(
   collection,
-  tokenId,
+  tokenIds,
   chainId,
   requestId = ""
 ) {
@@ -16,19 +16,19 @@ export async function getAssetPrice(
   console.log("Getting price Sig from chain:", chainId);
   const requestURL =
     serverAddress +
-    "/api/assetPrice?requestId=" +
+    "/api/assetsPrice?requestId=" +
     requestId +
     "&collection=" +
     collection +
     "&tokenId=" +
-    tokenId +
+    tokenIds.join(",") +
     "&chainId=" +
     chainId;
   console.log(requestURL);
-  const assetPriceResponse = await fetch(requestURL, options).catch((err) =>
+  const assetsPriceResponse = await fetch(requestURL, options).catch((err) =>
     console.error(err)
   );
-  const assetPrice = await assetPriceResponse.json();
+  const assetPrice = await assetsPriceResponse.json();
 
   return assetPrice;
 }

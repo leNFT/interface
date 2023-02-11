@@ -1,6 +1,6 @@
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
-import { getAssetPrice } from "../helpers/getAssetPrice.js";
+import { getAssetPrice } from "../helpers/getAssetsPrice.js";
 import { getNFTImage } from "../helpers/getNFTImage.js";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
 import { getLendingNFTCollections } from "../helpers/getLendingNFTCollections.js";
@@ -12,6 +12,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 import Borrow from "../components/lending/Borrow";
 import RepayLoan from "../components/lending/RepayLoan";
 import Image from "next/image";
+import { Button } from "grommet";
 import { getAddress } from "@ethersproject/address";
 import loanCenterContract from "../contracts/LoanCenter.json";
 import { calculateHealthLevel } from "../helpers/healthLevel.js";
@@ -26,7 +27,7 @@ import Box from "@mui/material/Box";
 import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 
 export default function Lend() {
-  const SEARCH_PAGE_SIZE = 8;
+  const SEARCH_PAGE_SIZE = 9;
   const [loadingUI, setLoadingUI] = useState(false);
   const [loans, setLoans] = useState([]);
   const [supportedAssets, setSupportedAssets] = useState([]);
@@ -35,10 +36,13 @@ export default function Lend() {
   const [searchPageData, setSearchPageData] = useState([]);
   const [searchInputString, setSearchInputString] = useState("");
   const [unsupportedAssets, setUnsupportedAssets] = useState([]);
-  const [visibleAssetModal, setVisibleAssetModal] = useState(false);
+  const [visibleAssetModal, setVisibleBorrowModal] = useState(false);
   const [visibleLoanModal, setVisibleLoanModal] = useState(false);
-  const [selectedAsset, setSelectedAsset] = useState();
+  const [selectedCollection, setSelectedCollection] = useState();
+  const [selectedAssets, setSelectedAssets] = useState([]);
+  const [selectedAssetsImages, setSelectedAssetsImages] = useState([]);
   const [selectedLoan, setSelectedLoan] = useState();
+  const [supportedNFTs, setSupportedNFTs] = useState([]);
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
 
@@ -61,7 +65,8 @@ export default function Lend() {
 
     // Get user NFT assets
     const addressNFTs = await getAddressNFTs(address, "", chain.id);
-    const supportedNFTs = await getLendingNFTCollections(chain.id);
+    const updatedSupportedNFTs = await getLendingNFTCollections(chain.id);
+    setSupportedNFTs(updatedSupportedNFTs);
 
     console.log("supportedNFTs:", supportedNFTs);
     var updatedLoans = [];
@@ -101,7 +106,7 @@ export default function Lend() {
           loanId: BigNumber.from(addressNFTs[i].id.tokenId).toNumber(),
           tokenName: addressNFTs[i].title,
           tokenAddress: loan.nftAsset,
-          tokenId: loan.nftTokenId.toString(),
+          tokenIds: loan.nftTokenIds,
           tokenImage: tokenImage,
           amount: loan.amount,
           boost: loan.boost,
@@ -112,7 +117,8 @@ export default function Lend() {
           maxLTV: loan.maxLTV,
         });
       } else if (
-        supportedNFTs[getAddress(addressNFTs[i].contract.address)] != undefined
+        updatedSupportedNFTs[getAddress(addressNFTs[i].contract.address)] !=
+        undefined
       ) {
         // Add asset to supported assets
         updatedSupportedAssets.push(addressNFTs[i]);
@@ -145,6 +151,36 @@ export default function Lend() {
     }
     console.log("useEffect called");
   }, [isConnected, address, chain]);
+
+  useEffect(() => {
+    async function getSelectedCollectionNFTs() {
+      var selectedCollectionNFTs = [];
+      const addressCollectionNFTs = await getAddressNFTs(
+        address,
+        selectedCollection,
+        chain.id
+      );
+
+      if (selectedCollection == "") {
+        for (let i = 0; i < addressCollectionNFTs.length; i++) {
+          if (
+            supportedNFTs[
+              getAddress(addressCollectionNFTs[i].contract.address)
+            ] != undefined
+          ) {
+            selectedCollectionNFTs.push(addressCollectionNFTs[i]);
+          }
+        }
+      } else {
+        selectedCollectionNFTs = addressCollectionNFTs;
+      }
+
+      setSupportedAssets(selectedCollectionNFTs);
+      setSearchResults(selectedCollectionNFTs);
+      setSearchPageData(selectedCollectionNFTs.slice(0, SEARCH_PAGE_SIZE));
+    }
+    getSelectedCollectionNFTs();
+  }, [selectedCollection]);
 
   const handleUnsupportedAssetClick = async function (assetName) {
     dispatch({
@@ -329,7 +365,7 @@ export default function Lend() {
                       loan_id={selectedLoan.loanId}
                       token_name={selectedLoan.tokenName}
                       token_address={selectedLoan.tokenAddress}
-                      token_id={selectedLoan.tokenId}
+                      token_ids={selectedLoan.tokenIds}
                       token_image={selectedLoan.tokenImage}
                       updateUI={setupUI}
                     />
@@ -340,33 +376,70 @@ export default function Lend() {
           </div>
           <div className="flex flex-col m-4 mt-8 sm:m-8 md:mx-16 rounded-3xl p-2 bg-black/5 shadow-lg">
             <div className="flex flex-col md:flex-row justify-between p-8 pb-0">
-              <div className="flex flex-col">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    letterSpacing: 14,
-                  }}
-                >
-                  <div className="text-xl text-center md:text-left md:text-4xl">
-                    Wallet
+              {selectedAssets.length == 0 ? (
+                <div className="flex flex-col">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      letterSpacing: 14,
+                    }}
+                  >
+                    <div className="text-xl text-center md:text-left md:text-4xl">
+                      Wallet
+                    </div>
+                  </Box>
+                  <div className="mt-4">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                      }}
+                    >
+                      <div className="text-sm text-center md:text-left md:text-md">
+                        {isConnected
+                          ? "You can use " +
+                            supportedAssets.length +
+                            " of your NFTs to borrow."
+                          : "Connect wallet to view your NFTs."}
+                      </div>
+                    </Box>
                   </div>
-                </Box>
-                <div className="mt-4">
+                </div>
+              ) : (
+                <div className="flex flex-col">
                   <Box
                     sx={{
                       fontFamily: "Monospace",
                     }}
+                    className="mt-4"
                   >
-                    <div className="text-sm text-center md:text-left md:text-md">
-                      {isConnected
-                        ? "You can use " +
-                          supportedAssets.length +
-                          " of your NFTs to borrow."
-                        : "Connect wallet to view your NFTs."}
+                    <div className="text-xl text-center md:text-left md:text-2xl">
+                      {"Selected " +
+                        selectedAssets.length +
+                        " " +
+                        supportedAssets.find(
+                          (element) =>
+                            element.contract.address == selectedCollection
+                        ).contractMetadata.name +
+                        "s"}
                     </div>
                   </Box>
+                  <Button
+                    onClick={function () {
+                      setSelectedAssets([]);
+                      setSelectedCollection("");
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                      }}
+                      className="mt-1 text-center md:text-left"
+                    >
+                      {"(unselect all)"}
+                    </Box>
+                  </Button>
                 </div>
-              </div>
+              )}
               <div className="flex flex-col m-4 items-center justify-center">
                 <Input
                   onBlur={function noRefCheck() {}}
@@ -392,6 +465,33 @@ export default function Lend() {
                 </div>
               </div>
             </div>
+            {selectedAssets.length != 0 && (
+              <div className="flex flex-row m-4 mt-0 md:mt-4">
+                <Button
+                  primary
+                  fill="horizontal"
+                  size="large"
+                  color="#063970"
+                  onClick={async function () {
+                    setVisibleBorrowModal(true);
+                  }}
+                  label={
+                    <div className="flex justify-center">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle2.fontSize",
+                          fontWeight: "bold",
+                          letterSpacing: 2,
+                        }}
+                      >
+                        {"Borrow"}
+                      </Box>
+                    </div>
+                  }
+                />
+              </div>
+            )}
             {searchPageData.length != 0 && (
               <div>
                 <div className="flex flex-row grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
@@ -403,14 +503,56 @@ export default function Lend() {
                       <Card
                         sx={{
                           borderRadius: 4,
-                          background:
-                            "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
+                          background: selectedAssets.includes(
+                            BigNumber.from(data.id.tokenId).toNumber()
+                          )
+                            ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
+                            : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                         }}
                       >
                         <CardActionArea
                           onClick={function () {
-                            setSelectedAsset(data);
-                            setVisibleAssetModal(true);
+                            var newSelectedAssets = selectedAssets.slice();
+                            var newSelectedAssetsImages =
+                              selectedAssetsImages.slice();
+                            console.log(
+                              "newSelectedAssets1: ",
+                              newSelectedAssets
+                            );
+                            // If the asset is already selected, remove it from the array
+                            if (
+                              selectedAssets.includes(
+                                BigNumber.from(data.id.tokenId).toNumber()
+                              )
+                            ) {
+                              const index = newSelectedAssets.indexOf(
+                                BigNumber.from(data.id.tokenId).toNumber()
+                              );
+                              newSelectedAssets.splice(index, 1);
+                              newSelectedAssetsImages.splice(index, 1);
+
+                              if (newSelectedAssets.length == 0) {
+                                setSelectedCollection("");
+                              }
+                            } else {
+                              if (selectedAssets.length == 0) {
+                                setSelectedCollection(data.contract.address);
+                              }
+
+                              // If the asset is not selected, add it to the array
+                              newSelectedAssets.push(
+                                BigNumber.from(data.id.tokenId).toNumber()
+                              );
+                              newSelectedAssetsImages.push(
+                                data.metadata.image ? data.media[0].gateway : ""
+                              );
+                            }
+                            console.log(
+                              "newSelectedAssets2: ",
+                              newSelectedAssets
+                            );
+                            setSelectedAssetsImages(newSelectedAssetsImages);
+                            setSelectedAssets(newSelectedAssets);
                           }}
                         >
                           <CardContent>
@@ -427,14 +569,14 @@ export default function Lend() {
                                 />
                               </div>
                             ) : (
-                              <div className="flex flex-col w-[150px] h-[150px] text-center items-center justify-center">
+                              <div className="flex flex-col w-[130px] h-[130px] text-center items-center justify-center">
                                 <Box
                                   sx={{
                                     fontFamily: "Monospace",
-                                    fontSize: "caption.fontSize",
+                                    fontSize: 12,
                                   }}
                                 >
-                                  Image Unavailable
+                                  No Image
                                 </Box>
                               </div>
                             )}
@@ -442,6 +584,7 @@ export default function Lend() {
                               sx={{
                                 fontFamily: "Monospace",
                                 fontSize: "subtitle1.fontSize",
+                                fontWeight: "bold",
                               }}
                             >
                               <div className="flex flex-col mt-2 items-center text-center">
@@ -467,23 +610,21 @@ export default function Lend() {
                 </div>
               </div>
             )}
-            {selectedAsset && (
-              <StyledModal
-                hasFooter={false}
-                isVisible={visibleAssetModal}
-                onCloseButtonPressed={function () {
-                  setVisibleAssetModal(false);
-                }}
-              >
-                <Borrow
-                  setVisibility={setVisibleAssetModal}
-                  token_address={getAddress(selectedAsset.contract.address)}
-                  token_id={BigNumber.from(selectedAsset.id.tokenId).toNumber()}
-                  token_image={selectedAsset.metadata.image}
-                  updateUI={setupUI}
-                />
-              </StyledModal>
-            )}
+            <StyledModal
+              hasFooter={false}
+              isVisible={visibleAssetModal}
+              onCloseButtonPressed={function () {
+                setVisibleBorrowModal(false);
+              }}
+            >
+              <Borrow
+                setVisibility={setVisibleBorrowModal}
+                token_address={selectedCollection}
+                token_ids={selectedAssets}
+                token_images={selectedAssetsImages}
+                updateUI={setupUI}
+              />
+            </StyledModal>
             {supportedAssets.length != 0 && unsupportedAssets.length != 0 && (
               <div className="m-4 items-center justify-center">
                 <Divider variant="middle" />
@@ -539,14 +680,15 @@ export default function Lend() {
                                 />
                               </div>
                             ) : (
-                              <div className="flex flex-col w-[120px] h-[120px] text-center items-center justify-center">
+                              <div className="flex flex-col w-[120px] h-[120px] items-center justify-center">
                                 <Box
                                   sx={{
                                     fontFamily: "Monospace",
-                                    fontSize: "caption.fontSize",
+                                    fontSize: 12,
                                   }}
+                                  className="text-center"
                                 >
-                                  Image Unavailable
+                                  No Image
                                 </Box>
                               </div>
                             )}
@@ -554,6 +696,7 @@ export default function Lend() {
                               sx={{
                                 fontFamily: "Monospace",
                                 fontSize: "subtitle2.fontSize",
+                                fontWeight: "bold",
                               }}
                             >
                               <div className="flex flex-col mt-4 items-center text-center">

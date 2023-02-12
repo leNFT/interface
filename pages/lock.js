@@ -328,7 +328,7 @@ export default function Lock() {
                       fontSize: "subtitle1.fontSize",
                     }}
                   >
-                    {Number(formatUnits(totalLocked, 18)).toFixed() + " veLE"}
+                    {Math.floor(Number(formatUnits(totalLocked, 18))) + " veLE"}
                   </Box>
                 </div>
               </div>

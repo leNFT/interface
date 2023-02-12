@@ -5,7 +5,7 @@ import {
   useProvider,
   useSigner,
 } from "wagmi";
-import { getAssetPrice } from "../../helpers/getAssetPrice.js";
+import { getAssetsPrice } from "../../helpers/getAssetsPrice.js";
 import { getNewRequestID } from "../../helpers/getNewRequestID.js";
 import loanCenterContract from "../../contracts/LoanCenter.json";
 import { BigNumber } from "@ethersproject/bignumber";
@@ -94,9 +94,9 @@ export default function Liquidate(props) {
   async function getLoanDetails() {
     // Get liquidation price for the loan
     const requestId = getNewRequestID();
-    const priceSig = await getAssetPrice(
+    const priceSig = await getAssetsPrice(
       props.loan.tokenAddress,
-      props.loan.tokenId,
+      props.loan.tokenIds,
       chain.id,
       requestId
     );
@@ -117,9 +117,9 @@ export default function Liquidate(props) {
 
   async function getAssetPricing() {
     // Get token price
-    const price = await getAssetPrice(
+    const price = await getAssetsPrice(
       props.loan.tokenAddress,
-      props.loan.tokenId,
+      props.loan.tokenIds,
       chain.id
     );
     setTokenPrice(price.price);
@@ -311,9 +311,9 @@ export default function Liquidate(props) {
                       try {
                         setLiquidationLoading(true);
                         const requestId = getNewRequestID();
-                        const priceSig = await getAssetPrice(
+                        const priceSig = await getAssetsPrice(
                           props.loan.tokenAddress,
-                          props.loan.tokenId,
+                          props.loan.tokenIds,
                           chain.id,
                           requestId
                         );

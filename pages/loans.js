@@ -1,5 +1,5 @@
 import styles from "../styles/Home.module.css";
-import { getAssetPrice } from "../helpers/getAssetPrice.js";
+import { getAssetsPrice } from "../helpers/getAssetsPrice.js";
 import { ethers } from "ethers";
 import { getLendingNFTCollections } from "../helpers/getLendingNFTCollections.js";
 import { getNFTImage } from "../helpers/getNFTImage.js";
@@ -101,9 +101,9 @@ export default function Loans() {
 
       // Find the valuation given by the protocol to this specific asset
       const assetPrice = (
-        await getAssetPrice(
+        await getAssetsPrice(
           collectionNFTs[i].contract.address,
-          BigNumber.from(collectionNFTs[i].id.tokenId).toNumber(),
+          loan.nftTokenIds,
           chain.id
         )
       ).price;
@@ -123,7 +123,7 @@ export default function Loans() {
         borrowRate: loan.borrowRate,
         boost: loan.boost,
         tokenAddress: collectionNFTs[i].contract.address,
-        tokenId: BigNumber.from(collectionNFTs[i].id.tokenId).toNumber(),
+        tokenIds: loan.nftTokenIds,
         tokenURI: tokenURI,
         price: assetPrice,
       });

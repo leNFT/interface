@@ -127,6 +127,7 @@ export default function Lock() {
       addresses.ETH.address,
       updatedEpoch.toNumber() == 0 ? 0 : updatedEpoch.toNumber() - 1
     );
+    console.log("updatedTotalFees", updatedTotalFees.toString());
     const updateNativeTokenPrice = await curvePoolProvider.callStatic.get_dy(
       1,
       0,
@@ -260,79 +261,79 @@ export default function Lock() {
         />
       </StyledModal>
       <div className="flex flex-col items-center">
-        <div className="flex flex-col py-4 px-8 m-8 mb-4 items-center justify-center text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
-          <Box
-            sx={{
-              fontFamily: "Monospace",
-              fontSize: "subtitle2.fontSize",
-              fontWeight: "bold",
-            }}
-            className="mb-2 border-2 border-stone-600 rounded-2xl p-2 px-4 w-fit"
-          >
-            {Number(formatUnits(tokenPrice, 18)).toFixed(5) + " LE / ETH"}
-          </Box>
-          <div className="flex flex-row items-center justify-center">
-            <div className="flex flex-col items-start m-2 mx-4">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "subtitle1.fontSize",
-                }}
-              >
-                Epoch
-              </Box>
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "h4.fontSize",
-                }}
-              >
-                {epoch}
-              </Box>
-            </div>
-            <div className="flex flex-col items-end m-2 border-l-2 border-stone-600 p-6">
-              <div className="flex flex-col items-end text-right mb-4">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle2.fontSize",
-                    fontWeight: "bold",
-                  }}
-                >
-                  APR
-                </Box>
+        <div className="flex flex-col lg:flex-row max-w-[100%] justify-center items-center">
+          <div className="flex flex-col py-4 px-8 m-8 mb-4 items-center justify-center text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+                fontWeight: "bold",
+              }}
+              className="mb-2 border-2 border-stone-600 rounded-2xl p-2 px-4 w-fit"
+            >
+              {Number(formatUnits(tokenPrice, 18)).toFixed(5) + " LE / ETH"}
+            </Box>
+            <div className="flex flex-row items-center justify-center">
+              <div className="flex flex-col items-start m-2 mx-4">
                 <Box
                   sx={{
                     fontFamily: "Monospace",
                     fontSize: "subtitle1.fontSize",
                   }}
                 >
-                  {apr + " %"}
+                  Epoch
+                </Box>
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "h4.fontSize",
+                  }}
+                >
+                  {epoch}
                 </Box>
               </div>
-              <div className="flex flex-col items-end text-right mt-4">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle2.fontSize",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Total Locked
-                </Box>
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                  }}
-                >
-                  {Number(formatUnits(totalLocked, 18)).toFixed() + " veLE"}
-                </Box>
+              <div className="flex flex-col items-end m-2 border-l-2 border-stone-600 p-6">
+                <div className="flex flex-col items-end text-right mb-4">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    APR
+                  </Box>
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle1.fontSize",
+                    }}
+                  >
+                    {apr + " %"}
+                  </Box>
+                </div>
+                <div className="flex flex-col items-end text-right mt-4">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Total Locked
+                  </Box>
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle1.fontSize",
+                    }}
+                  >
+                    {Number(formatUnits(totalLocked, 18)).toFixed() + " veLE"}
+                  </Box>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="flex flex-col lg:flex-row max-w-[100%] justify-center items-center">
           <div className="flex flex-col border-4 p-4 m-4 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
             <div className="flex flex-col-reverse md:flex-row items-center justify-center">
               {unlockTime < Date.now() / 1000 ? (
@@ -468,102 +469,102 @@ export default function Lock() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col md:flex-row items-center justify-center border-4 m-4 md:m-8 rounded-3xl bg-black/5 shadow-lg">
-            <div className="flex flex-col md:flex-row items-center mb:m-4 justify-center">
-              <div className="flex flex-row m-4">
-                <div className="flex flex-col m-4">
-                  <div className="flex flex-row">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "h6.fontSize",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Used Votes
-                    </Box>
-                  </div>
-                  <div className="flex flex-row">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "subtitle1.fontSize",
-                      }}
-                    >
-                      {totalVoteRatio / 100 + " %"}
-                    </Box>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col justify-center items-center m-8 p-4 rounded-3xl bg-black/5 shadow-lg">
-              <div className="flex flex-col items-center m-4 mb-8">
-                <Input
-                  bordered
-                  aria-label="Gauge Address"
-                  size="xl"
-                  placeholder="Gauge Address"
-                  onChange={handleGaugeChange}
-                />
-                <div className="flex flex-row mt-1">
+        </div>
+        <div className="flex flex-col md:flex-row items-center justify-center border-4 m-4 md:m-8 rounded-3xl bg-black/5 shadow-lg">
+          <div className="flex flex-col md:flex-row items-center mb:m-4 justify-center">
+            <div className="flex flex-row m-4">
+              <div className="flex flex-col m-4">
+                <div className="flex flex-row">
                   <Box
                     sx={{
                       fontFamily: "Monospace",
-                      fontSize: "caption.fontSize",
+                      fontSize: "h6.fontSize",
+                      fontWeight: "bold",
                     }}
                   >
-                    {selectedGauge !== undefined
-                      ? selectedGauge == ""
-                        ? "Gauge not found"
-                        : "Gauge found"
-                      : "Select a gauge"}
+                    Used Votes
+                  </Box>
+                </div>
+                <div className="flex flex-row">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle1.fontSize",
+                    }}
+                  >
+                    {totalVoteRatio / 100 + " %"}
                   </Box>
                 </div>
               </div>
-              <div className="flex flex-col-reverse md:flex-row">
-                <div className="flex flex-col justify-center m-4">
-                  <div className="flex flex-row justify-center items-center m-2">
-                    <Button
-                      customize={{
-                        backgroundColor: "grey",
-                        fontSize: 16,
-                        textColor: "white",
-                      }}
-                      text="Vote"
-                      disabled={!selectedGauge}
-                      theme="custom"
-                      size="large"
-                      radius="12"
-                      onClick={async function () {
-                        setVisibleVoteModal(true);
-                      }}
-                    />
-                  </div>
+            </div>
+          </div>
+          <div className="flex flex-col justify-center items-center m-8 p-4 rounded-3xl bg-black/5 shadow-lg">
+            <div className="flex flex-col items-center m-4 mb-8">
+              <Input
+                bordered
+                aria-label="Gauge Address"
+                size="xl"
+                placeholder="Gauge Address"
+                onChange={handleGaugeChange}
+              />
+              <div className="flex flex-row mt-1">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "caption.fontSize",
+                  }}
+                >
+                  {selectedGauge !== undefined
+                    ? selectedGauge == ""
+                      ? "Gauge not found"
+                      : "Gauge found"
+                    : "Select a gauge"}
+                </Box>
+              </div>
+            </div>
+            <div className="flex flex-col-reverse md:flex-row">
+              <div className="flex flex-col justify-center m-4">
+                <div className="flex flex-row justify-center items-center m-2">
+                  <Button
+                    customize={{
+                      backgroundColor: "grey",
+                      fontSize: 16,
+                      textColor: "white",
+                    }}
+                    text="Vote"
+                    disabled={!selectedGauge}
+                    theme="custom"
+                    size="large"
+                    radius="12"
+                    onClick={async function () {
+                      setVisibleVoteModal(true);
+                    }}
+                  />
                 </div>
-                <div className="flex flex-col justify-center">
-                  <div className="flex flex-row m-2">
-                    <div className="flex flex-col">
-                      <div className="flex flex-row">
-                        <Box
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "subtitle1.fontSize",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          My Gauge Votes
-                        </Box>
-                      </div>
-                      <div className="flex flex-row">
-                        <Box
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "subtitle1.fontSize",
-                          }}
-                        >
-                          {gaugeVoteRatio / 100 + " %"}
-                        </Box>
-                      </div>
+              </div>
+              <div className="flex flex-col justify-center">
+                <div className="flex flex-row m-2">
+                  <div className="flex flex-col">
+                    <div className="flex flex-row">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle1.fontSize",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        My Gauge Votes
+                      </Box>
+                    </div>
+                    <div className="flex flex-row">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle1.fontSize",
+                        }}
+                      >
+                        {gaugeVoteRatio / 100 + " %"}
+                      </Box>
                     </div>
                   </div>
                 </div>

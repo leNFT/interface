@@ -65,7 +65,7 @@ export default function GenesisMint(props) {
   }, [props.price]);
 
   useEffect(() => {
-    if (props.mintCount) {
+    if (props.mintCount != undefined) {
       setMintIds([props.mintCount + 1]);
     }
   }, [props.mintCount]);
@@ -222,6 +222,7 @@ export default function GenesisMint(props) {
                 "uris: ",
                 mintIds.map((id) => genesisNFTURIs[id])
               );
+              console.log("mintPrice: ", mintPrice);
               const tx = await genesisNFTSigner.mint(
                 mintIds.map(() => locktimeDays * SECONDS_IN_DAY),
                 mintIds.map((id) => genesisNFTURIs[id]),

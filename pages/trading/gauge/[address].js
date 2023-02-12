@@ -7,6 +7,7 @@ import { formatUnits, parseUnits } from "@ethersproject/units";
 import { getAddressNFTs } from "../../../helpers/getAddressNFTs.js";
 import contractAddresses from "../../../contractAddresses.json";
 import votingEscrowContract from "../../../contracts/VotingEscrow.json";
+import gaugeControllerContract from "../../../contracts/GaugeController.json";
 import tradingGaugeContract from "../../../contracts/TradingGauge.json";
 import StakeTradingGauge from "../../../components/gauges/StakeTradingGauge";
 import UnstakeTradingGauge from "../../../components/gauges/UnstakeTradingGauge";
@@ -45,7 +46,8 @@ export default function TradingPoolGauge() {
   const provider = useProvider();
   const [epoch, setEpoch] = useState(0);
   const [apr, setAPR] = useState("0");
-  const [totalLocked, setTotalLocked] = useState("0");
+  const [totalLockedValue, setTotalLockedValue] = useState("0");
+  const [userLockedValue, setUserLockedValue] = useState("0");
 
   const addresses =
     isConnected && chain.id in contractAddresses
@@ -64,6 +66,12 @@ export default function TradingPoolGauge() {
     signerOrProvider: provider,
   });
 
+  const gaugeControllerProvider = useContract({
+    contractInterface: gaugeControllerContract.abi,
+    addressOrName: addresses.GaugeController,
+    signerOrProvider: provider,
+  });
+
   // Update the UI
   async function updateUI() {
     const gauge = new ethers.Contract(
@@ -78,6 +86,9 @@ export default function TradingPoolGauge() {
 
     const boostResponse = await gauge.userBoost(address);
     setBoost(boostResponse.toNumber());
+
+    const newUserLockedValue = await gauge.userLPValue(address);
+    setUserLockedValue(newUserLockedValue.toString());
 
     const stakedLPsBalanceResponse = await gauge.balanceOf(address);
     const stakedLPsAmount = stakedLPsBalanceResponse.toNumber();
@@ -115,9 +126,9 @@ export default function TradingPoolGauge() {
     );
 
     // Get the total locked amount
-    const updatedTotalLocked = await gauge.totalSupply();
-    console.log("updatedTotalLocked", updatedTotalLocked.toString());
-    setTotalLocked(updatedTotalLocked.toString());
+    const updatedTotalLockedValue = await gauge.totalLPValue();
+    console.log("updatedTotalLockedValue", updatedTotalLockedValue.toString());
+    setTotalLockedValue(updatedTotalLockedValue.toString());
 
     // Get the previous gauge rewards
     const previousGaugeRewards =
@@ -128,7 +139,7 @@ export default function TradingPoolGauge() {
 
     if (
       nativeTokenPrice.toString() == "0" ||
-      updatedTotalLocked.toString() == "0"
+      updatedTotalLockedValue.toString() == "0"
     ) {
       setAPR(0);
     } else {
@@ -136,7 +147,7 @@ export default function TradingPoolGauge() {
         BigNumber.from(previousGaugeRewards)
           .mul(nativeTokenPrice)
           .mul(100)
-          .div(updatedTotalLocked)
+          .div(updatedTotalLockedValue)
           .toNumber()
       );
     }
@@ -296,7 +307,7 @@ export default function TradingPoolGauge() {
                     fontSize: "subtitle1.fontSize",
                   }}
                 >
-                  {totalLocked + " LPs"}
+                  {formatUnits(totalLockedValue, 18) + " ETH"}
                 </Box>
               </div>
             </div>
@@ -328,7 +339,7 @@ export default function TradingPoolGauge() {
                     </Tooltip>
                   </div>
                 </div>
-                <div className="flex flex-row m-2">
+                <div className="flex flex-row m-2 mb-0">
                   <div className="flex flex-col">
                     <Box
                       sx={{
@@ -338,6 +349,18 @@ export default function TradingPoolGauge() {
                       }}
                     >
                       {stakedLPs.length + " staked LPs"}
+                    </Box>
+                  </div>
+                </div>
+                <div className="flex flex-row mt-0 m-2">
+                  <div className="flex flex-col">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "caption.fontSize",
+                      }}
+                    >
+                      {"worth " + formatUnits(userLockedValue, 18) + " ETH"}
                     </Box>
                   </div>
                 </div>
@@ -473,7 +496,7 @@ export default function TradingPoolGauge() {
                     <div>{"No LP Positions staked in this gauge."}</div>
                   </Box>
                 ) : (
-                  <div className="flex grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div className="flex grid auto-cols-auto gap-2">
                     {stakedLPs.map((data) => (
                       <div
                         key={data}
@@ -492,19 +515,18 @@ export default function TradingPoolGauge() {
                               setVisibleUnstakeModal(true);
                             }}
                           >
-                            <CardContent>
-                              <Box
-                                sx={{
-                                  fontFamily: "Monospace",
-                                  fontSize: "subtitle1.fontSize",
-                                }}
-                              >
-                                <div className="flex flex-col mt-2 items-center text-center">
-                                  <div>{"LP Position"}</div>
-                                  <div>{"#" + data}</div>
-                                </div>
-                              </Box>
-                            </CardContent>
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "subtitle1.fontSize",
+                              }}
+                              className="p-4"
+                            >
+                              <div className="flex flex-col mt-2 items-center text-center">
+                                <div>{"LP Position"}</div>
+                                <div>{"#" + data}</div>
+                              </div>
+                            </Box>
                           </CardActionArea>
                         </Card>
                       </div>

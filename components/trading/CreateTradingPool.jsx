@@ -57,6 +57,7 @@ export default function CreateTradingPool(props) {
 
   useEffect(() => {
     if (isConnected) {
+      getTVLSafeguard();
     }
   }, [isConnected]);
 

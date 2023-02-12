@@ -101,6 +101,11 @@ export default function LendingPools() {
         </Box>,
         <div className="m-1" key={"gauge" + key}>
           <Button
+            customize={{
+              backgroundColor: "black",
+              textColor: "white",
+            }}
+            theme="custom"
             text={
               <Box
                 sx={{

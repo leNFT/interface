@@ -256,23 +256,25 @@ export default function RepayLoan(props) {
               (props.token_images.length == 1 ? "grid-cols-1" : "grid-cols-2")
             }
           >
-            {props.token_images.map((token_image) =>
-              token_image ? (
-                <Image
-                  key={token_image}
-                  loader={() => token_image}
-                  src={token_image}
-                  height="200"
-                  width="200"
-                  loading="eager"
-                  className="rounded-3xl"
-                />
-              ) : (
-                <div className="flex items-center text-center justify-center w-[200px] h-[200px]">
-                  No Image
-                </div>
-              )
-            )}
+            {props.token_images.map((token_image) => (
+              <div key={i}>
+                {token_image ? (
+                  <Image
+                    key={token_image}
+                    loader={() => token_image}
+                    src={token_image}
+                    height="200"
+                    width="200"
+                    loading="eager"
+                    className="rounded-3xl"
+                  />
+                ) : (
+                  <div className="flex items-center text-center justify-center w-[200px] h-[200px]">
+                    No Image
+                  </div>
+                )}{" "}
+              </div>
+            ))}
           </div>
           <div className="flex flex-row justify-center mt-1">
             <Typography variant="caption18">

@@ -27,9 +27,7 @@ export default function CreateLendingPool(props) {
   const [collectionFloorPrice, setCollectionFloorPrice] = useState();
   const provider = useProvider();
   const [tvlSafeguard, setTVLSafeguard] = useState("0");
-  const [maximumUtilizationRate, setMaximumUtilizationRate] = useState("0");
-  const [liquidationFee, setLiquidationFee] = useState("0");
-  const [liquidationPenalty, setLiquidationPenalty] = useState("0");
+  const [defaultPoolConfig, setDefaultPoolConfig] = useState();
 
   const dispatch = useNotification();
 
@@ -53,31 +51,16 @@ export default function CreateLendingPool(props) {
   async function getLendingPoolDefaultValues() {
     // Get default underlying safeguard
     const updatedTVLSafeguard = (
-      await lendingMarketContractProvider.getDefaultTVLSafeguard()
+      await lendingMarketContractProvider.getTVLSafeguard()
     ).toString();
 
     setTVLSafeguard(updatedTVLSafeguard);
 
     // Get default maximum utilization rate
-    const updatedMaximumUtilizationRate = (
-      await lendingMarketContractProvider.getDefaultMaximumUtilizationRate()
-    ).toString();
-
-    setMaximumUtilizationRate(updatedMaximumUtilizationRate);
-
-    // Get protocol liquidation fee
-    const updatedLiquidationFee = (
-      await lendingMarketContractProvider.getDefaultLiquidationFee()
-    ).toString();
-
-    setLiquidationFee(updatedLiquidationFee);
-
-    // Get underlying safeguard
-    const updatedLiquidationPenalty = (
-      await lendingMarketContractProvider.getDefaultLiquidationPenalty()
-    ).toString();
-
-    setLiquidationPenalty(updatedLiquidationPenalty);
+    const updatedDefaultPoolConfig =
+      await lendingMarketContractProvider.getDefaultPoolConfig();
+    console.log("updatedDefaultPoolConfig", updatedDefaultPoolConfig);
+    setDefaultPoolConfig(updatedDefaultPoolConfig);
   }
 
   async function updateCollectionInfo(collection) {
@@ -121,13 +104,17 @@ export default function CreateLendingPool(props) {
           <div className="flex flex-col m-4">
             <Typography variant="subtitle2">Liquidation Penalty</Typography>
             <Typography variant="caption16">
-              {BigNumber.from(liquidationPenalty).div(100) + "%"}
+              {BigNumber.from(
+                defaultPoolConfig ? defaultPoolConfig.liquidationPenalty : 0
+              ).div(100) + "%"}
             </Typography>
           </div>
           <div className="flex flex-col m-4">
             <Typography variant="subtitle2">Liquidation Fee</Typography>
             <Typography variant="caption16">
-              {BigNumber.from(liquidationFee).div(100) + "%"}
+              {BigNumber.from(
+                defaultPoolConfig ? defaultPoolConfig.liquidationFee : 0
+              ).div(100) + "%"}
             </Typography>
           </div>
         </div>
@@ -135,7 +122,9 @@ export default function CreateLendingPool(props) {
           <div className="flex flex-col m-4">
             <Typography variant="subtitle2">Max Utilization Rate</Typography>
             <Typography variant="caption16">
-              {BigNumber.from(maximumUtilizationRate).div(100) + "%"}
+              {BigNumber.from(
+                defaultPoolConfig ? defaultPoolConfig.maximumUtilizationRate : 0
+              ).div(100) + "%"}
             </Typography>
           </div>
           <div className="flex flex-col m-4">

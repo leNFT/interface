@@ -24,7 +24,7 @@ export default function CreateTradingPool(props) {
   const { data: signer } = useSigner();
   const [creatingLoading, setCreatingLoading] = useState(false);
   const [collection, setCollection] = useState("");
-
+  const [tvlSafeguard, setTVLSafeguard] = useState("0");
   const provider = useProvider();
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -47,6 +47,13 @@ export default function CreateTradingPool(props) {
     addressOrName: addresses.TradingPoolFactory,
     signerOrProvider: provider,
   });
+
+  async function getTVLSafeguard() {
+    const updatedTVLSafeguard = (
+      await factoryProvider.getTVLSafeguard()
+    ).toString();
+    setTVLSafeguard(updatedTVLSafeguard);
+  }
 
   useEffect(() => {
     if (isConnected) {
@@ -93,6 +100,12 @@ export default function CreateTradingPool(props) {
 
   return (
     <div className="flex flex-col">
+      <div className="flex flex-col p-8 justify-center m-2 border-2 rounded-2xl max-w-lg self-center">
+        <Typography variant="subtitle2">ETH TVL Safeguard</Typography>
+        <Typography variant="caption16">
+          {formatUnits(tvlSafeguard, 18) + " ETH"}
+        </Typography>
+      </div>
       <div className="flex flex-col items-center justify-center mt-8 mb-2 mx-2 md:mx-8">
         <Input
           description="The address of the pool's NFT collection."

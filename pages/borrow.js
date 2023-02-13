@@ -9,7 +9,7 @@ import Pagination from "@mui/material/Pagination";
 import { useNotification, Tooltip, Loading, Input } from "@web3uikit/core";
 import { HelpCircle, Search } from "@web3uikit/icons";
 import { BigNumber } from "@ethersproject/bignumber";
-import Borrow from "../components/lending/Borrow";
+import CreateLoan from "../components/lending/CreateLoan";
 import RepayLoan from "../components/lending/RepayLoan";
 import Image from "next/image";
 import { Button } from "grommet";
@@ -26,7 +26,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { useAccount, useNetwork, useContract, useProvider } from "wagmi";
 
-export default function Lend() {
+export default function Borrow() {
   const SEARCH_PAGE_SIZE = 9;
   const [loadingUI, setLoadingUI] = useState(false);
   const [loans, setLoans] = useState([]);
@@ -36,7 +36,7 @@ export default function Lend() {
   const [searchPageData, setSearchPageData] = useState([]);
   const [searchInputString, setSearchInputString] = useState("");
   const [unsupportedAssets, setUnsupportedAssets] = useState([]);
-  const [visibleAssetModal, setVisibleBorrowModal] = useState(false);
+  const [visibleCreateLoanModal, setVisibleCreateLoanModal] = useState(false);
   const [visibleLoanModal, setVisibleLoanModal] = useState(false);
   const [selectedCollection, setSelectedCollection] = useState();
   const [selectedAssets, setSelectedAssets] = useState([]);
@@ -475,7 +475,7 @@ export default function Lend() {
                   size="large"
                   color="#063970"
                   onClick={async function () {
-                    setVisibleBorrowModal(true);
+                    setVisibleCreateLoanModal(true);
                   }}
                   label={
                     <div className="flex justify-center">
@@ -614,13 +614,13 @@ export default function Lend() {
             )}
             <StyledModal
               hasFooter={false}
-              isVisible={visibleAssetModal}
+              isVisible={visibleCreateLoanModal}
               onCloseButtonPressed={function () {
-                setVisibleBorrowModal(false);
+                setVisibleCreateLoanModal(false);
               }}
             >
-              <Borrow
-                setVisibility={setVisibleBorrowModal}
+              <CreateLoan
+                setVisibility={setVisibleCreateLoanModal}
                 token_address={selectedCollection}
                 token_ids={selectedAssets}
                 token_images={selectedAssetsImages}

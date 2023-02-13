@@ -25,7 +25,7 @@ export default function Footer() {
               Trade
             </Box>
           </a>
-          <a href="/lend" target="_blank" rel="noopener noreferrer">
+          <a href="/borrow" target="_blank" rel="noopener noreferrer">
             <Box
               sx={{
                 fontFamily: "Monospace",

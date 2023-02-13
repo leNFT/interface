@@ -13,7 +13,7 @@ import Box from "@mui/material/Box";
 import { useState } from "react";
 import Router from "next/router";
 
-export default function LendingHeader() {
+export default function BorrowHeader() {
   const SELECTED_COLOR = "#d2c6d2";
   const UNSELECTED_COLOR = "#eae5ea";
   const [option, setOption] = useState("lend");
@@ -54,13 +54,13 @@ export default function LendingHeader() {
                     letterSpacing: 2,
                   }}
                 >
-                  Lending
+                  Borrow
                 </Box>
               ),
               onClick: () => {
                 Router.push({
-                  pathname: "/lend",
-                  options: { locale: "lend" },
+                  pathname: "/borrow",
+                  options: { locale: "borrow" },
                 });
               },
               icon: (
@@ -173,13 +173,13 @@ export default function LendingHeader() {
       </div>
       <div className="hidden md:flex flex-row md:items-center">
         <div className="flex flex-col m-2">
-          <Link href="/lend">
+          <Link href="/borrow">
             <Button
               primary
               size="medium"
-              color={option == "lend" ? SELECTED_COLOR : UNSELECTED_COLOR}
+              color={option == "borrow" ? SELECTED_COLOR : UNSELECTED_COLOR}
               onClick={() => {
-                setOption("lend");
+                setOption("borrow");
               }}
               label={
                 <div className="flex md:hidden xl:flex">
@@ -191,7 +191,7 @@ export default function LendingHeader() {
                       letterSpacing: 4,
                     }}
                   >
-                    Lending
+                    Borrow
                   </Box>
                 </div>
               }

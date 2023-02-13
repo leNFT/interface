@@ -1,5 +1,5 @@
 import Link from "next/link";
-import LendingHeader from "./LendingHeader";
+import BorrowHeader from "./BorrowHeader";
 import TradeHeader from "./TradeHeader";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { BannerStrip } from "@web3uikit/core";
@@ -20,7 +20,7 @@ export default function HeaderController() {
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
   console.log("router.locale", router);
-  if (router.pathname == "/lend" || router.pathname == "/trade") {
+  if (router.pathname == "/borrow" || router.pathname == "/trade") {
     mode = router.pathname;
   }
 
@@ -62,7 +62,7 @@ export default function HeaderController() {
       <div className="p-4 pb-0 md:pb-2 mb-2 border-b-2 flex flex-row justify-between items-center">
         <div className="flex flex-row-reverse md:flex-row items-center">
           <div className="flex flex-row-reverse md:flex-row 2xl:flex-col items-center">
-            {mode == "/lend" ? <LendingHeader /> : <TradeHeader />}
+            {mode == "/borrow" ? <BorrowHeader /> : <TradeHeader />}
           </div>
         </div>
         <div className="flex flex-col items-center px-8">

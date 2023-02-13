@@ -31,7 +31,7 @@ import {
 import wethGatewayContract from "../../contracts/WETHGateway.json";
 import { ethers } from "ethers";
 
-export default function Borrow(props) {
+export default function CreateLoan(props) {
   const PRICE_PRECISION = "1000000000000000000";
   const [genesisNFTId, setGenesisNFTId] = useState(0);
   const [genesisBoost, setGenesisBoost] = useState(false);

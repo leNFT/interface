@@ -269,7 +269,7 @@ export default function Lock() {
                 fontSize: "subtitle2.fontSize",
                 fontWeight: "bold",
               }}
-              className="mb-2 border-2 border-stone-600 rounded-2xl p-2 px-4 w-fit"
+              className="my-2 border-2 border-stone-600 rounded-2xl p-2 px-4 w-fit"
             >
               {Number(formatUnits(tokenPrice, 18)).toFixed(5) + " LE / ETH"}
             </Box>
@@ -471,30 +471,51 @@ export default function Lock() {
           </div>
         </div>
         <div className="flex flex-col md:flex-row items-center justify-center border-4 m-4 md:m-8 rounded-3xl bg-black/5 shadow-lg">
-          <div className="flex flex-col md:flex-row items-center mb:m-4 justify-center">
-            <div className="flex flex-row m-4">
-              <div className="flex flex-col m-4">
-                <div className="flex flex-row">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "h6.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Used Votes
-                  </Box>
-                </div>
-                <div className="flex flex-row">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle1.fontSize",
-                    }}
-                  >
-                    {totalVoteRatio / 100 + " %"}
-                  </Box>
-                </div>
+          <div className="flex flex-col m-4">
+            <div className="flex flex-col m-4">
+              <div className="flex flex-row">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  All Used Votes
+                </Box>
+              </div>
+              <div className="flex flex-row">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                  }}
+                >
+                  {totalVoteRatio / 100 + " %"}
+                </Box>
+              </div>
+            </div>
+            <div className="flex flex-col m-4">
+              <div className="flex flex-row">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Gauge Votes
+                </Box>
+              </div>
+              <div className="flex flex-row">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                  }}
+                >
+                  {(selectedGauge ? gaugeVoteRatio / 100 : "─") + " %"}
+                </Box>
               </div>
             </div>
           </div>
@@ -540,33 +561,6 @@ export default function Lock() {
                       setVisibleVoteModal(true);
                     }}
                   />
-                </div>
-              </div>
-              <div className="flex flex-col justify-center">
-                <div className="flex flex-row m-2">
-                  <div className="flex flex-col">
-                    <div className="flex flex-row">
-                      <Box
-                        sx={{
-                          fontFamily: "Monospace",
-                          fontSize: "subtitle1.fontSize",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        My Gauge Votes
-                      </Box>
-                    </div>
-                    <div className="flex flex-row">
-                      <Box
-                        sx={{
-                          fontFamily: "Monospace",
-                          fontSize: "subtitle1.fontSize",
-                        }}
-                      >
-                        {gaugeVoteRatio / 100 + " %"}
-                      </Box>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>

@@ -4,7 +4,6 @@ import { HelpCircle } from "@web3uikit/icons";
 import { getTradingPoolHistory } from "../../../helpers/getTradingPoolHistory.js";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Table } from "@nextui-org/react";
-
 import StyledModal from "../../../components/StyledModal";
 import { formatUnits } from "@ethersproject/units";
 import { getAddressNFTs } from "../../../helpers/getAddressNFTs.js";

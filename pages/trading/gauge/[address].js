@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { Button, Tooltip, Loading, Typography } from "@web3uikit/core";
+import { Button, Tooltip, Loading, useNotification } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
 import { BigNumber } from "@ethersproject/bignumber";
 import StyledModal from "../../../components/StyledModal";
 import { formatUnits, parseUnits } from "@ethersproject/units";
-import { getAddressNFTs } from "../../../helpers/getAddressNFTs.js";
+import { getGaugeHistory } from "../../../helpers/getGaugeHistory.js";
 import contractAddresses from "../../../contractAddresses.json";
 import votingEscrowContract from "../../../contracts/VotingEscrow.json";
 import gaugeControllerContract from "../../../contracts/GaugeController.json";
@@ -16,6 +16,7 @@ import { ethers } from "ethers";
 import Card from "@mui/material/Card";
 import { CardActionArea } from "@mui/material";
 import CardContent from "@mui/material/CardContent";
+import { Table } from "@nextui-org/react";
 import {
   useAccount,
   useNetwork,
@@ -49,6 +50,8 @@ export default function TradingPoolGauge() {
   const [totalLockedValue, setTotalLockedValue] = useState("0");
   const [userLockedValue, setUserLockedValue] = useState("0");
   const [lastEpochRewards, setLastEpochRewards] = useState("0");
+  const [history, setHistory] = useState([]);
+  const dispatch = useNotification();
 
   const addresses =
     isConnected && chain.id in contractAddresses
@@ -149,10 +152,19 @@ export default function TradingPoolGauge() {
         BigNumber.from(previousGaugeRewards)
           .mul(nativeTokenPrice)
           .mul(100)
+          .mul(52)
+          .div(ethers.constants.WeiPerEther)
           .div(updatedTotalLockedValue)
           .toNumber()
       );
     }
+
+    // Get the history
+    const historyResponse = await getGaugeHistory(
+      chain.id,
+      router.query.address
+    );
+    setHistory(historyResponse);
   }
 
   // Set the rest of the UI when we receive the reserve address
@@ -253,85 +265,97 @@ export default function TradingPoolGauge() {
         </div>
       </div>
       <div className="flex flex-col items-center">
-        <div className="flex flex-col py-4 px-8 m-8 mb-2 items-center justify-center text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
-          <div className="flex flex-row items-center justify-center">
-            <div className="flex flex-col items-start m-2 mx-4">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "subtitle1.fontSize",
-                }}
-              >
-                Epoch
-              </Box>
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "h4.fontSize",
-                }}
-              >
-                {epoch}
-              </Box>
-            </div>
-            <div className="flex flex-col items-end m-2 border-l-2 border-stone-600 p-6">
-              <div className="flex flex-col items-end text-right mb-2">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle2.fontSize",
-                    fontWeight: "bold",
-                  }}
-                >
-                  APR
-                </Box>
+        <div className="flex flex-col md:flex-row justify-center m-8 mb-2">
+          <div className="flex flex-col py-4 px-8 items-center m-2 justify-center text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
+            <div className="flex flex-row items-center justify-center">
+              <div className="flex flex-col items-start m-2 mx-4">
                 <Box
                   sx={{
                     fontFamily: "Monospace",
                     fontSize: "subtitle1.fontSize",
                   }}
                 >
-                  {apr + " %"}
+                  Epoch
+                </Box>
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "h4.fontSize",
+                  }}
+                >
+                  {epoch}
                 </Box>
               </div>
-              <div className="flex flex-col items-end text-right my-2">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle2.fontSize",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {"Epoch " + (epoch == 0 ? 0 : epoch - 1) + " Rewards"}
-                </Box>
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                  }}
-                >
-                  {formatUnits(lastEpochRewards, 18) + " LE"}
-                </Box>
-              </div>
-              <div className="flex flex-col items-end text-right mt-2">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle2.fontSize",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Total Locked
-                </Box>
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                  }}
-                >
-                  {formatUnits(totalLockedValue, 18) + " ETH"}
-                </Box>
+              <div className="flex flex-col items-end m-2 border-l-2 border-stone-600 p-6">
+                <div className="flex flex-col items-end text-right mb-2">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    APR
+                  </Box>
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle1.fontSize",
+                    }}
+                  >
+                    {apr + " %"}
+                  </Box>
+                </div>
+                <div className="flex flex-col items-end text-right mt-2">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    TVL
+                  </Box>
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle1.fontSize",
+                    }}
+                  >
+                    {formatUnits(totalLockedValue, 18) + " ETH"}
+                  </Box>
+                </div>
               </div>
             </div>
+          </div>
+          <div className="flex flex-col m-2 rounded-3xl bg-black/5 shadow-lg">
+            <Table
+              shadow={false}
+              bordered={false}
+              aria-label="Gauge History"
+              css={{
+                height: "auto",
+                width: "25vw",
+                fontFamily: "Monospace",
+              }}
+            >
+              <Table.Header>
+                <Table.Column>Epoch</Table.Column>
+                <Table.Column>Vote Stake</Table.Column>
+                <Table.Column>Rewards</Table.Column>
+              </Table.Header>
+              <Table.Body>
+                {history.map((data, i) => (
+                  <Table.Row key={i}>
+                    <Table.Cell>{data.epoch}</Table.Cell>
+                    <Table.Cell>{data.gaugeStake / 100 + " %"}</Table.Cell>
+                    <Table.Cell>
+                      {formatUnits(data.rewards, 18) + " ETH"}
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table>
           </div>
         </div>
         <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">
@@ -451,7 +475,8 @@ export default function TradingPoolGauge() {
                         fontWeight: "bold",
                       }}
                     >
-                      {formatUnits(claimableRewards, 18) + " LE"}
+                      {Number(formatUnits(claimableRewards, 18)).toFixed(2) +
+                        " LE"}
                     </Box>
                   </div>
                 </div>
@@ -517,7 +542,7 @@ export default function TradingPoolGauge() {
                     <div>{"No LP Positions staked in this gauge."}</div>
                   </Box>
                 ) : (
-                  <div className="flex grid auto-cols-auto gap-2">
+                  <div className="grid auto-cols-auto gap-2">
                     {stakedLPs.map((data) => (
                       <div
                         key={data}

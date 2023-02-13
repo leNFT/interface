@@ -10,6 +10,7 @@ import styles from "../../styles/Home.module.css";
 import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
 import tradingGaugeContract from "../../contracts/TradingGauge.json";
+import { ethers } from "ethers";
 
 export default function UnstakeTradingGauge(props) {
   const [unstakeLoading, setUnstakeLoading] = useState(false);

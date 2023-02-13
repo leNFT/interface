@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { Button, Tooltip, Loading, Typography, LinkTo } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
+import { getTradingPoolHistory } from "../../../helpers/getTradingPoolHistory.js";
 import { BigNumber } from "@ethersproject/bignumber";
+import { Table } from "@nextui-org/react";
+
 import StyledModal from "../../../components/StyledModal";
 import { formatUnits } from "@ethersproject/units";
 import { getAddressNFTs } from "../../../helpers/getAddressNFTs.js";
@@ -21,6 +24,7 @@ import Router from "next/router";
 import { useRouter } from "next/router";
 import { ChevronLeft } from "@web3uikit/icons";
 import { ExternalLink } from "@web3uikit/icons";
+import * as timeago from "timeago.js";
 
 export default function TradingPool() {
   const { address, isConnected } = useAccount();
@@ -32,6 +36,7 @@ export default function TradingPool() {
   const [totalTokenAmount, setTotalTokenAmount] = useState("0");
   const [lpPositions, setLpPositions] = useState([]);
   const [selectedLP, setSelectedLP] = useState();
+  const [poolHistory, setPoolHistory] = useState([]);
   const [visibleDepositModal, setVisibleDepositModal] = useState(false);
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
   const [loadingTradingPool, setLoadingTradingPool] = useState(true);
@@ -100,6 +105,14 @@ export default function TradingPool() {
 
       setLpPositions(newLpPositions);
     }
+
+    // Get pool history
+    const updatePoolHistory = await getTradingPoolHistory(
+      chain.id,
+      router.query.address
+    );
+    console.log("updatePoolHistory", updatePoolHistory);
+    setPoolHistory(updatePoolHistory);
 
     setLoadingTradingPool(false);
   }
@@ -382,6 +395,117 @@ export default function TradingPool() {
             )}
           </div>
         </div>
+      </div>
+      <div className="flex flex-col items-center justify-center py-4 rounded-3xl m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">
+        <Table
+          shadow={false}
+          bordered={false}
+          className="hidden md:table"
+          color="secondary"
+          aria-label="Trading Pool Activity"
+          css={{
+            height: "auto",
+            width: "75vw",
+            fontFamily: "Monospace",
+          }}
+        >
+          <Table.Header>
+            <Table.Column>Type</Table.Column>
+            <Table.Column>Date</Table.Column>
+            <Table.Column>Address</Table.Column>
+            <Table.Column>NFTs</Table.Column>
+            <Table.Column>Price</Table.Column>
+            <Table.Column>Transaction</Table.Column>
+          </Table.Header>
+          <Table.Body>
+            {poolHistory.map((data, i) => (
+              <Table.Row key={i}>
+                <Table.Cell>
+                  {data.type.charAt(0).toUpperCase() + data.type.slice(1)}
+                </Table.Cell>
+                <Table.Cell>{timeago.format(data.timestamp * 1000)}</Table.Cell>
+                <Table.Cell>
+                  {data.address.slice(0, 6) + ".." + data.address.slice(-4)}
+                </Table.Cell>
+                <Table.Cell>{data.nftIds}</Table.Cell>
+                <Table.Cell>{formatUnits(data.price, 18) + " ETH"}</Table.Cell>
+                <Table.Cell>
+                  <LinkTo
+                    type="external"
+                    iconLayout="none"
+                    text={
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: {
+                            xs: "caption.fontSize",
+                            sm: "subtitle2.fontSize",
+                          },
+                        }}
+                      >
+                        {data.transaction.slice(0, 4) +
+                          ".." +
+                          data.transaction.slice(-3)}
+                      </Box>
+                    }
+                    address={
+                      isConnected
+                        ? chain.id == 1
+                          ? "https://etherscan.io/tx/" + data.transaction
+                          : "https://goerli.etherscan.io/tx/" + data.transaction
+                        : "https://goerli.etherscan.io/tx/" + data.transaction
+                    }
+                  ></LinkTo>
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+          <Table.Pagination
+            noMargin
+            align="center"
+            rowsPerPage={7}
+            onPageChange={(page) => console.log({ page })}
+          />
+        </Table>
+        <Table
+          shadow={false}
+          bordered={false}
+          className="md:hidden"
+          color="secondary"
+          aria-label="Trading Pool Activity"
+          css={{
+            height: "auto",
+            width: "75vw",
+            fontFamily: "Monospace",
+          }}
+        >
+          <Table.Header>
+            <Table.Column>Type</Table.Column>
+            <Table.Column>Date</Table.Column>
+
+            <Table.Column>NFTs</Table.Column>
+            <Table.Column>Price</Table.Column>
+          </Table.Header>
+          <Table.Body>
+            {poolHistory.map((data, i) => (
+              <Table.Row key={i}>
+                <Table.Cell>
+                  {data.type.charAt(0).toUpperCase() + data.type.slice(1)}
+                </Table.Cell>
+                <Table.Cell>{timeago.format(data.timestamp * 1000)}</Table.Cell>
+
+                <Table.Cell>{data.nftIds}</Table.Cell>
+                <Table.Cell>{formatUnits(data.price, 18) + " ETH"}</Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+          <Table.Pagination
+            noMargin
+            align="center"
+            rowsPerPage={7}
+            onPageChange={(page) => console.log({ page })}
+          />
+        </Table>
       </div>
     </div>
   );

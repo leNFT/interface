@@ -257,7 +257,7 @@ export default function TradingPool() {
           {tokenName}
         </Box>
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">
+      <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:mx-16 !mt-8 bg-black/5 shadow-lg">
         <div className="flex flex-col items-center p-4 rounded-3xl m-8 lg:m-16 bg-black/5 shadow-lg">
           <div className="flex flex-col m-4 rounded-2xl">
             <div className="flex flex-row m-2">
@@ -396,39 +396,29 @@ export default function TradingPool() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col items-center justify-center py-4 rounded-3xl m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">
+      <div className="flex flex-col items-center justify-center py-4 rounded-3xl my-8 md:m-8 lg:mx-16 !mt-8 bg-black/5 shadow-lg">
         <Table
           shadow={false}
           bordered={false}
           className="hidden md:table"
-          color="secondary"
           aria-label="Trading Pool Activity"
           css={{
             height: "auto",
-            width: "75vw",
+            width: "80vw",
             fontFamily: "Monospace",
           }}
         >
           <Table.Header>
+            <Table.Column>Transaction</Table.Column>
             <Table.Column>Type</Table.Column>
             <Table.Column>Date</Table.Column>
             <Table.Column>Address</Table.Column>
             <Table.Column>NFTs</Table.Column>
             <Table.Column>Price</Table.Column>
-            <Table.Column>Transaction</Table.Column>
           </Table.Header>
           <Table.Body>
             {poolHistory.map((data, i) => (
               <Table.Row key={i}>
-                <Table.Cell>
-                  {data.type.charAt(0).toUpperCase() + data.type.slice(1)}
-                </Table.Cell>
-                <Table.Cell>{timeago.format(data.timestamp * 1000)}</Table.Cell>
-                <Table.Cell>
-                  {data.address.slice(0, 6) + ".." + data.address.slice(-4)}
-                </Table.Cell>
-                <Table.Cell>{data.nftIds}</Table.Cell>
-                <Table.Cell>{formatUnits(data.price, 18) + " ETH"}</Table.Cell>
                 <Table.Cell>
                   <LinkTo
                     type="external"
@@ -457,11 +447,21 @@ export default function TradingPool() {
                     }
                   ></LinkTo>
                 </Table.Cell>
+                <Table.Cell>
+                  {data.type.charAt(0).toUpperCase() + data.type.slice(1)}
+                </Table.Cell>
+                <Table.Cell>{timeago.format(data.timestamp * 1000)}</Table.Cell>
+                <Table.Cell>
+                  {data.address.slice(0, 6) + ".." + data.address.slice(-4)}
+                </Table.Cell>
+                <Table.Cell>{data.nftIds}</Table.Cell>
+                <Table.Cell>{formatUnits(data.price, 18) + " ETH"}</Table.Cell>
               </Table.Row>
             ))}
           </Table.Body>
           <Table.Pagination
             noMargin
+            color={"secondary"}
             align="center"
             rowsPerPage={7}
             onPageChange={(page) => console.log({ page })}
@@ -471,7 +471,6 @@ export default function TradingPool() {
           shadow={false}
           bordered={false}
           className="md:hidden"
-          color="secondary"
           aria-label="Trading Pool Activity"
           css={{
             height: "auto",
@@ -482,8 +481,6 @@ export default function TradingPool() {
           <Table.Header>
             <Table.Column>Type</Table.Column>
             <Table.Column>Date</Table.Column>
-
-            <Table.Column>NFTs</Table.Column>
             <Table.Column>Price</Table.Column>
           </Table.Header>
           <Table.Body>
@@ -493,14 +490,13 @@ export default function TradingPool() {
                   {data.type.charAt(0).toUpperCase() + data.type.slice(1)}
                 </Table.Cell>
                 <Table.Cell>{timeago.format(data.timestamp * 1000)}</Table.Cell>
-
-                <Table.Cell>{data.nftIds}</Table.Cell>
                 <Table.Cell>{formatUnits(data.price, 18) + " ETH"}</Table.Cell>
               </Table.Row>
             ))}
           </Table.Body>
           <Table.Pagination
             noMargin
+            color={"secondary"}
             align="center"
             rowsPerPage={7}
             onPageChange={(page) => console.log({ page })}

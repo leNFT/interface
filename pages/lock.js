@@ -519,7 +519,7 @@ export default function Lock() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col justify-center items-center m-8 p-4 rounded-3xl bg-black/5 shadow-lg">
+          <div className="flex flex-col justify-center items-center m-8 p-6 rounded-3xl bg-black/5 shadow-lg">
             <div className="flex flex-col items-center m-4 mb-8">
               <Input
                 bordered
@@ -543,26 +543,22 @@ export default function Lock() {
                 </Box>
               </div>
             </div>
-            <div className="flex flex-col-reverse md:flex-row">
-              <div className="flex flex-col justify-center m-4">
-                <div className="flex flex-row justify-center items-center m-2">
-                  <Button
-                    customize={{
-                      backgroundColor: "grey",
-                      fontSize: 16,
-                      textColor: "white",
-                    }}
-                    text="Vote"
-                    disabled={!selectedGauge}
-                    theme="custom"
-                    size="large"
-                    radius="12"
-                    onClick={async function () {
-                      setVisibleVoteModal(true);
-                    }}
-                  />
-                </div>
-              </div>
+            <div className="flex flex-row justify-center items-center m-2">
+              <Button
+                customize={{
+                  backgroundColor: "grey",
+                  fontSize: 16,
+                  textColor: "white",
+                }}
+                text="Vote"
+                disabled={!selectedGauge}
+                theme="custom"
+                size="large"
+                radius="12"
+                onClick={async function () {
+                  setVisibleVoteModal(true);
+                }}
+              />
             </div>
           </div>
         </div>

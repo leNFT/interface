@@ -48,6 +48,7 @@ export default function TradingPoolGauge() {
   const [apr, setAPR] = useState("0");
   const [totalLockedValue, setTotalLockedValue] = useState("0");
   const [userLockedValue, setUserLockedValue] = useState("0");
+  const [lastEpochRewards, setLastEpochRewards] = useState("0");
 
   const addresses =
     isConnected && chain.id in contractAddresses
@@ -85,6 +86,7 @@ export default function TradingPoolGauge() {
     setLPToken(lpTokenResponse.toString());
 
     const boostResponse = await gauge.userBoost(address);
+    console.log("boostResponse", boostResponse.toNumber());
     setBoost(boostResponse.toNumber());
 
     const newUserLockedValue = await gauge.userLPValue(address);
@@ -136,7 +138,7 @@ export default function TradingPoolGauge() {
         router.query.address,
         updatedEpoch.toNumber() == 0 ? 0 : updatedEpoch.toNumber() - 1
       );
-
+    setLastEpochRewards(previousGaugeRewards.toString());
     if (
       nativeTokenPrice.toString() == "0" ||
       updatedTotalLockedValue.toString() == "0"
@@ -272,7 +274,7 @@ export default function TradingPoolGauge() {
               </Box>
             </div>
             <div className="flex flex-col items-end m-2 border-l-2 border-stone-600 p-6">
-              <div className="flex flex-col items-end text-right mb-4">
+              <div className="flex flex-col items-end text-right mb-2">
                 <Box
                   sx={{
                     fontFamily: "Monospace",
@@ -291,7 +293,26 @@ export default function TradingPoolGauge() {
                   {apr + " %"}
                 </Box>
               </div>
-              <div className="flex flex-col items-end text-right mt-4">
+              <div className="flex flex-col items-end text-right my-2">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle2.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {"Epoch " + (epoch == 0 ? 0 : epoch - 1) + " Rewards"}
+                </Box>
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                  }}
+                >
+                  {formatUnits(lastEpochRewards, 18) + " LE"}
+                </Box>
+              </div>
+              <div className="flex flex-col items-end text-right mt-2">
                 <Box
                   sx={{
                     fontFamily: "Monospace",

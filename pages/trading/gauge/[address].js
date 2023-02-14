@@ -341,7 +341,7 @@ export default function TradingPoolGauge() {
             >
               <Table.Header>
                 <Table.Column>Epoch</Table.Column>
-                <Table.Column>Vote Stake</Table.Column>
+                <Table.Column>Gauge Vote %</Table.Column>
                 <Table.Column>Rewards</Table.Column>
               </Table.Header>
               <Table.Body>

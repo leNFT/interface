@@ -9,6 +9,15 @@ export async function getTradingPoolHistory(chainId, pool) {
     },
   };
 
+  console.log(
+    serverAddress +
+      "/api/tradingPoolHistory" +
+      "?chainId=" +
+      chainId +
+      "&pool=" +
+      pool
+  );
+
   const tradingPoolHistoryResponse = await fetch(
     serverAddress +
       "/api/tradingPoolHistory" +

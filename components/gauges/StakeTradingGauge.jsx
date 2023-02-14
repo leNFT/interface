@@ -33,6 +33,7 @@ export default function StakeTradingGauge(props) {
   const { chain } = useNetwork();
   const provider = useProvider();
   const { data: signer } = useSigner();
+  const [lpsValue, setLpsValue] = useState([]);
   const addresses =
     isConnected && chain.id in contractAddresses
       ? contractAddresses[chain.id]
@@ -45,6 +46,19 @@ export default function StakeTradingGauge(props) {
     const addressNFTs = await getAddressNFTs(address, props.lpToken, chain.id);
     setUserLPs(addressNFTs);
     console.log("addressNFTs", addressNFTs);
+
+    // Get lp values
+    var newLpsValue = [];
+    for (let i = 0; i < addressNFTs.length; i++) {
+      const gauge = new ethers.Contract(
+        props.gauge,
+        tradingGaugeContract.abi,
+        provider
+      );
+      const lpValue = await gauge.calculateLpValue(addressNFTs[i].id.tokenId);
+      newLpsValue.push(lpValue);
+    }
+    setLpsValue(newLpsValue);
   }
 
   async function getLPAllowance() {
@@ -156,7 +170,7 @@ export default function StakeTradingGauge(props) {
       </div>
       {selectingLP && userLPs.length > 0 && (
         <div className="flex flex-row grid md:grid-cols-3 lg:grid-cols-4">
-          {userLPs.map((lp, _) => (
+          {userLPs.map((lp, index) => (
             <div
               key={BigNumber.from(lp.id.tokenId).toNumber()}
               className="flex m-4 items-center justify-center max-w-[300px]"
@@ -189,6 +203,7 @@ export default function StakeTradingGauge(props) {
                       }}
                     >
                       {BigNumber.from(lp.id.tokenId).toNumber()}
+                      {formatUnits(lpsValue[index], 18) + " ETH"}
                     </Box>
                   </CardContent>
                 </CardActionArea>

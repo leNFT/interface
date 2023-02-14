@@ -560,7 +560,7 @@ export default function Lock() {
               </div>
             </div>
             <div className="flex flex-col justify-center items-center m-8 p-6 rounded-3xl bg-black/5 shadow-lg">
-              <div className="flex flex-col items-center m-4 mb-8">
+              <div className="flex flex-col items-center m-4">
                 <Input
                   bordered
                   aria-label="Gauge Address"
@@ -579,27 +579,29 @@ export default function Lock() {
                       ? selectedGauge == ""
                         ? "Gauge not found"
                         : "Gauge found"
-                      : "Select a gauge"}
+                      : "Enter a gauge address"}
                   </Box>
                 </div>
               </div>
-              <div className="flex flex-row justify-center items-center m-2">
-                <Button
-                  customize={{
-                    backgroundColor: "grey",
-                    fontSize: 16,
-                    textColor: "white",
-                  }}
-                  text="Vote"
-                  disabled={!selectedGauge}
-                  theme="custom"
-                  size="large"
-                  radius="12"
-                  onClick={async function () {
-                    setVisibleVoteModal(true);
-                  }}
-                />
-              </div>
+              {selectedGauge && (
+                <div className="flex flex-row justify-center items-center m-2">
+                  <Button
+                    customize={{
+                      backgroundColor: "grey",
+                      fontSize: 16,
+                      textColor: "white",
+                    }}
+                    text="Vote"
+                    disabled={!selectedGauge}
+                    theme="custom"
+                    size="large"
+                    radius="12"
+                    onClick={async function () {
+                      setVisibleVoteModal(true);
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>

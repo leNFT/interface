@@ -478,7 +478,7 @@ export default function Swap() {
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center text-center w-full py-8 md:w-fit justify-center m-4 rounded-3xl bg-black/5 shadow-lg">
       {sellPoolAddress == buyPoolAddress && sellPoolAddress != "" && (
         <div className="flex flex-row w-full p-4 justify-center">
           <Box

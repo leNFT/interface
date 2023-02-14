@@ -747,7 +747,7 @@ export default function Sell() {
               noMargin
               color={"secondary"}
               align="center"
-              rowsPerPage={7}
+              rowsPerPage={5}
               onPageChange={(page) => console.log({ page })}
             />
           </Table>

@@ -341,6 +341,7 @@ export default function Swap() {
   };
 
   const handleSwapSuccess = async function () {
+    setPriceQuote();
     dispatch({
       type: "success",
       message: "You just swapped your NFTs.",

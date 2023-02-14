@@ -207,6 +207,7 @@ export default function Buy() {
   }, [selectedNFTs]);
 
   const handleBuySuccess = async function () {
+    setPriceQuote();
     dispatch({
       type: "success",
       message: "You just bought.",
@@ -635,7 +636,6 @@ export default function Buy() {
             } catch (error) {
               console.log(error);
             } finally {
-              getPriceQuote(amount);
               setBuyLoading(false);
             }
           }}

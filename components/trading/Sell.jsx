@@ -200,6 +200,7 @@ export default function Sell() {
   };
 
   const handleSellSuccess = async function () {
+    setPriceQuote();
     dispatch({
       type: "success",
       message: "Your just sold.",
@@ -672,7 +673,6 @@ export default function Sell() {
               } catch (error) {
                 console.log(error);
               } finally {
-                getPriceQuote(amount);
                 setSellLoading(false);
               }
             }}

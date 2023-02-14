@@ -160,8 +160,7 @@ export default function Home() {
               </Link>
             </div>
             <div className={styles.indexDescribeSubtitle}>
-              <li>Buy / Sell your NFTs for ETH</li>
-              <li>Swap your NFTs for other NFTs</li>
+              <li>Trade your NFTs</li>
               <li>Borrow ETH using your NFTs as collateral</li>
               <li>Earn interest on your ETH</li>
               <li>Bring liquidity into your NFT&apos;s ecosystem</li>

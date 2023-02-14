@@ -124,11 +124,16 @@ export default function TradingPoolGauge() {
     console.log("updatedEpoch", updatedEpoch.toNumber());
     setEpoch(updatedEpoch.toNumber());
 
-    const nativeTokenPrice = await curvePoolProvider.callStatic.get_dy(
-      1,
-      0,
-      parseUnits("1", 18).toString()
-    );
+    var nativeTokenPrice = "0";
+    try {
+      await curvePoolProvider.callStatic.get_dy(
+        1,
+        0,
+        parseUnits("1", 18).toString()
+      );
+    } catch (e) {
+      console.log(e);
+    }
 
     // Get the total locked amount
     const updatedTotalLockedValue = await gauge.totalLPValue();

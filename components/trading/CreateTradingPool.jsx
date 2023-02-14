@@ -102,7 +102,7 @@ export default function CreateTradingPool(props) {
   return (
     <div className="flex flex-col">
       <div className="flex flex-col p-8 justify-center m-2 border-2 rounded-2xl max-w-lg self-center">
-        <Typography variant="subtitle2">ETH TVL Safeguard</Typography>
+        <Typography variant="subtitle2">TVL Safeguard</Typography>
         <Typography variant="caption16">
           {formatUnits(tvlSafeguard, 18) + " ETH"}
         </Typography>

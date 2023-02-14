@@ -196,15 +196,24 @@ export default function StakeTradingGauge(props) {
                   }}
                 >
                   <CardContent>
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "caption",
-                      }}
-                    >
-                      {BigNumber.from(lp.id.tokenId).toNumber()}
-                      {formatUnits(lpsValue[index], 18) + " ETH"}
-                    </Box>
+                    <div className="flex flex-col items-center text-center space-y-2 justify-center">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "caption",
+                        }}
+                      >
+                        {"LP #" + BigNumber.from(lp.id.tokenId).toNumber()}
+                      </Box>
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "caption",
+                        }}
+                      >
+                        {"Value: " + formatUnits(lpsValue[index], 18) + " ETH"}
+                      </Box>
+                    </div>
                   </CardContent>
                 </CardActionArea>
               </Card>

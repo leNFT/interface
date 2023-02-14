@@ -67,7 +67,17 @@ export default function TradingPools() {
           className="m-2"
           key={"token" + key}
         >
-          {Number(formatUnits(value.token.amount, 18)).toFixed(2) + " ETH"}
+          {Number(formatUnits(value.token.amount, 18)).toPrecision(2) + " ETH"}
+        </Box>,
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
+          }}
+          className="m-2"
+          key={"volume" + key}
+        >
+          {Number(formatUnits(value.volume, 18)).toPrecision(2) + " ETH"}
         </Box>,
         <div className="m-1" key={"gauge" + key}>
           <Button
@@ -167,7 +177,7 @@ export default function TradingPools() {
           />
         </div>
         <Table
-          columnsConfig="1fr 2fr 2fr 1fr 0fr"
+          columnsConfig="1fr 2fr 2fr 2fr 1fr 0fr"
           alignCellItems="center"
           tableBackgroundColor="white"
           customLoadingContent={
@@ -232,6 +242,20 @@ export default function TradingPools() {
                   <HelpCircle fontSize="14px" color="#000000" />
                 </Tooltip>
               </div>
+            </div>,
+            <div className="flex flex-row m-2" key="volume">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: {
+                    xs: "caption.fontSize",
+                    sm: "subtitle1.fontSize",
+                  },
+                }}
+                key="4"
+              >
+                Volume (24h)
+              </Box>
             </div>,
             <div className="flex flex-row m-2" key="rates">
               <Box

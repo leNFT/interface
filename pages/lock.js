@@ -366,7 +366,7 @@ export default function Lock() {
                     <Table.Cell>{data.epoch}</Table.Cell>
                     <Table.Cell>{data.supply_locked / 100 + " %"}</Table.Cell>
                     <Table.Cell>
-                      {Number(formatUnits(data.rewards, 18)).toFixed(3) +
+                      {Number(formatUnits(data.rewards, 18)).toPrecision(3) +
                         " ETH"}
                     </Table.Cell>
                   </Table.Row>

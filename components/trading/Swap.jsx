@@ -1304,16 +1304,20 @@ export default function Swap() {
             }}
             label={
               <div className="flex justify-center">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle2.fontSize",
-                    fontWeight: "bold",
-                    letterSpacing: 2,
-                  }}
-                >
-                  {"SWAP"}
-                </Box>
+                {swapLoading ? (
+                  <Spinner color={"black"} size="small" />
+                ) : (
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                      letterSpacing: 2,
+                    }}
+                  >
+                    {"SWAP"}
+                  </Box>
+                )}
               </div>
             }
           />

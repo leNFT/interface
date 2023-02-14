@@ -678,16 +678,20 @@ export default function Sell() {
             }}
             label={
               <div className="flex justify-center">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle2.fontSize",
-                    fontWeight: "bold",
-                    letterSpacing: 2,
-                  }}
-                >
-                  {"SELL " + amount + " " + (nftName ? nftName : "NFTs")}
-                </Box>
+                {sellLoading ? (
+                  <Spinner color={"black"} size="small" />
+                ) : (
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                      letterSpacing: 2,
+                    }}
+                  >
+                    {"SELL " + amount + " " + (nftName ? nftName : "NFTs")}
+                  </Box>
+                )}
               </div>
             }
           />

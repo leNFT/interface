@@ -27,7 +27,7 @@ import { formatUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
 import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
-import { Button } from "grommet";
+import { Button, Spinner } from "grommet";
 import { Divider } from "@mui/material";
 import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json";
 import wethGateway from "../../contracts/WETHGateway.json";
@@ -48,7 +48,6 @@ export default function Buy() {
   const [priceQuote, setPriceQuote] = useState();
   const [loadingPriceQuote, setLoadingPriceQuote] = useState(false);
   const [buyLoading, setBuyLoading] = useState(false);
-  const [approvalLoading, setApprovalLoading] = useState(false);
   const [nftName, setNFTName] = useState("");
   const [collectionThumbnailURL, setCollectionThumbnailURL] = useState("");
 
@@ -641,16 +640,20 @@ export default function Buy() {
           }}
           label={
             <div className="flex justify-center">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "subtitle2.fontSize",
-                  fontWeight: "bold",
-                  letterSpacing: 2,
-                }}
-              >
-                {"BUY " + amount + " " + (nftName ? nftName : "NFTs")}
-              </Box>
+              {buyLoading ? (
+                <Spinner color={"black"} size="small" />
+              ) : (
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle2.fontSize",
+                    fontWeight: "bold",
+                    letterSpacing: 2,
+                  }}
+                >
+                  {"BUY " + amount + " " + (nftName ? nftName : "NFTs")}
+                </Box>
+              )}
             </div>
           }
         />

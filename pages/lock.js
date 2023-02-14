@@ -350,6 +350,7 @@ export default function Lock() {
               aria-label="Gauge History"
               css={{
                 height: "auto",
+                zIndex: 0,
                 minWidth: "35vw",
                 fontFamily: "Monospace",
               }}

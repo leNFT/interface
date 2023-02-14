@@ -20,6 +20,9 @@ export default function GenesisBurn(props) {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const [burningLoading, setBurningLoading] = useState(false);
+  const [mintingLoading, setMintingLoading] = useState(false);
+  const [rewards, setRewards] = useState("0");
+  const [minted, setMinted] = useState(false);
   const [unlockTimestamp, setUnlockTimestamp] = useState("1707447529");
 
   const addresses =
@@ -40,17 +43,29 @@ export default function GenesisBurn(props) {
     signerOrProvider: signer,
   });
 
-  async function updateBurnInfo() {
+  async function updateGenesisNFTInfo() {
     const updatedUnlockTimestamp = (
       await genesisNFTProvider.getUnlockTimestamp(props.tokenId)
     ).toNumber();
     console.log("updatedUnlockTimestamp", updatedUnlockTimestamp);
     setUnlockTimestamp(updatedUnlockTimestamp);
+
+    const updatedRewards = (
+      await genesisNFTProvider.getRewards(props.tokenId)
+    ).toString();
+    console.log("updatedRewards", updatedRewards);
+    setRewards(updatedRewards);
+
+    const updatedMintedRewards = await genesisNFTProvider.mintedRewards(
+      props.tokenId
+    );
+    console.log("updatedMintedRewards", updatedMintedRewards);
+    setMinted(updatedMintedRewards);
   }
 
   useEffect(() => {
     if (isConnected) {
-      updateBurnInfo();
+      updateGenesisNFTInfo();
     }
   }, [isConnected, props.tokenId]);
 
@@ -62,6 +77,16 @@ export default function GenesisBurn(props) {
       type: "success",
       message: "You have burned your Genesis NFT.",
       title: "Burn Successful!",
+      position: "bottomL",
+    });
+  };
+
+  const handleMintSuccess = async function () {
+    console.log("Mnted");
+    dispatch({
+      type: "success",
+      message: "You have minted your LE rewards.",
+      title: "Mint Successful!",
       position: "bottomL",
     });
   };
@@ -81,6 +106,34 @@ export default function GenesisBurn(props) {
             {new Date(unlockTimestamp * 1000).toDateString()}
           </Typography>
         </div>
+      </div>
+      <div className="flex flex-row items-center justify-center m-8">
+        <Button
+          text={"MINT REWARDS " + Math.floor(formatUnits(rewards, 18)) + " LE"}
+          disabled={Date.now() / 1000 < unlockTimestamp || minted}
+          theme="secondary"
+          isFullWidth
+          loadingProps={{
+            spinnerColor: "#000000",
+            spinnerType: "loader",
+            direction: "right",
+            size: "24",
+          }}
+          loadingText=""
+          isLoading={mintingLoading}
+          onClick={async function () {
+            try {
+              setMintingLoading(true);
+              const tx = await genesisNFTSigner.mintRewards([props.tokenId]);
+              await tx.wait(1);
+              await handleMintSuccess();
+            } catch (error) {
+              console.log(error);
+            } finally {
+              setMintingLoading(false);
+            }
+          }}
+        />
       </div>
       <div className="flex flex-row items-center justify-center m-8">
         <Button

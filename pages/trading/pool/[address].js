@@ -405,6 +405,7 @@ export default function TradingPool() {
             height: "auto",
             width: "80vw",
             fontFamily: "Monospace",
+            zIndex: 0,
           }}
         >
           <Table.Header>

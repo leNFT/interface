@@ -270,7 +270,7 @@ export default function Lock() {
         />
       </StyledModal>
       <div className="flex flex-col items-center">
-        <div className="flex flex-col lg:flex-row max-w-[100%] justify-center items-center">
+        <div className="flex flex-col md:flex-row max-w-[100%] justify-center items-center">
           <div className="flex flex-col py-4 px-8 m-8 mb-4 items-center justify-center text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
             <Box
               sx={{

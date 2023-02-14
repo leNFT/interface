@@ -165,6 +165,7 @@ export default function TradingPoolGauge() {
       router.query.address
     );
     setHistory(historyResponse);
+    console.log("historyResponse", historyResponse);
   }
 
   // Set the rest of the UI when we receive the reserve address
@@ -265,7 +266,7 @@ export default function TradingPoolGauge() {
         </div>
       </div>
       <div className="flex flex-col items-center">
-        <div className="flex flex-col md:flex-row justify-center m-8 mb-2">
+        <div className="flex flex-col md:flex-row justify-center items-center m-8 mb-2">
           <div className="flex flex-col py-4 px-8 items-center m-2 justify-center text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
             <div className="flex flex-row items-center justify-center">
               <div className="flex flex-col items-start m-2 mx-4">
@@ -328,29 +329,30 @@ export default function TradingPoolGauge() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col m-2 rounded-3xl bg-black/5 shadow-lg">
+          <div className="flex flex-col items-center m-2 rounded-3xl bg-black/5 shadow-lg">
             <Table
               shadow={false}
               bordered={false}
               aria-label="Gauge History"
               css={{
                 height: "auto",
-                width: "25vw",
+                minWidth: "40vw",
                 fontFamily: "Monospace",
               }}
             >
               <Table.Header>
-                <Table.Column>Epoch</Table.Column>
-                <Table.Column>Gauge Vote %</Table.Column>
-                <Table.Column>Rewards</Table.Column>
+                <Table.Column width={100}>Epoch</Table.Column>
+                <Table.Column width={120}>Gauge Inflation</Table.Column>
+                <Table.Column width={100}>Rewards</Table.Column>
               </Table.Header>
               <Table.Body>
                 {history.map((data, i) => (
                   <Table.Row key={i}>
                     <Table.Cell>{data.epoch}</Table.Cell>
-                    <Table.Cell>{data.gaugeStake / 100 + " %"}</Table.Cell>
+                    <Table.Cell>{data.stake / 100 + " %"}</Table.Cell>
                     <Table.Cell>
-                      {formatUnits(data.rewards, 18) + " ETH"}
+                      {Number(formatUnits(data.rewards, 18)).toFixed(3) +
+                        " ETH"}
                     </Table.Cell>
                   </Table.Row>
                 ))}

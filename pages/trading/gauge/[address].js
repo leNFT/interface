@@ -342,7 +342,7 @@ export default function TradingPoolGauge() {
             >
               <Table.Header>
                 <Table.Column width={100}>Epoch</Table.Column>
-                <Table.Column width={120}>Gauge Inflation</Table.Column>
+                <Table.Column width={120}>Gauge Stake</Table.Column>
                 <Table.Column width={100}>Rewards</Table.Column>
               </Table.Header>
               <Table.Body>
@@ -351,8 +351,7 @@ export default function TradingPoolGauge() {
                     <Table.Cell>{data.epoch}</Table.Cell>
                     <Table.Cell>{data.stake / 100 + " %"}</Table.Cell>
                     <Table.Cell>
-                      {Number(formatUnits(data.rewards, 18)).toFixed(3) +
-                        " ETH"}
+                      {Number(formatUnits(data.rewards, 18)).toFixed(3) + " LE"}
                     </Table.Cell>
                   </Table.Row>
                 ))}

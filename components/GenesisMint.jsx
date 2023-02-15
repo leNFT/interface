@@ -53,6 +53,7 @@ export default function GenesisMint(props) {
 
   async function updateMintInfo() {
     const updatedRewards = await genesisNFTProvider.getNativeTokenReward(
+      amount,
       locktimeDays * SECONDS_IN_DAY
     );
     setRewards(updatedRewards.toString());
@@ -72,7 +73,7 @@ export default function GenesisMint(props) {
 
   useEffect(() => {
     updateMintInfo();
-  }, [locktimeDays]);
+  }, [locktimeDays, amount]);
 
   useEffect(() => {
     if (isConnected) {
@@ -212,19 +213,9 @@ export default function GenesisMint(props) {
             try {
               setMintingLoading(true);
               console.log("Minting...");
-              console.log("mintIds: ", mintIds);
-              console.log(
-                "locktime: ",
-                mintIds.map(() => locktimeDays * SECONDS_IN_DAY)
-              );
-              console.log("amount: ", amount);
-              console.log(
-                "uris: ",
-                mintIds.map((id) => genesisNFTURIs[id])
-              );
               console.log("mintPrice: ", mintPrice);
               const tx = await genesisNFTSigner.mint(
-                mintIds.map(() => locktimeDays * SECONDS_IN_DAY),
+                locktimeDays * SECONDS_IN_DAY,
                 mintIds.map((id) => genesisNFTURIs[id]),
                 { value: mintPrice }
               );

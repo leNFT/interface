@@ -169,7 +169,7 @@ export default function StakeTradingGauge(props) {
         )}
       </div>
       {selectingLP && userLPs.length > 0 && (
-        <div className="flex flex-row grid md:grid-cols-3 lg:grid-cols-4">
+        <div className="flex flex-row grid auto-cols-auto">
           {userLPs.map((lp, index) => (
             <div
               key={BigNumber.from(lp.id.tokenId).toNumber()}
@@ -195,26 +195,24 @@ export default function StakeTradingGauge(props) {
                     }
                   }}
                 >
-                  <CardContent>
-                    <div className="flex flex-col items-center text-center space-y-2 justify-center">
-                      <Box
-                        sx={{
-                          fontFamily: "Monospace",
-                          fontSize: "caption",
-                        }}
-                      >
-                        {"LP #" + BigNumber.from(lp.id.tokenId).toNumber()}
-                      </Box>
-                      <Box
-                        sx={{
-                          fontFamily: "Monospace",
-                          fontSize: "caption",
-                        }}
-                      >
-                        {"Value: " + formatUnits(lpsValue[index], 18) + " ETH"}
-                      </Box>
-                    </div>
-                  </CardContent>
+                  <div className="flex flex-col items-center p-4 text-center space-y-2 justify-center">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "caption",
+                      }}
+                    >
+                      {"LP #" + BigNumber.from(lp.id.tokenId).toNumber()}
+                    </Box>
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "caption",
+                      }}
+                    >
+                      {formatUnits(lpsValue[index], 18) + " ETH"}
+                    </Box>
+                  </div>
                 </CardActionArea>
               </Card>
             </div>

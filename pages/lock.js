@@ -346,7 +346,7 @@ export default function Lock() {
             </div>
           </div>
           <div className="flex flex-col m-2 rounded-3xl bg-black/5 shadow-lg">
-            {false ? (
+            {loadingHistory ? (
               <div className="m-28">
                 <Loading size={40} spinnerColor="#000000" />
               </div>

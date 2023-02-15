@@ -51,6 +51,7 @@ export default function TradingPoolGauge() {
   const [userLockedValue, setUserLockedValue] = useState("0");
   const [lastEpochRewards, setLastEpochRewards] = useState("0");
   const [history, setHistory] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(true);
   const dispatch = useNotification();
 
   const addresses =
@@ -170,6 +171,7 @@ export default function TradingPoolGauge() {
       router.query.address
     );
     setHistory(historyResponse);
+    setLoadingHistory(false);
     console.log("historyResponse", historyResponse);
   }
 
@@ -335,34 +337,41 @@ export default function TradingPoolGauge() {
             </div>
           </div>
           <div className="flex flex-col items-center m-2 rounded-3xl bg-black/5 shadow-lg">
-            <Table
-              shadow={false}
-              bordered={false}
-              aria-label="Gauge History"
-              css={{
-                height: "auto",
-                minWidth: "40vw",
-                fontFamily: "Monospace",
-                zIndex: 0,
-              }}
-            >
-              <Table.Header>
-                <Table.Column width={100}>Epoch</Table.Column>
-                <Table.Column width={120}>Gauge Stake</Table.Column>
-                <Table.Column width={100}>Rewards</Table.Column>
-              </Table.Header>
-              <Table.Body>
-                {history.map((data, i) => (
-                  <Table.Row key={i}>
-                    <Table.Cell>{data.epoch}</Table.Cell>
-                    <Table.Cell>{data.stake / 100 + " %"}</Table.Cell>
-                    <Table.Cell>
-                      {Number(formatUnits(data.rewards, 18)).toFixed(3) + " LE"}
-                    </Table.Cell>
-                  </Table.Row>
-                ))}
-              </Table.Body>
-            </Table>
+            {loadingHistory ? (
+              <div className="m-28">
+                <Loading size={40} spinnerColor="#000000" />
+              </div>
+            ) : (
+              <Table
+                shadow={false}
+                bordered={false}
+                aria-label="Gauge History"
+                css={{
+                  height: "auto",
+                  minWidth: "30vw",
+                  fontFamily: "Monospace",
+                  zIndex: 0,
+                }}
+              >
+                <Table.Header>
+                  <Table.Column width={100}>Epoch</Table.Column>
+                  <Table.Column width={120}>Gauge Stake</Table.Column>
+                  <Table.Column width={100}>Rewards</Table.Column>
+                </Table.Header>
+                <Table.Body>
+                  {history.map((data, i) => (
+                    <Table.Row key={i}>
+                      <Table.Cell>{data.epoch}</Table.Cell>
+                      <Table.Cell>{data.stake / 100 + " %"}</Table.Cell>
+                      <Table.Cell>
+                        {Number(formatUnits(data.rewards, 18)).toFixed(3) +
+                          " LE"}
+                      </Table.Cell>
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table>
+            )}
           </div>
         </div>
         <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">

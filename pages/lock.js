@@ -155,7 +155,6 @@ export default function Lock() {
     }
 
     // Get the history
-    // Get the history
     const historyResponse = await getLockHistory(chain.id);
     setHistory(historyResponse);
     setLoadingHistory(false);

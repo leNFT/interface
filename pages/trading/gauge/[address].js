@@ -343,6 +343,7 @@ export default function TradingPoolGauge() {
                 height: "auto",
                 minWidth: "40vw",
                 fontFamily: "Monospace",
+                zIndex: 0,
               }}
             >
               <Table.Header>

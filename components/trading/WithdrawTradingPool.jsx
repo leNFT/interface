@@ -99,7 +99,7 @@ export default function WithdrawTradingPool(props) {
   };
 
   return (
-    <div>
+    <div className="flex flex-col items-center">
       <div className="flex flex-row items-center justify-center m-8">
         <Typography variant="subtitle1">{"LP #" + props.lp}</Typography>
       </div>
@@ -108,15 +108,19 @@ export default function WithdrawTradingPool(props) {
           {"LP Price: " + price + " ETH"}
         </Typography>
       </div>
-      <div className="flex flex-row items-center m-4">
-        <Typography variant="subtitle2">
-          {formatUnits(tokenAmount, 18) + " ETH"}
-        </Typography>
-      </div>
-      <div className="flex flex-row items-center  m-4">
-        <Typography variant="subtitle2">
-          {nfts.length + " NFTs: " + nfts.toString()}
-        </Typography>
+      <div className="flex flex-col items-center justify-center border-4 rounded-xl p-4">
+        <div className="flex flex-row items-center m-2">
+          <Typography variant="subtitle2">
+            {formatUnits(tokenAmount, 18) + " ETH"}
+          </Typography>
+        </div>
+        <div className="flex flex-row items-center  m-2">
+          <Typography variant="subtitle2">
+            {nfts.length > 0
+              ? nfts.length + " NFTs: " + nfts.toString()
+              : "No NFTs in LP"}
+          </Typography>
+        </div>
       </div>
       <div className="flex flex-row items-center justify-center m-8">
         {approvedLP ? (

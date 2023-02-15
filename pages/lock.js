@@ -12,7 +12,7 @@ import {
 } from "wagmi";
 import Vote from "../components/gauges/Vote";
 import { Input } from "@nextui-org/react";
-import { Button } from "@web3uikit/core";
+import { Button, Loading } from "@web3uikit/core";
 import { getLockHistory } from "../helpers/getLockHistory.js";
 import LockNativeToken from "../components/LockNativeToken";
 import EditNativeTokenLock from "../components/EditNativeTokenLock";
@@ -46,6 +46,7 @@ export default function Lock() {
   const [totalLocked, setTotalLocked] = useState("0");
   const [tokenPrice, setTokenPrice] = useState("0");
   const [history, setHistory] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(true);
 
   const addresses =
     isConnected && chain.id in contractAddresses
@@ -157,6 +158,7 @@ export default function Lock() {
     // Get the history
     const historyResponse = await getLockHistory(chain.id);
     setHistory(historyResponse);
+    setLoadingHistory(false);
     console.log("historyResponse", historyResponse);
   }
 
@@ -270,8 +272,8 @@ export default function Lock() {
         />
       </StyledModal>
       <div className="flex flex-col items-center">
-        <div className="flex flex-col md:flex-row max-w-[100%] justify-center items-center">
-          <div className="flex flex-col py-4 px-8 m-8 mb-4 items-center justify-center text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
+        <div className="flex flex-col md:flex-row max-w-[100%] justify-center items-center mb-4">
+          <div className="flex flex-col py-4 px-8 m-8 items-center justify-center text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
             <Box
               sx={{
                 fontFamily: "Monospace",
@@ -343,36 +345,42 @@ export default function Lock() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center m-2 rounded-3xl bg-black/5 shadow-lg">
-            <Table
-              shadow={false}
-              bordered={false}
-              aria-label="Gauge History"
-              css={{
-                height: "auto",
-                zIndex: 0,
-                minWidth: "35vw",
-                fontFamily: "Monospace",
-              }}
-            >
-              <Table.Header>
-                <Table.Column width={100}>Epoch</Table.Column>
-                <Table.Column width={120}>Locked Supply</Table.Column>
-                <Table.Column width={100}>Rewards</Table.Column>
-              </Table.Header>
-              <Table.Body>
-                {history.map((data, i) => (
-                  <Table.Row key={i}>
-                    <Table.Cell>{data.epoch}</Table.Cell>
-                    <Table.Cell>{data.supply_locked / 100 + " %"}</Table.Cell>
-                    <Table.Cell>
-                      {Number(formatUnits(data.rewards, 18)).toPrecision(3) +
-                        " ETH"}
-                    </Table.Cell>
-                  </Table.Row>
-                ))}
-              </Table.Body>
-            </Table>
+          <div className="flex flex-col m-2 rounded-3xl bg-black/5 shadow-lg">
+            {false ? (
+              <div className="m-28">
+                <Loading size={40} spinnerColor="#000000" />
+              </div>
+            ) : (
+              <Table
+                shadow={false}
+                bordered={false}
+                aria-label="Gauge History"
+                css={{
+                  height: "auto",
+                  zIndex: 0,
+                  minWidth: "35vw",
+                  fontFamily: "Monospace",
+                }}
+              >
+                <Table.Header>
+                  <Table.Column width={100}>Epoch</Table.Column>
+                  <Table.Column width={120}>Locked Supply</Table.Column>
+                  <Table.Column width={100}>Rewards</Table.Column>
+                </Table.Header>
+                <Table.Body>
+                  {history.map((data, i) => (
+                    <Table.Row key={i}>
+                      <Table.Cell>{data.epoch}</Table.Cell>
+                      <Table.Cell>{data.supply_locked / 100 + " %"}</Table.Cell>
+                      <Table.Cell>
+                        {Number(formatUnits(data.rewards, 18)).toPrecision(3) +
+                          " ETH"}
+                      </Table.Cell>
+                    </Table.Row>
+                  ))}
+                </Table.Body>
+              </Table>
+            )}
           </div>
         </div>
         <div className="flex flex-col lg:flex-row max-w-[100%] justify-center items-center">

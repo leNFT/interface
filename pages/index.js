@@ -93,7 +93,7 @@ export default function Home() {
                 </a>
               </Link>
               {" and "}
-              <Link href="/lend">
+              <Link href="/borrow">
                 <a
                   style={{
                     textDecoration: "underline",
@@ -133,7 +133,7 @@ export default function Home() {
                   </Button>
                 </a>
               </Link>
-              <Link href="/lend">
+              <Link href="/borrow">
                 <a>
                   <Button
                     icon={<AccountBalanceIcon />}

@@ -20,8 +20,8 @@ export default function GenesisBurn(props) {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const [burningLoading, setBurningLoading] = useState(false);
-
   const [unlockTimestamp, setUnlockTimestamp] = useState("1707447529");
+  const [lpValue, setLPValue] = useState("0");
 
   const addresses =
     isConnected && chain.id in contractAddresses
@@ -47,6 +47,12 @@ export default function GenesisBurn(props) {
     ).toNumber();
     console.log("updatedUnlockTimestamp", updatedUnlockTimestamp);
     setUnlockTimestamp(updatedUnlockTimestamp);
+
+    const updatedLPValue = (
+      await genesisNFTProvider.getLPValue([props.tokenId])
+    ).toString();
+    console.log("updatedLPValue", updatedLPValue);
+    setLPValue(updatedLPValue);
   }
 
   useEffect(() => {
@@ -80,6 +86,14 @@ export default function GenesisBurn(props) {
           <Typography variant="subtitle2">Unlock Date</Typography>
           <Typography variant="body16">
             {new Date(unlockTimestamp * 1000).toDateString()}
+          </Typography>
+        </div>
+      </div>
+      <div className="flex flex-row items-center justify-center m-4 text-center">
+        <div className="flex flex-col">
+          <Typography variant="subtitle2">LP Value</Typography>
+          <Typography variant="body16">
+            {Number(formatUnits(lpValue, 18)).toPrecision(3) + " LE"}
           </Typography>
         </div>
       </div>

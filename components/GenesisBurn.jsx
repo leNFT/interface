@@ -76,13 +76,13 @@ export default function GenesisBurn(props) {
   return (
     <div className={styles.container}>
       <div className="flex flex-row items-center justify-center m-4 text-center">
-        <div className="flex flex-col">
+        <div className="flex flex-col space-y-1">
           <Typography variant="subtitle2">Token ID</Typography>
           <Typography variant="body16">{props.tokenId}</Typography>
         </div>
       </div>
       <div className="flex flex-row items-center justify-center m-4 text-center">
-        <div className="flex flex-col">
+        <div className="flex flex-col space-y-1">
           <Typography variant="subtitle2">Unlock Date</Typography>
           <Typography variant="body16">
             {new Date(unlockTimestamp * 1000).toDateString()}
@@ -90,8 +90,11 @@ export default function GenesisBurn(props) {
         </div>
       </div>
       <div className="flex flex-row items-center justify-center m-4 text-center">
-        <div className="flex flex-col">
-          <Typography variant="subtitle2">LP Value</Typography>
+        <div className="flex flex-col space-y-1">
+          <div className="flex flex-row items-center justify-center space-x-2">
+            <Typography variant="subtitle2">LP Value</Typography>
+            <Typography variant="caption10">(available on burn)</Typography>
+          </div>
           <Typography variant="body16">
             {Number(formatUnits(lpValue, 18)).toPrecision(3) + " LE"}
           </Typography>

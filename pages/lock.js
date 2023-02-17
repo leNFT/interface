@@ -40,7 +40,7 @@ export default function Lock() {
   const [votingLoading, setVotingLoading] = useState(false);
   const [claimableRewards, setClaimableRewards] = useState("0");
   const [selectedGauge, setSelectedGauge] = useState();
-  const [gaugeVoteRatio, setGaugeVoteRatio] = useState(0);
+  const [gaugeVoteRatio, setGaugeVoteRatio] = useState(10);
   const [totalVoteRatio, setTotalVoteRatio] = useState(0);
   const [epoch, setEpoch] = useState(0);
   const [apr, setAPR] = useState("0");
@@ -170,28 +170,33 @@ export default function Lock() {
   }
 
   async function updateGaugeDetails(gauge) {
+    console.log("gauge", gauge);
     // Check if the gauge address is valid
     if (!ethers.utils.isAddress(gauge)) {
-      console.log("Invalid Gauge Address");
-      setSelectedGauge("");
+      console.log("Invalid Address");
       setGaugeVoteRatio(0);
+      setGaugeVotes(0);
+      setSelectedGauge("");
       return;
     }
 
     console.log("Updating Gauge Details");
     // Check if the address is a gauge
     const isGauge = await gaugeControllerProvider.isGauge(gauge);
+    console.log("isGauge", isGauge);
 
     if (isGauge) {
-      setSelectedGauge(gauge);
       // Get the number of votes for the gauge
       const updatedGaugeVoteRatio =
         await gaugeControllerProvider.userVoteRatioForGauge(address, gauge);
       console.log("updatedgaugeVoteRatio", updatedGaugeVoteRatio.toString());
       setGaugeVoteRatio(updatedGaugeVoteRatio.toNumber());
+      setGaugeVotes(updatedGaugeVoteRatio.toNumber());
+      setSelectedGauge(gauge);
     } else {
-      setSelectedGauge("");
       setGaugeVoteRatio(0);
+      setGaugeVotes(0);
+      setSelectedGauge("");
       console.log("Gauge not found");
     }
   }
@@ -204,7 +209,7 @@ export default function Lock() {
 
   function handleVoteSliderChange(_, newValue) {
     console.log("gauge votes: ", newValue);
-    setGaugeVotes(newValue);
+    setGaugeVotes(newValue * 100);
   }
 
   const handleGaugeChange = (event) => {
@@ -606,11 +611,12 @@ export default function Lock() {
               {selectedGauge && (
                 <div className="flex flex-col justify-center space-y-2 items-center m-2 w-full">
                   <Slider
+                    defaultValue={gaugeVoteRatio / 100}
                     valueLabelDisplay="auto"
                     onChange={handleVoteSliderChange}
                     min={0}
                     step={1}
-                    max={(10000 - totalVoteRatio) / 100}
+                    max={(10000 - totalVoteRatio + gaugeVoteRatio) / 100}
                   />
                   <Button
                     customize={{
@@ -618,7 +624,7 @@ export default function Lock() {
                       fontSize: 16,
                       textColor: "white",
                     }}
-                    text={"Vote with " + gaugeVotes + " %"}
+                    text={"Vote with " + gaugeVotes / 100 + " %"}
                     disabled={!selectedGauge}
                     theme="custom"
                     size="large"
@@ -628,10 +634,10 @@ export default function Lock() {
                         setVotingLoading(true);
                         const tx = await gaugeControllerSigner.vote(
                           props.gauge,
-                          amount
+                          gaugeVotes
                         );
                         await tx.wait(1);
-                        await handleVoteSuccess(amount);
+                        await handleVoteSuccess(gaugeVotes);
                       } catch (error) {
                         console.log(error);
                       } finally {

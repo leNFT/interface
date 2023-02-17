@@ -625,7 +625,11 @@ export default function Lock() {
                       fontSize: 16,
                       textColor: "white",
                     }}
-                    text={"Vote with " + gaugeVotes / 100 + " %"}
+                    text={
+                      (gaugeVoteRatio == 0 ? "Vote with " : "Update to ") +
+                      gaugeVotes / 100 +
+                      " %"
+                    }
                     disabled={!selectedGauge}
                     theme="custom"
                     size="large"

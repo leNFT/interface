@@ -16,7 +16,7 @@ import { ethers } from "ethers";
 import Card from "@mui/material/Card";
 import { CardActionArea } from "@mui/material";
 import CardContent from "@mui/material/CardContent";
-import { useAccount, useNetwork, useProvider } from "wagmi";
+import { useAccount, useNetwork, useProvider, useBalance } from "wagmi";
 import erc721 from "../../../contracts/erc721.json";
 import erc20 from "../../../contracts/erc20.json";
 import Router from "next/router";
@@ -31,7 +31,8 @@ export default function TradingPool() {
   const router = useRouter();
   const [nft, setNFT] = useState("");
   const [token, setToken] = useState("");
-  const [totalNFTs, setTotalNFTs] = useState(0);
+  const [totalProvidedNFTs, setTotalProvidedNFTs] = useState(0);
+  const [userNFTsAmount, setUserNFTsAmount] = useState(0);
   const [totalTokenAmount, setTotalTokenAmount] = useState("0");
   const [lpPositions, setLpPositions] = useState([]);
   const [selectedLP, setSelectedLP] = useState();
@@ -41,6 +42,10 @@ export default function TradingPool() {
   const [loadingTradingPool, setLoadingTradingPool] = useState(true);
   const [nftName, setNFTName] = useState("...");
   const [tokenName, setTokenName] = useState("...");
+  const { data: ethBalance } = useBalance({
+    addressOrName: address,
+  });
+  console.log("ethBalance", ethBalance);
   const provider = useProvider();
   const addresses =
     isConnected && chain.id in contractAddresses
@@ -77,6 +82,11 @@ export default function TradingPool() {
     const tokenNameResponse = await tokenContract.name();
     setTokenName(tokenNameResponse);
 
+    // Get number of user NFTs
+    setUserNFTsAmount(
+      (await getAddressNFTs(address, nftResponse.toString(), chain.id)).length
+    );
+
     // Get lp positions
     if (address) {
       const addressNFTs = await getAddressNFTs(
@@ -99,7 +109,7 @@ export default function TradingPool() {
           .add(newTotalTokenAmount)
           .toString();
       }
-      setTotalNFTs(newTotalNFTs);
+      setTotalProvidedNFTs(newTotalNFTs);
       setTotalTokenAmount(newTotalTokenAmount);
 
       setLpPositions(newLpPositions);
@@ -281,31 +291,45 @@ export default function TradingPool() {
                 </Tooltip>
               </div>
             </div>
-            <div className="flex flex-row m-2">
-              <div className="flex flex-col">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "h5.fontSize",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {totalNFTs + " NFTs"}
-                </Box>
-              </div>
+            <div className="flex flex-row m-2 items-center space-x-2">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "h5.fontSize",
+                  fontWeight: "bold",
+                }}
+              >
+                {totalProvidedNFTs + " NFTs"}
+              </Box>
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subitle1.fontSize",
+                }}
+              >
+                {"(" + userNFTsAmount + " NFTs available)"}
+              </Box>
             </div>
-            <div className="flex flex-row m-2">
-              <div className="flex flex-col">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "h5.fontSize",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {formatUnits(totalTokenAmount, 18) + " ETH"}
-                </Box>
-              </div>
+            <div className="flex flex-row m-2 items-center space-x-2">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "h5.fontSize",
+                  fontWeight: "bold",
+                }}
+              >
+                {formatUnits(totalTokenAmount, 18) + " ETH"}
+              </Box>
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subitle1.fontSize",
+                }}
+              >
+                {"(" +
+                  Number(formatUnits(ethBalance.value, 18)).toPrecision(2) +
+                  " ETH available)"}
+              </Box>
             </div>
           </div>
           <div className="flex flex-row items-center ">

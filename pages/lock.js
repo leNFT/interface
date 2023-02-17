@@ -484,7 +484,9 @@ export default function Lock() {
                         fontSize: "subtitle1.fontSize",
                       }}
                     >
-                      {formatUnits(claimableRewards, 18) + " wETH"}
+                      {Number(formatUnits(claimableRewards, 18)).toPrecision(
+                        3
+                      ) + " wETH"}
                     </Box>
                     <div className="ml-4">
                       <Button

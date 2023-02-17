@@ -14,6 +14,7 @@ import {
   Typography,
   DatePicker,
 } from "@web3uikit/core";
+import Slider from "@mui/material/Slider";
 import { ethers } from "ethers";
 import contractAddresses from "../contractAddresses.json";
 import { useState, useEffect } from "react";
@@ -32,6 +33,7 @@ export default function LockNativeToken(props) {
   const [lockedLoading, setLockedLoading] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [unlockTime, setUnlockTime] = useState(0);
+  const [lockDuration, setLockDuration] = useState(1);
 
   const dispatch = useNotification();
   const addresses =
@@ -129,11 +131,13 @@ export default function LockNativeToken(props) {
     }
   }
 
-  function handleUnlockTimeChange(e) {
-    if (e.date != "") {
-      setUnlockTime(Date.parse(e.date) / 1000);
-      console.log(Date.parse(e.date) / 1000);
+  function handleSliderChange(_, newValue) {
+    if (newValue != "") {
+      setLockDuration(newValue);
+      setUnlockTime(Math.floor(Date.now() / 1000 + newValue * 604800));
+      console.log(Date.now() / 1000 + newValue * 604800);
     } else {
+      setLockDuration(1);
       setUnlockTime(0);
     }
   }
@@ -161,7 +165,7 @@ export default function LockNativeToken(props) {
           onChange={handleAmountChange}
         />
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center m-8">
+      <div className="flex flex-col items-center justify-center m-8">
         <div className="flex flex-col m-4 items-center">
           <Box
             sx={{
@@ -170,7 +174,7 @@ export default function LockNativeToken(props) {
               fontWeight: "bold",
             }}
           >
-            Unlock Time:
+            Unlock Time (weeks):
           </Box>
           <Box
             sx={{
@@ -181,12 +185,28 @@ export default function LockNativeToken(props) {
             (1 week to 4 years from today)
           </Box>
         </div>
-        <DatePicker id="date-picker" onChange={handleUnlockTimeChange} />
+        <div className="flex flex-row items-center w-full justify-center md:px-8">
+          <Slider
+            valueLabelDisplay="auto"
+            onChangeCommitted={handleSliderChange}
+            min={1}
+            step={1}
+            max={52 * 4}
+          />
+        </div>
       </div>
       {approved ? (
         <div className="my-4 md:m-8">
           <Button
-            text="Lock"
+            text={
+              "Lock for " +
+              (lockDuration > 52
+                ? Math.floor(lockDuration / 52) +
+                  " years and " +
+                  (lockDuration % 52) +
+                  " weeks"
+                : lockDuration + " weeks")
+            }
             theme="secondary"
             isFullWidth
             loadingProps={{

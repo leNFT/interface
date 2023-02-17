@@ -14,6 +14,7 @@ import {
 import { useState, useEffect } from "react";
 import Slider from "@mui/material/Slider";
 import genesisNFTContract from "../contracts/GenesisNFT.json";
+import votingEscrowContract from "../contracts/VotingEscrow.json";
 import { BigNumber } from "@ethersproject/bignumber";
 
 export default function GenesisMint(props) {
@@ -28,6 +29,7 @@ export default function GenesisMint(props) {
   const { data: signer } = useSigner();
   const [mintingLoading, setMintingLoading] = useState(false);
   const [rewards, setRewards] = useState("0");
+  const [lockedRewards, setLockedRewards] = useState("0");
   const [locktimeDays, setLocktimeDays] = useState(14);
   const [sliderValue, setSliderValue] = useState(14);
   const [mintIds, setMintIds] = useState([]);
@@ -45,6 +47,12 @@ export default function GenesisMint(props) {
     signerOrProvider: provider,
   });
 
+  const votingEscrowProvider = useContract({
+    contractInterface: votingEscrowContract.abi,
+    addressOrName: addresses.VotingEscrow,
+    signerOrProvider: provider,
+  });
+
   const genesisNFTSigner = useContract({
     contractInterface: genesisNFTContract.abi,
     addressOrName: addresses.GenesisNFT,
@@ -57,6 +65,12 @@ export default function GenesisMint(props) {
       locktimeDays * SECONDS_IN_DAY
     );
     setRewards(updatedRewards.toString());
+
+    const updateLockedRewards = await votingEscrowProvider.simulateLock(
+      updatedRewards.toString(),
+      Date.now() / 1000 + locktimeDays * SECONDS_IN_DAY
+    );
+    setLockedRewards(updateLockedRewards.toString());
   }
 
   useEffect(() => {
@@ -170,7 +184,10 @@ export default function GenesisMint(props) {
           <div className="flex flex-col m-2 md:m-4">
             <Typography variant="subtitle2">LE Rewards</Typography>
             <Typography variant="body16">
-              {formatUnits(rewards, 18) + " LE"}
+              {formatUnits(rewards, 18) +
+                " LE -> " +
+                formatUnits(lockedRewards, 18) +
+                " veLE"}
             </Typography>
           </div>
         </div>

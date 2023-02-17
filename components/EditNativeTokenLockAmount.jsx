@@ -7,19 +7,12 @@ import {
   useSigner,
 } from "wagmi";
 import { formatUnits, parseUnits } from "@ethersproject/units";
-import {
-  useNotification,
-  Button,
-  Input,
-  Typography,
-  DatePicker,
-} from "@web3uikit/core";
+import { useNotification, Button, Input, Typography } from "@web3uikit/core";
 import { ethers } from "ethers";
 import contractAddresses from "../contractAddresses.json";
 import { useState, useEffect } from "react";
 import votingEscrowContract from "../contracts/VotingEscrow.json";
 import nativeTokenContract from "../contracts/NativeToken.json";
-import Box from "@mui/material/Box";
 
 export default function EditNativeTokenLock(props) {
   const { address, isConnected } = useAccount();
@@ -29,12 +22,13 @@ export default function EditNativeTokenLock(props) {
   const [amount, setAmount] = useState("0");
   const [balance, setBalance] = useState("0");
   const [approved, setApproved] = useState(false);
-  const [increaseUnlocktimeLoading, setIncreaseUnlocktimeLoading] =
-    useState(false);
+  useState(false);
   const [increaseLockAmountLoading, setIncreaseLockAmountLoading] =
     useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [unlockTime, setUnlockTime] = useState(0);
+  const [lockWeight, setLockWeight] = useState("0");
+  const [newLockWeight, setNewLockWeight] = useState("0");
 
   const dispatch = useNotification();
   const addresses =
@@ -65,6 +59,12 @@ export default function EditNativeTokenLock(props) {
     addressOrName: addresses.VotingEscrow,
     signerOrProvider: signer,
   });
+
+  async function getLockWeight() {
+    const updatedLockWeight = await votingEscrowProvider.balanceOf(address);
+    console.log("Updated Lock Weight:", updatedLockWeight);
+    setLockWeight(updatedLockWeight.toString());
+  }
 
   async function getTokenBalance() {
     const updatedBalance = await nativeTokenProvider.balanceOf(address);
@@ -98,6 +98,7 @@ export default function EditNativeTokenLock(props) {
     if (isConnected) {
       getTokenAllowance();
       getTokenBalance();
+      getLockWeight();
       getUnlockTime();
     }
   }, [isConnected]);
@@ -113,17 +114,6 @@ export default function EditNativeTokenLock(props) {
     });
   };
 
-  const handleIncreseUnlocktimeSuccess = async function () {
-    props.updateUI();
-    props.setVisibility(false);
-    dispatch({
-      type: "success",
-      message: "You increased your unlock time.",
-      title: "Increase Unlock Time Successful!",
-      position: "bottomL",
-    });
-  };
-
   const handleApprovalSuccess = async function () {
     setApproved(true);
     dispatch({
@@ -134,113 +124,65 @@ export default function EditNativeTokenLock(props) {
     });
   };
 
-  function handleAmountChange(e) {
+  async function handleAmountChange(e) {
     if (e.target.value != "") {
       setAmount(parseUnits(e.target.value, 18).toString());
+      const simulatedLockWeight = await votingEscrowProvider.simulateLock(
+        parseUnits(e.target.value, 18).toString(),
+        unlockTime
+      );
+      setNewLockWeight(
+        BigNumber.from(simulatedLockWeight).add(lockWeight).toString()
+      );
     } else {
+      setNewLockWeight("0");
       setAmount("0");
-    }
-  }
-
-  function handleUnlockTimeChange(e) {
-    if (e.date != "") {
-      setUnlockTime(Date.parse(e.date) / 1000);
-      console.log(Date.parse(e.date) / 1000);
-    } else {
-      setUnlockTime(0);
     }
   }
 
   return (
     <div>
-      <div className="flex flex-row items-center justify-center">
-        <div className="flex flex-col">
-          <Typography variant="subtitle2">My Balance</Typography>
-          <Typography variant="body16">
-            {formatUnits(balance, 18) + " LE"}
-          </Typography>
+      <div className="flex flex-row items-center justify-center mt-8">
+        <div className="flex flex-row items-center space-x-16 justify-center">
+          <div className="flex flex-col">
+            <Typography variant="subtitle2">Lock Weight</Typography>
+            <Typography variant="body16">
+              {Number(formatUnits(lockWeight, 18)).toPrecision(5) + " veLE"}
+            </Typography>
+          </div>
+          <div className="flex flex-col">
+            <Typography variant="subtitle2">New Lock Weight</Typography>
+            <Typography variant="body16">
+              {Number(formatUnits(newLockWeight, 18)).toPrecision(5) + " veLE"}
+            </Typography>
+          </div>
         </div>
       </div>
-      <div className="flex flex-row items-center justify-center m-8 md:m-16">
-        <Input
-          label="Amount"
-          type="number"
-          step="any"
-          validation={{
-            numberMax: Number(formatUnits(0, 18)),
-            numberMin: 0,
-          }}
-          disabled={!approved}
-          onChange={handleAmountChange}
-        />
-        {approved ? (
-          <div className="mx-4">
-            <Button
-              text="Increase Lock Amount"
-              theme="secondary"
-              isFullWidth
-              loadingProps={{
-                spinnerColor: "#000000",
-                spinnerType: "loader",
-                direction: "right",
-                size: "24",
-              }}
-              loadingText=""
-              isLoading={increaseLockAmountLoading}
-              onClick={async function () {
-                try {
-                  setIncreaseLockAmountLoading(true);
-                  console.log("amount", amount);
-                  console.log("addresses.VotingEscrow", addresses.VotingEscrow);
-                  const tx = await votingEscrowSigner.increaseAmount(amount);
-                  await tx.wait(1);
-                  handleIncreseLockAmountSuccess();
-                } catch (error) {
-                  console.log(error);
-                } finally {
-                  setIncreaseLockAmountLoading(false);
-                }
-              }}
-            ></Button>
+      <div className="flex flex-row items-center justify-center m-12">
+        <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-row items-left w-full p-4 space-x-4">
+            <Typography variant="subtitle2">My Balance:</Typography>
+            <Typography variant="body16">
+              {formatUnits(balance, 18) + " LE"}
+            </Typography>
           </div>
-        ) : (
-          <div className="mx-4">
-            <Button
-              text="Approve"
-              theme="secondary"
-              isFullWidth
-              loadingProps={{
-                spinnerColor: "#000000",
-                spinnerType: "loader",
-                direction: "right",
-                size: "24",
-              }}
-              loadingText=""
-              isLoading={approvalLoading}
-              onClick={async function () {
-                try {
-                  setApprovalLoading(true);
-                  const tx = await nativeTokenSigner.approve(
-                    addresses.VotingEscrow,
-                    ethers.constants.MaxUint256
-                  );
-                  await tx.wait(1);
-                  handleApprovalSuccess();
-                } catch (error) {
-                  console.log(error);
-                } finally {
-                  setApprovalLoading(false);
-                }
-              }}
-            ></Button>
-          </div>
-        )}
+          <Input
+            label="Amount"
+            type="number"
+            step="any"
+            validation={{
+              numberMax: Number(formatUnits(0, 18)),
+              numberMin: 0,
+            }}
+            disabled={!approved}
+            onChange={handleAmountChange}
+          />
+        </div>
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center m-8 md:m-16">
-        <DatePicker id="date-picker" onChange={handleUnlockTimeChange} />
-        <div className="mx-4">
+      {approved ? (
+        <div className="m-6">
           <Button
-            text="Increase Unlock Time"
+            text="Increase Lock Amount"
             theme="secondary"
             isFullWidth
             loadingProps={{
@@ -250,25 +192,55 @@ export default function EditNativeTokenLock(props) {
               size: "24",
             }}
             loadingText=""
-            isLoading={increaseUnlocktimeLoading}
+            isLoading={increaseLockAmountLoading}
             onClick={async function () {
               try {
-                setIncreaseUnlocktimeLoading(true);
-                console.log("unlockTime", unlockTime);
-                const tx = await votingEscrowSigner.increaseUnlockTime(
-                  unlockTime
-                );
+                setIncreaseLockAmountLoading(true);
+                console.log("amount", amount);
+                console.log("addresses.VotingEscrow", addresses.VotingEscrow);
+                const tx = await votingEscrowSigner.increaseAmount(amount);
                 await tx.wait(1);
-                handleIncreseUnlocktimeSuccess();
+                handleIncreseLockAmountSuccess();
               } catch (error) {
                 console.log(error);
               } finally {
-                setIncreaseUnlocktimeLoading(false);
+                setIncreaseLockAmountLoading(false);
               }
             }}
           ></Button>
         </div>
-      </div>
+      ) : (
+        <div className="m-6">
+          <Button
+            text="Approve"
+            theme="secondary"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
+            }}
+            loadingText=""
+            isLoading={approvalLoading}
+            onClick={async function () {
+              try {
+                setApprovalLoading(true);
+                const tx = await nativeTokenSigner.approve(
+                  addresses.VotingEscrow,
+                  ethers.constants.MaxUint256
+                );
+                await tx.wait(1);
+                handleApprovalSuccess();
+              } catch (error) {
+                console.log(error);
+              } finally {
+                setApprovalLoading(false);
+              }
+            }}
+          ></Button>
+        </div>
+      )}
     </div>
   );
 }

@@ -15,7 +15,8 @@ import { Input } from "@nextui-org/react";
 import { Button, Loading } from "@web3uikit/core";
 import { getLockHistory } from "../helpers/getLockHistory.js";
 import LockNativeToken from "../components/LockNativeToken";
-import EditNativeTokenLock from "../components/EditNativeTokenLock";
+import EditNativeTokenLockAmount from "../components/EditNativeTokenLockAmount";
+import EditNativeTokenLocktime from "../components/EditNativeTokenLocktime";
 import contractAddresses from "../contractAddresses.json";
 import UnlockNativeToken from "../components/UnlockNativeToken";
 import votingEscrowContract from "../contracts/VotingEscrow.json";
@@ -33,8 +34,10 @@ export default function Lock() {
   const [voteTokenBalance, setVoteTokenBalance] = useState("0");
   const [visibleLockModal, setVisibleLockModal] = useState(false);
   const [visibleUnlockModal, setVisibleUnlockModal] = useState(false);
-  const [visibleVoteModal, setVisibleVoteModal] = useState(false);
-  const [visibleEditLockModal, setVisibleEditLockModal] = useState(false);
+  const [visibleEditLockAmountModal, setVisibleEditLockAmountModal] =
+    useState(false);
+  const [visibleEditLockTimeModal, setVisibleEditLockTimeModal] =
+    useState(false);
   const [unlockTime, setUnlockTime] = useState(0);
   const [claimingLoading, setClaimingLoading] = useState(false);
   const [votingLoading, setVotingLoading] = useState(false);
@@ -273,18 +276,30 @@ export default function Lock() {
       </StyledModal>
       <StyledModal
         hasFooter={false}
-        title="Edit Lock"
-        isVisible={visibleEditLockModal}
+        title="Edit Lock Amount"
+        isVisible={visibleEditLockAmountModal}
         onCloseButtonPressed={function () {
-          setVisibleEditLockModal(false);
+          setVisibleEditLockAmountModal(false);
         }}
       >
-        <EditNativeTokenLock
-          setVisibility={setVisibleEditLockModal}
+        <EditNativeTokenLockAmount
+          setVisibility={setVisibleEditLockAmountModal}
           updateUI={updateUI}
         />
       </StyledModal>
-
+      <StyledModal
+        hasFooter={false}
+        title="Edit Lock Time"
+        isVisible={visibleEditLockTimeModal}
+        onCloseButtonPressed={function () {
+          setVisibleEditLockTimeModal(false);
+        }}
+      >
+        <EditNativeTokenLocktime
+          setVisibility={setVisibleEditLockTimeModal}
+          updateUI={updateUI}
+        />
+      </StyledModal>
       <div className="flex flex-col items-center">
         <div className="flex flex-col md:flex-row max-w-[100%] justify-center items-center mb-4">
           <div className="flex flex-col py-4 px-8 m-8 items-center justify-center text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
@@ -444,12 +459,28 @@ export default function Lock() {
                         fontSize: 16,
                         textColor: "white",
                       }}
-                      text="Edit Lock"
+                      text="Edit Amount"
                       theme="custom"
                       size="large"
                       radius="12"
                       onClick={async function () {
-                        setVisibleEditLockModal(true);
+                        setVisibleEditLockAmountModal(true);
+                      }}
+                    />
+                  </div>
+                  <div className="flex flex-row m-2">
+                    <Button
+                      customize={{
+                        backgroundColor: "grey",
+                        fontSize: 16,
+                        textColor: "white",
+                      }}
+                      text="Edit Unlock Time"
+                      theme="custom"
+                      size="large"
+                      radius="12"
+                      onClick={async function () {
+                        setVisibleEditLockTimeModal(true);
                       }}
                     />
                   </div>

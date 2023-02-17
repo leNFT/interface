@@ -33,6 +33,7 @@ export default function LockNativeToken(props) {
   const [lockedLoading, setLockedLoading] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [unlockTime, setUnlockTime] = useState(0);
+  const [lockWeight, setLockWeight] = useState("0");
   const [lockDuration, setLockDuration] = useState(1);
 
   const dispatch = useNotification();
@@ -97,9 +98,25 @@ export default function LockNativeToken(props) {
     if (isConnected) {
       getTokenAllowance();
       getTokenBalance();
+
       getUnlockTime();
     }
   }, [isConnected]);
+
+  useEffect(() => {
+    if (isConnected) {
+      const simulateBlockWeight = async () => {
+        const simulatedLockWeight = await votingEscrowProvider.simulateLock(
+          amount,
+          unlockTime
+        );
+        setLockWeight(BigNumber.from(simulatedLockWeight).toString());
+        console.log("Simulated Lock Weight:", simulatedLockWeight.toString());
+      };
+
+      simulateBlockWeight();
+    }
+  }, [amount, lockDuration]);
 
   const handleLockedSuccess = async function () {
     console.log("Locked", amount);
@@ -135,7 +152,8 @@ export default function LockNativeToken(props) {
     if (newValue != "") {
       setLockDuration(newValue);
       setUnlockTime(Math.floor(Date.now() / 1000 + newValue * 604800));
-      console.log(Date.now() / 1000 + newValue * 604800);
+      console.log("Slider changed to:");
+      console.log(Math.floor(Date.now() / 1000 + newValue * 604800));
     } else {
       setLockDuration(1);
       setUnlockTime(0);
@@ -144,26 +162,36 @@ export default function LockNativeToken(props) {
 
   return (
     <div>
-      <div className="flex flex-row items-center justify-center">
-        <div className="flex flex-col">
-          <Typography variant="subtitle2">My Balance</Typography>
-          <Typography variant="body16">
-            {formatUnits(balance, 18) + " LE"}
-          </Typography>
+      <div className="flex flex-row items-center justify-center mt-8">
+        <div className="flex flex-row items-center space-x-16 justify-center">
+          <div className="flex flex-col">
+            <Typography variant="subtitle2">Lock Weight</Typography>
+            <Typography variant="body16">
+              {Number(formatUnits(lockWeight, 18)).toPrecision(5) + " veLE"}
+            </Typography>
+          </div>
         </div>
       </div>
       <div className="flex flex-row items-center justify-center m-8">
-        <Input
-          label="Amount"
-          type="number"
-          step="any"
-          validation={{
-            numberMax: Number(formatUnits(0, 18)),
-            numberMin: 0,
-          }}
-          disabled={!approved}
-          onChange={handleAmountChange}
-        />
+        <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-row items-left w-full p-2 space-x-4">
+            <Typography variant="subtitle2">My Balance:</Typography>
+            <Typography variant="body16">
+              {formatUnits(balance, 18) + " LE"}
+            </Typography>
+          </div>
+          <Input
+            label="Amount"
+            type="number"
+            step="any"
+            validation={{
+              numberMax: Number(formatUnits(0, 18)),
+              numberMin: 0,
+            }}
+            disabled={!approved}
+            onChange={handleAmountChange}
+          />
+        </div>
       </div>
       <div className="flex flex-col items-center justify-center m-8">
         <div className="flex flex-col m-4 items-center">
@@ -224,6 +252,7 @@ export default function LockNativeToken(props) {
                 console.log("unlockTime", unlockTime);
                 console.log("addresses.VotingEscrow", addresses.VotingEscrow);
                 const tx = await votingEscrowSigner.createLock(
+                  address,
                   amount,
                   unlockTime
                 );

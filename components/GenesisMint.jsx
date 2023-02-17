@@ -209,7 +209,6 @@ export default function GenesisMint(props) {
           />
         </div>
       </div>
-
       <div className="flex flex-row items-center justify-center m-8 px-8 w-full">
         <Button
           text="MINT"

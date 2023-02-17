@@ -613,6 +613,7 @@ export default function Lock() {
                   <Slider
                     defaultValue={gaugeVoteRatio / 100}
                     valueLabelDisplay="auto"
+                    valueLabelFormat={(value) => value + "%"}
                     onChange={handleVoteSliderChange}
                     min={0}
                     step={1}

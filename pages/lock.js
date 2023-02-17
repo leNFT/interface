@@ -10,7 +10,7 @@ import {
   useContract,
   useSigner,
 } from "wagmi";
-import Vote from "../components/gauges/Vote";
+import Slider from "@mui/material/Slider";
 import { Input } from "@nextui-org/react";
 import { Button, Loading } from "@web3uikit/core";
 import { getLockHistory } from "../helpers/getLockHistory.js";
@@ -37,6 +37,7 @@ export default function Lock() {
   const [visibleEditLockModal, setVisibleEditLockModal] = useState(false);
   const [unlockTime, setUnlockTime] = useState(0);
   const [claimingLoading, setClaimingLoading] = useState(false);
+  const [votingLoading, setVotingLoading] = useState(false);
   const [claimableRewards, setClaimableRewards] = useState("0");
   const [selectedGauge, setSelectedGauge] = useState();
   const [gaugeVoteRatio, setGaugeVoteRatio] = useState(0);
@@ -47,6 +48,7 @@ export default function Lock() {
   const [tokenPrice, setTokenPrice] = useState("0");
   const [history, setHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
+  const [gaugeVotes, setGaugeVotes] = useState(0);
 
   const addresses =
     isConnected && chain.id in contractAddresses
@@ -75,6 +77,12 @@ export default function Lock() {
     contractInterface: gaugeControllerContract.abi,
     addressOrName: addresses.GaugeController,
     signerOrProvider: provider,
+  });
+
+  const gaugeControllerSigner = useContract({
+    contractInterface: gaugeControllerContract.abi,
+    addressOrName: addresses.GaugeController,
+    signerOrProvider: signer,
   });
 
   const curvePoolProvider = useContract({
@@ -194,6 +202,11 @@ export default function Lock() {
     }
   }, [isConnected]);
 
+  function handleVoteSliderChange(_, newValue) {
+    console.log("gauge votes: ", newValue);
+    setGaugeVotes(newValue);
+  }
+
   const handleGaugeChange = (event) => {
     const newGauge = event.target.value;
     console.log("newGauge", newGauge);
@@ -209,6 +222,17 @@ export default function Lock() {
       type: "success",
       message: "You claimed your rewards",
       title: "Claim Successful!",
+      position: "bottomL",
+    });
+  };
+
+  const handleVoteSuccess = async function () {
+    console.log("Voted");
+    updateUI();
+    dispatch({
+      type: "success",
+      message: "You have voted",
+      title: "Vote Successful!",
       position: "bottomL",
     });
   };
@@ -255,21 +279,7 @@ export default function Lock() {
           updateUI={updateUI}
         />
       </StyledModal>
-      <StyledModal
-        hasFooter={false}
-        title={"Vote for Gauge"}
-        isVisible={visibleVoteModal}
-        onCloseButtonPressed={function () {
-          setVisibleVoteModal(false);
-        }}
-      >
-        <Vote
-          setVisibility={setVisibleVoteModal}
-          gauge={selectedGauge}
-          updateUI={updateUI}
-          updateGaugeDetails={updateGaugeDetails}
-        />
-      </StyledModal>
+
       <div className="flex flex-col items-center">
         <div className="flex flex-col md:flex-row max-w-[100%] justify-center items-center mb-4">
           <div className="flex flex-col py-4 px-8 m-8 items-center justify-center text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
@@ -531,7 +541,7 @@ export default function Lock() {
                       fontWeight: "bold",
                     }}
                   >
-                    All Used Votes
+                    Used Voting Power
                   </Box>
                 </div>
                 <div className="flex flex-row">
@@ -554,7 +564,7 @@ export default function Lock() {
                       fontWeight: "bold",
                     }}
                   >
-                    Gauge Votes
+                    Selected Gauge
                   </Box>
                 </div>
                 <div className="flex flex-row">
@@ -594,20 +604,39 @@ export default function Lock() {
                 </div>
               </div>
               {selectedGauge && (
-                <div className="flex flex-row justify-center items-center m-2">
+                <div className="flex flex-col justify-center space-y-2 items-center m-2 w-full">
+                  <Slider
+                    valueLabelDisplay="auto"
+                    onChange={handleVoteSliderChange}
+                    min={0}
+                    step={1}
+                    max={(10000 - totalVoteRatio) / 100}
+                  />
                   <Button
                     customize={{
                       backgroundColor: "grey",
                       fontSize: 16,
                       textColor: "white",
                     }}
-                    text="Vote"
+                    text={"Vote with " + gaugeVotes + " %"}
                     disabled={!selectedGauge}
                     theme="custom"
                     size="large"
                     radius="12"
                     onClick={async function () {
-                      setVisibleVoteModal(true);
+                      try {
+                        setVotingLoading(true);
+                        const tx = await gaugeControllerSigner.vote(
+                          props.gauge,
+                          amount
+                        );
+                        await tx.wait(1);
+                        await handleVoteSuccess(amount);
+                      } catch (error) {
+                        console.log(error);
+                      } finally {
+                        setVotingLoading(false);
+                      }
                     }}
                   />
                 </div>

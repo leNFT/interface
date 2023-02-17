@@ -327,7 +327,8 @@ export default function TradingPool() {
                 }}
               >
                 {"(" +
-                  Number(formatUnits(ethBalance.value, 18)).toPrecision(2) +
+                  (ethBalance &&
+                    Number(formatUnits(ethBalance.value, 18)).toPrecision(2)) +
                   " ETH available)"}
               </Box>
             </div>

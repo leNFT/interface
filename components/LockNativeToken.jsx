@@ -167,7 +167,9 @@ export default function LockNativeToken(props) {
           <div className="flex flex-col">
             <Typography variant="subtitle2">Lock Weight</Typography>
             <Typography variant="body16">
-              {Number(formatUnits(lockWeight, 18)).toPrecision(5) + " veLE"}
+              {lockWeight == 0
+                ? "−"
+                : Number(formatUnits(lockWeight, 18)).toPrecision(5) + " veLE"}
             </Typography>
           </div>
         </div>

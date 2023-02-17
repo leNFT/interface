@@ -113,7 +113,10 @@ export default function EditNativeTokenLock(props) {
           <div className="flex flex-col space-y-2">
             <Typography variant="subtitle2">New Lock Weight</Typography>
             <Typography variant="body16">
-              {Number(formatUnits(newLockWeight, 18)).toPrecision(5) + " veLE"}
+              {newLockWeight == 0
+                ? "−"
+                : Number(formatUnits(newLockWeight, 18)).toPrecision(5) +
+                  " veLE"}
             </Typography>
           </div>
         </div>

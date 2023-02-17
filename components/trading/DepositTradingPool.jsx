@@ -231,7 +231,13 @@ export default function DepositTradingPool(props) {
           value={delta}
           type="number"
           step="any"
-          placeholder="0"
+          placeholder={
+            curve == "exponential"
+              ? "20 %"
+              : curve == "linear"
+              ? "0.01 ETH"
+              : "0"
+          }
           description="The LP price change after each buy/sell"
           validation={{
             numberMin: 0,
@@ -243,7 +249,7 @@ export default function DepositTradingPool(props) {
         <Input
           label="Initial Price"
           type="number"
-          placeholder="> 0"
+          placeholder="0.01 ETH"
           value={initialPrice}
           step="any"
           description="The initial price of the LP"
@@ -257,7 +263,7 @@ export default function DepositTradingPool(props) {
         <Input
           label="ETH Amount"
           type="number"
-          placeholder="0"
+          placeholder="2.5 ETH"
           value={tokenAmount}
           step="any"
           validation={{
@@ -271,7 +277,7 @@ export default function DepositTradingPool(props) {
         <Input
           label="Fee %"
           type="number"
-          placeholder="0"
+          placeholder="0.05 %"
           value={fee}
           step="any"
           validation={{

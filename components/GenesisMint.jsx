@@ -68,7 +68,13 @@ export default function GenesisMint(props) {
 
     const updateLockedRewards = await votingEscrowProvider.simulateLock(
       updatedRewards.toString(),
-      Date.now() / 1000 + locktimeDays * SECONDS_IN_DAY
+      Math.floor(Date.now() / 1000) + locktimeDays * SECONDS_IN_DAY
+    );
+    console.log("updateLockedRewards: ", updateLockedRewards.toString());
+    console.log("updatedRewards: ", updatedRewards.toString());
+    console.log(
+      "locktimeDays: ",
+      Math.floor(Date.now() / 1000) + locktimeDays * SECONDS_IN_DAY
     );
     setLockedRewards(updateLockedRewards.toString());
   }
@@ -186,7 +192,7 @@ export default function GenesisMint(props) {
             <Typography variant="body16">
               {formatUnits(rewards, 18) +
                 " LE -> " +
-                formatUnits(lockedRewards, 18) +
+                Number(formatUnits(lockedRewards, 18)).toPrecision(4) +
                 " veLE"}
             </Typography>
           </div>

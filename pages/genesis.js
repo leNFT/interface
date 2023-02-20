@@ -17,6 +17,7 @@ import Link from "@mui/material/Link";
 import CardContent from "@mui/material/CardContent";
 import { BigNumber } from "@ethersproject/bignumber";
 import { formatUnits } from "ethers/lib/utils";
+import votingEscrowContract from "../contracts/VotingEscrow.json";
 
 export default function Genesis() {
   const [mintCount, setMintCount] = useState(0);
@@ -28,6 +29,7 @@ export default function Genesis() {
   const [userGenesisNFTs, setUserGenesisNFTs] = useState([]);
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
+  const [hasLocked, setHasLocked] = useState(false);
   const provider = useProvider();
   const dispatch = useNotification();
   const addresses =
@@ -35,11 +37,24 @@ export default function Genesis() {
       ? contractAddresses[chain.id]
       : contractAddresses["5"];
 
+  const votingEscrowProvider = useContract({
+    contractInterface: votingEscrowContract.abi,
+    addressOrName: addresses.VotingEscrow,
+    signerOrProvider: provider,
+  });
+
   const genesisNFTProvider = useContract({
     contractInterface: genesisNFTContract.abi,
     addressOrName: addresses.GenesisNFT,
     signerOrProvider: provider,
   });
+
+  async function getLocked() {
+    const locked = await votingEscrowProvider.locked(address);
+    if (locked.end > Date.now() / 1000 || BigNumber.from(locked.amount).gt(0)) {
+      setHasLocked(true);
+    }
+  }
 
   async function updateGenesisInfo() {
     // Get supply
@@ -74,6 +89,7 @@ export default function Genesis() {
   useEffect(() => {
     if (isConnected) {
       updateUI();
+      getLocked();
     }
   }, [isConnected]);
 
@@ -175,7 +191,8 @@ export default function Genesis() {
                 fontSize: 20,
                 textColor: "white",
               }}
-              text="Mint"
+              text={hasLocked ? "Already Minted / Locked LE tokens" : "Mint"}
+              disabled={hasLocked}
               theme="custom"
               size="large"
               radius="12"

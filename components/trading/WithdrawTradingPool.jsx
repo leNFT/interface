@@ -11,15 +11,13 @@ import { useNotification, Button, Typography } from "@web3uikit/core";
 import styles from "../../styles/Home.module.css";
 import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import tradingPoolContract from "../../contracts/TradingPool.json";
 import wethGatewayContract from "../../contracts/WETHGateway.json";
 import erc721 from "../../contracts/erc721.json";
 
 export default function WithdrawTradingPool(props) {
-  const [tokenAmount, setTokenAmount] = useState("0");
-  const [nfts, setNFTs] = useState([]);
-  const [price, setPrice] = useState(0);
+  const [lp, setLP] = useState();
   const [approvedLP, setApprovedLP] = useState(false);
   const [approvalLPLoading, setApprovalLPLoading] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
@@ -50,9 +48,7 @@ export default function WithdrawTradingPool(props) {
     console.log("props.lp", props.lp);
     const lpResponse = await pool.getLP(props.lp);
     console.log("lpResponse", lpResponse);
-    setPrice(formatUnits(lpResponse.spotPrice.toString(), 18));
-    setTokenAmount(lpResponse.tokenAmount.toString());
-    setNFTs(lpResponse.nftIds);
+    setLP(lpResponse);
 
     // GEt allowance for LP token
     const approvedResponse = await pool.getApproved(props.lp);
@@ -103,21 +99,38 @@ export default function WithdrawTradingPool(props) {
       <div className="flex flex-row items-center justify-center m-8">
         <Typography variant="subtitle1">{"LP #" + props.lp}</Typography>
       </div>
-      <div className="flex flex-row m-8">
-        <Typography variant="subtitle2">
-          {"LP Price: " + price + " ETH"}
+      <div className="flex flex-col m-2 space-y-2 text-center">
+        <Typography variant="subtitle1">{"LP Price:"}</Typography>
+        <Typography variant="body16">
+          {(lp ? formatUnits(lp.spotPrice, 18) : "0") + " ETH"}
+        </Typography>
+      </div>
+      <div className="flex flex-col m-2 space-y-2 text-center">
+        <Typography variant="subtitle1">{"Trade Fee:"}</Typography>
+        <Typography variant="body16">
+          {(lp ? lp.fee.toString() / 100 : "0") + "%"}
+        </Typography>
+      </div>
+      <div className="flex flex-col m-2 space-y-2 text-center">
+        <Typography variant="subtitle1">{"Curve:"}</Typography>
+        <Typography variant="body16">{lp ? lp.curve : "_"}</Typography>
+      </div>
+      <div className="flex flex-col m-2 space-y-2 text-center mb-8">
+        <Typography variant="subtitle1">{"Delta:"}</Typography>
+        <Typography variant="body16">
+          {(lp ? lp.delta / 100 : "0") + "%"}
         </Typography>
       </div>
       <div className="flex flex-col items-center justify-center border-4 rounded-xl p-4">
         <div className="flex flex-row items-center m-2">
           <Typography variant="subtitle2">
-            {formatUnits(tokenAmount, 18) + " ETH"}
+            {(lp ? formatUnits(lp.tokenAmount, 18) : "0") + " ETH"}
           </Typography>
         </div>
         <div className="flex flex-row items-center  m-2">
           <Typography variant="subtitle2">
-            {nfts.length > 0
-              ? nfts.length + " NFTs: " + nfts.toString()
+            {lp && lp.nftIds.length > 0
+              ? lp.nftIds.length + " NFTs: " + lp.nftIds.toString()
               : "No NFTs in LP"}
           </Typography>
         </div>

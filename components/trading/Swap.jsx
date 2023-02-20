@@ -1154,7 +1154,7 @@ export default function Swap() {
                     ),
                     18
                   ) +
-                  " WETH"}
+                  " ETH"}
             </Box>
             <Tooltip
               content="The 'change' resulting from the swap. Negative you pay, positive you receive."
@@ -1172,7 +1172,7 @@ export default function Swap() {
                 fontSize: "subtitle1.fontSize",
               }}
             >
-              Buy Side Impact: {priceQuote.buyPriceImpact / 100}%
+              {"Buy Side Impact: +" + priceQuote.buyPriceImpact / 100 + "%"}
             </Box>
           )}
           {priceQuote.sellPriceImpact && (
@@ -1183,7 +1183,7 @@ export default function Swap() {
                 fontSize: "subtitle1.fontSize",
               }}
             >
-              Sell Side Impact: {priceQuote.sellPriceImpact / 100}%
+              {"Sell Side Impact: -" + priceQuote.sellPriceImpact / 100 + "%"}
             </Box>
           )}
         </div>
@@ -1276,6 +1276,17 @@ export default function Swap() {
                   .toString();
                 console.log("txValue: " + txValue);
               }
+              console.log("txValue: " + txValue);
+              console.log("buyPoolAddress: " + buyPoolAddress);
+              console.log("sellPoolAddress: " + sellPoolAddress);
+              console.log(
+                "selectedBuyNFTs: ",
+                selectingBuyNFTs ? selectedBuyNFTs : priceQuote.exampleBuyNFTs
+              );
+              console.log("priceQuote.buyPrice: ", priceQuote.buyPrice);
+              console.log("selectedSellNFTs: ", selectedSellNFTs);
+              console.log("priceQuote.sellLps: ", priceQuote.sellLps);
+              console.log("priceQuote.sellPrice: ", priceQuote.sellPrice);
               try {
                 let tx = await wethGatewaySigner.swap(
                   buyPoolAddress,

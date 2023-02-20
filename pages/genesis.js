@@ -1,6 +1,6 @@
 import styles from "../styles/Home.module.css";
-import { Button } from "@web3uikit/core";
 import contractAddresses from "../contractAddresses.json";
+import { Button, useNotification } from "@web3uikit/core";
 import genesisNFTContract from "../contracts/GenesisNFT.json";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
@@ -29,7 +29,7 @@ export default function Genesis() {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const provider = useProvider();
-
+  const dispatch = useNotification();
   const addresses =
     isConnected && chain.id in contractAddresses
       ? contractAddresses[chain.id]
@@ -180,7 +180,16 @@ export default function Genesis() {
               size="large"
               radius="12"
               onClick={async function () {
-                setVisibleMintModal(true);
+                if (!isConnected) {
+                  dispatch({
+                    type: "warning",
+                    message: "You need to connect your wallet first",
+                    title: "Connect Wallet",
+                    position: "bottomL",
+                  });
+                } else {
+                  setVisibleMintModal(true);
+                }
               }}
             />
           </div>

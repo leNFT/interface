@@ -34,6 +34,7 @@ export default function GenesisMint(props) {
   const [sliderValue, setSliderValue] = useState(14);
   const [mintIds, setMintIds] = useState([]);
   const [mintPrice, setMintPrice] = useState("0");
+  const [hasLocked, setHasLocked] = useState(false);
 
   const addresses =
     isConnected && chain.id in contractAddresses
@@ -79,6 +80,13 @@ export default function GenesisMint(props) {
     setLockedRewards(updateLockedRewards.toString());
   }
 
+  async function getLocked() {
+    const locked = await votingEscrowProvider.locked(address);
+    if (locked.end > Date.now() / 1000 || BigNumber.from(locked.amount).gt(0)) {
+      setHasLocked(true);
+    }
+  }
+
   useEffect(() => {
     if (props.price) {
       setMintPrice(props.price);
@@ -98,6 +106,7 @@ export default function GenesisMint(props) {
   useEffect(() => {
     if (isConnected) {
       updateMintInfo();
+      getLocked();
     }
   }, [isConnected]);
 
@@ -153,14 +162,14 @@ export default function GenesisMint(props) {
     <div className="flex flex-col w-full items-center">
       <div className="flex flex-col lg:flex-row items-center justify-center m-4 text-center">
         <div className="flex flex-col m-2 lg:mx-8">
-          <Typography variant="subtitle2">Price</Typography>
-          <Typography variant="body16">
+          <Typography variant="subtitle1">Price</Typography>
+          <Typography variant="body18">
             {formatUnits(mintPrice, 18) + " ETH"}
           </Typography>
         </div>
         <div className="flex flex-col m-2 lg:mx-8">
-          <Typography variant="subtitle2">Token ID</Typography>
-          <Typography variant="body16">
+          <Typography variant="subtitle1">Token ID</Typography>
+          <Typography variant="body18">
             {amount < 4
               ? mintIds.toString()
               : mintIds.slice(0, 2) + "..." + mintIds.slice(-1)}
@@ -184,12 +193,12 @@ export default function GenesisMint(props) {
       <div className="flex flex-col p-2 border-4 rounded-3xl w-full md:w-8/12">
         <div className="flex flex-col md:flex-row items-center justify-center mt-2 text-center">
           <div className="flex flex-col m-2 md:m-4">
-            <Typography variant="subtitle2">Lock Time</Typography>
-            <Typography variant="body16">{locktimeDays + " days"}</Typography>
+            <Typography variant="subtitle1">Lock Time</Typography>
+            <Typography variant="body18">{locktimeDays + " days"}</Typography>
           </div>
           <div className="flex flex-col m-2 md:m-4">
-            <Typography variant="subtitle2">LE Rewards</Typography>
-            <Typography variant="body16">
+            <Typography variant="subtitle1">LE Rewards</Typography>
+            <Typography variant="body18">
               {formatUnits(rewards, 18) +
                 " LE -> " +
                 Number(formatUnits(lockedRewards, 18)).toPrecision(4) +
@@ -211,8 +220,9 @@ export default function GenesisMint(props) {
       </div>
       <div className="flex flex-row items-center justify-center m-8 px-8 w-full">
         <Button
-          text="MINT"
+          text={hasLocked ? "Already Minted / Locked LE tokens" : "MINT"}
           theme="secondary"
+          disabled={hasLocked}
           isFullWidth
           loadingProps={{
             spinnerColor: "#000000",
@@ -223,6 +233,8 @@ export default function GenesisMint(props) {
           loadingText=""
           isLoading={mintingLoading}
           onClick={async function () {
+            console.log("Minting...");
+            console.log("ethBalance: ", ethBalance);
             if (ethBalance.value.lt(props.price)) {
               dispatch({
                 type: "error",

@@ -20,7 +20,7 @@ export async function getTradingPoolHistory(chainId, pool) {
 
   const tradingPoolHistoryResponse = await fetch(
     serverAddress +
-      "/api/tradingPoolHistory" +
+      "/trading/poolHistory" +
       "?chainId=" +
       chainId +
       "&pool=" +

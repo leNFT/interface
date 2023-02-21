@@ -259,12 +259,10 @@ export default function Sell() {
       getUserNFTs(value);
       getTradingPoolAddress(value);
     } else if (
-      tradingCollections
-        .map((collection) => collection.contractMetadata.name)
-        .includes(value)
+      tradingCollections.map((collection) => collection.name).includes(value)
     ) {
       const nftAddress = tradingCollections.find(
-        (collection) => collection.contractMetadata.name == value
+        (collection) => collection.name == value
       ).address;
       setNFTAddress(nftAddress);
       getUserNFTs(nftAddress);
@@ -299,29 +297,25 @@ export default function Sell() {
                   fontFamily: "Monospace",
                 },
               }}
-              options={tradingCollections.map(
-                (option) => option.contractMetadata.name
-              )}
+              options={tradingCollections.map((option) => option.name)}
               sx={{ minWidth: { xs: 215, sm: 300, md: 380 } }}
               onInputChange={handleNFTAddressChange}
               renderOption={(props, option, state) => (
                 <div className="flex flex-row m-4" {...props}>
                   <div className="flex w-3/12 h-[50px]">
                     {tradingCollections.find(
-                      (collection) => collection.contractMetadata.name == option
-                    ).media.gateway && (
+                      (collection) => collection.name == option
+                    ).image && (
                       <Image
                         loader={() =>
                           tradingCollections.find(
-                            (collection) =>
-                              collection.contractMetadata.name == option
-                          ).media.gateway
+                            (collection) => collection.name == option
+                          ).image
                         }
                         src={
                           tradingCollections.find(
-                            (collection) =>
-                              collection.contractMetadata.name == option
-                          ).media.gateway
+                            (collection) => collection.name == option
+                          ).image
                         }
                         height="50"
                         width="50"

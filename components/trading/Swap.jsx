@@ -361,12 +361,10 @@ export default function Swap() {
       getSellTradingPoolAddress(value);
       getSellCollectionThumbnailURL(value);
     } else if (
-      tradingCollections
-        .map((collection) => collection.contractMetadata.name)
-        .includes(value)
+      tradingCollections.map((collection) => collection.name).includes(value)
     ) {
       const nftAddress = tradingCollections.find(
-        (collection) => collection.contractMetadata.name == value
+        (collection) => collection.name == value
       ).address;
       setSellNFTAddress(nftAddress);
       getCollectionNFTs(nftAddress);
@@ -395,12 +393,10 @@ export default function Swap() {
       getBuyTradingPoolAddress(value);
       getBuyCollectionThumbnailURL(value);
     } else if (
-      tradingCollections
-        .map((collection) => collection.contractMetadata.name)
-        .includes(value)
+      tradingCollections.map((collection) => collection.name).includes(value)
     ) {
       const nftAddress = tradingCollections.find(
-        (collection) => collection.contractMetadata.name == value
+        (collection) => collection.name == value
       ).address;
       setBuyNFTAddress(nftAddress);
       getBuyTradingPoolAddress(nftAddress);
@@ -519,9 +515,7 @@ export default function Swap() {
                     fontFamily: "Monospace",
                   },
                 }}
-                options={tradingCollections.map(
-                  (option) => option.contractMetadata.name
-                )}
+                options={tradingCollections.map((option) => option.name)}
                 sx={{
                   minWidth: { xs: 180, sm: 250, md: 270, lg: 260, xl: 280 },
                 }}
@@ -530,21 +524,18 @@ export default function Swap() {
                   <div className="flex flex-row m-4" {...props}>
                     <div className="flex w-3/12 h-[50px]">
                       {tradingCollections.find(
-                        (collection) =>
-                          collection.contractMetadata.name == option
-                      ).media.gateway && (
+                        (collection) => collection.name == option
+                      ).image && (
                         <Image
                           loader={() =>
                             tradingCollections.find(
-                              (collection) =>
-                                collection.contractMetadata.name == option
-                            ).media.gateway
+                              (collection) => collection.name == option
+                            ).image
                           }
                           src={
                             tradingCollections.find(
-                              (collection) =>
-                                collection.contractMetadata.name == option
-                            ).media.gateway
+                              (collection) => collection.name == option
+                            ).image
                           }
                           height="50"
                           width="50"
@@ -801,9 +792,7 @@ export default function Swap() {
                     fontFamily: "Monospace",
                   },
                 }}
-                options={tradingCollections.map(
-                  (option) => option.contractMetadata.name
-                )}
+                options={tradingCollections.map((option) => option.name)}
                 sx={{
                   minWidth: { xs: 200, sm: 250, md: 270, lg: 260, xl: 280 },
                 }}
@@ -812,21 +801,18 @@ export default function Swap() {
                   <div className="flex flex-row m-4" {...props}>
                     <div className="flex w-3/12 h-[50px]">
                       {tradingCollections.find(
-                        (collection) =>
-                          collection.contractMetadata.name == option
-                      ).media.gateway && (
+                        (collection) => collection.name == option
+                      ).image && (
                         <Image
                           loader={() =>
                             tradingCollections.find(
-                              (collection) =>
-                                collection.contractMetadata.name == option
-                            ).media.gateway
+                              (collection) => collection.name == option
+                            ).image
                           }
                           src={
                             tradingCollections.find(
-                              (collection) =>
-                                collection.contractMetadata.name == option
-                            ).media.gateway
+                              (collection) => collection.name == option
+                            ).image
                           }
                           height="50"
                           width="50"

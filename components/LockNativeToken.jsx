@@ -104,7 +104,7 @@ export default function LockNativeToken(props) {
   }, [isConnected]);
 
   useEffect(() => {
-    if (isConnected) {
+    if (isConnected && amount && unlockTime) {
       const simulateBlockWeight = async () => {
         const simulatedLockWeight = await votingEscrowProvider.simulateLock(
           amount,

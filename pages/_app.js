@@ -13,6 +13,7 @@ import {
 import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 import { alchemyProvider } from "wagmi/providers/alchemy";
+import { Script } from "next/script";
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -50,6 +51,13 @@ function MyApp({ Component, pageProps }) {
             overlayBlur: "large",
           })}
         >
+          <script
+            defer
+            type="text/javascript"
+            src="https://api.pirsch.io/pirsch.js"
+            id="pirschjs"
+            data-code="e2QT8Re8oVzu1JJr0Nxf7hsXT3Psu0JF"
+          />
           <LayoutComponent>
             <Component {...pageProps}></Component>
           </LayoutComponent>

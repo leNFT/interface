@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 
 export async function getTradingPools(chainId) {
-  const serverAddress = "https://lenft-api-w27ha.ondigitalocean.app";
+  const serverAddress = "https://api-h6nqa.ondigitalocean.app";
   const options = {
     method: "GET",
     headers: {
@@ -9,10 +9,10 @@ export async function getTradingPools(chainId) {
     },
   };
 
-  console.log(serverAddress + "/api/tradingPools?chainId=" + chainId);
+  console.log(serverAddress + "/trading/pools?chainId=" + chainId);
 
   const tradingPoolsResponse = await fetch(
-    serverAddress + "/api/tradingPools?chainId=" + chainId,
+    serverAddress + "/trading/pools?chainId=" + chainId,
     options
   ).catch((err) => console.error(err));
   var tradingPools = [];

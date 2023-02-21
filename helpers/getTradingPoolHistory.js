@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 
 export async function getTradingPoolHistory(chainId, pool) {
-  const serverAddress = "https://lenft-api-w27ha.ondigitalocean.app";
+  const serverAddress = "https://api-h6nqa.ondigitalocean.app";
   const options = {
     method: "GET",
     headers: {
@@ -11,7 +11,7 @@ export async function getTradingPoolHistory(chainId, pool) {
 
   console.log(
     serverAddress +
-      "/api/tradingPoolHistory" +
+      "/trading/poolHistory" +
       "?chainId=" +
       chainId +
       "&pool=" +

@@ -662,6 +662,8 @@ export default function Lock() {
                       " %"
                     }
                     disabled={!selectedGauge}
+                    isLoading={votingLoading}
+                    loadingText=""
                     theme="custom"
                     size="large"
                     radius="12"
@@ -669,7 +671,7 @@ export default function Lock() {
                       try {
                         setVotingLoading(true);
                         const tx = await gaugeControllerSigner.vote(
-                          props.gauge,
+                          selectedGauge,
                           gaugeVotes
                         );
                         await tx.wait(1);

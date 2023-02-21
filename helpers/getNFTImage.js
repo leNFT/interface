@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 
 export async function getNFTImage(collection, tokenId, chainId) {
-  const serverAddress = "https://lenft-api-w27ha.ondigitalocean.app";
+  const serverAddress = "https://api-h6nqa.ondigitalocean.app";
   const options = {
     method: "GET",
     headers: {
@@ -10,7 +10,7 @@ export async function getNFTImage(collection, tokenId, chainId) {
   };
   console.log(
     serverAddress +
-      "/api/nftImageURL?address=" +
+      "/nfts/imageURL?address=" +
       collection +
       "&tokenId=" +
       tokenId +
@@ -19,7 +19,7 @@ export async function getNFTImage(collection, tokenId, chainId) {
   );
   const nftImageResponse = await fetch(
     serverAddress +
-      "/api/nftImageURL?address=" +
+      "/nfts/imageURL?address=" +
       collection +
       "&tokenId=" +
       tokenId +

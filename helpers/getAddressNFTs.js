@@ -25,7 +25,7 @@ export async function getAddressNFTs(address, collection, chainId) {
 
   const nftsResponse = await fetch(
     serverAddress +
-      "/api/addressNFTs?address=" +
+      "/nfts/address?address=" +
       address +
       "&chainId=" +
       chainId +

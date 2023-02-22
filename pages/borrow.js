@@ -487,7 +487,7 @@ export default function Borrow() {
                           letterSpacing: 2,
                         }}
                       >
-                        {"Borrow"}
+                        {"Borrow with " + selectedAssets.length + " NFTs"}
                       </Box>
                     </div>
                   }

@@ -10,7 +10,7 @@ export async function getAddressNFTs(address, collection, chainId) {
   };
 
   var collectionsURLString = "";
-  if (collection != "") {
+  if (collection) {
     collectionsURLString = "&collection=" + collection;
   }
 
@@ -32,6 +32,7 @@ export async function getAddressNFTs(address, collection, chainId) {
       collectionsURLString,
     options
   ).catch((err) => console.error(err));
+  console.log("nftsREsponse", nftsResponse);
   const nfts = await nftsResponse.json();
 
   return nfts;

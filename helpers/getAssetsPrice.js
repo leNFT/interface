@@ -6,7 +6,7 @@ export async function getAssetsPrice(
   chainId,
   requestId = ""
 ) {
-  const serverAddress = "https://lenft-api-w27ha.ondigitalocean.app";
+  const serverAddress = "https://api-h6nqa.ondigitalocean.app";
   const options = {
     method: "GET",
     headers: {
@@ -16,7 +16,7 @@ export async function getAssetsPrice(
   console.log("Getting price Sig from chain:", chainId);
   const requestURL =
     serverAddress +
-    "/api/assetsPrice?requestId=" +
+    "/nfts/price?requestId=" +
     requestId +
     "&collection=" +
     collection +

@@ -1,22 +1,17 @@
 import fetch from "node-fetch";
 
 export async function getLendingNFTCollections(chainId, pool = "") {
-  const serverAddress = "https://lenft-api-w27ha.ondigitalocean.app";
+  const serverAddress = "https://api-h6nqa.ondigitalocean.app";
   const options = {
     method: "GET",
     headers: {
       Accept: "application/json",
     },
   };
-  console.log(
-    serverAddress +
-      "/api/lendingNFTCollections?chainId=" +
-      chainId +
-      (pool != "" && "&pool=" + pool)
-  );
+
   const response = await fetch(
     serverAddress +
-      "/api/lendingNFTCollections?chainId=" +
+      "/lending/collections?chainId=" +
       chainId +
       (pool != "" ? "&pool=" + pool : ""),
     options

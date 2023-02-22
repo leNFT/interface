@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 
 export async function getLendingPools(chainId) {
-  const serverAddress = "https://lenft-api-w27ha.ondigitalocean.app";
+  const serverAddress = "https://api-h6nqa.ondigitalocean.app";
   const options = {
     method: "GET",
     headers: {
@@ -10,7 +10,7 @@ export async function getLendingPools(chainId) {
   };
 
   const lendingPoolsResponse = await fetch(
-    serverAddress + "/api/lendingPools?chainId=" + chainId,
+    serverAddress + "/lending/pools?chainId=" + chainId,
     options
   ).catch((err) => console.error(err));
   var lendingPools = [];

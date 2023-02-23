@@ -52,6 +52,7 @@ export default function Lock() {
   const [history, setHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [gaugeVotes, setGaugeVotes] = useState(0);
+  const [lockAmount, setLockAmount] = useState("0");
 
   const addresses =
     isConnected && chain.id in contractAddresses
@@ -95,12 +96,13 @@ export default function Lock() {
   });
 
   async function updateUI() {
-    const updatedUnlockTime = await votingEscrowProvider.locked(address);
+    const updatedLockDetails = await votingEscrowProvider.locked(address);
     console.log(
       "updatedUnlockTime:",
-      BigNumber.from(updatedUnlockTime.end).toNumber()
+      BigNumber.from(updatedLockDetails.end).toNumber()
     );
-    setUnlockTime(BigNumber.from(updatedUnlockTime.end).toNumber());
+    setUnlockTime(BigNumber.from(updatedLockDetails.end).toNumber());
+    setLockAmount(updatedLockDetails.amount);
 
     //Get the vote token Balance
     const updatedVoteTokenBalance = await votingEscrowProvider.balanceOf(
@@ -499,7 +501,7 @@ export default function Lock() {
                       Locked Balance
                     </Box>
                   </div>
-                  <div className="flex flex-row my-2">
+                  <div className="flex flex-col my-2 space-y-1">
                     <Box
                       sx={{
                         fontFamily: "Monospace",
@@ -507,7 +509,18 @@ export default function Lock() {
                       }}
                     >
                       {Number(formatUnits(voteTokenBalance, 18)).toFixed(2) +
-                        " veLE"}
+                        " veLE (" +
+                        Number(formatUnits(lockAmount, 18)).toFixed(2) +
+                        " LE)"}
+                    </Box>
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                      }}
+                    >
+                      {"Locked until " +
+                        new Date(unlockTime * 1000).toLocaleDateString()}
                     </Box>
                   </div>
                 </div>

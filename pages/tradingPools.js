@@ -208,7 +208,7 @@ export default function TradingPools() {
               >
                 NFT
               </Box>
-              <div className="flex flex-col">
+              <div className="flex flex-col ml-1">
                 <Tooltip
                   content="NFTs in this pool"
                   position="bottom"
@@ -231,7 +231,7 @@ export default function TradingPools() {
               >
                 Token
               </Box>
-              <div className="flex flex-col">
+              <div className="flex flex-col ml-1">
                 <Tooltip
                   content="Tokens in this pool."
                   position="bottom"
@@ -268,7 +268,7 @@ export default function TradingPools() {
               >
                 Gauge
               </Box>
-              <div className="flex flex-col">
+              <div className="flex flex-col ml-1">
                 <Tooltip
                   content="Gauge for this pool."
                   position="bottom"

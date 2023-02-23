@@ -68,7 +68,7 @@ export default function Borrow() {
     const updatedSupportedNFTs = await getLendingNFTCollections(chain.id);
     setSupportedNFTs(updatedSupportedNFTs);
 
-    console.log("supportedNFTs:", supportedNFTs);
+    console.log("supportedNFTs:", updatedSupportedNFTs);
     var updatedLoans = [];
     var updatedSupportedAssets = [];
     var updatedUnsupportedAssets = [];
@@ -163,7 +163,10 @@ export default function Borrow() {
         chain.id
       );
 
-      if (selectedCollection == "") {
+      console.log("addressCollectionNFTs", addressCollectionNFTs);
+      console.log("selectedCollection", selectedCollection);
+
+      if (!selectedCollection) {
         for (let i = 0; i < addressCollectionNFTs.length; i++) {
           if (
             supportedNFTs[

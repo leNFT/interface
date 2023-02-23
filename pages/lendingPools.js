@@ -197,8 +197,8 @@ export default function LendingPools() {
         </div>
         <Table
           columnsConfig="2fr 2fr 2fr 2fr 1fr 0fr"
-          tableBackgroundColor="white"
           alignCellItems="center"
+          tableBackgroundColor="rgba(255, 255, 255, 0.65)"
           customLoadingContent={
             <div
               style={{

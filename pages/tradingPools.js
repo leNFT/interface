@@ -43,8 +43,8 @@ export default function TradingPools() {
           <Image
             loader={() => value.nft.image}
             src={value.nft.image}
-            height="80"
-            width="80"
+            height="50"
+            width="50"
             className="rounded-xl"
             key={"image" + key}
           />
@@ -54,7 +54,6 @@ export default function TradingPools() {
             fontFamily: "Monospace",
             fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
           }}
-          className="m-2"
           key={"nft" + key}
         >
           {value.nft.amount + " " + value.nft.name}
@@ -64,7 +63,6 @@ export default function TradingPools() {
             fontFamily: "Monospace",
             fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
           }}
-          className="m-2"
           key={"token" + key}
         >
           {Number(formatUnits(value.token.amount, 18)).toPrecision(2) + " ETH"}
@@ -74,24 +72,24 @@ export default function TradingPools() {
             fontFamily: "Monospace",
             fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
           }}
-          className="m-2"
           key={"volume" + key}
         >
           {Number(formatUnits(value.volume, 18)).toPrecision(2) + " ETH"}
         </Box>,
-        <div className="m-1" key={"gauge" + key}>
+        <div key={"gauge" + key}>
           <Button
             customize={{
               backgroundColor: "black",
               textColor: "white",
             }}
+            size="small"
             theme="custom"
             text={
               <Box
                 sx={{
                   fontSize: {
                     xs: "caption.fontSize",
-                    sm: "h6.fontSize",
+                    sm: "subtitle1.fontSize",
                   },
                 }}
               >
@@ -117,9 +115,9 @@ export default function TradingPools() {
               fontSize: 18,
               textColor: "white",
             }}
-            text="Deposit"
+            text="+"
             theme="custom"
-            size="large"
+            size="medium"
             id={key}
             radius="12"
             onClick={async function (event) {
@@ -160,7 +158,7 @@ export default function TradingPools() {
         />
       </StyledModal>
       <div className="flex flex-col">
-        <div className="flex flex-row justify-end m-2 mb-4">
+        <div className="flex flex-row justify-end mb-4">
           <Button
             customize={{
               backgroundColor: "grey",
@@ -179,7 +177,7 @@ export default function TradingPools() {
         <Table
           columnsConfig="1fr 2fr 2fr 2fr 1fr 0fr"
           alignCellItems="center"
-          tableBackgroundColor="white"
+          tableBackgroundColor="rgba(255, 255, 255, 0.65)"
           customLoadingContent={
             <div
               style={{
@@ -197,7 +195,7 @@ export default function TradingPools() {
           data={tableData}
           header={[
             <div key="image"></div>,
-            <div className="flex flex-row m-2" key="nft">
+            <div className="flex flex-row" key="nft">
               <Box
                 sx={{
                   fontFamily: "Monospace",
@@ -210,7 +208,7 @@ export default function TradingPools() {
               >
                 NFT
               </Box>
-              <div className="flex flex-col ml-1">
+              <div className="flex flex-col">
                 <Tooltip
                   content="NFTs in this pool"
                   position="bottom"
@@ -220,7 +218,7 @@ export default function TradingPools() {
                 </Tooltip>
               </div>
             </div>,
-            <div className="flex flex-row m-2" key="token">
+            <div className="flex flex-row" key="token">
               <Box
                 sx={{
                   fontFamily: "Monospace",
@@ -233,7 +231,7 @@ export default function TradingPools() {
               >
                 Token
               </Box>
-              <div className="flex flex-col ml-1">
+              <div className="flex flex-col">
                 <Tooltip
                   content="Tokens in this pool."
                   position="bottom"
@@ -243,7 +241,7 @@ export default function TradingPools() {
                 </Tooltip>
               </div>
             </div>,
-            <div className="flex flex-row m-2" key="volume">
+            <div className="flex flex-row" key="volume">
               <Box
                 sx={{
                   fontFamily: "Monospace",
@@ -257,7 +255,7 @@ export default function TradingPools() {
                 Volume (24h)
               </Box>
             </div>,
-            <div className="flex flex-row m-2" key="rates">
+            <div className="flex flex-row" key="rates">
               <Box
                 sx={{
                   fontFamily: "Monospace",
@@ -270,7 +268,7 @@ export default function TradingPools() {
               >
                 Gauge
               </Box>
-              <div className="flex flex-col ml-1">
+              <div className="flex flex-col">
                 <Tooltip
                   content="Gauge for this pool."
                   position="bottom"
@@ -286,7 +284,7 @@ export default function TradingPools() {
           isColumnSortable={[false, true, true, true, false]}
           onPageNumberChanged={function noRefCheck() {}}
           onRowClick={function noRefCheck() {}}
-          pageSize={5}
+          pageSize={20}
         />
       </div>
     </div>

@@ -166,7 +166,7 @@ export default function Borrow() {
       console.log("addressCollectionNFTs", addressCollectionNFTs);
       console.log("selectedCollection", selectedCollection);
 
-      if (!selectedCollection) {
+      if (selectedCollection == "") {
         for (let i = 0; i < addressCollectionNFTs.length; i++) {
           if (
             supportedNFTs[
@@ -184,7 +184,9 @@ export default function Borrow() {
       setSearchResults(selectedCollectionNFTs);
       setSearchPageData(selectedCollectionNFTs.slice(0, SEARCH_PAGE_SIZE));
     }
-    getSelectedCollectionNFTs();
+    if (selectedCollection != undefined) {
+      getSelectedCollectionNFTs();
+    }
   }, [selectedCollection]);
 
   const handleUnsupportedAssetClick = async function (assetName) {

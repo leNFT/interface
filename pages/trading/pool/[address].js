@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button, Tooltip, Loading, Typography, LinkTo } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
 import { getTradingPoolHistory } from "../../../helpers/getTradingPoolHistory.js";
+import { getTradingPoolPrice } from "../../../helpers/getTradingPoolPrice.js";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Table } from "@nextui-org/react";
 import StyledModal from "../../../components/StyledModal";
@@ -42,6 +43,7 @@ export default function TradingPool() {
   const [loadingTradingPool, setLoadingTradingPool] = useState(true);
   const [nftName, setNFTName] = useState("...");
   const [tokenName, setTokenName] = useState("...");
+  const [price, setPrice] = useState();
   const { data: ethBalance } = useBalance({
     addressOrName: address,
   });
@@ -81,6 +83,13 @@ export default function TradingPool() {
     );
     const tokenNameResponse = await tokenContract.name();
     setTokenName(tokenNameResponse);
+
+    // Get the best price the pool LPs can offer
+    const priceResponse = await getTradingPoolPrice(
+      chain.id,
+      router.query.address
+    );
+    setPrice(priceResponse);
 
     // Get number of user NFTs
     setUserNFTsAmount(
@@ -214,58 +223,114 @@ export default function TradingPool() {
           />
         </div>
       </div>
-      <div className="flex flex-row justify-center items-center p-8 rounded-3xl m-8 lg:mx-16 bg-black/5 shadow-lg">
-        <LinkTo
-          type="external"
-          iconLayout="none"
-          text={
+
+      <div className="flex flex-col justify-center items-center p-8 rounded-3xl m-8 lg:mx-16 bg-black/5 shadow-lg">
+        <div className="flex flex-row justify-center items-center">
+          <LinkTo
+            type="external"
+            iconLayout="none"
+            text={
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: {
+                    xs: "caption.fontSize",
+                    sm: "h5.fontSize",
+                  },
+                }}
+                className="m-2"
+              >
+                {nftName}
+              </Box>
+            }
+            address={
+              isConnected
+                ? chain.id == 1
+                  ? "https://etherscan.io/address/" + nft
+                  : "https://goerli.etherscan.io/address/" + nft
+                : "https://goerli.etherscan.io/address/" + nft
+            }
+          ></LinkTo>
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: {
+                xs: "caption.fontSize",
+                sm: "h5.fontSize",
+              },
+              fontWeight: "bold",
+            }}
+          >
+            {" / "}
+          </Box>
+          <Box
+            className="m-2"
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: {
+                xs: "caption.fontSize",
+                sm: "h5.fontSize",
+              },
+              fontWeight: "bold",
+            }}
+          >
+            {tokenName}
+          </Box>
+        </div>
+        <div className="flex flex-row justify-center items-center space-x-8 mt-4 p-4 border-2 rounded-3xl border-black">
+          <div className="flex flex-col border-r-2 pr-8 border-black justify-center items-center text-center">
             <Box
               sx={{
                 fontFamily: "Monospace",
                 fontSize: {
                   xs: "caption.fontSize",
-                  sm: "h5.fontSize",
+                  sm: "h6.fontSize",
+                },
+                fontWeight: "bold",
+              }}
+            >
+              Buy Price
+            </Box>
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: {
+                  xs: "caption.fontSize",
+                  sm: "subtitle1.fontSize",
                 },
               }}
-              className="m-2"
             >
-              {nftName}
+              {(price ? formatUnits(price.buyPrice, 18) : "0.00") + " ETH"}
             </Box>
-          }
-          address={
-            isConnected
-              ? chain.id == 1
-                ? "https://etherscan.io/address/" + nft
-                : "https://goerli.etherscan.io/address/" + nft
-              : "https://goerli.etherscan.io/address/" + nft
-          }
-        ></LinkTo>
-        <Box
-          sx={{
-            fontFamily: "Monospace",
-            fontSize: {
-              xs: "caption.fontSize",
-              sm: "h5.fontSize",
-            },
-            fontWeight: "bold",
-          }}
-        >
-          {" / "}
-        </Box>
-        <Box
-          className="m-2"
-          sx={{
-            fontFamily: "Monospace",
-            fontSize: {
-              xs: "caption.fontSize",
-              sm: "h5.fontSize",
-            },
-            fontWeight: "bold",
-          }}
-        >
-          {tokenName}
-        </Box>
+          </div>
+          <div className="flex flex-col justify-center items-center text-center">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: {
+                  xs: "caption.fontSize",
+                  sm: "h6.fontSize",
+                },
+                fontWeight: "bold",
+              }}
+            >
+              Sell Price
+            </Box>
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: {
+                  xs: "caption.fontSize",
+                  sm: "subtitle1.fontSize",
+                },
+              }}
+            >
+              {(price ? formatUnits(price.sellPrice, 18) : "0.00") + " ETH"}
+            </Box>
+          </div>
+        </div>
       </div>
+
       <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:mx-16 !mt-8 bg-black/5 shadow-lg">
         <div className="flex flex-col items-center p-4 rounded-3xl m-8 lg:m-16 bg-black/5 shadow-lg">
           <div className="flex flex-col m-4 rounded-2xl">
@@ -375,7 +440,11 @@ export default function TradingPool() {
                       fontSize: "subtitle1.fontSize",
                     }}
                   >
-                    <div>{"No LP Positions found"}</div>
+                    <div>
+                      {
+                        "No LP Positions found. (Did you stake them in the gauge?)"
+                      }
+                    </div>
                   </Box>
                 ) : (
                   <div className="flex grid md:grid-cols-2 lg:grid-cols-3 gap-4">

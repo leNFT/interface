@@ -520,7 +520,9 @@ export default function Lock() {
                       }}
                     >
                       {"Locked until " +
-                        new Date(unlockTime * 1000).toLocaleDateString()}
+                        (unlockTime > 0
+                          ? new Date(unlockTime * 1000).toLocaleDateString()
+                          : "-")}
                     </Box>
                   </div>
                 </div>

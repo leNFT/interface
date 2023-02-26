@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 
-export async function getTradingPools(chainId) {
+export async function getTradingPools(chainId, pool) {
   const serverAddress = "https://api-h6nqa.ondigitalocean.app";
   const options = {
     method: "GET",
@@ -9,13 +9,20 @@ export async function getTradingPools(chainId) {
     },
   };
 
-  console.log(serverAddress + "/trading/pools?chainId=" + chainId);
+  var poolURLString = "";
+  if (pool) {
+    poolURLString = "&pool=" + pool;
+  }
+
+  console.log(
+    serverAddress + "/trading/pools?chainId=" + chainId + poolURLString
+  );
 
   const tradingPoolsResponse = await fetch(
-    serverAddress + "/trading/pools?chainId=" + chainId,
+    serverAddress + "/trading/pools?chainId=" + chainId + poolURLString,
     options
   ).catch((err) => console.error(err));
-  var tradingPools = [];
+  var tradingPools;
 
   try {
     tradingPools = await tradingPoolsResponse.json();

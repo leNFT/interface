@@ -8,6 +8,7 @@ import { Table } from "@nextui-org/react";
 import StyledModal from "../../../components/StyledModal";
 import { formatUnits } from "@ethersproject/units";
 import { getAddressNFTs } from "../../../helpers/getAddressNFTs.js";
+import { getTradingPools } from "../../../helpers/getTradingPools.js";
 import contractAddresses from "../../../contractAddresses.json";
 import tradingPoolContract from "../../../contracts/TradingPool.json";
 import DepositTradingPool from "../../../components/trading/DepositTradingPool";
@@ -44,6 +45,7 @@ export default function TradingPool() {
   const [nftName, setNFTName] = useState("...");
   const [tokenName, setTokenName] = useState("...");
   const [price, setPrice] = useState();
+  const [poolInfo, setPoolInfo] = useState();
   const { data: ethBalance } = useBalance({
     addressOrName: address,
   });
@@ -62,6 +64,10 @@ export default function TradingPool() {
     );
 
     // Set pool details
+    const poolInfo = await getTradingPools(chain.id, router.query.address);
+    console.log("poolInfo", poolInfo);
+    setPoolInfo(poolInfo);
+
     const nftResponse = await pool.getNFT();
     setNFT(nftResponse.toString());
 
@@ -277,7 +283,7 @@ export default function TradingPool() {
             {tokenName}
           </Box>
         </div>
-        <div className="flex flex-row justify-center items-center space-x-8 mt-4 p-4 border-2 rounded-3xl border-black">
+        <div className="flex flex-row justify-center items-center space-x-8 mt-4 p-6 border-2 rounded-3xl border-black">
           <div className="flex flex-col border-r-2 pr-8 border-black justify-center items-center text-center">
             <Box
               sx={{
@@ -303,7 +309,7 @@ export default function TradingPool() {
               {(price ? formatUnits(price.buyPrice, 18) : "0.00") + " ETH"}
             </Box>
           </div>
-          <div className="flex flex-col justify-center items-center text-center">
+          <div className="flex flex-col border-r-2 pr-8 border-black justify-center items-center text-center">
             <Box
               sx={{
                 fontFamily: "Monospace",
@@ -326,6 +332,31 @@ export default function TradingPool() {
               }}
             >
               {(price ? formatUnits(price.sellPrice, 18) : "0.00") + " ETH"}
+            </Box>
+          </div>
+          <div className="flex flex-col justify-center items-center text-center">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: {
+                  xs: "caption.fontSize",
+                  sm: "h6.fontSize",
+                },
+                fontWeight: "bold",
+              }}
+            >
+              Volume
+            </Box>
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: {
+                  xs: "caption.fontSize",
+                  sm: "subtitle1.fontSize",
+                },
+              }}
+            >
+              {(poolInfo ? formatUnits(poolInfo.volume, 18) : "0.00") + " ETH"}
             </Box>
           </div>
         </div>

@@ -32,6 +32,7 @@ export default function EditNativeTokenLock(props) {
   const [lockWeight, setLockWeight] = useState("0");
   const [addToLock, setAddToLock] = useState(0);
   const [newLockWeight, setNewLockWeight] = useState("0");
+  const [amount, setAmount] = useState("0");
 
   const dispatch = useNotification();
   const addresses =
@@ -58,12 +59,13 @@ export default function EditNativeTokenLock(props) {
   }
 
   async function getUnlockTime() {
-    const updatedUnlockTime = await votingEscrowProvider.locked(address);
+    const updatedLockedDetails = await votingEscrowProvider.locked(address);
     console.log(
       "updatedUnlockTime:",
-      BigNumber.from(updatedUnlockTime.end).toNumber()
+      BigNumber.from(updatedLockedDetails.end).toNumber()
     );
-    setUnlockTime(BigNumber.from(updatedUnlockTime.end).toNumber());
+    setAmount(updatedLockedDetails.amount.toString());
+    setUnlockTime(BigNumber.from(updatedLockedDetails.end).toNumber());
   }
 
   useEffect(() => {
@@ -77,9 +79,12 @@ export default function EditNativeTokenLock(props) {
     if (newValue != "") {
       setAddToLock(newValue);
       const simulatedLockWeight = await votingEscrowProvider.simulateLock(
-        lockWeight.toString(),
+        amount,
         unlockTime + newValue * 604800
       );
+      console.log("amount:", amount);
+      console.log("simulatedLockWeight:", unlockTime + newValue * 604800);
+
       setNewLockWeight(
         BigNumber.from(simulatedLockWeight).add(lockWeight).toString()
       );
@@ -135,7 +140,9 @@ export default function EditNativeTokenLock(props) {
               onChange={handleSliderChange}
               min={1}
               step={1}
-              max={120}
+              max={
+                52 * 4 - Math.floor((unlockTime - Date.now() / 1000) / 86400)
+              }
             />
           </div>
         </div>

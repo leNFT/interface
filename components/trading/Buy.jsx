@@ -454,7 +454,6 @@ export default function Buy() {
               </div>
             </div>
           </div>
-
           {selectingNFTs &&
             (availableNFTs.length > 0 ? (
               <div className="flex flex-col justify-center items-center m-4">
@@ -467,7 +466,7 @@ export default function Buy() {
                       color: "#be4d25",
                     }}
                   >
-                    Selecting NFTs doesn't guarantee best price.
+                    Selecting NFTs doesn't guarantee the best buy price.
                   </Box>
                 </div>
                 <div className="m-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 overflow-auto max-h-[24rem]">

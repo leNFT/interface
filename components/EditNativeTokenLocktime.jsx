@@ -30,7 +30,7 @@ export default function EditNativeTokenLock(props) {
     useState(false);
   const [unlockTime, setUnlockTime] = useState(0);
   const [lockWeight, setLockWeight] = useState("0");
-  const [addToLock, setAddToLock] = useState(0);
+  const [addWeeksToLock, setAddWeeksToLock] = useState(0);
   const [newLockWeight, setNewLockWeight] = useState("0");
   const [amount, setAmount] = useState("0");
 
@@ -77,7 +77,7 @@ export default function EditNativeTokenLock(props) {
 
   async function handleSliderChange(_, newValue) {
     if (newValue != "") {
-      setAddToLock(newValue);
+      setAddWeeksToLock(newValue);
       const simulatedLockWeight = await votingEscrowProvider.simulateLock(
         amount,
         unlockTime + newValue * 604800
@@ -90,7 +90,7 @@ export default function EditNativeTokenLock(props) {
       );
     } else {
       setNewLockWeight(0);
-      setAddToLock(0);
+      setAddWeeksToLock(0);
     }
   }
 
@@ -131,7 +131,9 @@ export default function EditNativeTokenLock(props) {
           <div className="flex flex-col items-center text-center justify-center md:flex-row space-x-4">
             <Typography variant="subtitle2">Unlock Time:</Typography>
             <Typography variant="body16">
-              {new Date((unlockTime + addToLock * 604800) * 1000).toUTCString()}
+              {new Date(
+                (unlockTime + addWeeksToLock * 604800) * 1000
+              ).toUTCString()}
             </Typography>
           </div>
           <div className="flex flex-row items-center justify-center p-4">
@@ -150,12 +152,12 @@ export default function EditNativeTokenLock(props) {
           <Button
             text={
               "Increase unlock time by " +
-              (addToLock > 52
-                ? Math.floor(addToLock / 52) +
+              (addWeeksToLock > 52
+                ? Math.floor(addWeeksToLock / 52) +
                   " years and " +
-                  (addToLock % 52) +
+                  (addWeeksToLock % 52) +
                   " weeks"
-                : addToLock + " weeks")
+                : addWeeksToLock + " weeks")
             }
             theme="secondary"
             isFullWidth
@@ -170,9 +172,8 @@ export default function EditNativeTokenLock(props) {
             onClick={async function () {
               try {
                 setIncreaseUnlocktimeLoading(true);
-                console.log("unlockTime", unlockTime);
                 const tx = await votingEscrowSigner.increaseUnlockTime(
-                  unlockTime
+                  unlockTime + addWeeksToLock * 604800
                 );
                 await tx.wait(1);
                 handleIncreseUnlocktimeSuccess();

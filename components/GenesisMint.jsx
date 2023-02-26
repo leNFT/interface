@@ -240,7 +240,7 @@ export default function GenesisMint(props) {
               console.log("mintPrice: ", mintPrice);
               const tx = await genesisNFTSigner.mint(
                 locktimeDays * SECONDS_IN_DAY,
-                mintIds.map((id) => genesisNFTURIs[id]),
+                mintIds.map((id) => genesisNFTURIs[id - 1]),
                 { value: mintPrice }
               );
               await tx.wait(1);

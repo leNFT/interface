@@ -465,18 +465,24 @@ export default function TradingPool() {
             ) : (
               <div>
                 {lpPositions.length == 0 ? (
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle1.fontSize",
-                    }}
-                  >
-                    <div>
-                      {
-                        "No LP Positions found. (Did you stake them in the gauge?)"
-                      }
-                    </div>
-                  </Box>
+                  <div className="flex flex-col items-center space-y-2">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                      }}
+                    >
+                      No LP Positions found.
+                    </Box>
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "caption.fontSize",
+                      }}
+                    >
+                      (Staked positions will be shown in this pool's gauge)
+                    </Box>
+                  </div>
                 ) : (
                   <div className="flex grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {lpPositions.map((data) => (

@@ -9,6 +9,15 @@ export async function getGaugeHistory(chainId, gauge) {
     },
   };
 
+  console.log(
+    serverAddress +
+      "/gauges/history" +
+      "?chainId=" +
+      chainId +
+      "&gauge=" +
+      gauge
+  );
+
   const gaugeHistoryResponse = await fetch(
     serverAddress +
       "/gauges/history" +

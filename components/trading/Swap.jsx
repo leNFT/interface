@@ -960,7 +960,7 @@ export default function Swap() {
                           color: "#be4d25",
                         }}
                       >
-                        Selecting NFTs doesn't guarantee the best buy price.
+                        {"Selecting NFTs doesn't guarantee the best buy price."}
                       </Box>
                     </div>
                     <div className="flex flex-row m-4 grid grid-cols-3 lg:grid-cols-4 overflow-auto max-h-[24rem]">

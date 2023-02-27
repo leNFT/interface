@@ -480,7 +480,7 @@ export default function TradingPool() {
                         fontSize: "caption.fontSize",
                       }}
                     >
-                      (Staked positions will be shown in this pool's gauge)
+                      {"(Staked positions will be shown in this pool's gauge)"}
                     </Box>
                   </div>
                 ) : (

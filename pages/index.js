@@ -18,7 +18,6 @@ export default function Home() {
               ></img>
             </a>
           </div>
-
           <nav>
             <ul id="main-nav" className={styles.nav}>
               <li>

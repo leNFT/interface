@@ -7,6 +7,7 @@ import {
   Plus,
   LockClosed,
   Rocket,
+  Trending,
   Menu as MenuIcon,
 } from "@web3uikit/icons";
 import Box from "@mui/material/Box";
@@ -64,7 +65,7 @@ export default function TradeHeader() {
               },
               icon: (
                 <div className="mr-1 my-1">
-                  <Home fontSize="20px" />
+                  <Trending fontSize="20px" />
                 </div>
               ),
             },
@@ -169,7 +170,7 @@ export default function TradeHeader() {
               }
               icon={
                 <div className="pl-[10px]">
-                  <Home fontSize="20px" color="#000000" />
+                  <Trending fontSize="20px" color="#000000" />
                 </div>
               }
             />

@@ -10,6 +10,7 @@ import {
   Menu as MenuIcon,
 } from "@web3uikit/icons";
 import Box from "@mui/material/Box";
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import { useState } from "react";
 import Router from "next/router";
 
@@ -64,8 +65,8 @@ export default function BorrowHeader() {
                 });
               },
               icon: (
-                <div className="mr-1 my-1">
-                  <Home fontSize="20px" />
+                <div className="flex items-center justify-center mr-1 mt-1">
+                  <AccountBalanceIcon fontSize="20px" />
                 </div>
               ),
             },
@@ -196,8 +197,8 @@ export default function BorrowHeader() {
                 </div>
               }
               icon={
-                <div className="pl-[10px]">
-                  <Home fontSize="20px" color="#000000" />
+                <div className="flex items-center justify-center pl-[10px]">
+                  <AccountBalanceIcon fontSize="20px" color="#000000" />
                 </div>
               }
             />

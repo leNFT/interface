@@ -42,6 +42,8 @@ export default function GenesisBurn(props) {
   });
 
   async function updateGenesisNFTInfo() {
+    console.log("Updating Genesis NFT info");
+    console.log("props.tokenId", props.tokenId);
     const updatedUnlockTimestamp = (
       await genesisNFTProvider.getUnlockTimestamp(props.tokenId)
     ).toNumber();
@@ -56,7 +58,7 @@ export default function GenesisBurn(props) {
   }
 
   useEffect(() => {
-    if (isConnected) {
+    if (isConnected && props.tokenId) {
       updateGenesisNFTInfo();
     }
   }, [isConnected, props.tokenId]);

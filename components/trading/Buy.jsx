@@ -92,7 +92,11 @@ export default function Buy() {
   }
 
   async function getCollectionThumbnailURL(collection) {
-    const updatedURL = await getNFTImage(collection, 1, chain.id);
+    const updatedURL = await getNFTImage(
+      collection,
+      1,
+      isConnected ? chain.id : 1
+    );
     console.log("updatedURL", updatedURL);
     setCollectionThumbnailURL(updatedURL);
   }
@@ -110,7 +114,10 @@ export default function Buy() {
     getAvailableNFTs(updatedPool, collection);
 
     // Get history
-    const updatedHistory = await getTradingPoolHistory(chain.id, updatedPool);
+    const updatedHistory = await getTradingPoolHistory(
+      isConnected ? chain.id : 1,
+      updatedPool
+    );
     setPoolHistory(updatedHistory);
 
     if (isConnected) {

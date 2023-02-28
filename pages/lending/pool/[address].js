@@ -37,11 +37,19 @@ export default function LendingPool() {
   const [borrowRate, setBorrowRate] = useState(0);
   const [utilizationRate, setUtilizationRate] = useState(0);
   const [loadingPool, setLoadingPool] = useState(false);
+  const [poolConfig, setPoolConfig] = useState();
   const [tvlSafeguard, setTVLSafeguard] = useState("0");
-  const [maximumUtilizationRate, setMaximumUtilizationRate] = useState("0");
-  const [liquidationFee, setLiquidationFee] = useState("0");
-  const [liquidationPenalty, setLiquidationPenalty] = useState("0");
   const provider = useProvider();
+  const addresses =
+    isConnected && chain.id in contractAddresses
+      ? contractAddresses[chain.id]
+      : contractAddresses["5"];
+
+  const lendingMarket = useContract({
+    contractInterface: lendingMarketContract.abi,
+    addressOrName: addresses.LendingMarket,
+    signerOrProvider: provider,
+  });
 
   async function getLendingPoolDetails() {
     const lendingPool = new ethers.Contract(
@@ -90,31 +98,15 @@ export default function LendingPool() {
     }
 
     const updatedUnderyingSafeguard = (
-      await lendingPool.getTVLSafeguard()
+      await lendingMarket.getTVLSafeguard()
     ).toString();
 
     setTVLSafeguard(updatedUnderyingSafeguard);
 
-    // Get default maximum utilization rate
-    const updatedMaximumUtilizationRate = (
-      await lendingPool.getMaximumUtilizationRate()
-    ).toString();
-
-    setMaximumUtilizationRate(updatedMaximumUtilizationRate);
-
-    // Get protocol liquidation fee
-    const updatedliquidationFee = (
-      await lendingPool.getLiquidationFee()
-    ).toString();
-
-    setLiquidationFee(updatedliquidationFee);
-
-    // Get underlying safeguard
-    const updatedLiquidationPenalty = (
-      await lendingPool.getLiquidationPenalty()
-    ).toString();
-
-    setLiquidationPenalty(updatedLiquidationPenalty);
+    // Get pool config
+    const updatedPoolConfig = await lendingPool.getPoolConfig();
+    console.log("Updated Pool Config:", updatedPoolConfig);
+    setPoolConfig(updatedPoolConfig);
 
     const updatedPoolSupportedNFTs = await getLendingNFTCollections(
       isConnected ? chain.id : 5,
@@ -442,7 +434,9 @@ export default function LendingPool() {
                 fontSize: "subtitle2.fontSize",
               }}
             >
-              {BigNumber.from(liquidationPenalty).div(100) + "%"}
+              {(poolConfig
+                ? BigNumber.from(poolConfig.liquidationPenalty).div(100)
+                : "0") + "%"}
             </Box>
           </div>
           <div className="flex flex-col m-4">
@@ -461,7 +455,9 @@ export default function LendingPool() {
                 fontSize: "subtitle2.fontSize",
               }}
             >
-              {BigNumber.from(liquidationFee).div(100) + "%"}
+              {(poolConfig
+                ? BigNumber.from(poolConfig.liquidationFee).div(100)
+                : "0") + "%"}
             </Box>
           </div>
         </div>
@@ -482,7 +478,9 @@ export default function LendingPool() {
                 fontSize: "subtitle2.fontSize",
               }}
             >
-              {BigNumber.from(maximumUtilizationRate).div(100) + "%"}
+              {(poolConfig
+                ? BigNumber.from(poolConfig.maximumUtilizationRate).div(100)
+                : "0") + "%"}
             </Box>
           </div>
           <div className="flex flex-col m-4">

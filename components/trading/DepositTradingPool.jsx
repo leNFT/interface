@@ -62,18 +62,6 @@ export default function DepositTradingPool(props) {
     signerOrProvider: signer,
   });
 
-  const tokenProvider = useContract({
-    contractInterface: erc20,
-    addressOrName: props.token,
-    signerOrProvider: provider,
-  });
-
-  const nftProvider = useContract({
-    contractInterface: erc721,
-    addressOrName: props.nft,
-    signerOrProvider: provider,
-  });
-
   async function getUserNFTs() {
     // Get lp positions
     const addressNFTs = await getAddressNFTs(address, props.nft, chain.id);
@@ -82,7 +70,8 @@ export default function DepositTradingPool(props) {
   }
 
   async function getNFTAllowance() {
-    const allowed = await nftProvider.isApprovedForAll(
+    const nftContract = new ethers.Contract(props.nft, erc721, provider);
+    const allowed = await nftContract.isApprovedForAll(
       address,
       addresses.WETHGateway
     );

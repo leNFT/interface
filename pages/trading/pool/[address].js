@@ -31,8 +31,6 @@ export default function TradingPool() {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const router = useRouter();
-  const [nft, setNFT] = useState("");
-  const [token, setToken] = useState("");
   const [totalProvidedNFTs, setTotalProvidedNFTs] = useState(0);
   const [userNFTsAmount, setUserNFTsAmount] = useState(0);
   const [totalTokenAmount, setTotalTokenAmount] = useState("0");
@@ -42,8 +40,6 @@ export default function TradingPool() {
   const [visibleDepositModal, setVisibleDepositModal] = useState(false);
   const [visibleWithdrawalModal, setVisibleWithdrawalModal] = useState(false);
   const [loadingTradingPool, setLoadingTradingPool] = useState(true);
-  const [nftName, setNFTName] = useState("...");
-  const [tokenName, setTokenName] = useState("...");
   const [price, setPrice] = useState();
   const [poolInfo, setPoolInfo] = useState();
   const { data: ethBalance } = useBalance({
@@ -68,28 +64,6 @@ export default function TradingPool() {
     console.log("poolInfo", poolInfo);
     setPoolInfo(poolInfo);
 
-    const nftResponse = await pool.getNFT();
-    setNFT(nftResponse.toString());
-
-    const nftContract = new ethers.Contract(
-      nftResponse.toString(),
-      erc721,
-      provider
-    );
-    const nftNameResponse = await nftContract.name();
-    setNFTName(nftNameResponse);
-
-    const tokenResponse = await pool.getToken();
-    setToken(tokenResponse.toString());
-
-    const tokenContract = new ethers.Contract(
-      tokenResponse.toString(),
-      erc20,
-      provider
-    );
-    const tokenNameResponse = await tokenContract.name();
-    setTokenName(tokenNameResponse);
-
     // Get the best price the pool LPs can offer
     const priceResponse = await getTradingPoolPrice(
       chain.id,
@@ -99,7 +73,7 @@ export default function TradingPool() {
 
     // Get number of user NFTs
     setUserNFTsAmount(
-      (await getAddressNFTs(address, nftResponse.toString(), chain.id)).length
+      (await getAddressNFTs(address, poolInfo.nft.address, chain.id)).length
     );
 
     // Get lp positions
@@ -162,9 +136,9 @@ export default function TradingPool() {
         <DepositTradingPool
           setVisibility={setVisibleDepositModal}
           pool={router.query.address}
-          token={token}
-          nft={nft}
-          nftName={nftName}
+          token={poolInfo?.token.address}
+          nft={poolInfo?.nft.address}
+          nftName={poolInfo?.nft.name}
           updateUI={updateUI}
         />
       </StyledModal>
@@ -246,15 +220,16 @@ export default function TradingPool() {
                 }}
                 className="m-2"
               >
-                {nftName}
+                {poolInfo?.nft.name}
               </Box>
             }
             address={
               isConnected
                 ? chain.id == 1
-                  ? "https://etherscan.io/address/" + nft
-                  : "https://goerli.etherscan.io/address/" + nft
-                : "https://goerli.etherscan.io/address/" + nft
+                  ? "https://etherscan.io/address/" + poolInfo?.nft.address
+                  : "https://goerli.etherscan.io/address/" +
+                    poolInfo?.nft.address
+                : "https://goerli.etherscan.io/address/" + poolInfo?.nft.address
             }
           ></LinkTo>
           <Box
@@ -280,7 +255,7 @@ export default function TradingPool() {
               fontWeight: "bold",
             }}
           >
-            {tokenName}
+            {poolInfo?.token.name}
           </Box>
         </div>
         <div className="flex flex-row justify-center items-center space-x-8 mt-4 p-6 border-2 rounded-3xl border-black">
@@ -480,7 +455,14 @@ export default function TradingPool() {
                         fontSize: "caption.fontSize",
                       }}
                     >
-                      {"(Staked positions will be shown in this pool's gauge)"}
+                      {"(Staked positions available in the pool's "}
+                      <a
+                        href={"/gauges/" + poolInfo.gauge}
+                        className="text-teal-600"
+                      >
+                        gauge
+                      </a>
+                      {")"}
                     </Box>
                   </div>
                 ) : (

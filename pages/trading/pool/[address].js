@@ -457,7 +457,7 @@ export default function TradingPool() {
                     >
                       {"(Staked positions available in the pool's "}
                       <a
-                        href={"/gauges/" + poolInfo.gauge}
+                        href={"/trading/gauge/" + poolInfo.gauge}
                         className="text-blue-600 underline text-sm"
                       >
                         gauge

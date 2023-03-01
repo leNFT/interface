@@ -91,7 +91,7 @@ export default function Genesis() {
       updateUI();
       getLocked();
     }
-  }, [isConnected]);
+  }, [isConnected, address, chain.id]);
 
   return (
     <div className={styles.container}>

@@ -4,12 +4,12 @@ import Box from "@mui/material/Box";
 export default function Footer() {
   return (
     <footer className={styles.footer}>
-      <div className="flex flex-row justify-evenly items-center w-full">
+      <div className="flex flex-row justify-evenly items-start w-full">
         <div className="flex flex-col space-y-2 items-start">
           <Box
             sx={{
               fontFamily: "Monospace",
-              fontSize: "subtitle1.fontSize",
+              fontSize: "subtitle2.fontSize",
               fontWeight: "bold",
             }}
           >
@@ -40,7 +40,7 @@ export default function Footer() {
           <Box
             sx={{
               fontFamily: "Monospace",
-              fontSize: "subtitle1.fontSize",
+              fontSize: "subtitle2.fontSize",
               fontWeight: "bold",
             }}
           >
@@ -79,7 +79,7 @@ export default function Footer() {
           <Box
             sx={{
               fontFamily: "Monospace",
-              fontSize: "subtitle1.fontSize",
+              fontSize: "subtitle2.fontSize",
               fontWeight: "bold",
             }}
           >
@@ -111,6 +111,31 @@ export default function Footer() {
               }}
             >
               Github
+            </Box>
+          </a>
+        </div>
+        <div className="flex flex-col space-y-2 items-start">
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "subtitle2.fontSize",
+              fontWeight: "bold",
+            }}
+          >
+            About
+          </Box>
+          <a
+            href="https://mirror.xyz/0x7084faEe75719Be09f9fad92F3407B948527f54F"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+              }}
+            >
+              Blog
             </Box>
           </a>
         </div>

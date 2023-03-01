@@ -40,11 +40,11 @@ export default function Home() {
               </li>
               <li>
                 <a
-                  href="https://github.com/leNFT"
+                  href="https://mirror.xyz/0x7084faEe75719Be09f9fad92F3407B948527f54F"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Github
+                  Blog
                 </a>
               </li>
               <li>

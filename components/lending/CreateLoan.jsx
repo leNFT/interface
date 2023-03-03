@@ -186,7 +186,9 @@ export default function CreateLoan(props) {
       await tokenOracle.getTokenETHPrice(addresses[borrowAsset].address)
     ).toString();
     console.log("tokenETHPrice", tokenETHPrice);
+    console.log("props.token_ids.length", props.token_ids.length);
     const maxCollateralization = BigNumber.from(updatedMaxCollateralization)
+      .mul(props.token_ids.length)
       .add(genesisBoostAmount)
       .mul(priceResponse.price)
       .div(10000)
@@ -473,7 +475,14 @@ export default function CreateLoan(props) {
                       chain.id,
                       requestID
                     );
+
+                    console.log(
+                      "Price sig Request ID: " + priceSig.sig.request
+                    );
+                    console.log("Request ID: " + requestID);
                     var tx;
+                    console.log("Borrowing " + borrowAsset);
+                    console.log("Amount: " + amount);
                     if (borrowAsset == "ETH") {
                       tx = await wethGatewaySigner.borrow(
                         amount,
@@ -486,7 +495,7 @@ export default function CreateLoan(props) {
                       await tx.wait(1);
                     } else {
                       console.log("Borrowing ERC20");
-                      tx = await marketSigner.borrow(
+                      tx = await lendingMarketSigner.borrow(
                         addresses[borrowAsset].address,
                         amount,
                         props.token_address,

@@ -426,7 +426,7 @@ export default function LendingPool() {
                 fontWeight: "bold",
               }}
             >
-              Liquidation Penalty
+              Max Liquidator Discount
             </Box>
             <Box
               sx={{
@@ -435,7 +435,7 @@ export default function LendingPool() {
               }}
             >
               {(poolConfig
-                ? BigNumber.from(poolConfig.liquidationPenalty).div(100)
+                ? BigNumber.from(poolConfig.maxLiquidatorDiscount).div(100)
                 : "0") + "%"}
             </Box>
           </div>

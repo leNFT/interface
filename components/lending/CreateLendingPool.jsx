@@ -102,10 +102,10 @@ export default function CreateLendingPool(props) {
       <div className="flex flex-col md:flex-row justify-center m-2 border-2 rounded-2xl max-w-lg self-center">
         <div className="flex flex-col my-2 md:m-2">
           <div className="flex flex-col m-4">
-            <Typography variant="subtitle2">Liquidation Penalty</Typography>
+            <Typography variant="subtitle2">Max Liquidator Discount</Typography>
             <Typography variant="caption16">
               {BigNumber.from(
-                defaultPoolConfig ? defaultPoolConfig.liquidationPenalty : 0
+                defaultPoolConfig ? defaultPoolConfig.maxLiquidatorDiscount : 0
               ).div(100) + "%"}
             </Typography>
           </div>

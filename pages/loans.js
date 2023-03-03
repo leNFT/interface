@@ -32,7 +32,6 @@ export default function Loans() {
   const [collectionLoans, setCollectionLoans] = useState([]);
   const [selectedCollection, setSelectedCollection] = useState("");
   const [maxCollateralization, setMaxCollateralization] = useState("0");
-  const [count, setCount] = useState(0);
   const [processedCount, setProcessedCount] = useState(0);
   const [loadingCollectionLoans, setLoadingCollectionLoans] = useState(false);
   const [selectedLoan, setSelectedLoan] = useState();
@@ -49,12 +48,6 @@ export default function Loans() {
   const loanCenter = useContract({
     contractInterface: loanCenterContract.abi,
     addressOrName: addresses.LoanCenter,
-    signerOrProvider: provider,
-  });
-
-  const nftOracle = useContract({
-    contractInterface: nftOracleContract.abi,
-    addressOrName: addresses.NFTOracle,
     signerOrProvider: provider,
   });
 
@@ -78,7 +71,6 @@ export default function Loans() {
     );
 
     console.log("collectionNFTs", collectionNFTs);
-    setCount(collectionNFTs.length);
 
     for (let i = 0; i < collectionNFTs.length; i++) {
       // Get the loan ID of each NFT
@@ -86,6 +78,14 @@ export default function Loans() {
         collectionNFTs[i].contract.address,
         BigNumber.from(collectionNFTs[i].id.tokenId).toNumber()
       );
+
+      // If we have added this loan already, skip it
+      console.log("updatedCollectionLoans", updatedCollectionLoans);
+      console.log("loanId", loanId);
+      if (updatedCollectionLoans.find((l) => l.loanId.eq(loanId))) {
+        console.log("Loan already added", loanId);
+        continue;
+      }
 
       // Get the debt associated with this loan
       const loanDebt = (await loanCenter.getLoanDebt(loanId)).toString();
@@ -233,54 +233,86 @@ export default function Loans() {
             />
           )}
         />
-        <div className="flex flex-col border-2 rounded-3xl my-8 md:my-0 md:ml-8 p-1">
-          <div className="flex flex-row">
-            <div className="flex flex-col m-4">
-              <div className="flex flex-row">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Max LTV
-                </Box>
-              </div>
-              <div className="flex flex-row">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                  }}
-                >
-                  {maxCollateralization / 100}%
-                </Box>
-              </div>
+        <div className="flex flex-col sm:flex-row border-2 rounded-3xl my-8 md:my-0 md:ml-8 p-1">
+          <div className="flex flex-col m-4">
+            <div className="flex flex-row">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle1.fontSize",
+                  fontWeight: "bold",
+                }}
+              >
+                Max LTV
+              </Box>
             </div>
-            <Divider orientation="vertical" variant="middle" flexItem />
-            <div className="flex flex-col m-4">
-              <div className="flex flex-row">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Active Loans
-                </Box>
-              </div>
-              <div className="flex flex-row">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                  }}
-                >
-                  {collectionLoans.length}
-                </Box>
-              </div>
+            <div className="flex flex-row">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle1.fontSize",
+                }}
+              >
+                {maxCollateralization / 100}%
+              </Box>
+            </div>
+          </div>
+          <Divider
+            className="hidden md:flex"
+            orientation="vertical"
+            variant="middle"
+            flexItem
+          />
+          <div className="flex flex-col m-4">
+            <div className="flex flex-row">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle1.fontSize",
+                  fontWeight: "bold",
+                }}
+              >
+                Active Loans
+              </Box>
+            </div>
+            <div className="flex flex-row">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle1.fontSize",
+                }}
+              >
+                {collectionLoans.length}
+              </Box>
+            </div>
+          </div>
+          <Divider
+            className="hidden md:flex"
+            orientation="vertical"
+            variant="middle"
+            flexItem
+          />
+          <div className="flex flex-col m-4">
+            <div className="flex flex-row">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle1.fontSize",
+                  fontWeight: "bold",
+                }}
+              >
+                Floor Price
+              </Box>
+            </div>
+            <div className="flex flex-row">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle1.fontSize",
+                }}
+              >
+                {"0 ETH"}
+              </Box>
             </div>
           </div>
         </div>
@@ -297,7 +329,7 @@ export default function Loans() {
                   }}
                 >
                   <div className="text-md md:text-2xl justify-center text-center">
-                    {"Got " + processedCount + "/" + count + " loans"}
+                    {"Got " + processedCount + " loans"}
                   </div>
                 </Box>
               </Typography>

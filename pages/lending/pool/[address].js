@@ -479,7 +479,7 @@ export default function LendingPool() {
               }}
             >
               {(poolConfig
-                ? BigNumber.from(poolConfig.maximumUtilizationRate).div(100)
+                ? BigNumber.from(poolConfig.maxUtilizationRate).div(100)
                 : "0") + "%"}
             </Box>
           </div>
@@ -500,7 +500,7 @@ export default function LendingPool() {
               }}
             >
               {formatUnits(BigNumber.from(underlyingBalance).add(debt), 18) +
-                " / " +
+                " WETH / " +
                 formatUnits(tvlSafeguard, 18) +
                 " WETH"}
             </Box>

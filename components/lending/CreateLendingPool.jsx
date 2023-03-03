@@ -123,7 +123,7 @@ export default function CreateLendingPool(props) {
             <Typography variant="subtitle2">Max Utilization Rate</Typography>
             <Typography variant="caption16">
               {BigNumber.from(
-                defaultPoolConfig ? defaultPoolConfig.maximumUtilizationRate : 0
+                defaultPoolConfig ? defaultPoolConfig.maxUtilizationRate : 0
               ).div(100) + "%"}
             </Typography>
           </div>

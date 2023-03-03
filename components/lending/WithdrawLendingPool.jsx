@@ -238,6 +238,11 @@ export default function Withdraw(props) {
             isLoading={approvalLoading}
             onClick={async function () {
               try {
+                const lendingPoolSigner = new ethers.Contract(
+                  props.pool,
+                  lendingPoolContract.abi,
+                  signer
+                );
                 setApprovalLoading(true);
                 console.log("signer.", signer);
                 const tx = await lendingPoolSigner.approve(

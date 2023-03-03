@@ -257,7 +257,7 @@ export default function RepayLoan(props) {
             }
           >
             {props.token_images.map((token_image) => (
-              <div key={i}>
+              <div key={token_image}>
                 {token_image ? (
                   <Image
                     key={token_image}

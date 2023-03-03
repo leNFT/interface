@@ -62,6 +62,7 @@ export default function Borrow() {
   async function setupUI() {
     console.log("Setting up UI");
     setLoadingUI(true);
+    setSelectedAssets([]);
 
     // Get user NFT assets
     const addressNFTs = await getAddressNFTs(address, "", chain.id);

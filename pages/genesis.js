@@ -191,7 +191,7 @@ export default function Genesis() {
                 fontSize: 20,
                 textColor: "white",
               }}
-              text={hasLocked ? "Already Minted / Locked LE tokens" : "Mint"}
+              text={hasLocked ? "Minted." : "Mint"}
               disabled={hasLocked}
               theme="custom"
               size="large"

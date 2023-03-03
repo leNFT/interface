@@ -179,7 +179,7 @@ export default function WithdrawTradingPool(props) {
           ></Button>
         ) : (
           <Button
-            text="Approve LP"
+            text="Approve Removal"
             theme="secondary"
             isFullWidth
             loadingProps={{

@@ -26,6 +26,7 @@ import Image from "next/image";
 import lendingMarketContract from "../../contracts/LendingMarket.json";
 import LinearProgressWithLabel from "../LinearProgressWithLabel";
 import erc20 from "../../contracts/erc20.json";
+import * as timeago from "timeago.js";
 
 function isLoanLiquidatable(
   debt,
@@ -47,8 +48,7 @@ export default function Liquidate(props) {
   const [liquidationLoading, setLiquidationLoading] = useState(false);
   const { address, isConnected } = useAccount();
   const [tokenPrice, setTokenPrice] = useState("0");
-  const [liquidationPrice, setLiquidationPrice] = useState("0");
-  const [liquidationReward, setLiquidationReward] = useState("0");
+  const [loanDetails, setLoanDetails] = useState();
   const { chain } = useNetwork();
   const { data: signer } = useSigner();
   const provider = useProvider();
@@ -92,27 +92,9 @@ export default function Liquidate(props) {
   }
 
   async function getLoanDetails() {
-    // Get liquidation price for the loan
-    const requestId = getNewRequestID();
-    const priceSig = await getAssetsPrice(
-      props.loan.tokenAddress,
-      props.loan.tokenIds,
-      chain.id,
-      requestId
-    );
-    console.log("priceSig", priceSig.sig);
+    const loan = await loanCenterProvider.getLoan(props.loan.loanId);
 
-    const newLiquidationPrice =
-      await loanCenterProvider.getLoanLiquidationPrice(
-        props.loan.loanId,
-        requestId,
-        priceSig.sig
-      );
-
-    console.log("newLiquidationPrice", newLiquidationPrice);
-
-    setLiquidationPrice(newLiquidationPrice[0].toString());
-    setLiquidationReward(newLiquidationPrice[1].toString());
+    setLoanDetails(loan);
   }
 
   async function getAssetPricing() {
@@ -267,25 +249,62 @@ export default function Liquidate(props) {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col lg:flex-row border-2 rounded-3xl max-w-max items-center justify-center m-2 p-2">
-              <div className="flex flex-col m-4">
-                <Typography variant="subtitle2">Liquidation Price</Typography>
-                <Typography variant="caption16">
-                  {formatUnits(liquidationPrice, 18)} WETH
-                </Typography>
+            <div className="flex flex-col rounded-3xl max-w-max justify-center m-2 p-2">
+              <div className="flex flex-row">
+                <div className="flex flex-col m-4">
+                  <Typography variant="subtitle2">Auction Max Bid</Typography>
+                  <Typography variant="caption16">
+                    {formatUnits(
+                      loanDetails ? loanDetails.auctionMaxBid : "0",
+                      18
+                    )}{" "}
+                    WETH
+                  </Typography>
+                </div>
+                <div className="flex flex-col m-4">
+                  <Typography variant="subtitle2">Time until end</Typography>
+                  <Typography variant="caption16">
+                    {loanDetails
+                      ? BigNumber.from(loanDetails.auctionStartTimestamp).eq(0)
+                        ? "-"
+                        : loanDetails.auctionStartTimestamp + 3600 * 24 >
+                          Date.now() / 1000
+                        ? "Ending in " +
+                          timeago.format(
+                            loanDetails.auctionStartTimestamp * 1000
+                          )
+                        : "Ended " +
+                          timeago.format(
+                            loanDetails.auctionStartTimestamp * 1000
+                          )
+                      : "-"}
+                  </Typography>
+                </div>
               </div>
-              <div className="flex flex-col m-4">
-                <Typography variant="subtitle2">Liquidation Reward</Typography>
-                <Typography variant="caption16">
-                  {Number(formatUnits(liquidationReward, 18)).toFixed(2)} LE
-                </Typography>
+              <div className="flex flex-row">
+                <div className="flex flex-col m-4">
+                  <Typography variant="subtitle2">Highest Bidder</Typography>
+                  <Typography variant="caption16">
+                    {loanDetails?.liquidator.slice(0, 4) +
+                      ".." +
+                      loanDetails?.liquidator.slice(-3)}
+                  </Typography>
+                </div>
+                <div className="flex flex-col m-4">
+                  <Typography variant="subtitle2">Auctioner</Typography>
+                  <Typography variant="caption16">
+                    {loanDetails?.auctioner.slice(0, 4) +
+                      ".." +
+                      loanDetails?.auctioner.slice(-3)}
+                  </Typography>
+                </div>
               </div>
             </div>
             <div className="flex flex-row m-8 items-center justify-center">
               <div className="flex flex-col">
-                {BigNumber.from(liquidationPrice).lte(
-                  BigNumber.from(allowance)
-                ) ? (
+                {BigNumber.from(
+                  loanDetails ? loanDetails.auctionMaxBid : "0"
+                ).lte(BigNumber.from(allowance)) ? (
                   <Button
                     disabled={
                       !isLoanLiquidatable(

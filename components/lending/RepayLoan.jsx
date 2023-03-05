@@ -209,7 +209,7 @@ export default function RepayLoan(props) {
     props.setVisibility(false);
     dispatch({
       type: "success",
-      message: "Your NFT will be available shortly.",
+      message: "Your NFTs will be available shortly.",
       title: "Repay Successful!",
       position: "bottomL",
     });

@@ -333,9 +333,23 @@ export default function Borrow() {
                             </div>
                             <div className="flex flex-col ml-1">
                               <Tooltip
-                                content="The relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
-                                position="top"
-                                minWidth={200}
+                                content={
+                                  <Box
+                                    sx={{
+                                      fontFamily: "Monospace",
+                                      fontSize: "caption",
+                                    }}
+                                  >
+                                    {
+                                      "The relation between the debt and the collateral's value. When it reaches 0 the loan can be liquidated."
+                                    }
+                                  </Box>
+                                }
+                                position="left"
+                                maxWidth={100}
+                                arrowSize={1}
+                                move={80}
+                                moveBody={-110}
                               >
                                 <HelpCircle fontSize="14px" color="#000000" />
                               </Tooltip>

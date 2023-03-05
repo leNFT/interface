@@ -10,10 +10,13 @@ import {
   useContract,
   useSigner,
 } from "wagmi";
+import TextField from "@mui/material/TextField";
 import Slider from "@mui/material/Slider";
 import { Input } from "@nextui-org/react";
 import { Button, Loading } from "@web3uikit/core";
+import Autocomplete from "@mui/material/Autocomplete";
 import { getLockHistory } from "../helpers/getLockHistory.js";
+import { getGauges } from "../helpers/getGauges";
 import LockNativeToken from "../components/LockNativeToken";
 import EditNativeTokenLockAmount from "../components/EditNativeTokenLockAmount";
 import EditNativeTokenLocktime from "../components/EditNativeTokenLocktime";
@@ -53,6 +56,7 @@ export default function Lock() {
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [gaugeVotes, setGaugeVotes] = useState(0);
   const [lockAmount, setLockAmount] = useState("0");
+  const [gauges, setGauges] = useState({});
 
   const addresses =
     isConnected && chain.id in contractAddresses
@@ -170,8 +174,11 @@ export default function Lock() {
     // Get the history
     const historyResponse = await getLockHistory(chain.id);
     setHistory(historyResponse);
-    setLoadingHistory(false);
-    console.log("historyResponse", historyResponse);
+
+    // Get the gauges
+    const updatedGauges = await getGauges(chain.id);
+    console.log("updatedGauges", updatedGauges);
+    setGauges(updatedGauges);
   }
 
   async function updateGaugeDetails(gauge) {
@@ -217,15 +224,24 @@ export default function Lock() {
     setGaugeVotes(newValue * 100);
   }
 
-  const handleGaugeChange = (event) => {
-    const newGauge = event.target.value;
-    console.log("newGauge", newGauge);
-    if (newGauge) {
-      updateGaugeDetails(newGauge);
+  function handleGaugeChange(_event, value) {
+    console.log("newGauge", value);
+    if (ethers.utils.isAddress(value)) {
+      updateGaugeDetails(value);
+    } else if (
+      Object.values(gauges)
+        .map((gauge) => gauge.pool.name)
+        .includes(value)
+    ) {
+      console.log("FOund Gauge Name");
+      const gaugeAddress = Object.keys(gauges).find(
+        (gauge) => gauges[gauge].pool.name == value
+      );
+      updateGaugeDetails(gaugeAddress);
     } else {
       setSelectedGauge();
     }
-  };
+  }
 
   const handleClaimSuccess = async function () {
     dispatch({
@@ -632,12 +648,48 @@ export default function Lock() {
             </div>
             <div className="flex flex-col justify-center items-center m-8 p-6 rounded-3xl bg-black/5 shadow-lg">
               <div className="flex flex-col items-center m-4">
-                <Input
-                  bordered
-                  aria-label="Gauge Address"
-                  size="xl"
-                  placeholder="Gauge Address"
-                  onChange={handleGaugeChange}
+                <Autocomplete
+                  autoComplete
+                  freeSolo
+                  disablePortal
+                  ListboxProps={{
+                    style: {
+                      backgroundColor: "rgb(253, 241, 244)",
+                      fontFamily: "Monospace",
+                    },
+                  }}
+                  options={Object.values(gauges).map(
+                    (option) => option.pool.name
+                  )}
+                  sx={{ minWidth: { xs: 215, sm: 300, md: 380 } }}
+                  onInputChange={handleGaugeChange}
+                  renderOption={(props, option, state) => (
+                    <div className="flex flex-row m-4" {...props}>
+                      {option}
+                    </div>
+                  )}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Gauge"
+                      sx={{
+                        "& label": {
+                          paddingLeft: (theme) => theme.spacing(2),
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle1.fontSize",
+                        },
+                        "& input": {
+                          paddingLeft: (theme) => theme.spacing(3.5),
+                          fontFamily: "Monospace",
+                        },
+                        "& fieldset": {
+                          paddingLeft: (theme) => theme.spacing(2.5),
+                          borderRadius: "20px",
+                          fontFamily: "Monospace",
+                        },
+                      }}
+                    />
+                  )}
                 />
                 <div className="flex flex-row mt-1">
                   <Box

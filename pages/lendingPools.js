@@ -95,7 +95,7 @@ export default function LendingPools() {
           className="m-2"
           key={"tvl" + key}
         >
-          {Number(formatUnits(value.tvl, 18)).toFixed(2) +
+          {Number(formatUnits(value.tvl, 18)).toPrecision(3) +
             " " +
             underlyingSymbol}
         </Box>,

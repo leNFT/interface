@@ -1,6 +1,6 @@
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
-import { Button, useNotification } from "@web3uikit/core";
+import { Button, useNotification, Loading } from "@web3uikit/core";
 import genesisNFTContract from "../contracts/GenesisNFT.json";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
@@ -23,7 +23,7 @@ export default function Genesis() {
   const [mintCount, setMintCount] = useState(0);
   const [selectedToken, setSelectedToken] = useState(0);
   const [cap, setCap] = useState(0);
-  const [price, setPrice] = useState("0");
+  const [price, setPrice] = useState();
   const [visibleMintModal, setVisibleMintModal] = useState(false);
   const [visibleBurnModal, setVisibleBurnModal] = useState(false);
   const [userGenesisNFTs, setUserGenesisNFTs] = useState([]);
@@ -156,14 +156,18 @@ export default function Genesis() {
                 </Box>
               </div>
               <div className="flex flex-row justify-center text-center m-2">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "h5.fontSize",
-                  }}
-                >
-                  {formatUnits(price, 18) + " ETH"}
-                </Box>
+                {price ? (
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "h5.fontSize",
+                    }}
+                  >
+                    {formatUnits(price ? price : "0", 18) + " ETH"}
+                  </Box>
+                ) : (
+                  <Loading className="px-10" size={25} spinnerColor="#000000" />
+                )}
               </div>
             </div>
             <div className="flex flex-col justify-center text-center m-8 rounded-2xl bg-black/5 shadow-lg p-4">

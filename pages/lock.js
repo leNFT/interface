@@ -174,6 +174,7 @@ export default function Lock() {
     // Get the history
     const historyResponse = await getLockHistory(chain.id);
     setHistory(historyResponse);
+    setLoadingHistory(false);
 
     // Get the gauges
     const updatedGauges = await getGauges(chain.id);
@@ -394,8 +395,16 @@ export default function Lock() {
           </div>
           <div className="flex flex-col m-2 rounded-3xl bg-black/5 shadow-lg">
             {loadingHistory ? (
-              <div className="m-28">
-                <Loading size={40} spinnerColor="#000000" />
+              <div className="flex flex-col items-center justify-center text-center m-20 space-y-4">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle2.fontSize",
+                  }}
+                >
+                  Loading Lock History
+                </Box>
+                <Loading size={30} spinnerColor="#000000" />
               </div>
             ) : (
               <Table
@@ -576,6 +585,7 @@ export default function Lock() {
                         text="Claim"
                         theme="custom"
                         size="small"
+                        Loading={claimingLoading}
                         onClick={async function () {
                           try {
                             setClaimingLoading(true);

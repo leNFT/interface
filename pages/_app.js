@@ -13,14 +13,13 @@ import {
 import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 import { alchemyProvider } from "wagmi/providers/alchemy";
-import { Script } from "next/script";
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
   const isIndex = router.pathname == "/";
   const LayoutComponent = isIndex ? SplashLayout : Layout;
   const { chains, provider } = configureChains(
-    [chain.goerli, chain.mainnet],
+    [chain.goerli, chain.sepolia, chain.mainnet],
     [
       alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY }),
       publicProvider(),

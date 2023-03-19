@@ -5,12 +5,11 @@ import styles from "../styles/Home.module.css";
 import { Typography } from "@web3uikit/core";
 import { useAccount, useNetwork } from "wagmi";
 import Script from "next/script";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function Layout({ children }) {
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
-  const supportedChains = [1, 5];
+  const supportedChains = [1, 5, 11155111];
 
   return (
     <>

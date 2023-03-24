@@ -31,10 +31,7 @@ export default function EditNativeTokenLock(props) {
   const [newLockWeight, setNewLockWeight] = useState("0");
 
   const dispatch = useNotification();
-  const addresses =
-    isConnected && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["5"];
+  var addresses = contractAddresses["11155111"];
 
   const nativeTokenProvider = useContract({
     contractInterface: nativeTokenContract.abi,
@@ -96,6 +93,7 @@ export default function EditNativeTokenLock(props) {
 
   useEffect(() => {
     if (isConnected) {
+      addresses = contractAddresses[chain.id];
       getTokenAllowance();
       getTokenBalance();
       getLockWeight();

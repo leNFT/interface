@@ -35,10 +35,7 @@ export default function EditNativeTokenLock(props) {
   const [amount, setAmount] = useState("0");
 
   const dispatch = useNotification();
-  const addresses =
-    isConnected && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["5"];
+  var addresses = contractAddresses["11155111"];
 
   const votingEscrowProvider = useContract({
     contractInterface: votingEscrowContract.abi,
@@ -70,6 +67,7 @@ export default function EditNativeTokenLock(props) {
 
   useEffect(() => {
     if (isConnected) {
+      addresses = contractAddresses[chain.id];
       getLockWeight();
       getUnlockTime();
     }

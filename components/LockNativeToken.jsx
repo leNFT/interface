@@ -37,10 +37,7 @@ export default function LockNativeToken(props) {
   const [lockDuration, setLockDuration] = useState(1);
 
   const dispatch = useNotification();
-  const addresses =
-    isConnected && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["5"];
+  var addresses = contractAddresses["11155111"];
 
   const nativeTokenProvider = useContract({
     contractInterface: nativeTokenContract.abi,
@@ -96,6 +93,7 @@ export default function LockNativeToken(props) {
 
   useEffect(() => {
     if (isConnected) {
+      addresses = contractAddresses[chain.id];
       getTokenAllowance();
       getTokenBalance();
 

@@ -25,7 +25,6 @@ import UnlockNativeToken from "../components/UnlockNativeToken";
 import votingEscrowContract from "../contracts/VotingEscrow.json";
 import feeDistributorContract from "../contracts/FeeDistributor.json";
 import gaugeControllerContract from "../contracts/GaugeController.json";
-import curvePoolContract from "../contracts/CurvePool.json";
 import Box from "@mui/material/Box";
 import { BigNumber, ethers } from "ethers";
 
@@ -58,10 +57,7 @@ export default function Lock() {
   const [lockAmount, setLockAmount] = useState("0");
   const [gauges, setGauges] = useState({});
 
-  const addresses =
-    isConnected && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["5"];
+  var addresses = contractAddresses["11155111"];
 
   const votingEscrowProvider = useContract({
     contractInterface: votingEscrowContract.abi,
@@ -91,12 +87,6 @@ export default function Lock() {
     contractInterface: gaugeControllerContract.abi,
     addressOrName: addresses.GaugeController,
     signerOrProvider: signer,
-  });
-
-  const curvePoolProvider = useContract({
-    contractInterface: curvePoolContract.abi,
-    addressOrName: addresses.CurvePool,
-    signerOrProvider: provider,
   });
 
   async function updateUI() {
@@ -216,6 +206,7 @@ export default function Lock() {
 
   useEffect(() => {
     if (isConnected) {
+      addresses = contractAddresses[chain.id];
       updateUI();
     }
   }, [isConnected]);

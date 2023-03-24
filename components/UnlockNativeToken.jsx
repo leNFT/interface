@@ -21,10 +21,8 @@ export default function WithdrawNativeToken(props) {
   const { data: signer } = useSigner();
   const [unlockLoading, setUnlockLoading] = useState(false);
 
-  const addresses =
-    isConnected && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["5"];
+  var addresses = contractAddresses["11155111"];
+
   const dispatch = useNotification();
 
   const votingEscrowProvider = useContract({
@@ -50,6 +48,7 @@ export default function WithdrawNativeToken(props) {
 
   useEffect(() => {
     if (isConnected) {
+      addresses = contractAddresses[chain.id];
       getUnlockTime();
     }
   }, [isConnected]);

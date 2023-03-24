@@ -23,10 +23,8 @@ export default function GenesisBurn(props) {
   const [unlockTimestamp, setUnlockTimestamp] = useState("1707447529");
   const [lpValue, setLPValue] = useState("0");
 
-  const addresses =
-    isConnected && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["5"];
+  var addresses = contractAddresses["11155111"];
+
   const dispatch = useNotification();
 
   const genesisNFTProvider = useContract({

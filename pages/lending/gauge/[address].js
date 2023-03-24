@@ -45,10 +45,7 @@ export default function TradingPoolGauge() {
   const [apr, setAPR] = useState("0");
   const [totalLocked, setTotalLocked] = useState("0");
 
-  const addresses =
-    isConnected && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["5"];
+  var addresses = contractAddresses["11155111"];
 
   const votingEscrowProvider = useContract({
     contractInterface: votingEscrowContract.abi,

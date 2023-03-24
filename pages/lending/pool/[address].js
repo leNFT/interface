@@ -40,10 +40,7 @@ export default function LendingPool() {
   const [poolConfig, setPoolConfig] = useState();
   const [tvlSafeguard, setTVLSafeguard] = useState("0");
   const provider = useProvider();
-  const addresses =
-    isConnected && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["5"];
+  var addresses = contractAddresses["11155111"];
 
   const lendingMarket = useContract({
     contractInterface: lendingMarketContract.abi,

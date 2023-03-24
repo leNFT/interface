@@ -27,10 +27,7 @@ export default function Withdraw(props) {
   const { data: signer } = useSigner();
   const [approvalLoading, setApprovalLoading] = useState(false);
   const provider = useProvider();
-  const addresses =
-    isConnected && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["5"];
+  var addresses = contractAddresses["11155111"];
 
   const dispatch = useNotification();
 

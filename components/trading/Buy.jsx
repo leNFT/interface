@@ -57,10 +57,7 @@ export default function Buy() {
 
   const dispatch = useNotification();
 
-  const addresses =
-    isConnected && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["5"];
+  var addresses = contractAddresses["11155111"];
 
   const factoryProvider = useContract({
     contractInterface: tradingPoolFactoryContract.abi,
@@ -205,7 +202,10 @@ export default function Buy() {
 
   // Runs once
   useEffect(() => {
-    getTradingCollections(isConnected ? chain.id : 5);
+    if (isConnected) {
+      addresses = contractAddresses[chain.id];
+      getTradingCollections(chain.id);
+    }
 
     console.log("useEffect called");
   }, [isConnected, chain]);

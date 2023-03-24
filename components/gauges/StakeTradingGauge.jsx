@@ -34,10 +34,7 @@ export default function StakeTradingGauge(props) {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const [lpsValue, setLpsValue] = useState([]);
-  const addresses =
-    isConnected && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["5"];
+  var addresses = contractAddresses["11155111"];
 
   console.log("props.lpToken", props.lpToken);
 

@@ -22,10 +22,7 @@ export default function UnstakeLendingGauge(props) {
   const { chain } = useNetwork();
   const provider = useProvider();
   const { data: signer } = useSigner();
-  const addresses =
-    isConnected && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["5"];
+  var addresses = contractAddresses["11155111"];
 
   async function updateMaxAmount() {
     const gauge = new ethers.Contract(

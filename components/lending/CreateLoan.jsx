@@ -52,10 +52,7 @@ export default function CreateLoan(props) {
   const { data: signer } = useSigner();
   const { chain } = useNetwork();
   const provider = useProvider();
-  const addresses =
-    isConnected && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["5"];
+  var addresses = contractAddresses["11155111"];
 
   const dispatch = useNotification();
   const [borrowAsset, setBorrowAsset] = useState("ETH");

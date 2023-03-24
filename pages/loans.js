@@ -39,10 +39,8 @@ export default function Loans() {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const provider = useProvider();
-  const addresses =
-    isConnected && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["5"];
+  var addresses = contractAddresses["11155111"];
+
   const [collections, setCollections] = useState([]);
 
   const loanCenter = useContract({

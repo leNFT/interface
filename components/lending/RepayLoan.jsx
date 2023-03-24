@@ -43,10 +43,7 @@ export default function RepayLoan(props) {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const [repayLoading, setRepayLoading] = useState(false);
-  const addresses =
-    isConnected && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["5"];
+  var addresses = contractAddresses["11155111"];
 
   const [asset, setAsset] = useState(addresses["ETH"].address);
   const [symbol, setSymbol] = useState("ETH");

@@ -47,10 +47,7 @@ export default function TradingPool() {
   });
   console.log("ethBalance", ethBalance);
   const provider = useProvider();
-  const addresses =
-    isConnected && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["5"];
+  var addresses = contractAddresses["11155111"];
 
   async function updateUI() {
     const pool = new ethers.Contract(

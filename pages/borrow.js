@@ -48,10 +48,7 @@ export default function Borrow() {
 
   const provider = useProvider();
   const dispatch = useNotification();
-  const addresses =
-    isConnected && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["5"];
+  var addresses = contractAddresses["11155111"];
 
   const loanCenter = useContract({
     contractInterface: loanCenterContract.abi,

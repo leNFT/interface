@@ -35,10 +35,8 @@ export default function GenesisMint(props) {
   const [mintIds, setMintIds] = useState([]);
   const [mintPrice, setMintPrice] = useState("0");
 
-  const addresses =
-    isConnected && chain.id in contractAddresses
-      ? contractAddresses[chain.id]
-      : contractAddresses["5"];
+  var addresses = contractAddresses["11155111"];
+
   const dispatch = useNotification();
 
   const genesisNFTProvider = useContract({

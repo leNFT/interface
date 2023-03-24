@@ -133,18 +133,8 @@ export default function Lock() {
     console.log("updatedClaimableRewards", updatedClaimableRewards);
     setClaimableRewards(updatedClaimableRewards.toString());
 
-    // Get the APR
-    const updatedTotalFees = await feeDistributorProvider.totalFeesAt(
-      addresses.ETH.address,
-      updatedEpoch.toNumber() == 0 ? 0 : updatedEpoch.toNumber() - 1
-    );
-    console.log("updatedTotalFees", updatedTotalFees.toString());
-    const updateNativeTokenPrice = await curvePoolProvider.callStatic.get_dy(
-      1,
-      0,
-      parseUnits("1", 18).toString()
-    );
-    setTokenPrice(updateNativeTokenPrice.toString());
+    const updateNativeTokenPrice = "0";
+    setTokenPrice(updateNativeTokenPrice);
 
     if (
       updateNativeTokenPrice.toString() == "0" ||

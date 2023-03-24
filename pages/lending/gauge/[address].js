@@ -24,7 +24,6 @@ import Router from "next/router";
 import { useRouter } from "next/router";
 import { ChevronLeft } from "@web3uikit/icons";
 import { ExternalLink } from "@web3uikit/icons";
-import curvePoolContract from "../../../contracts/CurvePool.json";
 import erc20 from "../../../contracts/erc20.json";
 
 export default function TradingPoolGauge() {
@@ -60,12 +59,6 @@ export default function TradingPoolGauge() {
   const gaugeControllerProvider = useContract({
     contractInterface: gaugeControllerContract.abi,
     addressOrName: addresses.GaugeController,
-    signerOrProvider: provider,
-  });
-
-  const curvePoolProvider = useContract({
-    contractInterface: curvePoolContract.abi,
-    addressOrName: addresses.CurvePool,
     signerOrProvider: provider,
   });
 
@@ -108,11 +101,7 @@ export default function TradingPoolGauge() {
         router.query.address,
         updatedEpoch.toNumber() == 0 ? 0 : updatedEpoch.toNumber() - 1
       );
-    const nativeTokenPrice = await curvePoolProvider.callStatic.get_dy(
-      1,
-      0,
-      parseUnits("1", 18).toString()
-    );
+    const nativeTokenPrice = "0";
 
     const lendingPool = new ethers.Contract(
       lpTokenResponse.toString(),

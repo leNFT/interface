@@ -25,7 +25,6 @@ import {
   useSigner,
 } from "wagmi";
 import Router from "next/router";
-import curvePoolContract from "../../../contracts/CurvePool.json";
 import { useRouter } from "next/router";
 import { ChevronLeft } from "@web3uikit/icons";
 import { ExternalLink } from "@web3uikit/icons";
@@ -62,12 +61,6 @@ export default function TradingPoolGauge() {
   const votingEscrowProvider = useContract({
     contractInterface: votingEscrowContract.abi,
     addressOrName: addresses.VotingEscrow,
-    signerOrProvider: provider,
-  });
-
-  const curvePoolProvider = useContract({
-    contractInterface: curvePoolContract.abi,
-    addressOrName: addresses.CurvePool,
     signerOrProvider: provider,
   });
 
@@ -126,15 +119,6 @@ export default function TradingPoolGauge() {
     setEpoch(updatedEpoch.toNumber());
 
     var nativeTokenPrice = "0";
-    try {
-      await curvePoolProvider.callStatic.get_dy(
-        1,
-        0,
-        parseUnits("1", 18).toString()
-      );
-    } catch (e) {
-      console.log(e);
-    }
 
     // Get the total locked amount
     const updatedTotalLockedValue = await gauge.totalLPValue();

@@ -157,7 +157,7 @@ export default function Buy() {
             break;
           }
           newSelectedNFTs.push(
-            BigNumber.from(availableNFTs[index].id.tokenId).toNumber()
+            BigNumber.from(availableNFTs[index].tokenId).toNumber()
           );
         }
       }
@@ -479,7 +479,7 @@ export default function Buy() {
                 <div className="m-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 overflow-auto max-h-[24rem]">
                   {availableNFTs.map((nft, _) => (
                     <div
-                      key={BigNumber.from(nft.id.tokenId).toNumber()}
+                      key={BigNumber.from(nft.tokenId).toNumber()}
                       className="flex m-2 items-center justify-center max-w-[300px]"
                     >
                       <Card
@@ -487,8 +487,7 @@ export default function Buy() {
                           borderRadius: 4,
                           background: selectedNFTs.find(
                             (element) =>
-                              element ==
-                              BigNumber.from(nft.id.tokenId).toNumber()
+                              element == BigNumber.from(nft.tokenId).toNumber()
                           )
                             ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
                             : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
@@ -501,11 +500,11 @@ export default function Buy() {
                             var index = newSelectedNFTs.findIndex(
                               (element) =>
                                 element ==
-                                BigNumber.from(nft.id.tokenId).toNumber()
+                                BigNumber.from(nft.tokenId).toNumber()
                             );
                             if (index == -1) {
                               newSelectedNFTs.push(
-                                BigNumber.from(nft.id.tokenId).toNumber()
+                                BigNumber.from(nft.tokenId).toNumber()
                               );
                             } else {
                               newSelectedNFTs.splice(index, 1);
@@ -541,7 +540,7 @@ export default function Buy() {
                                 fontSize: "caption",
                               }}
                             >
-                              {BigNumber.from(nft.id.tokenId).toNumber()}
+                              {BigNumber.from(nft.tokenId).toNumber()}
                             </Box>
                           </div>
                         </CardActionArea>

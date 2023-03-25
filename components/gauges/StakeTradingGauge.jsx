@@ -52,7 +52,7 @@ export default function StakeTradingGauge(props) {
         tradingGaugeContract.abi,
         provider
       );
-      const lpValue = await gauge.calculateLpValue(addressNFTs[i].id.tokenId);
+      const lpValue = await gauge.calculateLpValue(addressNFTs[i].tokenId);
       newLpsValue.push(lpValue);
     }
     setLpsValue(newLpsValue);
@@ -169,26 +169,24 @@ export default function StakeTradingGauge(props) {
         <div className="flex flex-row grid auto-cols-auto">
           {userLPs.map((lp, index) => (
             <div
-              key={BigNumber.from(lp.id.tokenId).toNumber()}
+              key={BigNumber.from(lp.tokenId).toNumber()}
               className="flex m-4 items-center justify-center max-w-[300px]"
             >
               <Card
                 sx={{
                   borderRadius: 4,
                   background:
-                    selectedLP == BigNumber.from(lp.id.tokenId).toNumber()
+                    selectedLP == BigNumber.from(lp.tokenId).toNumber()
                       ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
                       : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                 }}
               >
                 <CardActionArea
                   onClick={function () {
-                    if (
-                      selectedLP == BigNumber.from(lp.id.tokenId).toNumber()
-                    ) {
+                    if (selectedLP == BigNumber.from(lp.tokenId).toNumber()) {
                       setSelectedLP();
                     } else {
-                      setSelectedLP(BigNumber.from(lp.id.tokenId).toNumber());
+                      setSelectedLP(BigNumber.from(lp.tokenId).toNumber());
                     }
                   }}
                 >
@@ -199,7 +197,7 @@ export default function StakeTradingGauge(props) {
                         fontSize: "caption",
                       }}
                     >
-                      {"LP #" + BigNumber.from(lp.id.tokenId).toNumber()}
+                      {"LP #" + BigNumber.from(lp.tokenId).toNumber()}
                     </Box>
                     <Box
                       sx={{

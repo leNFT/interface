@@ -230,7 +230,7 @@ export default function Genesis() {
             <div className="flex flex-row grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
               {userGenesisNFTs.map((nft) => (
                 <div
-                  key={nft.id.tokenId}
+                  key={nft.tokenId}
                   className="flex m-4 items-center justify-center"
                 >
                   <Card
@@ -243,7 +243,7 @@ export default function Genesis() {
                     <CardActionArea
                       onClick={function () {
                         setSelectedToken(
-                          BigNumber.from(nft.id.tokenId).toNumber()
+                          BigNumber.from(nft.tokenId).toNumber()
                         );
                         setVisibleBurnModal(true);
                       }}
@@ -280,7 +280,7 @@ export default function Genesis() {
                           }}
                         >
                           <div className="flex flex-col mt-2 items-center text-center">
-                            {"#" + BigNumber.from(nft.id.tokenId).toNumber()}
+                            {"#" + BigNumber.from(nft.tokenId).toNumber()}
                           </div>
                         </Box>
                       </CardContent>

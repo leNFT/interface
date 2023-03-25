@@ -186,7 +186,7 @@ export default function Swap() {
             break;
           }
           newSelectedSellNFTs.push(
-            BigNumber.from(userNFTs[index].id.tokenId).toNumber()
+            BigNumber.from(userNFTs[index].tokenId).toNumber()
           );
         }
       }
@@ -210,7 +210,7 @@ export default function Swap() {
             break;
           }
           newSelectedBuyNFTs.push(
-            BigNumber.from(availableBuyPoolNFTs[index].id.tokenId).toNumber()
+            BigNumber.from(availableBuyPoolNFTs[index].tokenId).toNumber()
           );
         }
       }
@@ -673,7 +673,7 @@ export default function Swap() {
                   <div className="flex flex-row m-4 grid grid-cols-3 lg:grid-cols-4 overflow-auto max-h-[24rem]">
                     {userNFTs.map((nft, _) => (
                       <div
-                        key={BigNumber.from(nft.id.tokenId).toNumber()}
+                        key={BigNumber.from(nft.tokenId).toNumber()}
                         className="flex m-2 items-center justify-center max-w-[300px]"
                       >
                         <Card
@@ -682,7 +682,7 @@ export default function Swap() {
                             background: selectedSellNFTs.find(
                               (element) =>
                                 element ==
-                                BigNumber.from(nft.id.tokenId).toNumber()
+                                BigNumber.from(nft.tokenId).toNumber()
                             )
                               ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
                               : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
@@ -696,11 +696,11 @@ export default function Swap() {
                               var index = newSelectedSellNFTs.findIndex(
                                 (element) =>
                                   element ==
-                                  BigNumber.from(nft.id.tokenId).toNumber()
+                                  BigNumber.from(nft.tokenId).toNumber()
                               );
                               if (index == -1) {
                                 newSelectedSellNFTs.push(
-                                  BigNumber.from(nft.id.tokenId).toNumber()
+                                  BigNumber.from(nft.tokenId).toNumber()
                                 );
                               } else {
                                 newSelectedSellNFTs.splice(index, 1);
@@ -735,7 +735,7 @@ export default function Swap() {
                                   fontSize: "caption",
                                 }}
                               >
-                                {BigNumber.from(nft.id.tokenId).toNumber()}
+                                {BigNumber.from(nft.tokenId).toNumber()}
                               </Box>
                             </div>
                           </CardActionArea>
@@ -963,7 +963,7 @@ export default function Swap() {
                     <div className="flex flex-row m-4 grid grid-cols-3 lg:grid-cols-4 overflow-auto max-h-[24rem]">
                       {availableBuyPoolNFTs.map((nft, _) => (
                         <div
-                          key={BigNumber.from(nft.id.tokenId).toNumber()}
+                          key={BigNumber.from(nft.tokenId).toNumber()}
                           className="flex m-2 items-center justify-center max-w-[300px]"
                         >
                           <Card
@@ -972,7 +972,7 @@ export default function Swap() {
                               background: selectedBuyNFTs.find(
                                 (element) =>
                                   element ==
-                                  BigNumber.from(nft.id.tokenId).toNumber()
+                                  BigNumber.from(nft.tokenId).toNumber()
                               )
                                 ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
                                 : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
@@ -986,11 +986,11 @@ export default function Swap() {
                                 var index = newSelectedBuyNFTs.findIndex(
                                   (element) =>
                                     element ==
-                                    BigNumber.from(nft.id.tokenId).toNumber()
+                                    BigNumber.from(nft.tokenId).toNumber()
                                 );
                                 if (index == -1) {
                                   newSelectedBuyNFTs.push(
-                                    BigNumber.from(nft.id.tokenId).toNumber()
+                                    BigNumber.from(nft.tokenId).toNumber()
                                   );
                                 } else {
                                   newSelectedBuyNFTs.splice(index, 1);
@@ -1025,7 +1025,7 @@ export default function Swap() {
                                     fontSize: "caption",
                                   }}
                                 >
-                                  {BigNumber.from(nft.id.tokenId).toNumber()}
+                                  {BigNumber.from(nft.tokenId).toNumber()}
                                 </Box>
                               </div>
                             </CardActionArea>

@@ -74,7 +74,7 @@ export default function Loans() {
       // Get the loan ID of each NFT
       const loanId = await loanCenter.getNFTLoanId(
         collectionNFTs[i].contract.address,
-        BigNumber.from(collectionNFTs[i].id.tokenId).toNumber()
+        BigNumber.from(collectionNFTs[i].tokenId).toNumber()
       );
 
       // If we have added this loan already, skip it
@@ -109,7 +109,7 @@ export default function Loans() {
       //Get token URI for image
       const tokenURI = await getNFTImage(
         collectionNFTs[i].contract.address,
-        BigNumber.from(collectionNFTs[i].id.tokenId).toNumber(),
+        BigNumber.from(collectionNFTs[i].tokenId).toNumber(),
         chain.id
       );
 

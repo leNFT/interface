@@ -120,7 +120,7 @@ export default function CreateLoan(props) {
 
     //Find an NFT that's not being used by a loan
     for (let i = 0; i < userGenesisNFTs.length; i++) {
-      const id = Number(userGenesisNFTs[i].id.tokenId);
+      const id = Number(userGenesisNFTs[i].tokenId);
       const activeState = await genesisNFTProvider.getActiveState(id);
       console.log("Active state for " + id + " is " + activeState);
       if (activeState == false) {

@@ -307,14 +307,16 @@ export default function Borrow() {
                               className="rounded-3xl"
                             />
                           ) : (
-                            <Box
-                              sx={{
-                                fontFamily: "Monospace",
-                                fontSize: "caption",
-                              }}
-                            >
-                              {"Can't load image"}.
-                            </Box>
+                            <div className="flex flex-col w-[100px] h-[100px] text-center items-center justify-center">
+                              <Box
+                                sx={{
+                                  fontFamily: "Monospace",
+                                  fontSize: 12,
+                                }}
+                              >
+                                No Image
+                              </Box>
+                            </div>
                           )}
                           <div className="flex flex-row mt-6">
                             <div className="flex flex-col">

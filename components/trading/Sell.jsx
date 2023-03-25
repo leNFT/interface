@@ -458,9 +458,8 @@ export default function Sell() {
                     <Card
                       sx={{
                         borderRadius: 4,
-                        background: selectedNFTs.find(
-                          (element) =>
-                            element == BigNumber.from(nft.tokenId).toNumber()
+                        background: selectedNFTs.includes(
+                          BigNumber.from(nft.tokenId).toNumber()
                         )
                           ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
                           : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",

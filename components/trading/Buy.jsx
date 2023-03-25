@@ -485,9 +485,8 @@ export default function Buy() {
                       <Card
                         sx={{
                           borderRadius: 4,
-                          background: selectedNFTs.find(
-                            (element) =>
-                              element == BigNumber.from(nft.tokenId).toNumber()
+                          background: selectedNFTs.includes(
+                            BigNumber.from(nft.tokenId).toNumber()
                           )
                             ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
                             : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
@@ -496,6 +495,7 @@ export default function Buy() {
                         <CardActionArea
                           onClick={function () {
                             //If it's selected we unselect and if its unselected we select
+                            console.log("Clicked on ID", nft.tokenId);
                             var newSelectedNFTs = selectedNFTs.slice();
                             var index = newSelectedNFTs.findIndex(
                               (element) =>

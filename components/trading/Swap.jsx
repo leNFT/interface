@@ -679,10 +679,8 @@ export default function Swap() {
                         <Card
                           sx={{
                             borderRadius: 4,
-                            background: selectedSellNFTs.find(
-                              (element) =>
-                                element ==
-                                BigNumber.from(nft.tokenId).toNumber()
+                            background: selectedSellNFTs.includes(
+                              BigNumber.from(nft.tokenId).toNumber()
                             )
                               ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
                               : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
@@ -969,10 +967,8 @@ export default function Swap() {
                           <Card
                             sx={{
                               borderRadius: 4,
-                              background: selectedBuyNFTs.find(
-                                (element) =>
-                                  element ==
-                                  BigNumber.from(nft.tokenId).toNumber()
+                              background: selectedBuyNFTs.includes(
+                                BigNumber.from(nft.tokenId).toNumber()
                               )
                                 ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
                                 : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",

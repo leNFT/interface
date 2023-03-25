@@ -78,17 +78,17 @@ export default function Borrow() {
 
     for (let i = 0; i < addressNFTs.length; i++) {
       if (
-        getAddress(addressNFTs[i].contract.address) ==
+        getAddress(addressNFTs[i].tokenAddress) ==
         contractAddresses[chain.id].DebtToken
       ) {
         // Get loan details
         const loan = await loanCenter.getLoan(
-          BigNumber.from(addressNFTs[i].id.tokenId).toNumber()
+          BigNumber.from(addressNFTs[i].tokenId).toNumber()
         );
         console.log("loan", loan);
 
         const debt = await loanCenter.getLoanDebt(
-          BigNumber.from(addressNFTs[i].id.tokenId).toNumber()
+          BigNumber.from(addressNFTs[i].tokenId).toNumber()
         );
 
         console.log("debt", debt);
@@ -103,7 +103,7 @@ export default function Borrow() {
 
         // Save relevant loan info
         updatedLoans.push({
-          loanId: BigNumber.from(addressNFTs[i].id.tokenId).toNumber(),
+          loanId: BigNumber.from(addressNFTs[i].tokenId).toNumber(),
           tokenName: addressNFTs[i].title,
           tokenAddress: loan.nftAsset,
           tokenIds: loan.nftTokenIds,
@@ -117,7 +117,7 @@ export default function Borrow() {
           maxLTV: loan.maxLTV,
         });
       } else if (
-        updatedSupportedNFTs[getAddress(addressNFTs[i].contract.address)] !=
+        updatedSupportedNFTs[getAddress(addressNFTs[i].tokenAddress)] !=
         undefined
       ) {
         // Add asset to supported assets
@@ -167,9 +167,8 @@ export default function Borrow() {
       if (selectedCollection == "") {
         for (let i = 0; i < addressCollectionNFTs.length; i++) {
           if (
-            supportedNFTs[
-              getAddress(addressCollectionNFTs[i].contract.address)
-            ] != undefined
+            supportedNFTs[getAddress(addressCollectionNFTs[i].tokenAddress)] !=
+            undefined
           ) {
             selectedCollectionNFTs.push(addressCollectionNFTs[i]);
           }
@@ -215,7 +214,7 @@ export default function Borrow() {
       const stringToMatch =
         asset.contractMetadata.name +
         " " +
-        BigNumber.from(asset.id.tokenId).toString();
+        BigNumber.from(asset.tokenId).toString();
 
       console.log("stringToMatch", stringToMatch);
 
@@ -437,7 +436,7 @@ export default function Borrow() {
                         " " +
                         supportedAssets.find(
                           (element) =>
-                            element.contract.address == selectedCollection
+                            element.tokenAddress == selectedCollection
                         ).contractMetadata.name +
                         "s"}
                     </div>
@@ -516,14 +515,14 @@ export default function Borrow() {
                 <div className="flex flex-row grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
                   {searchPageData.map((data) => (
                     <div
-                      key={data.id.tokenId + data.contract.address}
+                      key={data.tokenId + data.tokenAddress}
                       className="flex m-4 items-center justify-center max-w-[300px]"
                     >
                       <Card
                         sx={{
                           borderRadius: 4,
                           background: selectedAssets.includes(
-                            BigNumber.from(data.id.tokenId).toNumber()
+                            BigNumber.from(data.tokenId).toNumber()
                           )
                             ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
                             : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
@@ -541,11 +540,11 @@ export default function Borrow() {
                             // If the asset is already selected, remove it from the array
                             if (
                               selectedAssets.includes(
-                                BigNumber.from(data.id.tokenId).toNumber()
+                                BigNumber.from(data.tokenId).toNumber()
                               )
                             ) {
                               const index = newSelectedAssets.indexOf(
-                                BigNumber.from(data.id.tokenId).toNumber()
+                                BigNumber.from(data.tokenId).toNumber()
                               );
                               newSelectedAssets.splice(index, 1);
                               newSelectedAssetsImages.splice(index, 1);
@@ -555,12 +554,12 @@ export default function Borrow() {
                               }
                             } else {
                               if (selectedAssets.length == 0) {
-                                setSelectedCollection(data.contract.address);
+                                setSelectedCollection(data.tokenAddress);
                               }
 
                               // If the asset is not selected, add it to the array
                               newSelectedAssets.push(
-                                BigNumber.from(data.id.tokenId).toNumber()
+                                BigNumber.from(data.tokenId).toNumber()
                               );
                               newSelectedAssetsImages.push(
                                 data.metadata.image ? data.media[0].gateway : ""
@@ -607,10 +606,10 @@ export default function Borrow() {
                               }}
                             >
                               <div className="flex flex-col mt-2 items-center text-center">
-                                <div>{data.contractMetadata.symbol}</div>
+                                <div>{data.symbol}</div>
                                 <div>
                                   {"#" +
-                                    BigNumber.from(data.id.tokenId).toNumber()}
+                                    BigNumber.from(data.tokenId).toNumber()}
                                 </div>
                               </div>
                             </Box>
@@ -654,8 +653,7 @@ export default function Borrow() {
                 {unsupportedAssets.map((unsupportedAsset, index) => (
                   <div
                     key={
-                      unsupportedAsset.id.tokenId +
-                      unsupportedAsset.contract.address
+                      unsupportedAsset.tokenId + unsupportedAsset.tokenAddress
                     }
                     className="flex m-4 items-center justify-center max-w-[220px]"
                   >
@@ -686,13 +684,17 @@ export default function Borrow() {
                           }
                         >
                           <CardContent>
-                            {unsupportedAsset.metadata.image ? (
+                            {unsupportedAsset.media ? (
                               <div className="flex flex-col items-center">
                                 <Image
                                   loader={() =>
-                                    unsupportedAsset.media[0].gateway
+                                    unsupportedAsset.media.mediaCollection.low
+                                      .url
                                   }
-                                  src={unsupportedAsset.media[0].gateway}
+                                  src={
+                                    unsupportedAsset.media.mediaCollection.low
+                                      .url
+                                  }
                                   height="120"
                                   width="120"
                                   className="rounded-2xl"
@@ -719,13 +721,11 @@ export default function Borrow() {
                               }}
                             >
                               <div className="flex flex-col mt-4 items-center text-center">
-                                <div>
-                                  {unsupportedAsset.contractMetadata.symbol}
-                                </div>
+                                <div>{unsupportedAsset.symbol}</div>
                                 <div>
                                   {"#" +
                                     BigNumber.from(
-                                      unsupportedAsset.id.tokenId
+                                      unsupportedAsset.tokenId
                                     ).toNumber()}
                                 </div>
                               </div>

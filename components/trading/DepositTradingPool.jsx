@@ -332,7 +332,7 @@ export default function DepositTradingPool(props) {
           <div className="flex flex-row grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {userNFTs.map((nft, _) => (
               <div
-                key={BigNumber.from(nft.id.tokenId).toNumber()}
+                key={BigNumber.from(nft.tokenId).toNumber()}
                 className="flex items-center justify-center max-w-[300px]"
               >
                 <Card
@@ -340,7 +340,7 @@ export default function DepositTradingPool(props) {
                     borderRadius: 4,
                     background: selectedNFTs.find(
                       (element) =>
-                        element == BigNumber.from(nft.id.tokenId).toNumber()
+                        element == BigNumber.from(nft.tokenId).toNumber()
                     )
                       ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
                       : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
@@ -352,11 +352,11 @@ export default function DepositTradingPool(props) {
                       var newSelectedNFTs = selectedNFTs.slice();
                       var index = newSelectedNFTs.findIndex(
                         (element) =>
-                          element == BigNumber.from(nft.id.tokenId).toNumber()
+                          element == BigNumber.from(nft.tokenId).toNumber()
                       );
                       if (index == -1) {
                         newSelectedNFTs.push(
-                          BigNumber.from(nft.id.tokenId).toNumber()
+                          BigNumber.from(nft.tokenId).toNumber()
                         );
                         setNFTAmount(nftAmount + 1);
                       } else {
@@ -367,10 +367,10 @@ export default function DepositTradingPool(props) {
                     }}
                   >
                     <div className="flex flex-col items-center p-1">
-                      {nft.metadata.image ? (
+                      {nft.media ? (
                         <Image
-                          loader={() => nft.metadata.image}
-                          src={nft.metadata.image}
+                          loader={() => nft.media.mediaCollection.low.url}
+                          src={nft.media.mediaCollection.low.url}
                           height="100"
                           width="100"
                           className="rounded-xl"
@@ -393,7 +393,7 @@ export default function DepositTradingPool(props) {
                           fontSize: "caption",
                         }}
                       >
-                        {BigNumber.from(nft.id.tokenId).toNumber()}
+                        {BigNumber.from(nft.tokenId).toNumber()}
                       </Box>
                     </div>
                   </CardActionArea>

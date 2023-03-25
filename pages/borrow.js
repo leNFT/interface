@@ -437,7 +437,7 @@ export default function Borrow() {
                         supportedAssets.find(
                           (element) =>
                             element.tokenAddress == selectedCollection
-                        ).contractMetadata.name +
+                        ).name +
                         "s"}
                     </div>
                   </Box>
@@ -562,7 +562,9 @@ export default function Borrow() {
                                 BigNumber.from(data.tokenId).toNumber()
                               );
                               newSelectedAssetsImages.push(
-                                data.metadata.image ? data.media[0].gateway : ""
+                                data.media
+                                  ? data.media.mediaCollection.low.url
+                                  : ""
                               );
                             }
                             console.log(
@@ -574,12 +576,14 @@ export default function Borrow() {
                           }}
                         >
                           <CardContent>
-                            {data.metadata.image ? (
+                            {data.media ? (
                               <div className="flex flex-col items-center">
                                 <Image
-                                  loader={() => data.media[0].gateway}
+                                  loader={() =>
+                                    data.media.mediaCollection.low.url
+                                  }
                                   alt="Supported Asset"
-                                  src={data.media[0].gateway}
+                                  src={data.media.mediaCollection.low.url}
                                   height="200"
                                   width="200"
                                   className="rounded-2xl"

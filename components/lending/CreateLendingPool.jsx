@@ -160,9 +160,7 @@ export default function CreateLendingPool(props) {
             onChange={handleAssetChange}
             className="rounded-2xl"
           >
-            <MenuItem value={"0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6"}>
-              Ethereum (ETH)
-            </MenuItem>
+            <MenuItem value={addresses.ETH.address}>Ethereum (ETH)</MenuItem>
           </Select>
         </FormControl>
       </div>

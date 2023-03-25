@@ -104,7 +104,7 @@ export default function StakeTradingGauge(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-row items-center justify-center m-8">
+      <div className="flex flex-col items-center justify-center m-8">
         {approvedLP ? (
           <Button
             text={
@@ -166,52 +166,75 @@ export default function StakeTradingGauge(props) {
         )}
       </div>
       {selectingLP && userLPs.length > 0 && (
-        <div className="flex flex-row grid auto-cols-auto">
-          {userLPs.map((lp, index) => (
-            <div
-              key={BigNumber.from(lp.tokenId).toNumber()}
-              className="flex m-4 items-center justify-center max-w-[300px]"
+        <div>
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "caption.fontSize",
+              fontWeight: "bold",
+              color: "#be4d25",
+            }}
+            className="m-2 text-center"
+          >
+            {"Only LPs with a value > 0 can be staked. "}
+
+            <a
+              href={
+                "https://lenft.gitbook.io/lenft-docs/trading/deposit-in-a-trading-pool"
+              }
+              target="_blank"
+              className="text-blue-700 underline text-xs"
             >
-              <Card
-                sx={{
-                  borderRadius: 4,
-                  background:
-                    selectedLP == BigNumber.from(lp.tokenId).toNumber()
-                      ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
-                      : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
-                }}
+              What is LP value?
+            </a>
+          </Box>
+          <div className="grid auto-cols-auto">
+            {userLPs.map((lp, index) => (
+              <div
+                key={BigNumber.from(lp.tokenId).toNumber()}
+                className="flex m-4 items-center justify-center max-w-[300px]"
               >
-                <CardActionArea
-                  onClick={function () {
-                    if (selectedLP == BigNumber.from(lp.tokenId).toNumber()) {
-                      setSelectedLP();
-                    } else {
-                      setSelectedLP(BigNumber.from(lp.tokenId).toNumber());
-                    }
+                <Card
+                  sx={{
+                    borderRadius: 4,
+                    background:
+                      selectedLP == BigNumber.from(lp.tokenId).toNumber()
+                        ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
+                        : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                   }}
                 >
-                  <div className="flex flex-col items-center p-4 text-center space-y-2 justify-center">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "caption",
-                      }}
-                    >
-                      {"LP #" + BigNumber.from(lp.tokenId).toNumber()}
-                    </Box>
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "caption",
-                      }}
-                    >
-                      {formatUnits(lpsValue[index], 18) + " ETH"}
-                    </Box>
-                  </div>
-                </CardActionArea>
-              </Card>
-            </div>
-          ))}
+                  <CardActionArea
+                    onClick={function () {
+                      if (selectedLP == BigNumber.from(lp.tokenId).toNumber()) {
+                        setSelectedLP();
+                      } else {
+                        setSelectedLP(BigNumber.from(lp.tokenId).toNumber());
+                      }
+                    }}
+                  >
+                    <div className="flex flex-col items-center p-4 text-center space-y-2 justify-center">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "caption",
+                        }}
+                      >
+                        {"LP #" + BigNumber.from(lp.tokenId).toNumber()}
+                      </Box>
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "caption",
+                        }}
+                      >
+                        {formatUnits(lpsValue[index], 18) + " ETH"}
+                      </Box>
+                    </div>
+                  </CardActionArea>
+                </Card>
+              </div>
+            ))}
+          </div>
         </div>
       )}
       <div className="flex flex-row items-center justify-center m-8">

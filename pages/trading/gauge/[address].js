@@ -245,7 +245,8 @@ export default function TradingPoolGauge() {
                 );
               } else if (chain.id == 5) {
                 window.open(
-                  "https://goerli.etherscan.io/address/" + router.query.address,
+                  "https://sepolia.etherscan.io/address/" +
+                    router.query.address,
                   "_blank"
                 );
               }

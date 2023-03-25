@@ -56,8 +56,8 @@ export default function LendingPools() {
             isConnected
               ? chain.id == 1
                 ? "https://etherscan.io/address/" + key
-                : "https://goerli.etherscan.io/address/" + key
-              : "https://goerli.etherscan.io/address/" + key
+                : "https://sepolia.etherscan.io/address/" + key
+              : "https://sepolia.etherscan.io/address/" + key
           }
         ></LinkTo>,
         <Box

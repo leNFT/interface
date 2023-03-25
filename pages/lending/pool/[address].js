@@ -201,7 +201,8 @@ export default function LendingPool() {
                 );
               } else if (chain.id == 5) {
                 window.open(
-                  "https://goerli.etherscan.io/address/" + router.query.address,
+                  "https://sepolia.etherscan.io/address/" +
+                    router.query.address,
                   "_blank"
                 );
               }
@@ -244,8 +245,8 @@ export default function LendingPool() {
                   isConnected
                     ? chain.id == 1
                       ? "https://etherscan.io/address/" + key
-                      : "https://goerli.etherscan.io/address/" + key
-                    : "https://goerli.etherscan.io/address/" + key
+                      : "https://sepolia.etherscan.io/address/" + key
+                    : "https://sepolia.etherscan.io/address/" + key
                 }
               ></LinkTo>
             ))}

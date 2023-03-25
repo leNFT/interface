@@ -35,8 +35,8 @@ export default function HeaderController() {
             buttonConfig={{
               onClick: function noRefCheck() {
                 if (chain.id == 1) {
-                  switchNetwork(5);
-                } else if (chain.id == 5) {
+                  switchNetwork(11155111);
+                } else if (chain.id == 11155111) {
                   Router.push({
                     pathname: "/test",
                   });
@@ -52,7 +52,7 @@ export default function HeaderController() {
             }}
             text={
               chain.id == 1
-                ? "leNFT is only live on the Goerli testnet. Change networks to use the beta."
+                ? "leNFT is live on the Sepolia testnet. Change networks to use the beta."
                 : "Follow the flag to mint testnet assets"
             }
             type={chain.id == 1 ? "warning" : "success"}

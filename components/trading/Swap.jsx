@@ -1086,10 +1086,10 @@ export default function Swap() {
                     ? sellNFTAddress != ""
                       ? chain.id == 1
                         ? "https://etherscan.io/address/" + sellNFTAddress
-                        : "https://goerli.etherscan.io/address/" +
+                        : "https://sepolia.etherscan.io/address/" +
                           sellNFTAddress
                       : ""
-                    : "https://goerli.etherscan.io/address/" + sellNFTAddress
+                    : "https://sepolia.etherscan.io/address/" + sellNFTAddress
                 }
               />
               <ArrowForwardOutlinedIcon className="mx-1" />
@@ -1114,10 +1114,10 @@ export default function Swap() {
                     ? buyNFTAddress != ""
                       ? chain.id == 1
                         ? "https://etherscan.io/address/" + sellNFTAddress
-                        : "https://goerli.etherscan.io/address/" +
+                        : "https://sepolia.etherscan.io/address/" +
                           sellNFTAddress
                       : ""
-                    : "https://goerli.etherscan.io/address/" + sellNFTAddress
+                    : "https://sepolia.etherscan.io/address/" + sellNFTAddress
                 }
               />
             </Divider>

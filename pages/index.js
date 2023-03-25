@@ -104,7 +104,7 @@ export default function Home() {
               using your NFTs.
             </div>
             <div className={styles.indexDescribeSubtitle}>
-              (beta live on goerli)
+              (beta live on sepolia )
             </div>
             <div className="flex flex-col md:flex-row justify-start items-center m-8">
               <Link href="/trade">

@@ -570,8 +570,8 @@ export default function Sell() {
                       isConnected
                         ? chain.id == 1
                           ? "https://etherscan.io/address/" + nftAddress
-                          : "https://goerli.etherscan.io/address/" + nftAddress
-                        : "https://goerli.etherscan.io/address/" + nftAddress
+                          : "https://sepolia.etherscan.io/address/" + nftAddress
+                        : "https://sepolia.etherscan.io/address/" + nftAddress
                     }
                   />
                 )}

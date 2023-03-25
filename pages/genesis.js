@@ -68,7 +68,8 @@ export default function Genesis() {
   }
 
   async function updateGenesisWallet() {
-    // Get user NFT assets, special case for testnet goerli
+    // Get user NFT assets, special case for testnet sepolia
+
     const updatedUserGenesisNFTs = await getAddressNFTs(
       address,
       addresses.GenesisNFT,

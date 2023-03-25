@@ -514,10 +514,10 @@ export default function Buy() {
                           }}
                         >
                           <div className="flex flex-col items-center p-1">
-                            {nft.metadata.image ? (
+                            {nft.media ? (
                               <Image
-                                loader={() => nft.metadata.image}
-                                src={nft.metadata.image}
+                                loader={() => nft.media.mediaCollection.low.url}
+                                src={nft.media.mediaCollection.low.url}
                                 height="100"
                                 width="100"
                                 className="rounded-xl"

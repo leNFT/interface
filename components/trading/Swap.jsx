@@ -1164,7 +1164,7 @@ export default function Swap() {
               <HelpCircle fontSize="20px" color="#000000" />
             </Tooltip>
           </div>
-          {priceQuote.buyPriceImpact && (
+          {priceQuote.buyPriceImpact != undefined && (
             <Box
               className="m-1"
               sx={{
@@ -1175,7 +1175,7 @@ export default function Swap() {
               {"Buy Side Impact: +" + priceQuote.buyPriceImpact / 100 + "%"}
             </Box>
           )}
-          {priceQuote.sellPriceImpact && (
+          {priceQuote.sellPriceImpact != undefined && (
             <Box
               className="m-1"
               sx={{

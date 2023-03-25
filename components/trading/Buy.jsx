@@ -615,7 +615,7 @@ export default function Buy() {
             >
               {formatUnits(priceQuote.price, 18)} ETH
             </Box>
-            {priceQuote.priceImpact && (
+            {priceQuote.priceImpact != undefined && (
               <Box
                 className="m-1"
                 sx={{

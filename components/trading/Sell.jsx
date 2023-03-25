@@ -586,7 +586,7 @@ export default function Sell() {
             >
               {formatUnits(priceQuote.price, 18)} WETH
             </Box>
-            {priceQuote.priceImpact && (
+            {priceQuote.priceImpact != undefined && (
               <Box
                 className="m-1"
                 sx={{

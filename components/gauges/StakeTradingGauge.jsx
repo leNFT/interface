@@ -188,51 +188,49 @@ export default function StakeTradingGauge(props) {
               What is LP value?
             </a>
           </Box>
-          <div className="grid auto-cols-auto">
+          <div className="grid gap-4 md:grid-cols-2">
             {userLPs.map((lp, index) => (
-              <div
+              <Card
+                sx={{
+                  width: "180px",
+                  borderRadius: 4,
+                  background:
+                    selectedLP == BigNumber.from(lp.tokenId).toNumber()
+                      ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
+                      : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
+                }}
+                className="flex flex-col justify-self-center"
                 key={BigNumber.from(lp.tokenId).toNumber()}
-                className="flex m-4 items-center justify-center max-w-[300px]"
               >
-                <Card
-                  sx={{
-                    borderRadius: 4,
-                    background:
-                      selectedLP == BigNumber.from(lp.tokenId).toNumber()
-                        ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
-                        : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
+                <CardActionArea
+                  onClick={function () {
+                    if (selectedLP == BigNumber.from(lp.tokenId).toNumber()) {
+                      setSelectedLP();
+                    } else {
+                      setSelectedLP(BigNumber.from(lp.tokenId).toNumber());
+                    }
                   }}
                 >
-                  <CardActionArea
-                    onClick={function () {
-                      if (selectedLP == BigNumber.from(lp.tokenId).toNumber()) {
-                        setSelectedLP();
-                      } else {
-                        setSelectedLP(BigNumber.from(lp.tokenId).toNumber());
-                      }
-                    }}
-                  >
-                    <div className="flex flex-col items-center p-4 text-center space-y-2 justify-center">
-                      <Box
-                        sx={{
-                          fontFamily: "Monospace",
-                          fontSize: "caption",
-                        }}
-                      >
-                        {"LP #" + BigNumber.from(lp.tokenId).toNumber()}
-                      </Box>
-                      <Box
-                        sx={{
-                          fontFamily: "Monospace",
-                          fontSize: "caption",
-                        }}
-                      >
-                        {formatUnits(lpsValue[index], 18) + " ETH"}
-                      </Box>
-                    </div>
-                  </CardActionArea>
-                </Card>
-              </div>
+                  <div className="flex flex-col items-center p-4 text-center space-y-2 justify-center">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "caption",
+                      }}
+                    >
+                      {"LP #" + BigNumber.from(lp.tokenId).toNumber()}
+                    </Box>
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "caption",
+                      }}
+                    >
+                      {formatUnits(lpsValue[index], 18) + " ETH"}
+                    </Box>
+                  </div>
+                </CardActionArea>
+              </Card>
             ))}
           </div>
         </div>

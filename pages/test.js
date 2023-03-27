@@ -5,6 +5,7 @@ import contractAddresses from "../contractAddresses.json";
 import nativeTokenContract from "../contracts/NativeToken.json";
 import { useNotification } from "@web3uikit/core";
 import { useState } from "react";
+import { Box } from "@mui/material";
 import {
   useAccount,
   useNetwork,
@@ -56,49 +57,97 @@ export default function Test() {
 
   return (
     <div className={styles.container}>
-      <Button
-        text="Mint Test NFT"
-        isFullWidth
-        isLoading={mintingLoading}
-        loadingProps={{
-          spinnerColor: "#000000",
-        }}
-        onClick={async function () {
-          try {
-            setMintingLoading(true);
-            const tx = await testNFTSigner.mint(address);
-            await tx.wait(1);
-            handleMintTestNFTSuccess();
-          } catch (error) {
-            console.log(error);
-          } finally {
-            setMintingLoading(false);
-          }
-        }}
-      />
-      <Button
-        text="Mint 10,000 LE"
-        isFullWidth
-        isLoading={nativeTokenLoading}
-        loadingProps={{
-          spinnerColor: "#000000",
-        }}
-        onClick={async function () {
-          try {
-            setNativeTokenLoading(true);
-            const tx = await nativeTokenSigner.mint(
-              address,
-              "10000000000000000000000"
-            );
-            await tx.wait(1);
-            handleMintTokenSuccess();
-          } catch (error) {
-            console.log(error);
-          } finally {
-            setNativeTokenLoading(false);
-          }
-        }}
-      />
+      <div className="flex flex-col justify-center text-center">
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: "subtitle1.fontSize",
+          }}
+          className="mb-4"
+        >
+          Testing Guide:
+        </Box>
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: "caption.fontSize",
+          }}
+          className="mb-10"
+        >
+          <ol className="space-y-2 text-start">
+            <li>- Mint some Test NFTs & LE tokens</li>
+            <li>- Buy / Sell TestNFT for ETH using the TRADE page</li>
+            <li>
+              - Borrow ETH with the TEST NFT as collateral using the BORROW page
+            </li>
+            <li>
+              - Lock your LE tokens for veLE in order to receive a share of the
+              platform's fees
+            </li>
+            <li>
+              - Use your veLE to vote for the TEST NFT gauge in order to direct
+              the LE inflation to the TEST NFT pool
+            </li>
+            <li>
+              - Due to the unavailability of the deployable Balancer pool on the
+              Sepolia testnet, the minting function for the Genesis NFT is
+              currently non-functional.
+            </li>
+          </ol>
+        </Box>
+        <Button
+          text="Mint Test NFT"
+          isFullWidth
+          isLoading={mintingLoading}
+          loadingProps={{
+            spinnerColor: "#000000",
+          }}
+          onClick={async function () {
+            try {
+              setMintingLoading(true);
+              const tx = await testNFTSigner.mint(address);
+              await tx.wait(1);
+              handleMintTestNFTSuccess();
+            } catch (error) {
+              console.log(error);
+            } finally {
+              setMintingLoading(false);
+            }
+          }}
+        />
+        <Button
+          text="Mint 10,000 LE"
+          isFullWidth
+          isLoading={nativeTokenLoading}
+          loadingProps={{
+            spinnerColor: "#000000",
+          }}
+          onClick={async function () {
+            try {
+              setNativeTokenLoading(true);
+              const tx = await nativeTokenSigner.mint(
+                address,
+                "10000000000000000000000"
+              );
+              await tx.wait(1);
+              handleMintTokenSuccess();
+            } catch (error) {
+              console.log(error);
+            } finally {
+              setNativeTokenLoading(false);
+            }
+          }}
+        />
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: "h6.fontSize",
+          }}
+          className="m-8"
+        >
+          Thank you for helping us test our platform!
+        </Box>
+      </div>
     </div>
   );
 }

@@ -32,9 +32,11 @@ export default function LockNativeToken(props) {
   const [approved, setApproved] = useState(false);
   const [lockedLoading, setLockedLoading] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
-  const [unlockTime, setUnlockTime] = useState(0);
+  const [unlockTime, setUnlockTime] = useState(
+    Math.floor(Date.now() / 1000) + 86400 * 14
+  );
   const [lockWeight, setLockWeight] = useState("0");
-  const [lockDuration, setLockDuration] = useState(1);
+  const [lockDuration, setLockDuration] = useState(2);
 
   const dispatch = useNotification();
   var addresses = contractAddresses["11155111"];
@@ -76,7 +78,9 @@ export default function LockNativeToken(props) {
       "updatedUnlockTime:",
       BigNumber.from(updatedUnlockTime.end).toNumber()
     );
-    setUnlockTime(BigNumber.from(updatedUnlockTime.end).toNumber());
+    if (!BigNumber.from(updatedUnlockTime.end).eq(0)) {
+      setUnlockTime(BigNumber.from(updatedUnlockTime.end).toNumber());
+    }
   }
 
   async function getTokenAllowance() {
@@ -103,13 +107,16 @@ export default function LockNativeToken(props) {
 
   useEffect(() => {
     if (isConnected && amount && unlockTime) {
+      console.log("Simulating lock weight");
+      console.log("Amount:", amount);
+      console.log("Unlock Time:", unlockTime);
       const simulateBlockWeight = async () => {
         const simulatedLockWeight = await votingEscrowProvider.simulateLock(
           amount,
           unlockTime
         );
-        setLockWeight(BigNumber.from(simulatedLockWeight).toString());
         console.log("Simulated Lock Weight:", simulatedLockWeight.toString());
+        setLockWeight(BigNumber.from(simulatedLockWeight).toString());
       };
 
       simulateBlockWeight();
@@ -140,6 +147,7 @@ export default function LockNativeToken(props) {
 
   function handleAmountChange(e) {
     if (e.target.value != "") {
+      console.log("Amount changed to:", e.target.value);
       setAmount(parseUnits(e.target.value, 18).toString());
     } else {
       setAmount("0");
@@ -153,8 +161,8 @@ export default function LockNativeToken(props) {
       console.log("Slider changed to:");
       console.log(Math.floor(Date.now() / 1000 + newValue * 604800));
     } else {
-      setLockDuration(1);
-      setUnlockTime(0);
+      setLockDuration(2);
+      setUnlockTime(Date.now() / 1000 + 86400 * 14);
     }
   }
 
@@ -210,14 +218,14 @@ export default function LockNativeToken(props) {
               fontSize: "caption.fontSize",
             }}
           >
-            (1 week to 4 years from today)
+            (2 weeks to 4 years from today)
           </Box>
         </div>
         <div className="flex flex-row items-center w-full justify-center md:px-8">
           <Slider
             valueLabelDisplay="auto"
             onChangeCommitted={handleSliderChange}
-            min={1}
+            min={2}
             step={1}
             max={52 * 4}
           />

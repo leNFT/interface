@@ -16,18 +16,26 @@ import {
 export default function Test() {
   const { address, isConnected } = useAccount();
   const [mintingLoading, setMintingLoading] = useState(false);
+  const [minting2Loading, setMinting2Loading] = useState(false);
   const [nativeTokenLoading, setNativeTokenLoading] = useState(false);
   const dispatch = useNotification();
 
   const { chain } = useNetwork();
   const { data: signer } = useSigner();
   const testNFTAddress = "0xa7540Eb784A17B9D704330B13F61E07D757010c2";
+  const testNFT2Address = "0x8e06B6b9d28C3dc3a296099525Bf58F0B3F2c0DD";
 
   var addresses = contractAddresses["11155111"];
 
   const testNFTSigner = useContract({
     contractInterface: testNFTContract.abi,
     addressOrName: testNFTAddress,
+    signerOrProvider: signer,
+  });
+
+  const testNFT2Signer = useContract({
+    contractInterface: testNFTContract.abi,
+    addressOrName: testNFT2Address,
     signerOrProvider: signer,
   });
 
@@ -41,6 +49,15 @@ export default function Test() {
     dispatch({
       type: "success",
       message: "You minted the Test NFT.",
+      title: "Mint Successful!",
+      position: "bottomL",
+    });
+  };
+
+  const handleMintTestNFT2Success = async function () {
+    dispatch({
+      type: "success",
+      message: "You minted the Test NFT 2.",
       title: "Mint Successful!",
       position: "bottomL",
     });
@@ -112,6 +129,26 @@ export default function Test() {
               console.log(error);
             } finally {
               setMintingLoading(false);
+            }
+          }}
+        />
+        <Button
+          text="Mint Test NFT 2"
+          isFullWidth
+          isLoading={minting2Loading}
+          loadingProps={{
+            spinnerColor: "#000000",
+          }}
+          onClick={async function () {
+            try {
+              setMinting2Loading(true);
+              const tx = await testNFT2Signer.mint(address);
+              await tx.wait(1);
+              handleMintTestNFT2Success();
+            } catch (error) {
+              console.log(error);
+            } finally {
+              setMinting2Loading(false);
             }
           }}
         />

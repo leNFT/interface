@@ -109,7 +109,7 @@ export default function CreateTradingPool(props) {
         <Input
           description="The address of the pool's NFT collection."
           width="100%"
-          label="Collection Address"
+          label="ERC721 Token Address"
           type="text"
           value={collection}
           onChange={handleCollectionChange}

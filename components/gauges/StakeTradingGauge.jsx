@@ -183,6 +183,7 @@ export default function StakeTradingGauge(props) {
                 "https://lenft.gitbook.io/lenft-docs/trading/deposit-in-a-trading-pool"
               }
               target="_blank"
+              rel="noreferrer"
               className="text-blue-700 underline text-xs"
             >
               What is LP value?

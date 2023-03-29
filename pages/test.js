@@ -99,7 +99,7 @@ export default function Test() {
             </li>
             <li>
               - Lock your LE tokens for veLE in order to receive a share of the
-              platform's fees
+              platform fees
             </li>
             <li>
               - Use your veLE to vote for the TEST NFT gauge in order to direct

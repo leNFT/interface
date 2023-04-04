@@ -5,6 +5,7 @@ import contractAddresses from "../contractAddresses.json";
 import nativeTokenContract from "../contracts/NativeToken.json";
 import { useNotification } from "@web3uikit/core";
 import { useState } from "react";
+import Link from "@mui/material/Link";
 import { Box } from "@mui/material";
 import {
   useAccount,
@@ -92,7 +93,18 @@ export default function Test() {
           className="mb-10"
         >
           <ol className="space-y-2 text-start">
-            <li>- Mint some Test NFTs & LE tokens</li>
+            <li>- Mint some Test NFTs</li>
+            <li>
+              - Ask for some Sepolia LE tokens in our{" "}
+              <Link
+                href="https://discord.gg/B62BgWmGQT"
+                underline="none"
+                target="_blank"
+                color={"blue"}
+              >
+                {"discord"}
+              </Link>
+            </li>
             <li>- Buy / Sell TestNFT for ETH using the TRADE page</li>
             <li>
               - Borrow ETH with the TEST NFT as collateral using the BORROW page
@@ -152,29 +164,7 @@ export default function Test() {
             }
           }}
         />
-        <Button
-          text="Mint 10,000 LE"
-          isFullWidth
-          isLoading={nativeTokenLoading}
-          loadingProps={{
-            spinnerColor: "#000000",
-          }}
-          onClick={async function () {
-            try {
-              setNativeTokenLoading(true);
-              const tx = await nativeTokenSigner.mint(
-                address,
-                "10000000000000000000000"
-              );
-              await tx.wait(1);
-              handleMintTokenSuccess();
-            } catch (error) {
-              console.log(error);
-            } finally {
-              setNativeTokenLoading(false);
-            }
-          }}
-        />
+
         <Box
           sx={{
             fontFamily: "Monospace",

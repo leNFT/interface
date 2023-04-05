@@ -93,7 +93,7 @@ export default function Test() {
           className="mb-10"
         >
           <ol className="space-y-2 text-start">
-            <li>- Mint some Test NFTs</li>
+            <li>- Mint some Test NFTs using the buttons in this page</li>
             <li>
               - Ask for some Sepolia LE tokens in our{" "}
               <Link
@@ -164,16 +164,6 @@ export default function Test() {
             }
           }}
         />
-
-        <Box
-          sx={{
-            fontFamily: "Monospace",
-            fontSize: "h6.fontSize",
-          }}
-          className="m-8"
-        >
-          Thank you for helping us test our platform!
-        </Box>
       </div>
     </div>
   );

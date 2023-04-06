@@ -293,7 +293,9 @@ export default function TradingPoolGauge() {
                     fontSize: "subtitle1.fontSize",
                   }}
                 >
-                  {parseUnits(totalLocked, 18).toString() + " " + lpTokenSymbol}
+                  {formatUnits(totalLocked, 18).toString() +
+                    " " +
+                    lpTokenSymbol}
                 </Box>
               </div>
             </div>

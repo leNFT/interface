@@ -133,7 +133,7 @@ export default function StakeLendingGauge(props) {
               const gauge = new ethers.Contract(
                 props.gauge,
                 lendingGaugeContract.abi,
-                provider
+                signer
               );
               try {
                 setStakeLoading(true);

@@ -155,7 +155,7 @@ export default function Test() {
           }}
         />
         <Button
-          text="Get LE from Faucet"
+          text="Get 50 LE from Faucet"
           isFullWidth
           isLoading={nativeTokenLoading}
           loadingProps={{

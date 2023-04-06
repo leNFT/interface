@@ -164,7 +164,7 @@ export default function Test() {
           onClick={async function () {
             try {
               setNativeTokenLoading(true);
-              const tx = await nativeTokenFaucetSigner.dripToken(address);
+              const tx = await nativeTokenFaucetSigner.drip(address);
               await tx.wait(1);
               handleDripTokenSuccess();
             } catch (error) {

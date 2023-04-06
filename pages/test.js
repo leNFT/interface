@@ -2,7 +2,7 @@ import { Button } from "@web3uikit/core";
 import testNFTContract from "../contracts/test/TestNFT.json";
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
-import nativeTokenContract from "../contracts/NativeToken.json";
+import nativeTokenFaucetContract from "../contracts/NativeTokenFaucet.json";
 import { useNotification } from "@web3uikit/core";
 import { useState } from "react";
 import Link from "@mui/material/Link";
@@ -40,9 +40,9 @@ export default function Test() {
     signerOrProvider: signer,
   });
 
-  const nativeTokenSigner = useContract({
-    contractInterface: nativeTokenContract.abi,
-    addressOrName: addresses.NativeToken,
+  const nativeTokenFaucetSigner = useContract({
+    contractInterface: nativeTokenFaucetContract.abi,
+    addressOrName: addresses.NativeTokenFaucet,
     signerOrProvider: signer,
   });
 
@@ -64,11 +64,11 @@ export default function Test() {
     });
   };
 
-  const handleMintTokenSuccess = async function () {
+  const handleDripTokenSuccess = async function () {
     dispatch({
       type: "success",
-      message: "You minted 10,000 LE.",
-      title: "Mint Successful!",
+      message: "Faucet dripped 50 LE to your wallet.",
+      title: "Successful!",
       position: "bottomL",
     });
   };
@@ -94,17 +94,7 @@ export default function Test() {
         >
           <ol className="space-y-2 text-start">
             <li>- Mint some Test NFTs using the buttons in this page</li>
-            <li>
-              - Ask for some Sepolia LE tokens in our{" "}
-              <Link
-                href="https://discord.gg/B62BgWmGQT"
-                underline="none"
-                target="_blank"
-                color={"blue"}
-              >
-                {"discord"}
-              </Link>
-            </li>
+            <li>- Mint some LE tokens using the faucet in this page</li>
             <li>- Buy / Sell TestNFT for ETH using the TRADE page</li>
             <li>
               - Borrow ETH with the TEST NFT as collateral using the BORROW page
@@ -161,6 +151,26 @@ export default function Test() {
               console.log(error);
             } finally {
               setMinting2Loading(false);
+            }
+          }}
+        />
+        <Button
+          text="Get LE from Faucet"
+          isFullWidth
+          isLoading={nativeTokenLoading}
+          loadingProps={{
+            spinnerColor: "#000000",
+          }}
+          onClick={async function () {
+            try {
+              setNativeTokenLoading(true);
+              const tx = await nativeTokenFaucetSigner.dripToken(address);
+              await tx.wait(1);
+              handleDripTokenSuccess();
+            } catch (error) {
+              console.log(error);
+            } finally {
+              setNativeTokenLoading(false);
             }
           }}
         />

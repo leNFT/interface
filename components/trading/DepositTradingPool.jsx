@@ -456,6 +456,7 @@ export default function DepositTradingPool(props) {
               }
               const tx = await wethGatewaySigner.depositTradingPool(
                 props.pool,
+                0,
                 selectedNFTs,
                 parseUnits(initialPrice, 18).toString(),
                 curveAddress,

@@ -5,7 +5,7 @@ import { formatUnits } from "@ethersproject/units";
 import StyledModal from "../components/StyledModal";
 import { ethers } from "ethers";
 import CreateLendingPool from "../components/lending/CreateLendingPool";
-import { useAccount, useNetwork } from "wagmi";
+import { chainId, useAccount, useNetwork } from "wagmi";
 import { Tooltip } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
 import { useState, useEffect } from "react";
@@ -160,6 +160,7 @@ export default function LendingPools() {
   }
 
   useEffect(() => {
+    console.log("chain", chain);
     updateTableData();
   }, [isConnected]);
 
@@ -179,7 +180,12 @@ export default function LendingPools() {
         />
       </StyledModal>
       <div className="flex flex-col">
-        <div className="flex flex-row justify-end m-2 mb-4">
+        <div
+          className={
+            "flex flex-row justify-end m-2 mb-4 " +
+            (chain?.id == 1 ? "hidden" : "block")
+          }
+        >
           <Button
             customize={{
               backgroundColor: "grey",

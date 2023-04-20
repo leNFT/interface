@@ -10,6 +10,7 @@ import {
   useContract,
   useSigner,
 } from "wagmi";
+import { getAddressNFTs } from "../helpers/getAddressNFTs";
 import TextField from "@mui/material/TextField";
 import Slider from "@mui/material/Slider";
 import { Input } from "@nextui-org/react";
@@ -56,6 +57,8 @@ export default function Lock() {
   const [gaugeVotes, setGaugeVotes] = useState(0);
   const [lockAmount, setLockAmount] = useState("0");
   const [gauges, setGauges] = useState({});
+  const [lockedPositions, setLockedPositions] = useState([]);
+  const [selectedLock, setSelectedLock] = useState();
 
   var addresses = contractAddresses["11155111"];
 
@@ -89,8 +92,8 @@ export default function Lock() {
     signerOrProvider: signer,
   });
 
-  async function updateUI() {
-    const updatedLockDetails = await votingEscrowProvider.locked(address);
+  async function updateLockDetails() {
+    const updatedLockDetails = await votingEscrowProvider.locked(selectedLock);
     console.log(
       "updatedUnlockTime:",
       BigNumber.from(updatedLockDetails.end).toNumber()
@@ -99,19 +102,39 @@ export default function Lock() {
     setLockAmount(updatedLockDetails.amount);
 
     //Get the vote token Balance
-    const updatedVoteTokenBalance = await votingEscrowProvider.balanceOf(
-      address
+    const updatedVoteTokenBalance = await votingEscrowProvider.lockWeight(
+      selectedLock
     );
     setVoteTokenBalance(updatedVoteTokenBalance.toString());
 
     //Get the vote token Balance
-    const updatedVoteRatio = await gaugeControllerProvider.userVoteRatio(
-      address
+    const updatedVoteRatio = await gaugeControllerProvider.lockVoteRatio(
+      selectedLock
     );
     console.log("address", address);
     console.log("updatedVoteRatio", updatedVoteRatio.toString());
     setTotalVoteRatio(updatedVoteRatio.toString());
 
+    // Get the total locked amount
+    const updatedTotalLocked =
+      await votingEscrowProvider.callStatic.totalWeight();
+    console.log("updatedTotalLocked", updatedTotalLocked.toString());
+    setTotalLocked(updatedTotalLocked.toString());
+
+    // Get the claimable rewards
+    const updatedClaimableRewards =
+      await feeDistributorProvider.callStatic.claim(
+        addresses.ETH.address,
+        selectedLock,
+        {
+          from: address,
+        }
+      );
+    console.log("updatedClaimableRewards", updatedClaimableRewards);
+    setClaimableRewards(updatedClaimableRewards.toString());
+  }
+
+  async function updateUI() {
     // Get the current epoch
     const updatedEpoch = await votingEscrowProvider.epoch(
       Math.floor(Date.now() / 1000)
@@ -119,19 +142,14 @@ export default function Lock() {
     console.log("updatedEpoch", updatedEpoch.toNumber());
     setEpoch(updatedEpoch.toNumber());
 
-    // Get the total locked amount
-    const updatedTotalLocked =
-      await votingEscrowProvider.callStatic.totalSupply();
-    console.log("updatedTotalLocked", updatedTotalLocked.toString());
-    setTotalLocked(updatedTotalLocked.toString());
-
-    // Get the claimable rewards
-    const updatedClaimableRewards =
-      await feeDistributorProvider.callStatic.claim(addresses.ETH.address, {
-        from: address,
-      });
-    console.log("updatedClaimableRewards", updatedClaimableRewards);
-    setClaimableRewards(updatedClaimableRewards.toString());
+    // Get the NFTs that represent the user's locked positions
+    const updatedLockedPositions = await getAddressNFTs(
+      address,
+      addresses.VotingEscrow,
+      chain.id
+    );
+    console.log("updatedLockedPositions", updatedLockedPositions);
+    setLockedPositions(updatedLockedPositions);
 
     const updateNativeTokenPrice = "0";
     setTokenPrice(updateNativeTokenPrice);
@@ -162,34 +180,26 @@ export default function Lock() {
     setGauges(updatedGauges);
   }
 
-  async function updateGaugeDetails(gauge) {
-    console.log("gauge", gauge);
+  async function updateGaugeDetails() {
     // Check if the gauge address is valid
-    if (!ethers.utils.isAddress(gauge)) {
-      console.log("Invalid Address");
-      setGaugeVoteRatio(0);
-      setGaugeVotes(0);
-      setSelectedGauge("");
-      return;
-    }
-
     console.log("Updating Gauge Details");
     // Check if the address is a gauge
-    const isGauge = await gaugeControllerProvider.isGauge(gauge);
+    const isGauge = await gaugeControllerProvider.isGauge(selectedGauge);
     console.log("isGauge", isGauge);
 
     if (isGauge) {
       // Get the number of votes for the gauge
       const updatedGaugeVoteRatio =
-        await gaugeControllerProvider.userVoteRatioForGauge(address, gauge);
+        await gaugeControllerProvider.userVoteRatioForGauge(
+          address,
+          selectedGauge
+        );
       console.log("updatedgaugeVoteRatio", updatedGaugeVoteRatio.toString());
       setGaugeVoteRatio(updatedGaugeVoteRatio.toNumber());
       setGaugeVotes(updatedGaugeVoteRatio.toNumber());
-      setSelectedGauge(gauge);
     } else {
       setGaugeVoteRatio(0);
       setGaugeVotes(0);
-      setSelectedGauge("");
       console.log("Gauge not found");
     }
   }
@@ -201,6 +211,19 @@ export default function Lock() {
     }
   }, [isConnected]);
 
+  useEffect(() => {
+    if (isConnected) {
+      updateGaugeDetails();
+    }
+  }, [selectedGauge]);
+
+  useEffect(() => {
+    if (isConnected) {
+      updateLockDetails();
+      updateGaugeDetails();
+    }
+  }, [selectedLock]);
+
   function handleVoteSliderChange(_, newValue) {
     console.log("gauge votes: ", newValue);
     setGaugeVotes(newValue * 100);
@@ -209,7 +232,7 @@ export default function Lock() {
   function handleGaugeChange(_event, value) {
     console.log("newGauge", value);
     if (ethers.utils.isAddress(value)) {
-      updateGaugeDetails(value);
+      setSelectedGauge(value);
     } else if (
       Object.values(gauges)
         .map((gauge) => gauge.pool.name)
@@ -219,10 +242,15 @@ export default function Lock() {
       const gaugeAddress = Object.keys(gauges).find(
         (gauge) => gauges[gauge].pool.name == value
       );
-      updateGaugeDetails(gaugeAddress);
+      setSelectedGauge(gaugeAddress);
     } else {
       setSelectedGauge();
     }
+  }
+
+  function handleLockChange(_event, value) {
+    console.log("newLock", value);
+    setSelectedLock(value);
   }
 
   const handleClaimSuccess = async function () {
@@ -420,329 +448,374 @@ export default function Lock() {
             )}
           </div>
         </div>
-        <div className="flex flex-col lg:flex-row max-w-[100%] justify-center items-center">
-          <div className="flex flex-col border-4 p-4 m-4 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
-            <div className="flex flex-col-reverse md:flex-row items-center justify-center">
-              {unlockTime < Date.now() / 1000 ? (
-                <div className="flex flex-row md:flex-col items-center m-4 lg:ml-8">
-                  <div className="flex flex-row m-2">
-                    <Button
-                      customize={{
-                        backgroundColor: "grey",
-                        fontSize: 16,
-                        textColor: "white",
-                      }}
-                      text="Lock"
-                      theme="custom"
-                      size="large"
-                      radius="12"
-                      onClick={async function () {
-                        setVisibleLockModal(true);
-                      }}
-                    />
-                  </div>
-                  <div className="flex flex-row m-2">
-                    <Button
-                      customize={{
-                        backgroundColor: "grey",
-                        fontSize: 16,
-                        textColor: "white",
-                      }}
-                      text="Unlock"
-                      theme="custom"
-                      size="large"
-                      radius="12"
-                      onClick={async function () {
-                        setVisibleUnlockModal(true);
-                      }}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className="flex flex-row md:flex-col items-center m-4 lg:ml-8">
-                  <div className="flex flex-row m-2">
-                    <Button
-                      customize={{
-                        backgroundColor: "grey",
-                        fontSize: 16,
-                        textColor: "white",
-                      }}
-                      text="Edit Amount"
-                      theme="custom"
-                      size="large"
-                      radius="12"
-                      onClick={async function () {
-                        setVisibleEditLockAmountModal(true);
-                      }}
-                    />
-                  </div>
-                  <div className="flex flex-row m-2">
-                    <Button
-                      customize={{
-                        backgroundColor: "grey",
-                        fontSize: 16,
-                        textColor: "white",
-                      }}
-                      text="Edit Unlock Time"
-                      theme="custom"
-                      size="large"
-                      radius="12"
-                      onClick={async function () {
-                        setVisibleEditLockTimeModal(true);
-                      }}
-                    />
-                  </div>
+        <div className="flex flex-col 4 p-4 m-4 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
+          <div className="flex p-4">
+            <Autocomplete
+              autoComplete
+              freeSolo
+              disablePortal
+              ListboxProps={{
+                style: {
+                  backgroundColor: "rgb(253, 241, 244)",
+                  fontFamily: "Monospace",
+                },
+              }}
+              options={lockedPositions.map((option) => option.tokenId)}
+              sx={{ minWidth: { xs: 215, sm: 300, md: 380 } }}
+              onInputChange={handleLockChange}
+              renderOption={(props, option, state) => (
+                <div className="flex flex-row m-2" {...props}>
+                  {"veLE #" + option}
                 </div>
               )}
-              <div className="flex flex-col m-4 lg:m-8">
-                <div className="flex flex-col m-2">
-                  <div className="flex flex-row">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "h5.fontSize",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Locked Balance
-                    </Box>
-                  </div>
-                  <div className="flex flex-col my-2 space-y-1">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "subtitle1.fontSize",
-                      }}
-                    >
-                      {Number(formatUnits(voteTokenBalance, 18)).toFixed(2) +
-                        " veLE (" +
-                        Number(formatUnits(lockAmount, 18)).toFixed(2) +
-                        " LE)"}
-                    </Box>
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "subtitle1.fontSize",
-                      }}
-                    >
-                      {"Locked until " +
-                        (unlockTime > 0
-                          ? new Date(unlockTime * 1000).toLocaleDateString()
-                          : "-")}
-                    </Box>
-                  </div>
-                </div>
-                <div className="flex flex-col m-2">
-                  <div className="flex flex-row">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "h5.fontSize",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Claimable Rewards
-                    </Box>
-                  </div>
-                  <div className="flex flex-row my-2 items-center">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "subtitle1.fontSize",
-                      }}
-                    >
-                      {Number(formatUnits(claimableRewards, 18)).toPrecision(
-                        3
-                      ) + " wETH"}
-                    </Box>
-                    <div className="ml-4">
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Select Lock"
+                  sx={{
+                    "& label": {
+                      paddingLeft: (theme) => theme.spacing(2),
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle1.fontSize",
+                    },
+                    "& input": {
+                      paddingLeft: (theme) => theme.spacing(3.5),
+                      fontFamily: "Monospace",
+                    },
+                    "& fieldset": {
+                      paddingLeft: (theme) => theme.spacing(2.5),
+                      borderRadius: "20px",
+                      fontFamily: "Monospace",
+                    },
+                  }}
+                />
+              )}
+            />
+          </div>
+          <div className="flex flex-col lg:flex-row max-w-[100%] justify-center items-center">
+            <div className="flex flex-col p-4 m-4 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
+              <div className="flex flex-col-reverse md:flex-row items-center justify-center">
+                {unlockTime < Date.now() / 1000 ? (
+                  <div className="flex flex-row md:flex-col items-center m-4 lg:ml-8">
+                    <div className="flex flex-row m-2">
                       <Button
                         customize={{
                           backgroundColor: "grey",
                           fontSize: 16,
                           textColor: "white",
                         }}
-                        disabled={BigNumber.from(claimableRewards).eq(0)}
-                        text="Claim"
+                        text="Lock"
                         theme="custom"
-                        size="small"
-                        Loading={claimingLoading}
+                        size="large"
+                        radius="12"
                         onClick={async function () {
-                          try {
-                            setClaimingLoading(true);
-                            const tx = await feeDistributorSigner.claim(
-                              addresses.ETH.address
-                            );
-                            await tx.wait(1);
-                            await handleClaimSuccess();
-                          } catch (error) {
-                            console.log(error);
-                          } finally {
-                            setClaimingLoading(false);
-                          }
+                          setVisibleLockModal(true);
                         }}
                       />
+                    </div>
+                    <div className="flex flex-row m-2">
+                      <Button
+                        customize={{
+                          backgroundColor: "grey",
+                          fontSize: 16,
+                          textColor: "white",
+                        }}
+                        text="Unlock"
+                        theme="custom"
+                        size="large"
+                        radius="12"
+                        onClick={async function () {
+                          setVisibleUnlockModal(true);
+                        }}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-row md:flex-col items-center m-4 lg:ml-8">
+                    <div className="flex flex-row m-2">
+                      <Button
+                        customize={{
+                          backgroundColor: "grey",
+                          fontSize: 16,
+                          textColor: "white",
+                        }}
+                        text="Edit Amount"
+                        theme="custom"
+                        size="large"
+                        radius="12"
+                        onClick={async function () {
+                          setVisibleEditLockAmountModal(true);
+                        }}
+                      />
+                    </div>
+                    <div className="flex flex-row m-2">
+                      <Button
+                        customize={{
+                          backgroundColor: "grey",
+                          fontSize: 16,
+                          textColor: "white",
+                        }}
+                        text="Edit Unlock Time"
+                        theme="custom"
+                        size="large"
+                        radius="12"
+                        onClick={async function () {
+                          setVisibleEditLockTimeModal(true);
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+                <div className="flex flex-col m-4 lg:m-8">
+                  <div className="flex flex-col m-2">
+                    <div className="flex flex-row">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "h5.fontSize",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Locked Balance
+                      </Box>
+                    </div>
+                    <div className="flex flex-col my-2 space-y-1">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle1.fontSize",
+                        }}
+                      >
+                        {Number(formatUnits(voteTokenBalance, 18)).toFixed(2) +
+                          " veLE (" +
+                          Number(formatUnits(lockAmount, 18)).toFixed(2) +
+                          " LE)"}
+                      </Box>
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle1.fontSize",
+                        }}
+                      >
+                        {"Locked until " +
+                          (unlockTime > 0
+                            ? new Date(unlockTime * 1000).toLocaleDateString()
+                            : "-")}
+                      </Box>
+                    </div>
+                  </div>
+                  <div className="flex flex-col m-2">
+                    <div className="flex flex-row">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "h5.fontSize",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Claimable Rewards
+                      </Box>
+                    </div>
+                    <div className="flex flex-row my-2 items-center">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle1.fontSize",
+                        }}
+                      >
+                        {Number(formatUnits(claimableRewards, 18)).toPrecision(
+                          3
+                        ) + " wETH"}
+                      </Box>
+                      <div className="ml-4">
+                        <Button
+                          customize={{
+                            backgroundColor: "grey",
+                            fontSize: 16,
+                            textColor: "white",
+                          }}
+                          disabled={BigNumber.from(claimableRewards).eq(0)}
+                          text="Claim"
+                          theme="custom"
+                          size="small"
+                          Loading={claimingLoading}
+                          onClick={async function () {
+                            try {
+                              setClaimingLoading(true);
+                              const tx = await feeDistributorSigner.claim(
+                                addresses.ETH.address
+                              );
+                              await tx.wait(1);
+                              await handleClaimSuccess();
+                            } catch (error) {
+                              console.log(error);
+                            } finally {
+                              setClaimingLoading(false);
+                            }
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="flex flex-col md:flex-row items-center justify-center border-4 m-4 md:m-8 rounded-3xl bg-black/5 shadow-lg">
-            <div className="flex flex-col m-4">
+            <div className="flex flex-col md:flex-row items-center justify-center m-4 md:m-8 rounded-3xl bg-black/5 shadow-lg">
               <div className="flex flex-col m-4">
-                <div className="flex flex-row">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle1.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Used Voting Power
-                  </Box>
-                </div>
-                <div className="flex flex-row">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle1.fontSize",
-                    }}
-                  >
-                    {totalVoteRatio / 100 + " %"}
-                  </Box>
-                </div>
-              </div>
-              <div className="flex flex-col m-4">
-                <div className="flex flex-row">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle1.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Selected Gauge
-                  </Box>
-                </div>
-                <div className="flex flex-row">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle1.fontSize",
-                    }}
-                  >
-                    {(selectedGauge ? gaugeVoteRatio / 100 : "─") + " %"}
-                  </Box>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col justify-center items-center m-8 p-6 rounded-3xl bg-black/5 shadow-lg">
-              <div className="flex flex-col items-center m-4">
-                <Autocomplete
-                  autoComplete
-                  freeSolo
-                  disablePortal
-                  ListboxProps={{
-                    style: {
-                      backgroundColor: "rgb(253, 241, 244)",
-                      fontFamily: "Monospace",
-                    },
-                  }}
-                  options={Object.values(gauges).map(
-                    (option) => option.pool.name
-                  )}
-                  sx={{ minWidth: { xs: 215, sm: 300, md: 380 } }}
-                  onInputChange={handleGaugeChange}
-                  renderOption={(props, option, state) => (
-                    <div className="flex flex-row m-4" {...props}>
-                      {option}
-                    </div>
-                  )}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Gauge"
+                <div className="flex flex-col m-4">
+                  <div className="flex flex-row">
+                    <Box
                       sx={{
-                        "& label": {
-                          paddingLeft: (theme) => theme.spacing(2),
-                          fontFamily: "Monospace",
-                          fontSize: "subtitle1.fontSize",
-                        },
-                        "& input": {
-                          paddingLeft: (theme) => theme.spacing(3.5),
-                          fontFamily: "Monospace",
-                        },
-                        "& fieldset": {
-                          paddingLeft: (theme) => theme.spacing(2.5),
-                          borderRadius: "20px",
-                          fontFamily: "Monospace",
-                        },
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Used Voting Power
+                    </Box>
+                  </div>
+                  <div className="flex flex-row">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                      }}
+                    >
+                      {totalVoteRatio / 100 + " %"}
+                    </Box>
+                  </div>
+                </div>
+                <div className="flex flex-col m-4">
+                  <div className="flex flex-row">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Selected Gauge
+                    </Box>
+                  </div>
+                  <div className="flex flex-row">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                      }}
+                    >
+                      {(selectedGauge ? gaugeVoteRatio / 100 : "─") + " %"}
+                    </Box>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col justify-center items-center m-8 p-6 rounded-3xl bg-black/5 shadow-lg">
+                <div className="flex flex-col items-center m-4">
+                  <Autocomplete
+                    autoComplete
+                    freeSolo
+                    disablePortal
+                    ListboxProps={{
+                      style: {
+                        backgroundColor: "rgb(253, 241, 244)",
+                        fontFamily: "Monospace",
+                      },
+                    }}
+                    options={Object.values(gauges).map(
+                      (option) => option.pool.name
+                    )}
+                    sx={{ minWidth: { xs: 215, sm: 300, md: 380 } }}
+                    onInputChange={handleGaugeChange}
+                    renderOption={(props, option, state) => (
+                      <div className="flex flex-row m-4" {...props}>
+                        {option}
+                      </div>
+                    )}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Gauge"
+                        sx={{
+                          "& label": {
+                            paddingLeft: (theme) => theme.spacing(2),
+                            fontFamily: "Monospace",
+                            fontSize: "subtitle1.fontSize",
+                          },
+                          "& input": {
+                            paddingLeft: (theme) => theme.spacing(3.5),
+                            fontFamily: "Monospace",
+                          },
+                          "& fieldset": {
+                            paddingLeft: (theme) => theme.spacing(2.5),
+                            borderRadius: "20px",
+                            fontFamily: "Monospace",
+                          },
+                        }}
+                      />
+                    )}
+                  />
+                  <div className="flex flex-row mt-1">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "caption.fontSize",
+                      }}
+                    >
+                      {selectedGauge !== undefined
+                        ? selectedGauge == ""
+                          ? "Gauge not found"
+                          : "Gauge found"
+                        : "Enter a gauge address"}
+                    </Box>
+                  </div>
+                </div>
+                {selectedGauge && (
+                  <div className="flex flex-col justify-center space-y-2 items-center m-2 w-full">
+                    <Slider
+                      defaultValue={gaugeVoteRatio / 100}
+                      valueLabelDisplay="auto"
+                      valueLabelFormat={(value) => value + "%"}
+                      onChange={handleVoteSliderChange}
+                      min={0}
+                      step={1}
+                      max={(10000 - totalVoteRatio + gaugeVoteRatio) / 100}
+                    />
+                    <Button
+                      customize={{
+                        backgroundColor: "grey",
+                        fontSize: 16,
+                        textColor: "white",
+                      }}
+                      text={
+                        (gaugeVoteRatio == 0 ? "Vote with " : "Update to ") +
+                        gaugeVotes / 100 +
+                        " %"
+                      }
+                      disabled={!selectedGauge}
+                      isLoading={votingLoading}
+                      loadingText=""
+                      theme="custom"
+                      size="large"
+                      radius="12"
+                      onClick={async function () {
+                        try {
+                          setVotingLoading(true);
+                          const tx = await gaugeControllerSigner.vote(
+                            selectedGauge,
+                            gaugeVotes
+                          );
+                          await tx.wait(1);
+                          await handleVoteSuccess(gaugeVotes);
+                        } catch (error) {
+                          console.log(error);
+                        } finally {
+                          setVotingLoading(false);
+                        }
                       }}
                     />
-                  )}
-                />
-                <div className="flex flex-row mt-1">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "caption.fontSize",
-                    }}
-                  >
-                    {selectedGauge !== undefined
-                      ? selectedGauge == ""
-                        ? "Gauge not found"
-                        : "Gauge found"
-                      : "Enter a gauge address"}
-                  </Box>
-                </div>
+                  </div>
+                )}
               </div>
-              {selectedGauge && (
-                <div className="flex flex-col justify-center space-y-2 items-center m-2 w-full">
-                  <Slider
-                    defaultValue={gaugeVoteRatio / 100}
-                    valueLabelDisplay="auto"
-                    valueLabelFormat={(value) => value + "%"}
-                    onChange={handleVoteSliderChange}
-                    min={0}
-                    step={1}
-                    max={(10000 - totalVoteRatio + gaugeVoteRatio) / 100}
-                  />
-                  <Button
-                    customize={{
-                      backgroundColor: "grey",
-                      fontSize: 16,
-                      textColor: "white",
-                    }}
-                    text={
-                      (gaugeVoteRatio == 0 ? "Vote with " : "Update to ") +
-                      gaugeVotes / 100 +
-                      " %"
-                    }
-                    disabled={!selectedGauge}
-                    isLoading={votingLoading}
-                    loadingText=""
-                    theme="custom"
-                    size="large"
-                    radius="12"
-                    onClick={async function () {
-                      try {
-                        setVotingLoading(true);
-                        const tx = await gaugeControllerSigner.vote(
-                          selectedGauge,
-                          gaugeVotes
-                        );
-                        await tx.wait(1);
-                        await handleVoteSuccess(gaugeVotes);
-                      } catch (error) {
-                        console.log(error);
-                      } finally {
-                        setVotingLoading(false);
-                      }
-                    }}
-                  />
-                </div>
-              )}
             </div>
           </div>
         </div>

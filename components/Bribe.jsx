@@ -48,8 +48,10 @@ export default function Bribe(props) {
       return;
     }
     try {
-      const tx = await wethGatewaySigner.bribe(props.gauge, amount);
-      await tx.wait();
+      const tx = await wethGatewaySigner.bribe(props.gauge, {
+        value: parseUnits(amount, 18),
+      });
+      await tx.wait(1);
       dispatch({
         type: "success",
         message: "Bribe sent successfully!",

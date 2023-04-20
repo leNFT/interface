@@ -14,11 +14,12 @@ import { getAddressNFTs } from "../helpers/getAddressNFTs";
 import TextField from "@mui/material/TextField";
 import Slider from "@mui/material/Slider";
 import { Input } from "@nextui-org/react";
-import { Button, Loading } from "@web3uikit/core";
+import { Button, Loading, useNotification } from "@web3uikit/core";
 import Autocomplete from "@mui/material/Autocomplete";
 import { getLockHistory } from "../helpers/getLockHistory.js";
 import { getGauges } from "../helpers/getGauges";
 import LockNativeToken from "../components/LockNativeToken";
+import Bribe from "../components/Bribe";
 import EditNativeTokenLockAmount from "../components/EditNativeTokenLockAmount";
 import EditNativeTokenLocktime from "../components/EditNativeTokenLocktime";
 import contractAddresses from "../contractAddresses.json";
@@ -30,6 +31,7 @@ import Box from "@mui/material/Box";
 import { BigNumber, ethers } from "ethers";
 
 export default function Lock() {
+  const dispatch = useNotification();
   const { isConnected, address } = useAccount();
   const { chain } = useNetwork();
   const provider = useProvider();
@@ -37,6 +39,7 @@ export default function Lock() {
   const [voteTokenBalance, setVoteTokenBalance] = useState("0");
   const [visibleLockModal, setVisibleLockModal] = useState(false);
   const [visibleUnlockModal, setVisibleUnlockModal] = useState(false);
+  const [visibleBribeModal, setVisibleBribeModal] = useState(false);
   const [visibleEditLockAmountModal, setVisibleEditLockAmountModal] =
     useState(false);
   const [visibleEditLockTimeModal, setVisibleEditLockTimeModal] =
@@ -115,12 +118,6 @@ export default function Lock() {
     console.log("updatedVoteRatio", updatedVoteRatio.toString());
     setTotalVoteRatio(updatedVoteRatio.toString());
 
-    // Get the total locked amount
-    const updatedTotalLocked =
-      await votingEscrowProvider.callStatic.totalWeight();
-    console.log("updatedTotalLocked", updatedTotalLocked.toString());
-    setTotalLocked(updatedTotalLocked.toString());
-
     // Get the claimable rewards
     const updatedClaimableRewards =
       await feeDistributorProvider.callStatic.claim(
@@ -154,6 +151,12 @@ export default function Lock() {
     const updateNativeTokenPrice = "0";
     setTokenPrice(updateNativeTokenPrice);
 
+    // Get the total locked amount
+    const updatedTotalLocked =
+      await votingEscrowProvider.callStatic.totalWeight();
+    console.log("updatedTotalLocked", updatedTotalLocked.toString());
+    setTotalLocked(updatedTotalLocked.toString());
+
     if (
       updateNativeTokenPrice.toString() == "0" ||
       updatedTotalLocked.toString() == "0"
@@ -183,6 +186,7 @@ export default function Lock() {
   async function updateGaugeDetails() {
     // Check if the gauge address is valid
     console.log("Updating Gauge Details");
+    console.log("selectedGauge", selectedGauge);
     // Check if the address is a gauge
     const isGauge = await gaugeControllerProvider.isGauge(selectedGauge);
     console.log("isGauge", isGauge);
@@ -190,8 +194,8 @@ export default function Lock() {
     if (isGauge) {
       // Get the number of votes for the gauge
       const updatedGaugeVoteRatio =
-        await gaugeControllerProvider.userVoteRatioForGauge(
-          address,
+        await gaugeControllerProvider.lockVoteRatioForGauge(
+          selectedLock,
           selectedGauge
         );
       console.log("updatedgaugeVoteRatio", updatedGaugeVoteRatio.toString());
@@ -212,15 +216,17 @@ export default function Lock() {
   }, [isConnected]);
 
   useEffect(() => {
-    if (isConnected) {
+    if (isConnected && selectedGauge && selectedLock) {
       updateGaugeDetails();
     }
   }, [selectedGauge]);
 
   useEffect(() => {
-    if (isConnected) {
+    if (isConnected && selectedLock) {
       updateLockDetails();
-      updateGaugeDetails();
+      if (selectedGauge) {
+        updateGaugeDetails();
+      }
     }
   }, [selectedLock]);
 
@@ -275,6 +281,16 @@ export default function Lock() {
 
   return (
     <div>
+      <StyledModal
+        hasFooter={false}
+        title="Bribe Pool"
+        isVisible={visibleBribeModal}
+        onCloseButtonPressed={function () {
+          setVisibleBribeModal(false);
+        }}
+      >
+        <Bribe setVisibility={setVisibleBribeModal} gauge={selectedGauge} />
+      </StyledModal>
       <StyledModal
         hasFooter={false}
         title="Lock LE"
@@ -451,8 +467,6 @@ export default function Lock() {
         <div className="flex flex-col 4 p-4 m-4 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
           <div className="flex p-4">
             <Autocomplete
-              autoComplete
-              freeSolo
               disablePortal
               ListboxProps={{
                 style: {
@@ -471,7 +485,7 @@ export default function Lock() {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Select Lock"
+                  label="Select a lock"
                   sx={{
                     "& label": {
                       paddingLeft: (theme) => theme.spacing(2),
@@ -495,8 +509,24 @@ export default function Lock() {
           <div className="flex flex-col lg:flex-row max-w-[100%] justify-center items-center">
             <div className="flex flex-col p-4 m-4 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
               <div className="flex flex-col-reverse md:flex-row items-center justify-center">
-                {unlockTime < Date.now() / 1000 ? (
-                  <div className="flex flex-row md:flex-col items-center m-4 lg:ml-8">
+                <div className="flex flex-row md:flex-col items-center m-4 lg:ml-8">
+                  <div className="flex flex-row m-2">
+                    <Button
+                      customize={{
+                        backgroundColor: "grey",
+                        fontSize: 16,
+                        textColor: "white",
+                      }}
+                      text="New Lock"
+                      theme="custom"
+                      size="large"
+                      radius="12"
+                      onClick={async function () {
+                        setVisibleLockModal(true);
+                      }}
+                    />
+                  </div>
+                  {unlockTime < Date.now() / 1000 ? (
                     <div className="flex flex-row m-2">
                       <Button
                         customize={{
@@ -504,22 +534,7 @@ export default function Lock() {
                           fontSize: 16,
                           textColor: "white",
                         }}
-                        text="Lock"
-                        theme="custom"
-                        size="large"
-                        radius="12"
-                        onClick={async function () {
-                          setVisibleLockModal(true);
-                        }}
-                      />
-                    </div>
-                    <div className="flex flex-row m-2">
-                      <Button
-                        customize={{
-                          backgroundColor: "grey",
-                          fontSize: 16,
-                          textColor: "white",
-                        }}
+                        disabled={!selectedLock}
                         text="Unlock"
                         theme="custom"
                         size="large"
@@ -529,43 +544,43 @@ export default function Lock() {
                         }}
                       />
                     </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-row md:flex-col items-center m-4 lg:ml-8">
-                    <div className="flex flex-row m-2">
-                      <Button
-                        customize={{
-                          backgroundColor: "grey",
-                          fontSize: 16,
-                          textColor: "white",
-                        }}
-                        text="Edit Amount"
-                        theme="custom"
-                        size="large"
-                        radius="12"
-                        onClick={async function () {
-                          setVisibleEditLockAmountModal(true);
-                        }}
-                      />
+                  ) : (
+                    <div className="flex flex-col items-center">
+                      <div className="flex flex-row m-2">
+                        <Button
+                          customize={{
+                            backgroundColor: "grey",
+                            fontSize: 16,
+                            textColor: "white",
+                          }}
+                          text="Edit Amount"
+                          theme="custom"
+                          size="large"
+                          radius="12"
+                          onClick={async function () {
+                            setVisibleEditLockAmountModal(true);
+                          }}
+                        />
+                      </div>
+                      <div className="flex flex-row m-2">
+                        <Button
+                          customize={{
+                            backgroundColor: "grey",
+                            fontSize: 16,
+                            textColor: "white",
+                          }}
+                          text="Edit Unlock Time"
+                          theme="custom"
+                          size="large"
+                          radius="12"
+                          onClick={async function () {
+                            setVisibleEditLockTimeModal(true);
+                          }}
+                        />
+                      </div>
                     </div>
-                    <div className="flex flex-row m-2">
-                      <Button
-                        customize={{
-                          backgroundColor: "grey",
-                          fontSize: 16,
-                          textColor: "white",
-                        }}
-                        text="Edit Unlock Time"
-                        theme="custom"
-                        size="large"
-                        radius="12"
-                        onClick={async function () {
-                          setVisibleEditLockTimeModal(true);
-                        }}
-                      />
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
                 <div className="flex flex-col m-4 lg:m-8">
                   <div className="flex flex-col m-2">
                     <div className="flex flex-row">
@@ -770,49 +785,71 @@ export default function Lock() {
                   </div>
                 </div>
                 {selectedGauge && (
-                  <div className="flex flex-col justify-center space-y-2 items-center m-2 w-full">
-                    <Slider
-                      defaultValue={gaugeVoteRatio / 100}
-                      valueLabelDisplay="auto"
-                      valueLabelFormat={(value) => value + "%"}
-                      onChange={handleVoteSliderChange}
-                      min={0}
-                      step={1}
-                      max={(10000 - totalVoteRatio + gaugeVoteRatio) / 100}
-                    />
-                    <Button
-                      customize={{
-                        backgroundColor: "grey",
-                        fontSize: 16,
-                        textColor: "white",
-                      }}
-                      text={
-                        (gaugeVoteRatio == 0 ? "Vote with " : "Update to ") +
-                        gaugeVotes / 100 +
-                        " %"
-                      }
-                      disabled={!selectedGauge}
-                      isLoading={votingLoading}
-                      loadingText=""
-                      theme="custom"
-                      size="large"
-                      radius="12"
-                      onClick={async function () {
-                        try {
-                          setVotingLoading(true);
-                          const tx = await gaugeControllerSigner.vote(
-                            selectedGauge,
-                            gaugeVotes
-                          );
-                          await tx.wait(1);
-                          await handleVoteSuccess(gaugeVotes);
-                        } catch (error) {
-                          console.log(error);
-                        } finally {
-                          setVotingLoading(false);
+                  <div className="flex flex-row justify-center space-y-2 items-center m-2 w-full">
+                    <div className="flex flex-col justify-center space-y-2 items-center m-2 border-4 rounded-xl p-4 border-slate-500 w-6/12">
+                      <Slider
+                        defaultValue={gaugeVoteRatio / 100}
+                        value={gaugeVotes / 100}
+                        valueLabelDisplay="auto"
+                        valueLabelFormat={(value) => value + "%"}
+                        onChange={handleVoteSliderChange}
+                        min={0}
+                        step={1}
+                        max={(10000 - totalVoteRatio + gaugeVoteRatio) / 100}
+                      />
+                      <Button
+                        customize={{
+                          backgroundColor: "grey",
+                          fontSize: 16,
+                          textColor: "white",
+                        }}
+                        text={
+                          (gaugeVoteRatio == 0 ? "Vote with " : "Update to ") +
+                          gaugeVotes / 100 +
+                          " %"
                         }
-                      }}
-                    />
+                        disabled={!selectedGauge}
+                        isLoading={votingLoading}
+                        loadingText=""
+                        theme="custom"
+                        size="large"
+                        radius="12"
+                        onClick={async function () {
+                          try {
+                            setVotingLoading(true);
+                            const tx = await gaugeControllerSigner.vote(
+                              selectedLock,
+                              selectedGauge,
+                              gaugeVotes
+                            );
+                            await tx.wait(1);
+                            await handleVoteSuccess(gaugeVotes);
+                          } catch (error) {
+                            console.log(error);
+                          } finally {
+                            setVotingLoading(false);
+                          }
+                        }}
+                      />
+                    </div>
+                    <div className="flex flex-col justify-center items-center w-6/12">
+                      <Button
+                        customize={{
+                          backgroundColor: "grey",
+                          fontSize: 16,
+                          textColor: "white",
+                        }}
+                        text="Bribe"
+                        disabled={!selectedGauge}
+                        loadingText=""
+                        theme="custom"
+                        size="large"
+                        radius="12"
+                        onClick={async function () {
+                          setVisibleBribeModal(true);
+                        }}
+                      />
+                    </div>
                   </div>
                 )}
               </div>

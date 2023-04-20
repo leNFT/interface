@@ -7,6 +7,7 @@ import {
   useSigner,
 } from "wagmi";
 import { formatUnits, parseUnits } from "@ethersproject/units";
+import styles from "../styles/Home.module.css";
 import {
   useNotification,
   Button,
@@ -25,6 +26,7 @@ export default function Bribe(props) {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const provider = useProvider();
+  const [bribeLoading, setBribeLoading] = useState(false);
   const { data: signer } = useSigner();
   const [amount, setAmount] = useState("0");
 
@@ -48,8 +50,9 @@ export default function Bribe(props) {
       return;
     }
     try {
-      const tx = await wethGatewaySigner.bribe(props.gauge, {
-        value: parseUnits(amount, 18),
+      setBribeLoading(true);
+      const tx = await wethGatewaySigner.depositBribe(props.gauge, {
+        value: parseUnits(amount, 18).toString(),
       });
       await tx.wait(1);
       dispatch({
@@ -66,6 +69,8 @@ export default function Bribe(props) {
         title: "Error",
         position: "bottomL",
       });
+    } finally {
+      setBribeLoading(false);
     }
   };
 
@@ -76,16 +81,28 @@ export default function Bribe(props) {
   }, [isConnected]);
 
   return (
-    <div>
-      <Typography variant="h4">Gauge: {props.gauge}</Typography>
-      <Input
-        label="Bribe Amount"
-        type="number"
-        step="any"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-      />
-      <Button onClick={handleBribe} text="Bribe" />
+    <div className={styles.container}>
+      <div className="flex flex-col items-center justify-center m-4 text-center">
+        <div className="mb-12">
+          <Typography variant="h4">Gauge: {props.gauge}</Typography>
+        </div>
+        <div className="mb-8">
+          <Input
+            label="Bribe Amount (ETH)"
+            type="number"
+            step="any"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
+        </div>
+        <Button
+          theme="secondary"
+          isLoading={bribeLoading}
+          isFullWidth
+          onClick={handleBribe}
+          text="Bribe"
+        />
+      </div>
     </div>
   );
 }

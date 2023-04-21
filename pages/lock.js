@@ -65,6 +65,8 @@ export default function Lock() {
   const [gauges, setGauges] = useState({});
   const [lockedPositions, setLockedPositions] = useState([]);
   const [selectedLock, setSelectedLock] = useState();
+  const [lastEpochRewardsCeiling, setLastEpochRewardsCeiling] = useState("0");
+  const [lastEpochRewards, setLastEpochRewards] = useState("0");
 
   var addresses = contractAddresses["11155111"];
 
@@ -153,6 +155,27 @@ export default function Lock() {
     );
     console.log("updatedEpoch", updatedEpoch.toNumber());
     setEpoch(updatedEpoch.toNumber());
+
+    // Get the rewards from the last epoch
+    const updatedLastEpochRewards =
+      updatedEpoch.toNumber() == 0
+        ? "0"
+        : await gaugeControllerProvider.getEpochRewards(
+            updatedEpoch.toNumber() - 1
+          );
+    console.log("updatedLastEpochRewards", updatedLastEpochRewards.toString());
+    setLastEpochRewards(updatedLastEpochRewards.toString());
+
+    // Get the rewards ceiling from the last epoch
+    const updatedLastEpochRewardsCeiling =
+      await gaugeControllerProvider.getRewardsCeiling(
+        updatedEpoch.toNumber() == 0 ? 0 : updatedEpoch.toNumber() - 1
+      );
+    console.log(
+      "updatedLastEpochRewardsCeiling",
+      updatedLastEpochRewardsCeiling.toString()
+    );
+    setLastEpochRewardsCeiling(updatedLastEpochRewardsCeiling.toString());
 
     // Get the NFTs that represent the user's locked positions
     const updatedLockedPositions = await getAddressNFTs(
@@ -392,23 +415,45 @@ export default function Lock() {
               {Number(formatUnits(tokenPrice, 18)).toFixed(5) + " LE / ETH"}
             </Box>
             <div className="flex flex-row items-center justify-center">
-              <div className="flex flex-col items-start m-2 mx-4">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                  }}
-                >
-                  Epoch
-                </Box>
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "h4.fontSize",
-                  }}
-                >
-                  {epoch}
-                </Box>
+              <div className="flex flex-col items-start m-2 mx-4 space-y-2">
+                <div className="flex flex-col items-start">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle1.fontSize",
+                    }}
+                  >
+                    Epoch
+                  </Box>
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "h4.fontSize",
+                    }}
+                  >
+                    {epoch}
+                  </Box>
+                </div>
+                <div className="flex flex-col items-start">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                    }}
+                  >
+                    LP Rewards
+                  </Box>
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle1.fontSize",
+                    }}
+                  >
+                    {Math.floor(formatUnits(lastEpochRewards, 18)) +
+                      "/" +
+                      Math.floor(formatUnits(lastEpochRewardsCeiling, 18))}
+                  </Box>
+                </div>
               </div>
               <div className="flex flex-col items-end m-2 border-l-2 border-stone-600 p-6">
                 <div className="flex flex-col items-end text-right mb-4">

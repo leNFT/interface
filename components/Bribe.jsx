@@ -83,10 +83,10 @@ export default function Bribe(props) {
   return (
     <div className={styles.container}>
       <div className="flex flex-col items-center justify-center m-4 text-center">
-        <div className="mb-12">
+        <div className="mb-8">
           <Typography variant="h4">Gauge: {props.gauge}</Typography>
         </div>
-        <div className="mb-8">
+        <div className="m-4">
           <Input
             label="Bribe Amount (ETH)"
             type="number"
@@ -95,13 +95,15 @@ export default function Bribe(props) {
             onChange={(e) => setAmount(e.target.value)}
           />
         </div>
-        <Button
-          theme="secondary"
-          isLoading={bribeLoading}
-          isFullWidth
-          onClick={handleBribe}
-          text="Bribe"
-        />
+        <div className="w-full m-4">
+          <Button
+            theme="secondary"
+            isLoading={bribeLoading}
+            isFullWidth
+            onClick={handleBribe}
+            text="Bribe"
+          />
+        </div>
       </div>
     </div>
   );

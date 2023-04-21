@@ -27,6 +27,7 @@ import UnlockNativeToken from "../components/UnlockNativeToken";
 import votingEscrowContract from "../contracts/VotingEscrow.json";
 import feeDistributorContract from "../contracts/FeeDistributor.json";
 import gaugeControllerContract from "../contracts/GaugeController.json";
+import bribes from "../contracts/Bribes.json";
 import Box from "@mui/material/Box";
 import { BigNumber, ethers } from "ethers";
 
@@ -48,8 +49,10 @@ export default function Lock() {
   const [claimingLoading, setClaimingLoading] = useState(false);
   const [votingLoading, setVotingLoading] = useState(false);
   const [claimableRewards, setClaimableRewards] = useState("0");
+  const [bribeRewards, setBribeRewards] = useState("0");
+  const [claimingBribesLoading, setClaimingBribesLoading] = useState(false);
   const [selectedGauge, setSelectedGauge] = useState();
-  const [gaugeVoteRatio, setGaugeVoteRatio] = useState(10);
+  const [gaugeVoteRatio, setGaugeVoteRatio] = useState(0);
   const [totalVoteRatio, setTotalVoteRatio] = useState(0);
   const [epoch, setEpoch] = useState(0);
   const [apr, setAPR] = useState("0");
@@ -69,6 +72,18 @@ export default function Lock() {
     contractInterface: votingEscrowContract.abi,
     addressOrName: addresses.VotingEscrow,
     signerOrProvider: provider,
+  });
+
+  const bribesProvider = useContract({
+    contractInterface: bribes.abi,
+    addressOrName: addresses.Bribes,
+    signerOrProvider: provider,
+  });
+
+  const bribesSigner = useContract({
+    contractInterface: bribes.abi,
+    addressOrName: addresses.Bribes,
+    signerOrProvider: signer,
   });
 
   const feeDistributorProvider = useContract({
@@ -199,6 +214,16 @@ export default function Lock() {
           selectedGauge
         );
       console.log("updatedgaugeVoteRatio", updatedGaugeVoteRatio.toString());
+      const updatedBribeRewards = await bribesProvider.callStatic.claim(
+        addresses.ETH.address,
+        selectedGauge,
+        selectedLock,
+        {
+          from: address,
+        }
+      );
+      console.log("updatedBribeRewards", updatedBribeRewards);
+      setBribeRewards(updatedBribeRewards.toString());
       setGaugeVoteRatio(updatedGaugeVoteRatio.toNumber());
       setGaugeVotes(updatedGaugeVoteRatio.toNumber());
     } else {
@@ -275,6 +300,15 @@ export default function Lock() {
       type: "success",
       message: "You have voted",
       title: "Vote Successful!",
+      position: "bottomL",
+    });
+  };
+
+  const handleClaimingBribesSuccess = async function () {
+    dispatch({
+      type: "success",
+      message: "You claimed your bribes",
+      title: "Claim Successful!",
       position: "bottomL",
     });
   };
@@ -786,7 +820,18 @@ export default function Lock() {
                 </div>
                 {selectedGauge && (
                   <div className="flex flex-row justify-center space-y-2 items-center m-2 w-full">
-                    <div className="flex flex-col justify-center space-y-2 items-center m-2 border-4 rounded-xl p-4 border-slate-500 w-6/12">
+                    <div className="flex flex-col justify-center space-y-2 m-2 border-4 rounded-xl p-6 border-slate-500 w-6/12">
+                      <div className="flex flex-row">
+                        <Box
+                          sx={{
+                            fontFamily: "Monospace",
+                            fontSize: "subtitle2.fontSize",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Vote
+                        </Box>
+                      </div>
                       <Slider
                         defaultValue={gaugeVoteRatio / 100}
                         value={gaugeVotes / 100}
@@ -832,7 +877,62 @@ export default function Lock() {
                         }}
                       />
                     </div>
-                    <div className="flex flex-col justify-center items-center w-6/12">
+                    <div className="flex flex-col justify-center items-center border-4 rounded-xl p-4 border-slate-500 w-6/12">
+                      <div className="flex flex-col mx-2 mb-6">
+                        <div className="flex flex-row">
+                          <Box
+                            sx={{
+                              fontFamily: "Monospace",
+                              fontSize: "subtitle2.fontSize",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Bribe Rewards
+                          </Box>
+                        </div>
+                        <div className="flex flex-row my-2 items-center">
+                          <Box
+                            sx={{
+                              fontFamily: "Monospace",
+                              fontSize: "subtitle1.fontSize",
+                            }}
+                          >
+                            {Number(formatUnits(bribeRewards, 18)).toPrecision(
+                              3
+                            ) + " wETH"}
+                          </Box>
+                          <div className="ml-4">
+                            <Button
+                              customize={{
+                                backgroundColor: "grey",
+                                fontSize: 16,
+                                textColor: "white",
+                              }}
+                              disabled={BigNumber.from(bribeRewards).eq(0)}
+                              text="Claim"
+                              theme="custom"
+                              size="small"
+                              Loading={claimingBribesLoading}
+                              onClick={async function () {
+                                try {
+                                  setClaimingLoading(true);
+                                  const tx = await bribesSigner.claim(
+                                    addresses.ETH.address,
+                                    selectedGauge,
+                                    selectedLock
+                                  );
+                                  await tx.wait(1);
+                                  await handleClaimingBribesSuccess();
+                                } catch (error) {
+                                  console.log(error);
+                                } finally {
+                                  setClaimingBribesLoading(false);
+                                }
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
                       <Button
                         customize={{
                           backgroundColor: "grey",

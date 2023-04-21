@@ -14,7 +14,7 @@ import { getAddressNFTs } from "../helpers/getAddressNFTs";
 import TextField from "@mui/material/TextField";
 import Slider from "@mui/material/Slider";
 import { Input } from "@nextui-org/react";
-import { Button, Loading, useNotification } from "@web3uikit/core";
+import { Button, Loading, Typography, useNotification } from "@web3uikit/core";
 import Autocomplete from "@mui/material/Autocomplete";
 import { getLockHistory } from "../helpers/getLockHistory.js";
 import { getGauges } from "../helpers/getGauges";
@@ -819,66 +819,9 @@ export default function Lock() {
                   </div>
                 </div>
                 {selectedGauge && (
-                  <div className="flex flex-row justify-center space-y-2 items-center m-2 w-full">
-                    <div className="flex flex-col justify-center space-y-2 m-2 border-4 rounded-xl p-6 border-slate-500 w-6/12">
-                      <div className="flex flex-row">
-                        <Box
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "subtitle2.fontSize",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Vote
-                        </Box>
-                      </div>
-                      <Slider
-                        defaultValue={gaugeVoteRatio / 100}
-                        value={gaugeVotes / 100}
-                        valueLabelDisplay="auto"
-                        valueLabelFormat={(value) => value + "%"}
-                        onChange={handleVoteSliderChange}
-                        min={0}
-                        step={1}
-                        max={(10000 - totalVoteRatio + gaugeVoteRatio) / 100}
-                      />
-                      <Button
-                        customize={{
-                          backgroundColor: "grey",
-                          fontSize: 16,
-                          textColor: "white",
-                        }}
-                        text={
-                          (gaugeVoteRatio == 0 ? "Vote with " : "Update to ") +
-                          gaugeVotes / 100 +
-                          " %"
-                        }
-                        disabled={!selectedGauge}
-                        isLoading={votingLoading}
-                        loadingText=""
-                        theme="custom"
-                        size="large"
-                        radius="12"
-                        onClick={async function () {
-                          try {
-                            setVotingLoading(true);
-                            const tx = await gaugeControllerSigner.vote(
-                              selectedLock,
-                              selectedGauge,
-                              gaugeVotes
-                            );
-                            await tx.wait(1);
-                            await handleVoteSuccess(gaugeVotes);
-                          } catch (error) {
-                            console.log(error);
-                          } finally {
-                            setVotingLoading(false);
-                          }
-                        }}
-                      />
-                    </div>
-                    <div className="flex flex-col justify-center items-center border-4 rounded-xl p-4 border-slate-500 w-6/12">
-                      <div className="flex flex-col mx-2 mb-6">
+                  <div className="flex flex-col justify-center items-center">
+                    <div className="flex flex-row justify-center space-y-2 items-center m-2 w-full">
+                      <div className="flex flex-col justify-center space-y-2 m-2 border-4 rounded-xl p-6 border-slate-500 w-6/12">
                         <div className="flex flex-row">
                           <Box
                             sx={{
@@ -887,68 +830,141 @@ export default function Lock() {
                               fontWeight: "bold",
                             }}
                           >
-                            Bribe Rewards
+                            Vote
                           </Box>
                         </div>
-                        <div className="flex flex-row my-2 items-center">
-                          <Box
-                            sx={{
-                              fontFamily: "Monospace",
-                              fontSize: "subtitle1.fontSize",
+                        <Slider
+                          defaultValue={gaugeVoteRatio / 100}
+                          value={gaugeVotes / 100}
+                          valueLabelDisplay="auto"
+                          valueLabelFormat={(value) => value + "%"}
+                          onChange={handleVoteSliderChange}
+                          min={0}
+                          step={1}
+                          max={(10000 - totalVoteRatio + gaugeVoteRatio) / 100}
+                        />
+                        <div className="flex flex-row justify-center">
+                          <Button
+                            customize={{
+                              backgroundColor: "grey",
+                              fontSize: 16,
+                              textColor: "white",
                             }}
-                          >
-                            {Number(formatUnits(bribeRewards, 18)).toPrecision(
-                              3
-                            ) + " wETH"}
-                          </Box>
-                          <div className="ml-4">
-                            <Button
-                              customize={{
-                                backgroundColor: "grey",
-                                fontSize: 16,
-                                textColor: "white",
-                              }}
-                              disabled={BigNumber.from(bribeRewards).eq(0)}
-                              text="Claim"
-                              theme="custom"
-                              size="small"
-                              Loading={claimingBribesLoading}
-                              onClick={async function () {
-                                try {
-                                  setClaimingLoading(true);
-                                  const tx = await bribesSigner.claim(
-                                    addresses.ETH.address,
-                                    selectedGauge,
-                                    selectedLock
-                                  );
-                                  await tx.wait(1);
-                                  await handleClaimingBribesSuccess();
-                                } catch (error) {
-                                  console.log(error);
-                                } finally {
-                                  setClaimingBribesLoading(false);
-                                }
-                              }}
-                            />
-                          </div>
+                            text={
+                              (gaugeVoteRatio == 0
+                                ? "Vote with "
+                                : "Update to ") +
+                              gaugeVotes / 100 +
+                              " %"
+                            }
+                            disabled={!selectedGauge}
+                            isLoading={votingLoading}
+                            loadingText=""
+                            theme="custom"
+                            size="large"
+                            radius="12"
+                            onClick={async function () {
+                              try {
+                                setVotingLoading(true);
+                                const tx = await gaugeControllerSigner.vote(
+                                  selectedLock,
+                                  selectedGauge,
+                                  gaugeVotes
+                                );
+                                await tx.wait(1);
+                                await handleVoteSuccess(gaugeVotes);
+                              } catch (error) {
+                                console.log(error);
+                              } finally {
+                                setVotingLoading(false);
+                              }
+                            }}
+                          />
                         </div>
                       </div>
-                      <Button
-                        customize={{
-                          backgroundColor: "grey",
-                          fontSize: 16,
-                          textColor: "white",
-                        }}
-                        text="Bribe"
-                        disabled={!selectedGauge}
-                        loadingText=""
-                        theme="custom"
-                        size="large"
-                        radius="12"
-                        onClick={async function () {
-                          setVisibleBribeModal(true);
-                        }}
-                      />
+                      <div className="flex flex-col justify-center items-center border-4 rounded-xl p-4 border-slate-500 w-6/12">
+                        <div className="flex flex-col mx-2 mb-6">
+                          <div className="flex flex-row">
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "subtitle2.fontSize",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              Bribe Rewards
+                            </Box>
+                          </div>
+                          <div className="flex flex-row my-2 items-center">
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "subtitle1.fontSize",
+                              }}
+                            >
+                              {Number(
+                                formatUnits(bribeRewards, 18)
+                              ).toPrecision(3) + " wETH"}
+                            </Box>
+                            <div className="ml-4">
+                              <Button
+                                customize={{
+                                  backgroundColor: "grey",
+                                  fontSize: 16,
+                                  textColor: "white",
+                                }}
+                                disabled={BigNumber.from(bribeRewards).eq(0)}
+                                text="Claim"
+                                theme="custom"
+                                size="small"
+                                Loading={claimingBribesLoading}
+                                onClick={async function () {
+                                  try {
+                                    setClaimingLoading(true);
+                                    const tx = await bribesSigner.claim(
+                                      addresses.ETH.address,
+                                      selectedGauge,
+                                      selectedLock
+                                    );
+                                    await tx.wait(1);
+                                    await handleClaimingBribesSuccess();
+                                  } catch (error) {
+                                    console.log(error);
+                                  } finally {
+                                    setClaimingBribesLoading(false);
+                                  }
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <Button
+                          customize={{
+                            backgroundColor: "grey",
+                            fontSize: 16,
+                            textColor: "white",
+                          }}
+                          text="Bribe"
+                          disabled={!selectedGauge}
+                          loadingText=""
+                          theme="custom"
+                          size="large"
+                          radius="12"
+                          onClick={async function () {
+                            setVisibleBribeModal(true);
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex flex-row justify-center w-10/12 text-center">
+                      <Typography
+                        variant="subtitle2"
+                        color="#BF6958"
+                        sx={{ fontFamily: "Monospace" }}
+                      >
+                        ⚠️ Please claim your bribe rewards before UPDATING your
+                        vote. If you don't, you will lose your rewards. ⚠️
+                      </Typography>
                     </div>
                   </div>
                 )}

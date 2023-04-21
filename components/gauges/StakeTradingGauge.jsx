@@ -19,6 +19,7 @@ import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import tradingGaugeContract from "../../contracts/TradingGauge.json";
+import tradingPoolContract from "../../contracts/TradingPool.json";
 import erc721 from "../../contracts/erc721.json";
 
 export default function StakeTradingGauge(props) {
@@ -38,21 +39,34 @@ export default function StakeTradingGauge(props) {
 
   console.log("props.lpToken", props.lpToken);
 
+  const poolProvider = useContract({
+    contractInterface: tradingPoolContract.abi,
+    addressOrName: props.lpToken,
+    signerOrProvider: provider,
+  });
+
   async function getUserLPs() {
     // Get lp positions
     const addressNFTs = await getAddressNFTs(address, props.lpToken, chain.id);
     setUserLPs(addressNFTs);
     console.log("addressNFTs", addressNFTs);
 
+    const gauge = new ethers.Contract(
+      props.gauge,
+      tradingGaugeContract.abi,
+      provider
+    );
+
     // Get lp values
     var newLpsValue = [];
     for (let i = 0; i < addressNFTs.length; i++) {
-      const gauge = new ethers.Contract(
-        props.gauge,
-        tradingGaugeContract.abi,
-        provider
+      const lp = await poolProvider.getLP(addressNFTs[i].tokenId);
+      console.log("lp", lp);
+      const lpValue = await gauge.calculateLpValue(
+        lp.nftIds.length,
+        lp.tokenAmount,
+        lp.spotPrice
       );
-      const lpValue = await gauge.calculateLpValue(addressNFTs[i].tokenId);
       newLpsValue.push(lpValue);
     }
     setLpsValue(newLpsValue);

@@ -55,6 +55,7 @@ export default function Bribe(props) {
         value: parseUnits(amount, 18).toString(),
       });
       await tx.wait(1);
+      props.setVisibility(false);
       dispatch({
         type: "success",
         message: "Bribe sent successfully!",

@@ -20,6 +20,7 @@ import { getLockHistory } from "../helpers/getLockHistory.js";
 import { getGauges } from "../helpers/getGauges";
 import LockNativeToken from "../components/LockNativeToken";
 import Bribe from "../components/Bribe";
+import RemoveBribe from "../components/RemoveBribe";
 import EditNativeTokenLockAmount from "../components/EditNativeTokenLockAmount";
 import EditNativeTokenLocktime from "../components/EditNativeTokenLocktime";
 import contractAddresses from "../contractAddresses.json";
@@ -41,6 +42,7 @@ export default function Lock() {
   const [visibleLockModal, setVisibleLockModal] = useState(false);
   const [visibleUnlockModal, setVisibleUnlockModal] = useState(false);
   const [visibleBribeModal, setVisibleBribeModal] = useState(false);
+  const [visibleRemoveBribeModal, setVisibleRemoveBribeModal] = useState(false);
   const [visibleEditLockAmountModal, setVisibleEditLockAmountModal] =
     useState(false);
   const [visibleEditLockTimeModal, setVisibleEditLockTimeModal] =
@@ -68,6 +70,8 @@ export default function Lock() {
   const [lastEpochRewardsCeiling, setLastEpochRewardsCeiling] = useState("0");
   const [lastEpochRewards, setLastEpochRewards] = useState("0");
   const [lockedRatio, setLockedRatio] = useState("0");
+  const [userBribes, setUserBribes] = useState("0");
+  const [gaugeBribes, setGaugeBribes] = useState("0");
 
   var addresses = contractAddresses["11155111"];
 
@@ -243,24 +247,41 @@ export default function Lock() {
 
     if (isGauge) {
       // Get the number of votes for the gauge
-      const updatedGaugeVoteRatio =
-        await gaugeControllerProvider.lockVoteRatioForGauge(
+      if (selectedLock) {
+        const updatedGaugeVoteRatio =
+          await gaugeControllerProvider.lockVoteRatioForGauge(
+            selectedLock,
+            selectedGauge
+          );
+        console.log("updatedgaugeVoteRatio", updatedGaugeVoteRatio.toString());
+        const updatedBribeRewards = await bribesProvider.callStatic.claim(
+          addresses.ETH.address,
+          selectedGauge,
           selectedLock,
-          selectedGauge
+          {
+            from: address,
+          }
         );
-      console.log("updatedgaugeVoteRatio", updatedGaugeVoteRatio.toString());
-      const updatedBribeRewards = await bribesProvider.callStatic.claim(
+        console.log("updatedBribeRewards", updatedBribeRewards);
+        setBribeRewards(updatedBribeRewards.toString());
+        setGaugeVoteRatio(updatedGaugeVoteRatio.toNumber());
+        setGaugeVotes(updatedGaugeVoteRatio.toNumber());
+      }
+      const updatedUserBribes = await bribesProvider.getUserBribes(
         addresses.ETH.address,
         selectedGauge,
-        selectedLock,
-        {
-          from: address,
-        }
+        epoch + 1,
+        address
       );
-      console.log("updatedBribeRewards", updatedBribeRewards);
-      setBribeRewards(updatedBribeRewards.toString());
-      setGaugeVoteRatio(updatedGaugeVoteRatio.toNumber());
-      setGaugeVotes(updatedGaugeVoteRatio.toNumber());
+      console.log("updatedUserBribes", updatedUserBribes);
+      const updatedGaugeBribes = await bribesProvider.getGaugeBribes(
+        addresses.ETH.address,
+        selectedGauge,
+        epoch + 1
+      );
+      console.log("updatedGaugeBribes", updatedGaugeBribes);
+      setGaugeBribes(updatedGaugeBribes.toString());
+      setUserBribes(updatedUserBribes.toString());
     } else {
       setGaugeVoteRatio(0);
       setGaugeVotes(0);
@@ -276,7 +297,7 @@ export default function Lock() {
   }, [isConnected]);
 
   useEffect(() => {
-    if (isConnected && selectedGauge && selectedLock) {
+    if (isConnected && selectedGauge) {
       updateGaugeDetails();
     }
   }, [selectedGauge]);
@@ -359,6 +380,20 @@ export default function Lock() {
         }}
       >
         <Bribe setVisibility={setVisibleBribeModal} gauge={selectedGauge} />
+      </StyledModal>
+      <StyledModal
+        hasFooter={false}
+        title="Remove Bribe"
+        gaugeBribes={userBribes}
+        isVisible={visibleRemoveBribeModal}
+        onCloseButtonPressed={function () {
+          setVisibleRemoveBribeModal(false);
+        }}
+      >
+        <RemoveBribe
+          setVisibility={setVisibleRemoveBribeModal}
+          gauge={selectedGauge}
+        />
       </StyledModal>
       <StyledModal
         hasFooter={false}
@@ -446,26 +481,6 @@ export default function Lock() {
                     {epoch}
                   </Box>
                 </div>
-                <div className="flex flex-col items-start">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle2.fontSize",
-                    }}
-                  >
-                    LP Rewards
-                  </Box>
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle1.fontSize",
-                    }}
-                  >
-                    {Math.floor(formatUnits(lastEpochRewards, 18)) +
-                      "/" +
-                      Math.floor(formatUnits(lastEpochRewardsCeiling, 18))}
-                  </Box>
-                </div>
               </div>
               <div className="flex flex-col items-end m-2 border-l-2 border-stone-600 p-6">
                 <div className="flex flex-col items-end text-right mb-4">
@@ -487,7 +502,7 @@ export default function Lock() {
                     {apr + " %"}
                   </Box>
                 </div>
-                <div className="flex flex-col items-end text-right mt-4">
+                <div className="flex flex-col items-end text-right my-4">
                   <Box
                     sx={{
                       fontFamily: "Monospace",
@@ -497,16 +512,50 @@ export default function Lock() {
                   >
                     Total Locked
                   </Box>
+
                   <Box
                     sx={{
                       fontFamily: "Monospace",
                       fontSize: "subtitle1.fontSize",
                     }}
                   >
-                    {Math.floor(Number(formatUnits(totalLocked, 18))) +
-                      " veLE / " +
-                      lockedRatio / 100 +
-                      "%"}
+                    {Math.floor(Number(formatUnits(totalLocked, 18))) + " veLE"}
+                  </Box>
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                    }}
+                  >
+                    {lockedRatio / 100 + "%"}
+                  </Box>
+                </div>
+                <div className="flex flex-col items-end text-right mt-4">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    LP Rewards
+                  </Box>
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle1.fontSize",
+                    }}
+                  >
+                    {Math.floor(formatUnits(lastEpochRewards, 18)) + " LE"}
+                  </Box>
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                    }}
+                  >
+                    {Math.floor(formatUnits(lastEpochRewardsCeiling, 18)) +
+                      " LE"}
                   </Box>
                 </div>
               </div>
@@ -770,54 +819,57 @@ export default function Lock() {
               </div>
             </div>
             <div className="flex flex-col md:flex-row items-center justify-center m-4 md:m-8 rounded-3xl bg-black/5 shadow-lg">
-              <div className="flex flex-col m-4">
+              {selectedLock && (
                 <div className="flex flex-col m-4">
-                  <div className="flex flex-row">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "subtitle1.fontSize",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Used Voting Power
-                    </Box>
+                  <div className="flex flex-col m-4">
+                    <div className="flex flex-row">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle1.fontSize",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Used Voting Power
+                      </Box>
+                    </div>
+                    <div className="flex flex-row">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle1.fontSize",
+                        }}
+                      >
+                        {totalVoteRatio / 100 + " %"}
+                      </Box>
+                    </div>
                   </div>
-                  <div className="flex flex-row">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "subtitle1.fontSize",
-                      }}
-                    >
-                      {totalVoteRatio / 100 + " %"}
-                    </Box>
+
+                  <div className="flex flex-col m-4">
+                    <div className="flex flex-row">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle1.fontSize",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Selected Gauge
+                      </Box>
+                    </div>
+                    <div className="flex flex-row">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle1.fontSize",
+                        }}
+                      >
+                        {(selectedGauge ? gaugeVoteRatio / 100 : "─") + " %"}
+                      </Box>
+                    </div>
                   </div>
                 </div>
-                <div className="flex flex-col m-4">
-                  <div className="flex flex-row">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "subtitle1.fontSize",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Selected Gauge
-                    </Box>
-                  </div>
-                  <div className="flex flex-row">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "subtitle1.fontSize",
-                      }}
-                    >
-                      {(selectedGauge ? gaugeVoteRatio / 100 : "─") + " %"}
-                    </Box>
-                  </div>
-                </div>
-              </div>
+              )}
               <div className="flex flex-col justify-center items-center m-8 p-6 rounded-3xl bg-black/5 shadow-lg">
                 <div className="flex flex-col items-center m-4">
                   <Autocomplete
@@ -881,68 +933,99 @@ export default function Lock() {
                 {selectedGauge && (
                   <div className="flex flex-col justify-center items-center">
                     <div className="flex flex-row justify-center space-y-2 items-center m-2 w-full">
-                      <div className="flex flex-col justify-center space-y-2 m-2 border-4 rounded-xl p-6 border-slate-500 w-6/12">
-                        <div className="flex flex-row">
-                          <Box
-                            sx={{
-                              fontFamily: "Monospace",
-                              fontSize: "subtitle2.fontSize",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Vote
-                          </Box>
+                      <div className="flex flex-col m-4 p-2 w-5/12">
+                        <div className="flex flex-col justify-center space-y-2 m-2 border-4 rounded-xl px-6 py-4 border-slate-500 w-full">
+                          <div className="flex flex-row">
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "subtitle2.fontSize",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              Rewards next epoch
+                            </Box>
+                          </div>
+                          <div className="flex flex-row my-2 items-center">
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "subtitle1.fontSize",
+                              }}
+                            >
+                              {Number(formatUnits(gaugeBribes, 18)).toPrecision(
+                                3
+                              ) + " wETH"}
+                            </Box>
+                          </div>
                         </div>
-                        <Slider
-                          defaultValue={gaugeVoteRatio / 100}
-                          value={gaugeVotes / 100}
-                          valueLabelDisplay="auto"
-                          valueLabelFormat={(value) => value + "%"}
-                          onChange={handleVoteSliderChange}
-                          min={0}
-                          step={1}
-                          max={(10000 - totalVoteRatio + gaugeVoteRatio) / 100}
-                        />
-                        <div className="flex flex-row justify-center">
-                          <Button
-                            customize={{
-                              backgroundColor: "grey",
-                              fontSize: 16,
-                              textColor: "white",
-                            }}
-                            text={
-                              (gaugeVoteRatio == 0
-                                ? "Vote with "
-                                : "Update to ") +
-                              gaugeVotes / 100 +
-                              " %"
-                            }
-                            disabled={!selectedGauge}
-                            isLoading={votingLoading}
-                            loadingText=""
-                            theme="custom"
-                            size="large"
-                            radius="12"
-                            onClick={async function () {
-                              try {
-                                setVotingLoading(true);
-                                const tx = await gaugeControllerSigner.vote(
-                                  selectedLock,
-                                  selectedGauge,
-                                  gaugeVotes
-                                );
-                                await tx.wait(1);
-                                await handleVoteSuccess(gaugeVotes);
-                              } catch (error) {
-                                console.log(error);
-                              } finally {
-                                setVotingLoading(false);
+                        {selectedLock && (
+                          <div className="flex flex-col justify-center space-y-2 m-2 border-4 rounded-xl p-6 border-slate-500 w-full">
+                            <div className="flex flex-row">
+                              <Box
+                                sx={{
+                                  fontFamily: "Monospace",
+                                  fontSize: "subtitle2.fontSize",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                Vote
+                              </Box>
+                            </div>
+                            <Slider
+                              defaultValue={gaugeVoteRatio / 100}
+                              value={gaugeVotes / 100}
+                              valueLabelDisplay="auto"
+                              valueLabelFormat={(value) => value + "%"}
+                              onChange={handleVoteSliderChange}
+                              min={0}
+                              step={1}
+                              max={
+                                (10000 - totalVoteRatio + gaugeVoteRatio) / 100
                               }
-                            }}
-                          />
-                        </div>
+                            />
+                            <div className="flex flex-row justify-center">
+                              <Button
+                                customize={{
+                                  backgroundColor: "grey",
+                                  fontSize: 16,
+                                  textColor: "white",
+                                }}
+                                text={
+                                  (gaugeVoteRatio == 0
+                                    ? "Vote with "
+                                    : "Update to ") +
+                                  gaugeVotes / 100 +
+                                  " %"
+                                }
+                                disabled={!selectedGauge}
+                                isLoading={votingLoading}
+                                loadingText=""
+                                theme="custom"
+                                size="large"
+                                radius="12"
+                                onClick={async function () {
+                                  try {
+                                    setVotingLoading(true);
+                                    const tx = await gaugeControllerSigner.vote(
+                                      selectedLock,
+                                      selectedGauge,
+                                      gaugeVotes
+                                    );
+                                    await tx.wait(1);
+                                    await handleVoteSuccess(gaugeVotes);
+                                  } catch (error) {
+                                    console.log(error);
+                                  } finally {
+                                    setVotingLoading(false);
+                                  }
+                                }}
+                              />
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <div className="flex flex-col justify-center items-center border-4 rounded-xl p-4 border-slate-500 w-6/12">
+                      <div className="flex flex-col justify-center border-4 rounded-xl m-4 p-4 border-slate-500 w-5/12">
                         <div className="flex flex-col mx-2 mb-6">
                           <div className="flex flex-row">
                             <Box
@@ -998,34 +1081,80 @@ export default function Lock() {
                             </div>
                           </div>
                         </div>
-                        <Button
-                          customize={{
-                            backgroundColor: "grey",
-                            fontSize: 16,
-                            textColor: "white",
-                          }}
-                          text="Bribe"
-                          disabled={!selectedGauge}
-                          loadingText=""
-                          theme="custom"
-                          size="large"
-                          radius="12"
-                          onClick={async function () {
-                            setVisibleBribeModal(true);
-                          }}
-                        />
+                        <div className="flex flex-col mx-2">
+                          <div className="flex flex-row">
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "subtitle2.fontSize",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              Bribes Deposited
+                            </Box>
+                          </div>
+                          <div className="flex flex-row my-2 items-center">
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "subtitle1.fontSize",
+                              }}
+                            >
+                              {Number(formatUnits(userBribes, 18)).toPrecision(
+                                3
+                              ) + " wETH"}
+                            </Box>
+                            <div className="flex flex-col items-center ml-4 space-y-1">
+                              <Button
+                                customize={{
+                                  backgroundColor: "grey",
+                                  fontSize: 16,
+                                  textColor: "white",
+                                }}
+                                text="Add"
+                                disabled={!selectedGauge}
+                                loadingText=""
+                                theme="custom"
+                                size="small"
+                                radius="12"
+                                onClick={async function () {
+                                  setVisibleBribeModal(true);
+                                }}
+                              />
+                              <Button
+                                customize={{
+                                  backgroundColor: "grey",
+                                  fontSize: 16,
+                                  textColor: "white",
+                                }}
+                                text="Remove"
+                                disabled={!selectedGauge || userBribes == 0}
+                                loadingText=""
+                                theme="custom"
+                                size="small"
+                                radius="12"
+                                onClick={async function () {
+                                  setVisibleRemoveBribeModal(true);
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex flex-row justify-center w-10/12 text-center">
-                      <Typography
-                        variant="subtitle2"
-                        color="#BF6958"
-                        sx={{ fontFamily: "Monospace" }}
-                      >
-                        ⚠️ Please claim your bribe rewards before UPDATING your
-                        vote. If you don't, you will lose your rewards. ⚠️
-                      </Typography>
-                    </div>
+                    {gaugeVoteRatio != 0 && (
+                      <div className="flex flex-row justify-center w-10/12 text-center">
+                        <Typography
+                          variant="subtitle2"
+                          color="#BF6958"
+                          sx={{ fontFamily: "Monospace" }}
+                        >
+                          ⚠️ Please claim your bribe rewards BEFORE updating
+                          your vote. If you don't, you will lose your rewards.
+                          ⚠️
+                        </Typography>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

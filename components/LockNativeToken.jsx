@@ -33,7 +33,7 @@ export default function LockNativeToken(props) {
   const [lockedLoading, setLockedLoading] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [unlockTime, setUnlockTime] = useState(
-    Math.floor(Date.now() / 1000) + 86400 * 14
+    Math.floor(Date.now() / 1000) + 86400 * 15
   );
   const [lockWeight, setLockWeight] = useState("0");
   const [lockDuration, setLockDuration] = useState(2);

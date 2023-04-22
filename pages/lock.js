@@ -157,14 +157,6 @@ export default function Lock() {
     console.log("updatedEpoch", updatedEpoch.toNumber());
     setEpoch(updatedEpoch.toNumber());
 
-    // Get the rewards from the last epoch
-    const updatedLastEpochRewards =
-      await gaugeControllerProvider.callStatic.getEpochRewards(
-        updatedEpoch.toNumber()
-      );
-    console.log("updatedLastEpochRewards", updatedLastEpochRewards.toString());
-    setLastEpochRewards(updatedLastEpochRewards.toString());
-
     // Get the rewards ceiling from the last epoch
     const updatedLastEpochRewardsCeiling =
       await gaugeControllerProvider.getRewardsCeiling(updatedEpoch.toNumber());
@@ -173,6 +165,27 @@ export default function Lock() {
       updatedLastEpochRewardsCeiling.toString()
     );
     setLastEpochRewardsCeiling(updatedLastEpochRewardsCeiling.toString());
+
+    const updatedLockedRatio =
+      await votingEscrowProvider.callStatic.getLockedRatioAt(
+        updatedEpoch.toNumber(),
+        {
+          from: address,
+        }
+      );
+    console.log("updatedLockedRatio", updatedLockedRatio.toString());
+    setLockedRatio(updatedLockedRatio.toString());
+
+    // Get the rewards from the last epoch
+    const updatedLastEpochRewards =
+      await gaugeControllerProvider.callStatic.getEpochRewards(
+        updatedEpoch.toNumber(),
+        {
+          from: address,
+        }
+      );
+    console.log("updatedLastEpochRewards", updatedLastEpochRewards.toString());
+    setLastEpochRewards(updatedLastEpochRewards.toString());
 
     // Get the NFTs that represent the user's locked positions
     const updatedLockedPositions = await getAddressNFTs(
@@ -188,16 +201,11 @@ export default function Lock() {
 
     // Get the total locked amount
     const updatedTotalLocked =
-      await votingEscrowProvider.callStatic.totalWeight();
+      await votingEscrowProvider.callStatic.totalWeight({
+        from: address,
+      });
     console.log("updatedTotalLocked", updatedTotalLocked.toString());
     setTotalLocked(updatedTotalLocked.toString());
-
-    const updatedLockedRatio =
-      await gaugeControllerProvider.callStatic.getLockedRatioAt(
-        updatedEpoch.toNumber()
-      );
-    console.log("updatedLockedRatio", updatedLockedRatio.toString());
-    setLokedRatio(updatedLockedRatio.toString());
 
     if (
       updateNativeTokenPrice.toString() == "0" ||

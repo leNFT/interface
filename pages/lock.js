@@ -67,6 +67,7 @@ export default function Lock() {
   const [selectedLock, setSelectedLock] = useState();
   const [lastEpochRewardsCeiling, setLastEpochRewardsCeiling] = useState("0");
   const [lastEpochRewards, setLastEpochRewards] = useState("0");
+  const [lockedRatio, setLockedRatio] = useState("0");
 
   var addresses = contractAddresses["11155111"];
 
@@ -158,19 +159,15 @@ export default function Lock() {
 
     // Get the rewards from the last epoch
     const updatedLastEpochRewards =
-      updatedEpoch.toNumber() == 0
-        ? "0"
-        : await gaugeControllerProvider.getEpochRewards(
-            updatedEpoch.toNumber() - 1
-          );
+      await gaugeControllerProvider.callStatic.getEpochRewards(
+        updatedEpoch.toNumber()
+      );
     console.log("updatedLastEpochRewards", updatedLastEpochRewards.toString());
     setLastEpochRewards(updatedLastEpochRewards.toString());
 
     // Get the rewards ceiling from the last epoch
     const updatedLastEpochRewardsCeiling =
-      await gaugeControllerProvider.getRewardsCeiling(
-        updatedEpoch.toNumber() == 0 ? 0 : updatedEpoch.toNumber() - 1
-      );
+      await gaugeControllerProvider.getRewardsCeiling(updatedEpoch.toNumber());
     console.log(
       "updatedLastEpochRewardsCeiling",
       updatedLastEpochRewardsCeiling.toString()
@@ -194,6 +191,13 @@ export default function Lock() {
       await votingEscrowProvider.callStatic.totalWeight();
     console.log("updatedTotalLocked", updatedTotalLocked.toString());
     setTotalLocked(updatedTotalLocked.toString());
+
+    const updatedLockedRatio =
+      await gaugeControllerProvider.callStatic.getLockedRatioAt(
+        updatedEpoch.toNumber()
+      );
+    console.log("updatedLockedRatio", updatedLockedRatio.toString());
+    setLokedRatio(updatedLockedRatio.toString());
 
     if (
       updateNativeTokenPrice.toString() == "0" ||
@@ -491,7 +495,10 @@ export default function Lock() {
                       fontSize: "subtitle1.fontSize",
                     }}
                   >
-                    {Math.floor(Number(formatUnits(totalLocked, 18))) + " veLE"}
+                    {Math.floor(Number(formatUnits(totalLocked, 18))) +
+                      " veLE / " +
+                      lockedRatio / 100 +
+                      "%"}
                   </Box>
                 </div>
               </div>

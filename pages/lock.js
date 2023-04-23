@@ -555,11 +555,17 @@ export default function Lock() {
                       fontSize: "caption.fontSize",
                     }}
                   >
-                    {Math.floor(
-                      100 *
-                        (formatUnits(lastEpochRewards, 18) /
-                          formatUnits(lastEpochRewardsCeiling, 18))
-                    ) + " %"}
+                    {(BigNumber.from(lastEpochRewardsCeiling).eq(0)
+                      ? "0"
+                      : Math.floor(
+                          formatUnits(
+                            BigNumber.from(lastEpochRewards)
+                              .mul(100)
+                              .div(lastEpochRewardsCeiling)
+                              .toString(),
+                            18
+                          )
+                        )) + " %"}
                   </Box>
                 </div>
               </div>

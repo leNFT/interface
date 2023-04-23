@@ -552,11 +552,14 @@ export default function Lock() {
                   <Box
                     sx={{
                       fontFamily: "Monospace",
-                      fontSize: "subtitle2.fontSize",
+                      fontSize: "caption.fontSize",
                     }}
                   >
-                    {Math.floor(formatUnits(lastEpochRewardsCeiling, 18)) +
-                      " LE"}
+                    {Math.floor(
+                      100 *
+                        (formatUnits(lastEpochRewards, 18) /
+                          formatUnits(lastEpochRewardsCeiling, 18))
+                    ) + " %"}
                   </Box>
                 </div>
               </div>

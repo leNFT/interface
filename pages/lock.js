@@ -552,20 +552,15 @@ export default function Lock() {
                   <Box
                     sx={{
                       fontFamily: "Monospace",
-                      fontSize: "caption.fontSize",
+                      fontSize: "subtitle2.fontSize",
                     }}
                   >
                     {(BigNumber.from(lastEpochRewardsCeiling).eq(0)
                       ? "0"
-                      : Math.floor(
-                          formatUnits(
-                            BigNumber.from(lastEpochRewards)
-                              .mul(100)
-                              .div(lastEpochRewardsCeiling)
-                              .toString(),
-                            18
-                          )
-                        )) + " %"}
+                      : BigNumber.from(lastEpochRewards)
+                          .mul(100)
+                          .div(lastEpochRewardsCeiling)
+                          .toString()) + " %"}
                   </Box>
                 </div>
               </div>

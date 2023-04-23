@@ -393,6 +393,7 @@ export default function Lock() {
         <RemoveBribe
           setVisibility={setVisibleRemoveBribeModal}
           gauge={selectedGauge}
+          userBribes={userBribes}
         />
       </StyledModal>
       <StyledModal
@@ -1093,7 +1094,7 @@ export default function Lock() {
                               Bribes Deposited
                             </Box>
                           </div>
-                          <div className="flex flex-row my-2 items-center">
+                          <div className="flex flex-col space-y-2 md:flex-row my-2 items-center">
                             <Box
                               sx={{
                                 fontFamily: "Monospace",
@@ -1104,14 +1105,14 @@ export default function Lock() {
                                 3
                               ) + " wETH"}
                             </Box>
-                            <div className="flex flex-col items-center ml-4 space-y-1">
+                            <div className="flex flex-row justify-center space-x-1 items-center ml-1">
                               <Button
                                 customize={{
                                   backgroundColor: "grey",
                                   fontSize: 16,
                                   textColor: "white",
                                 }}
-                                text="Add"
+                                text="+"
                                 disabled={!selectedGauge}
                                 loadingText=""
                                 theme="custom"
@@ -1127,7 +1128,7 @@ export default function Lock() {
                                   fontSize: 16,
                                   textColor: "white",
                                 }}
-                                text="Remove"
+                                text="-"
                                 disabled={!selectedGauge || userBribes == 0}
                                 loadingText=""
                                 theme="custom"
@@ -1143,15 +1144,14 @@ export default function Lock() {
                       </div>
                     </div>
                     {gaugeVoteRatio != 0 && (
-                      <div className="flex flex-row justify-center w-10/12 text-center">
+                      <div className="flex flex-row justify-center w-8/12 text-center">
                         <Typography
                           variant="subtitle2"
                           color="#BF6958"
                           sx={{ fontFamily: "Monospace" }}
                         >
-                          ⚠️ Please claim your bribe rewards BEFORE updating
-                          your vote. If you don't, you will lose your rewards.
-                          ⚠️
+                          ⚠️ Claim your bribe rewards BEFORE updating your vote.
+                          If you don't, you will lose your rewards. ⚠️
                         </Typography>
                       </div>
                     )}

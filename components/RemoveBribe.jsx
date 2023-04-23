@@ -92,12 +92,12 @@ export default function RemoveBribe(props) {
         </div>
         <div className="m-4">
           <Typography variant="h6">
-            Deposited: {props.gaugeBribes} ETH
+            Deposited: {formatUnits(props.userBribes, 18)} wETH
           </Typography>
         </div>
         <div className="m-4">
           <Input
-            label="Bribe Amount (ETH)"
+            label="Amount to Remove (wETH)"
             type="number"
             step="any"
             value={amount}

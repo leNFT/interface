@@ -190,7 +190,7 @@ export default function StakeTradingGauge(props) {
             }}
             className="m-2 text-center"
           >
-            {"Only LPs with a value > 0 can be staked. "}
+            {"Only LPs with a value higher than 0 ETH can be staked. "}
 
             <a
               href={

@@ -84,6 +84,7 @@ export default function TradingPoolGauge() {
     setBoost(boostResponse.toNumber());
 
     const newUserLockedValue = await gauge.userLPValue(address);
+    console.log("newUserLockedValue", newUserLockedValue.toString());
     setUserLockedValue(newUserLockedValue.toString());
 
     const stakedLPsBalanceResponse = await gauge.balanceOf(address);

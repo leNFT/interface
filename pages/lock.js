@@ -1155,7 +1155,7 @@ export default function Lock() {
                           sx={{ fontFamily: "Monospace" }}
                         >
                           ⚠️ Claim your bribe rewards BEFORE updating your vote.
-                          If you don't, you will lose your rewards. ⚠️
+                          If you don&apos;t, you will lose your rewards. ⚠️
                         </Typography>
                       </div>
                     )}

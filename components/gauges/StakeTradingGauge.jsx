@@ -67,6 +67,7 @@ export default function StakeTradingGauge(props) {
         lp.tokenAmount,
         lp.spotPrice
       );
+      console.log("lpValue", lpValue);
       newLpsValue.push(lpValue);
     }
     setLpsValue(newLpsValue);

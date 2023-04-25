@@ -10,10 +10,12 @@ import styles from "../../styles/Home.module.css";
 import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
 import tradingGaugeContract from "../../contracts/TradingGauge.json";
+import { getNFTImage } from "../../helpers/getNFTImage";
 import { ethers } from "ethers";
 
 export default function UnstakeTradingGauge(props) {
   const [unstakeLoading, setUnstakeLoading] = useState(false);
+  const [lpImage, setLPImage] = useState("");
   const dispatch = useNotification();
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
@@ -21,7 +23,21 @@ export default function UnstakeTradingGauge(props) {
   const { data: signer } = useSigner();
   var addresses = contractAddresses["11155111"];
 
-  useEffect(() => {}, []);
+  async function getLPImage() {
+    const lpImage = await getNFTImage(
+      props.lpToken,
+      props.selectedLP,
+      chain.id
+    );
+    console.log("lpImage", lpImage);
+    setLPImage(lpImage);
+  }
+
+  useEffect(() => {
+    if (isConnected && props.selectedLP !== undefined) {
+      getLPImage();
+    }
+  }, [isConnected, props.selectedLP]);
 
   const handleUnstakeSuccess = async function () {
     props.updateUI();
@@ -36,7 +52,8 @@ export default function UnstakeTradingGauge(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-row items-center justify-center m-8">
+      <div className="flex flex-col items-center space-y-2 justify-center m-8">
+        <img src={lpImage} alt="LP Image" />
         <Typography variant="subtitle1">{"LP #" + props.selectedLP}</Typography>
       </div>
       <div className="flex flex-row items-center justify-center m-8">

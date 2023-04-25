@@ -582,10 +582,16 @@ export default function Borrow() {
                               <div className="flex flex-col items-center">
                                 <Image
                                   loader={() =>
-                                    data.media.mediaCollection.low.url
+                                    data.media.mediaCollection
+                                      ? data.media.mediaCollection.low.url
+                                      : data.metadata.image
                                   }
                                   alt="Supported Asset"
-                                  src={data.media.mediaCollection.low.url}
+                                  src={
+                                    data.media.mediaCollection
+                                      ? data.media.mediaCollection.low.url
+                                      : data.metadata.image
+                                  }
                                   height="200"
                                   width="200"
                                   className="rounded-2xl"
@@ -694,12 +700,16 @@ export default function Borrow() {
                               <div className="flex flex-col items-center">
                                 <Image
                                   loader={() =>
-                                    unsupportedAsset.media.mediaCollection.low
-                                      .url
+                                    unsupportedAsset.media.mediaCollection
+                                      ? unsupportedAsset.media.mediaCollection
+                                          .low.url
+                                      : unsupportedAsset.metadata.image
                                   }
                                   src={
-                                    unsupportedAsset.media.mediaCollection.low
-                                      .url
+                                    unsupportedAsset.media.mediaCollection
+                                      ? unsupportedAsset.media.mediaCollection
+                                          .low.url
+                                      : unsupportedAsset.metadata.image
                                   }
                                   height="120"
                                   width="120"

@@ -1,6 +1,6 @@
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
-import { Button, useNotification, Loading } from "@web3uikit/core";
+import { Button, useNotification, Loading, Typography } from "@web3uikit/core";
 import genesisNFTContract from "../contracts/GenesisNFT.json";
 import { getAddressNFTs } from "../helpers/getAddressNFTs.js";
 import LinearProgressWithLabel from "../components/LinearProgressWithLabel";
@@ -10,7 +10,13 @@ import Box from "@mui/material/Box";
 import GenesisMint from "../components/GenesisMint";
 import GenesisBurn from "../components/GenesisBurn";
 import StyledModal from "../components/StyledModal";
-import { useContract, useProvider, useNetwork, useAccount } from "wagmi";
+import {
+  useContract,
+  useProvider,
+  useNetwork,
+  useAccount,
+  chainId,
+} from "wagmi";
 import { CardActionArea } from "@mui/material";
 import Card from "@mui/material/Card";
 import Link from "@mui/material/Link";
@@ -193,8 +199,8 @@ export default function Genesis() {
                 fontSize: 20,
                 textColor: "white",
               }}
-              text={hasLocked ? "Minted." : "Mint"}
-              disabled={hasLocked}
+              text={"Mint Genesis NFT"}
+              disabled={chainId != 1}
               theme="custom"
               size="large"
               radius="12"
@@ -212,6 +218,17 @@ export default function Genesis() {
               }}
             />
           </div>
+          {chain.id != 1 && (
+            <div className="flex flex-row justify-center text-center mb-4">
+              <Typography
+                variant="subtitle2"
+                color="#BF6958"
+                sx={{ fontFamily: "Monospace" }}
+              >
+                {"This feature is only available on Ethereum Mainnet"}
+              </Typography>
+            </div>
+          )}
         </div>
         <div className="flex flex-col border-4 m-2 mt-8 p-2 md:m-8 rounded-3xl bg-black/5 shadow-lg max-w-3xl">
           <div className="flex flex-row p-4 md:p-8">

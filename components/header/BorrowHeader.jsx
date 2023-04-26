@@ -11,6 +11,7 @@ import {
 } from "@web3uikit/icons";
 import Box from "@mui/material/Box";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import { Trending } from "@web3uikit/icons";
 import { useState } from "react";
 import Router from "next/router";
 
@@ -45,6 +46,30 @@ export default function BorrowHeader() {
             </div>
           }
           items={[
+            {
+              label: (
+                <Box
+                  className="m-1"
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                    letterSpacing: 2,
+                  }}
+                >
+                  Trade
+                </Box>
+              ),
+              onClick: () => {
+                Router.push({
+                  pathname: "/trade",
+                });
+              },
+              icon: (
+                <div className="mr-1 my-1">
+                  <Trending fontSize="20px" />
+                </div>
+              ),
+            },
             {
               label: (
                 <Box
@@ -173,12 +198,41 @@ export default function BorrowHeader() {
         />
       </div>
       <div className="hidden md:flex flex-row md:items-center">
-        <div className="flex flex-col m-2">
+        <div className="flex flex-col m-2 space-y-1 border-r-2 p-2 pr-4">
+          <Link href="/trade">
+            <Button
+              primary
+              size="medium"
+              color={UNSELECTED_COLOR}
+              onClick={() => {
+                setOption("trade");
+              }}
+              label={
+                <div className="flex md:hidden xl:flex">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                      letterSpacing: 4,
+                    }}
+                  >
+                    Trade
+                  </Box>
+                </div>
+              }
+              icon={
+                <div className="pl-[10px]">
+                  <Trending fontSize="20px" color="#000000" />
+                </div>
+              }
+            />
+          </Link>
           <Link href="/borrow">
             <Button
               primary
               size="medium"
-              color={option == "borrow" ? SELECTED_COLOR : UNSELECTED_COLOR}
+              color={SELECTED_COLOR}
               onClick={() => {
                 setOption("borrow");
               }}

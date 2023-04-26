@@ -10,6 +10,7 @@ import {
   Trending,
   Menu as MenuIcon,
 } from "@web3uikit/icons";
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import Box from "@mui/material/Box";
 import { useState } from "react";
 import Router from "next/router";
@@ -66,6 +67,31 @@ export default function TradeHeader() {
               icon: (
                 <div className="mr-1 my-1">
                   <Trending fontSize="20px" />
+                </div>
+              ),
+            },
+            {
+              label: (
+                <Box
+                  className="m-1"
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                    letterSpacing: 2,
+                  }}
+                >
+                  Borrow
+                </Box>
+              ),
+              onClick: () => {
+                Router.push({
+                  pathname: "/borrow",
+                  options: { locale: "borrow" },
+                });
+              },
+              icon: (
+                <div className="flex items-center justify-center mr-1 mt-1">
+                  <AccountBalanceIcon fontSize="20px" />
                 </div>
               ),
             },
@@ -145,12 +171,12 @@ export default function TradeHeader() {
         />
       </div>
       <div className="hidden md:flex flex-row md:items-center">
-        <div className="flex flex-col m-2">
+        <div className="flex flex-col m-2 space-y-1 border-r-2 p-2 pr-4">
           <Link href="/trade">
             <Button
               primary
               size="medium"
-              color={option == "trade" ? SELECTED_COLOR : UNSELECTED_COLOR}
+              color={SELECTED_COLOR}
               onClick={() => {
                 setOption("trade");
               }}
@@ -171,6 +197,35 @@ export default function TradeHeader() {
               icon={
                 <div className="pl-[10px]">
                   <Trending fontSize="20px" color="#000000" />
+                </div>
+              }
+            />
+          </Link>
+          <Link href="/borrow">
+            <Button
+              primary
+              size="medium"
+              color={UNSELECTED_COLOR}
+              onClick={() => {
+                setOption("borrow");
+              }}
+              label={
+                <div className="flex md:hidden xl:flex">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                      letterSpacing: 4,
+                    }}
+                  >
+                    Borrow
+                  </Box>
+                </div>
+              }
+              icon={
+                <div className="flex items-center justify-center pl-[10px]">
+                  <AccountBalanceIcon fontSize="20px" color="#000000" />
                 </div>
               }
             />

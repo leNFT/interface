@@ -1,4 +1,4 @@
-import { Button } from "@web3uikit/core";
+import { Button } from "grommet";
 import testNFTContract from "../contracts/test/TestNFT.json";
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
@@ -75,7 +75,7 @@ export default function Test() {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-col justify-center text-center">
+      <div className="flex flex-col justify-center items-center text-center">
         <Box
           sx={{
             fontFamily: "Monospace",
@@ -93,6 +93,17 @@ export default function Test() {
           className="mb-10"
         >
           <ol className="space-y-2 text-start">
+            <li>
+              - Get some Sepolia ETH from a{" "}
+              <Link
+                href="https://sepoliafaucet.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                faucet
+              </Link>
+            </li>
+
             <li>- Mint some Test NFTs using the buttons in this page</li>
             <li>- Mint some LE tokens using the faucet in this page</li>
             <li>- Buy / Sell TestNFT for ETH using the TRADE page</li>
@@ -114,66 +125,59 @@ export default function Test() {
             </li>
           </ol>
         </Box>
-        <Button
-          text="Mint Test NFT"
-          isFullWidth
-          isLoading={mintingLoading}
-          loadingProps={{
-            spinnerColor: "#000000",
-          }}
-          onClick={async function () {
-            try {
-              setMintingLoading(true);
-              const tx = await testNFTSigner.mint(address);
-              await tx.wait(1);
-              handleMintTestNFTSuccess();
-            } catch (error) {
-              console.log(error);
-            } finally {
-              setMintingLoading(false);
-            }
-          }}
-        />
-        <Button
-          text="Mint Test NFT 2"
-          isFullWidth
-          isLoading={minting2Loading}
-          loadingProps={{
-            spinnerColor: "#000000",
-          }}
-          onClick={async function () {
-            try {
-              setMinting2Loading(true);
-              const tx = await testNFT2Signer.mint(address);
-              await tx.wait(1);
-              handleMintTestNFT2Success();
-            } catch (error) {
-              console.log(error);
-            } finally {
-              setMinting2Loading(false);
-            }
-          }}
-        />
-        <Button
-          text="Get 50 LE from Faucet"
-          isFullWidth
-          isLoading={nativeTokenLoading}
-          loadingProps={{
-            spinnerColor: "#000000",
-          }}
-          onClick={async function () {
-            try {
-              setNativeTokenLoading(true);
-              const tx = await nativeTokenFaucetSigner.drip(address);
-              await tx.wait(1);
-              handleDripTokenSuccess();
-            } catch (error) {
-              console.log(error);
-            } finally {
-              setNativeTokenLoading(false);
-            }
-          }}
-        />
+        <div className="flex flex-col justify-center space-y-2 items-center w-4/12 text-center">
+          <Button
+            primary
+            size="medium"
+            label="Mint Test NFT"
+            onClick={async function () {
+              try {
+                setMintingLoading(true);
+                const tx = await testNFTSigner.mint(address);
+                await tx.wait(1);
+                handleMintTestNFTSuccess();
+              } catch (error) {
+                console.log(error);
+              } finally {
+                setMintingLoading(false);
+              }
+            }}
+          />
+          <Button
+            label="Mint Test NFT 2"
+            primary
+            size="medium"
+            onClick={async function () {
+              try {
+                setMinting2Loading(true);
+                const tx = await testNFT2Signer.mint(address);
+                await tx.wait(1);
+                handleMintTestNFT2Success();
+              } catch (error) {
+                console.log(error);
+              } finally {
+                setMinting2Loading(false);
+              }
+            }}
+          />
+          <Button
+            label="Get 50 LE from Faucet"
+            primary
+            size="medium"
+            onClick={async function () {
+              try {
+                setNativeTokenLoading(true);
+                const tx = await nativeTokenFaucetSigner.drip(address);
+                await tx.wait(1);
+                handleDripTokenSuccess();
+              } catch (error) {
+                console.log(error);
+              } finally {
+                setNativeTokenLoading(false);
+              }
+            }}
+          />
+        </div>
       </div>
     </div>
   );

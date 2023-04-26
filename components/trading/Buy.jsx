@@ -2,6 +2,7 @@ import { useNotification, Typography } from "@web3uikit/core";
 import contractAddresses from "../../contractAddresses.json";
 import {
   useAccount,
+  useBalance,
   useNetwork,
   useContract,
   useSigner,
@@ -39,6 +40,9 @@ export default function Buy() {
   const { chain } = useNetwork();
   const { address, isConnected } = useAccount();
   const provider = useProvider();
+  const { data: ethBalance } = useBalance({
+    addressOrName: address,
+  });
   const [availableNFTs, setAvailableNFTs] = useState([]);
   const [selectingNFTs, setSelectingNFTs] = useState(false);
   const [selectedNFTs, setSelectedNFTs] = useState([]);
@@ -644,6 +648,14 @@ export default function Buy() {
                   position: "bottomL",
                 });
                 return;
+              }
+              if (priceQuote.price > ethBalance) {
+                dispatch({
+                  type: "info",
+                  message: "You don't have enough ETH",
+                  title: "Insufficient ETH",
+                  position: "bottomL",
+                });
               }
               setBuyLoading(true);
               try {

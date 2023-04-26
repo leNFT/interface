@@ -255,8 +255,8 @@ export default function TradingPool() {
             {poolInfo?.token.name}
           </Box>
         </div>
-        <div className="flex flex-row justify-center items-center space-x-8 mt-4 p-6 border-2 rounded-3xl border-black">
-          <div className="flex flex-col border-r-2 pr-8 border-black justify-center items-center text-center">
+        <div className="flex flex-col sm:flex-row justify-center items-center sm:space-x-8 space-y-2 sm:space-y-0 mt-4 p-6 border-2 rounded-3xl border-black">
+          <div className="flex flex-col border-r-2 sm:pr-8 md:border-black justify-center items-center text-center">
             <Box
               sx={{
                 fontFamily: "Monospace",
@@ -281,7 +281,7 @@ export default function TradingPool() {
               {(price ? formatUnits(price.buyPrice, 18) : "0.00") + " ETH"}
             </Box>
           </div>
-          <div className="flex flex-col border-r-2 pr-8 border-black justify-center items-center text-center">
+          <div className="flex flex-col border-r-2 sm:pr-8 md:border-black justify-center items-center text-center">
             <Box
               sx={{
                 fontFamily: "Monospace",
@@ -328,7 +328,9 @@ export default function TradingPool() {
                 },
               }}
             >
-              {(poolInfo ? formatUnits(poolInfo.volume, 18) : "0.00") + " ETH"}
+              {(poolInfo
+                ? Number(formatUnits(poolInfo.volume, 18)).toFixed(3)
+                : "0.00") + " ETH"}
             </Box>
           </div>
         </div>

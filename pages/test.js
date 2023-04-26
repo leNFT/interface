@@ -119,9 +119,12 @@ export default function Test() {
               the LE inflation to the TEST NFT pool
             </li>
             <li>
-              - Due to the unavailability of the deployable Balancer pool on the
-              Sepolia testnet, the minting function for the Genesis NFT is
-              currently non-functional.
+              <Box sx={{ fontSize: "larger" }}>
+                - Due to the unavailability of the deployable Balancer pool on
+                the Sepolia testnet, the minting function for the{" "}
+                <strong>Genesis NFT is currently not mintable</strong> in the
+                sepolia testing environment.
+              </Box>
             </li>
           </ol>
         </Box>

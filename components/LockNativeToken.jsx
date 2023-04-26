@@ -27,9 +27,8 @@ export default function LockNativeToken(props) {
   const { chain } = useNetwork();
   const provider = useProvider();
   const { data: signer } = useSigner();
-  const [amount, setAmount] = useState("0");
+  const [amount, setAmount] = useState("1");
   const [balance, setBalance] = useState("0");
-  const [approved, setApproved] = useState(false);
   const [lockedLoading, setLockedLoading] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [unlockTime, setUnlockTime] = useState(
@@ -37,6 +36,7 @@ export default function LockNativeToken(props) {
   );
   const [lockWeight, setLockWeight] = useState("0");
   const [lockDuration, setLockDuration] = useState(2);
+  const [allowance, setAllowance] = useState("0");
 
   const dispatch = useNotification();
   var addresses = contractAddresses["11155111"];
@@ -88,11 +88,8 @@ export default function LockNativeToken(props) {
       address,
       addresses.VotingEscrow
     );
-    console.log("Got allowance:", allowance);
-
-    if (!allowance.eq(BigNumber.from(0))) {
-      setApproved(true);
-    }
+    setAllowance(allowance.toString());
+    console.log("Got allowance:", BigNumber.from(allowance).toString());
   }
 
   useEffect(() => {
@@ -196,7 +193,7 @@ export default function LockNativeToken(props) {
               numberMax: Number(formatUnits(0, 18)),
               numberMin: 0,
             }}
-            disabled={!approved}
+            disabled={BigNumber.from(allowance).lte(amount)}
             onChange={handleAmountChange}
           />
         </div>
@@ -231,7 +228,7 @@ export default function LockNativeToken(props) {
           />
         </div>
       </div>
-      {approved ? (
+      {BigNumber.from(allowance).gte(amount) ? (
         <div className="my-4 md:m-8">
           <Button
             text={

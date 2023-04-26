@@ -128,7 +128,7 @@ export default function Test() {
             </li>
           </ol>
         </Box>
-        <div className="flex flex-col justify-center space-y-2 items-center w-10/12 md:w-4/12 text-center">
+        <div className="flex flex-col justify-center space-y-2 items-center text-center">
           <Button
             primary
             size="medium"

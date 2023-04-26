@@ -35,29 +35,15 @@ export default function Genesis() {
   const [userGenesisNFTs, setUserGenesisNFTs] = useState([]);
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
-  const [hasLocked, setHasLocked] = useState(false);
   const provider = useProvider();
   const dispatch = useNotification();
   var addresses = contractAddresses["11155111"];
-
-  const votingEscrowProvider = useContract({
-    contractInterface: votingEscrowContract.abi,
-    addressOrName: addresses.VotingEscrow,
-    signerOrProvider: provider,
-  });
 
   const genesisNFTProvider = useContract({
     contractInterface: genesisNFTContract.abi,
     addressOrName: addresses.GenesisNFT,
     signerOrProvider: provider,
   });
-
-  async function getLocked() {
-    const locked = await votingEscrowProvider.locked(address);
-    if (locked.end > Date.now() / 1000 || BigNumber.from(locked.amount).gt(0)) {
-      setHasLocked(true);
-    }
-  }
 
   async function updateGenesisInfo() {
     // Get supply
@@ -93,7 +79,6 @@ export default function Genesis() {
   useEffect(() => {
     if (isConnected) {
       updateUI();
-      getLocked();
     }
   }, [isConnected, address, chain]);
 
@@ -218,7 +203,7 @@ export default function Genesis() {
               }}
             />
           </div>
-          {chain.id != 1 && (
+          {chain?.id != 1 && (
             <div className="flex flex-row justify-center text-center mb-4">
               <Typography
                 variant="subtitle2"

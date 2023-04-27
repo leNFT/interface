@@ -49,8 +49,10 @@ export default function Lock() {
     useState(false);
   const [unlockTime, setUnlockTime] = useState(0);
   const [claimingLoading, setClaimingLoading] = useState(false);
+  const [claimingRebatesLoading, setClaimingRebatesLoading] = useState(false);
   const [votingLoading, setVotingLoading] = useState(false);
-  const [claimableRewards, setClaimableRewards] = useState("0");
+  const [claimableFees, setClaimableFees] = useState("0");
+  const [claimableRebates, setClaimableRebates] = useState("0");
   const [bribeRewards, setBribeRewards] = useState("0");
   const [claimingBribesLoading, setClaimingBribesLoading] = useState(false);
   const [selectedGauge, setSelectedGauge] = useState();
@@ -79,6 +81,12 @@ export default function Lock() {
     contractInterface: votingEscrowContract.abi,
     addressOrName: addresses.VotingEscrow,
     signerOrProvider: provider,
+  });
+
+  const votingEscrowSigner = useContract({
+    contractInterface: votingEscrowContract.abi,
+    addressOrName: addresses.VotingEscrow,
+    signerOrProvider: signer,
   });
 
   const bribesProvider = useContract({
@@ -140,17 +148,24 @@ export default function Lock() {
     console.log("updatedVoteRatio", updatedVoteRatio.toString());
     setTotalVoteRatio(updatedVoteRatio.toString());
 
-    // Get the claimable rewards
-    const updatedClaimableRewards =
-      await feeDistributorProvider.callStatic.claim(
-        addresses.ETH.address,
-        selectedLock,
-        {
-          from: address,
-        }
-      );
-    console.log("updatedClaimableRewards", updatedClaimableRewards);
-    setClaimableRewards(updatedClaimableRewards.toString());
+    // Get the claimable fees
+    const updatedClaimableFees = await feeDistributorProvider.callStatic.claim(
+      addresses.ETH.address,
+      selectedLock,
+      {
+        from: address,
+      }
+    );
+    console.log("updatedClaimableFees", updatedClaimableFees);
+    setClaimableFees(updatedClaimableFees.toString());
+
+    // Get the claimbable rebates
+    const updatedClaimableRebates =
+      await votingEscrowProvider.callStatic.claimRebates(selectedLock, {
+        from: address,
+      });
+    console.log("updatedClaimableRebates", updatedClaimableRebates);
+    setClaimableRebates(updatedClaimableRebates.toString());
   }
 
   async function updateUI() {
@@ -344,6 +359,15 @@ export default function Lock() {
     dispatch({
       type: "success",
       message: "You claimed your rewards",
+      title: "Claim Successful!",
+      position: "bottomL",
+    });
+  };
+
+  const handleClaimRebatesSuccess = async function () {
+    dispatch({
+      type: "success",
+      message: "You claimed your rebates",
       title: "Claim Successful!",
       position: "bottomL",
     });
@@ -786,9 +810,8 @@ export default function Lock() {
                           fontSize: "subtitle1.fontSize",
                         }}
                       >
-                        {Number(formatUnits(claimableRewards, 18)).toPrecision(
-                          3
-                        ) + " wETH"}
+                        {Number(formatUnits(claimableFees, 18)).toPrecision(3) +
+                          " wETH"}
                       </Box>
                       <div className="ml-4">
                         <Button
@@ -797,8 +820,8 @@ export default function Lock() {
                             fontSize: 16,
                             textColor: "white",
                           }}
-                          disabled={BigNumber.from(claimableRewards).eq(0)}
-                          text="Claim"
+                          disabled={BigNumber.from(claimableFees).eq(0)}
+                          text="Claim wETH"
                           theme="custom"
                           size="small"
                           Loading={claimingLoading}
@@ -814,6 +837,46 @@ export default function Lock() {
                               console.log(error);
                             } finally {
                               setClaimingLoading(false);
+                            }
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex flex-row my-2 items-center">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle1.fontSize",
+                        }}
+                      >
+                        {Number(formatUnits(claimableRebates, 18)).toPrecision(
+                          2
+                        ) + " LE"}
+                      </Box>
+                      <div className="ml-4">
+                        <Button
+                          customize={{
+                            backgroundColor: "grey",
+                            fontSize: 16,
+                            textColor: "white",
+                          }}
+                          disabled={BigNumber.from(claimableRebates).eq(0)}
+                          text="Claim LE"
+                          theme="custom"
+                          size="small"
+                          Loading={claimingRebatesLoading}
+                          onClick={async function () {
+                            try {
+                              setClaimingLoading(true);
+                              const tx = await votingEscrowSigner.claimRebates(
+                                selectedLock
+                              );
+                              await tx.wait(1);
+                              await handleClaimRebatesSuccess();
+                            } catch (error) {
+                              console.log(error);
+                            } finally {
+                              setClaimingRebatesLoading(false);
                             }
                           }}
                         />

@@ -164,7 +164,7 @@ export default function Test() {
             }}
           />
           <Button
-            label="Get 50 LE from Faucet"
+            label="Get 1000 LE from Faucet"
             primary
             size="medium"
             onClick={async function () {

@@ -133,7 +133,7 @@ export default function LockNativeToken(props) {
   };
 
   const handleApprovalSuccess = async function () {
-    setApproved(true);
+    getTokenAllowance();
     dispatch({
       type: "success",
       message: "You can now lock tokens in the escrow contract.",

@@ -120,8 +120,8 @@ export default function Test() {
             </li>
             <li>
               <Box sx={{ fontSize: "larger" }}>
-                - Due to the unavailability of the deployable Balancer pool on
-                the Sepolia testnet, the minting function for the{" "}
+                - Due to Balancer not being available on the Sepolia testnet
+                yet, the minting function for the{" "}
                 <strong>Genesis NFT is currently not mintable</strong> in the
                 sepolia testing environment.
               </Box>

@@ -54,6 +54,7 @@ export default function Sell() {
   const [nftName, setNFTName] = useState("");
   const [collectionThumbnailURL, setCollectionThumbnailURL] = useState("");
   const [poolHistory, setPoolHistory] = useState([]);
+  const [nftImages, setNFTImages] = useState([]);
 
   const dispatch = useNotification();
 
@@ -149,6 +150,14 @@ export default function Sell() {
         console.log("newSelectedNFTs", newSelectedNFTs);
         setSelectedNFTs(newSelectedNFTs);
       }
+
+      // Get the NFT images
+      const images = await Promise.all(
+        newSelectedNFTs.map(async (nft) => {
+          return await getNFTImage(nftAddress, nft, chain.id);
+        })
+      );
+      setNFTImages(images);
     }
   }
 
@@ -534,68 +543,85 @@ export default function Sell() {
         </div>
         {loadingPriceQuote && <Loading className="m-12" size="xl" />}
         {priceQuote && (
-          <div className="flex flex-col items-center text-center justify-center p-4 m-4 rounded-3xl bg-black/5 shadow-lg">
-            <Box
-              className="mb-4"
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle2.fontSize",
-                fontWeight: "bold",
-              }}
-            >
-              Your sell quote
-            </Box>
-            <div className="flex flex-row w-full justify-center items-center m-2">
-              <Divider style={{ width: "100%" }}>
-                {nftName && (
-                  <Chip
-                    label={
-                      <Box
-                        sx={{
-                          fontFamily: "Monospace",
-                          fontSize: "subtitle2.fontSize",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {nftName ? amount + " " + nftName : "?"}
-                      </Box>
-                    }
-                    variant="outlined"
-                    component="a"
-                    clickable
-                    target="_blank"
-                    href={
-                      isConnected
-                        ? chain.id == 1
-                          ? "https://etherscan.io/address/" + nftAddress
-                          : "https://sepolia.etherscan.io/address/" + nftAddress
-                        : "https://sepolia.etherscan.io/address/" + nftAddress
-                    }
-                  />
-                )}
-              </Divider>
-            </div>
-            <Box
-              className="m-4"
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "h6.fontSize",
-                fontWeight: "bold",
-              }}
-            >
-              {formatUnits(priceQuote.price, 18)} WETH
-            </Box>
-            {priceQuote.priceImpact != undefined && (
+          <div className="flex flex-col sm:flex-row items-start justify-center">
+            <div className="flex flex-col sm:w-6/12 items-center text-center justify-center p-4 m-4 rounded-3xl bg-black/5 shadow-lg">
               <Box
-                className="m-1"
+                className="mb-4"
                 sx={{
                   fontFamily: "Monospace",
-                  fontSize: "subtitle1.fontSize",
+                  fontSize: "subtitle2.fontSize",
+                  fontWeight: "bold",
                 }}
               >
-                Price Impact: {priceQuote.priceImpact / 100}%
+                Your sell quote
               </Box>
-            )}
+              <div className="flex flex-row w-full justify-center items-center m-2">
+                <Divider style={{ width: "100%" }}>
+                  {nftName && (
+                    <Chip
+                      label={
+                        <Box
+                          sx={{
+                            fontFamily: "Monospace",
+                            fontSize: "subtitle2.fontSize",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {nftName ? amount + " " + nftName : "?"}
+                        </Box>
+                      }
+                      variant="outlined"
+                      component="a"
+                      clickable
+                      target="_blank"
+                      href={
+                        isConnected
+                          ? chain.id == 1
+                            ? "https://etherscan.io/address/" + nftAddress
+                            : "https://sepolia.etherscan.io/address/" +
+                              nftAddress
+                          : "https://sepolia.etherscan.io/address/" + nftAddress
+                      }
+                    />
+                  )}
+                </Divider>
+              </div>
+              <Box
+                className="m-4"
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "h6.fontSize",
+                  fontWeight: "bold",
+                }}
+              >
+                {formatUnits(priceQuote.price, 18)} WETH
+              </Box>
+              {priceQuote.priceImpact != undefined && (
+                <Box
+                  className="m-1"
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                  }}
+                >
+                  Price Impact: {priceQuote.priceImpact / 100}%
+                </Box>
+              )}
+            </div>
+            <div className="grid sm:w-6/12 grid-cols-3 gap-4 p-4 m-4 rounded-3xl bg-black/5 shadow-lg">
+              {nftImages.map((imageUrl, index) => (
+                <div key={index} className="flex items-center justify-center">
+                  <Image
+                    loader={() => imageUrl}
+                    src={imageUrl}
+                    height="80"
+                    width="80"
+                    unoptimized={true}
+                    className="rounded-3xl"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         )}
         <div className="flex flex-row m-6 w-8/12 md:w-6/12">

@@ -356,6 +356,7 @@ export default function Lock() {
   }
 
   const handleClaimSuccess = async function () {
+    updateUI();
     dispatch({
       type: "success",
       message: "You claimed your rewards",
@@ -365,6 +366,7 @@ export default function Lock() {
   };
 
   const handleClaimRebatesSuccess = async function () {
+    updateUI();
     dispatch({
       type: "success",
       message: "You claimed your rebates",

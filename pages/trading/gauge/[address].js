@@ -36,7 +36,7 @@ export default function TradingPoolGauge() {
   const { data: signer } = useSigner();
   const [lpToken, setLPToken] = useState("");
   const [boost, setBoost] = useState(0);
-  const [maturityBoost, setMaturityBoost] = useState(0);
+  const [maturityMultiplier, setMaturityMultiplier] = useState(0);
   const [claimableRewards, setClaimableRewards] = useState("0");
   const [stakedLPs, setStakedLPs] = useState([]);
   const [selectedLP, setSelectedLP] = useState();
@@ -84,9 +84,14 @@ export default function TradingPoolGauge() {
     console.log("boostResponse", boostResponse.toNumber());
     setBoost(boostResponse.toNumber());
 
-    const maturityBoostResponse = await gauge.userMaturityBoost(address);
-    console.log("maturityBoostResponse", maturityBoostResponse.toNumber());
-    setMaturityBoost(maturityBoostResponse.toNumber());
+    const maturityMultiplierResponse = await gauge.userMaturityMultiplier(
+      address
+    );
+    console.log(
+      "maturityMultiplierResponse",
+      maturityMultiplierResponse.toNumber()
+    );
+    setMaturityMultiplier(maturityMultiplierResponse.toNumber());
 
     const newUserLockedValue = await gauge.userLPValue(address);
     console.log("newUserLockedValue", newUserLockedValue.toString());
@@ -431,7 +436,7 @@ export default function TradingPoolGauge() {
                       fontWeight: "bold",
                     }}
                   >
-                    {maturityBoost / 10000 + "x Maturity Boost"}
+                    {maturityMultiplier / 10000 + "x Time Multiplier"}
                   </Box>
                 </div>
               </div>

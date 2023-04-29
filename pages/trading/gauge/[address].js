@@ -36,6 +36,7 @@ export default function TradingPoolGauge() {
   const { data: signer } = useSigner();
   const [lpToken, setLPToken] = useState("");
   const [boost, setBoost] = useState(0);
+  const [maturityBoost, setMaturityBoost] = useState(0);
   const [claimableRewards, setClaimableRewards] = useState("0");
   const [stakedLPs, setStakedLPs] = useState([]);
   const [selectedLP, setSelectedLP] = useState();
@@ -82,6 +83,10 @@ export default function TradingPoolGauge() {
     const boostResponse = await gauge.userBoost(address);
     console.log("boostResponse", boostResponse.toNumber());
     setBoost(boostResponse.toNumber());
+
+    const maturityBoostResponse = await gauge.userMaturityBoost(address);
+    console.log("maturityBoostResponse", maturityBoostResponse.toNumber());
+    setMaturityBoost(maturityBoostResponse.toNumber());
 
     const newUserLockedValue = await gauge.userLPValue(address);
     console.log("newUserLockedValue", newUserLockedValue.toString());
@@ -408,18 +413,26 @@ export default function TradingPoolGauge() {
                     </Box>
                   </div>
                 </div>
-                <div className="flex flex-row m-2">
-                  <div className="flex flex-col">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "h5.fontSize",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {boost / 10000 + "x Boost"}
-                    </Box>
-                  </div>
+
+                <div className="flex flex-col m-2 space-y-1 p-3 border-4 border-rose-800 rounded-lg">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {boost / 10000 + "x Boost"}
+                  </Box>
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {maturityBoost / 10000 + "x Maturity Boost"}
+                  </Box>
                 </div>
               </div>
               <div className="flex flex-row items-center ">

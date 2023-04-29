@@ -201,7 +201,7 @@ export default function TradingPool() {
         </div>
       </div>
 
-      <div className="flex flex-col justify-center items-center p-8 rounded-3xl m-8 lg:mx-16 bg-black/5 shadow-lg">
+      <div className="flex flex-col lg:flex-row justify-between items-center p-8 rounded-3xl m-8 lg:mx-16 bg-black/5 shadow-lg">
         <div className="flex flex-row justify-center items-center">
           <LinkTo
             type="external"
@@ -255,7 +255,7 @@ export default function TradingPool() {
             {poolInfo?.token.name}
           </Box>
         </div>
-        <div className="flex flex-col sm:flex-row justify-center items-center sm:space-x-8 space-y-2 sm:space-y-0 mt-4 p-6 border-2 rounded-3xl border-black">
+        <div className="flex flex-col sm:flex-row justify-center items-center sm:space-x-8 space-y-2 sm:space-y-0 mt-4 mx-2 p-6 border-2 rounded-3xl border-black">
           <div className="flex flex-col border-r-2 sm:pr-8 md:border-black justify-center items-center text-center">
             <Box
               sx={{

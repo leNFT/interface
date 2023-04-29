@@ -15,6 +15,7 @@ import { CardActionArea } from "@mui/material";
 import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import Image from "next/image";
+import CurveChart from "../CurveChart.jsx";
 import {
   useNotification,
   Button,
@@ -205,213 +206,226 @@ export default function DepositTradingPool(props) {
           </Dropdown.Menu>
         </Dropdown>
       </div>
-      <div className="flex flex-row items-center justify-center mt-8 m-12">
-        <Input
-          label={
-            curve == "exponential"
-              ? "Delta %"
-              : curve == "linear"
-              ? "Delta (Amount)"
-              : "Delta"
-          }
-          value={delta}
-          type="number"
-          step="any"
-          placeholder={
-            curve == "exponential"
-              ? "20 %"
-              : curve == "linear"
-              ? "0.01 ETH"
-              : "0"
-          }
-          description="The LP price change after each buy/sell"
-          validation={{
-            numberMin: 0,
-          }}
-          onChange={handleDeltaChange}
-        />
-      </div>
-      <div className="flex flex-row items-center justify-center m-12">
-        <Input
-          label="Initial Price"
-          type="number"
-          placeholder="0.01 ETH"
-          value={initialPrice}
-          step="any"
-          description="The initial price of the LP"
-          validation={{
-            numberMin: formatUnits("1", 18),
-          }}
-          onChange={handleInitialPriceChange}
-        />
-      </div>
-      <div className="flex flex-row items-center justify-center m-12">
-        <Input
-          label="ETH Amount"
-          type="number"
-          placeholder="2.5 ETH"
-          value={tokenAmount}
-          step="any"
-          validation={{
-            numberMin: 0,
-          }}
-          description="Amount of ETH to deposit."
-          onChange={handleTokenAmountChange}
-        />
-      </div>
-      <div className="flex flex-row items-center justify-center m-12">
-        <Input
-          label="Fee %"
-          type="number"
-          placeholder="0.05 %"
-          value={fee}
-          step="any"
-          validation={{
-            numberMin: 0,
-          }}
-          description="Fee charged by your LP"
-          onChange={handleFeeChange}
-        />
-      </div>
-      <div className="flex flex-row items-center justify-center m-8">
-        {approvedNFT ? (
-          <Button
-            text={nftAmount ? "Selected " + nftAmount + " NFTs" : "Select NFTs"}
-            theme="secondary"
-            isFullWidth
-            loadingProps={{
-              spinnerColor: "#000000",
-              spinnerType: "loader",
-              direction: "right",
-              size: "24",
-            }}
-            loadingText=""
-            onClick={async function () {
-              setSelectingNFTs(!selectingNFTs);
-            }}
-          />
-        ) : (
-          <Button
-            text="Approve NFT"
-            theme="secondary"
-            isFullWidth
-            loadingProps={{
-              spinnerColor: "#000000",
-              spinnerType: "loader",
-              direction: "right",
-              size: "24",
-            }}
-            loadingText=""
-            isLoading={approvalNFTLoading}
-            onClick={async function () {
-              try {
-                setApprovalNFTLoading(true);
-                console.log("signer.", signer);
-                const nftContract = new ethers.Contract(
-                  props.nft,
-                  erc721,
-                  signer
-                );
-                const tx = await nftContract.setApprovalForAll(
-                  addresses.WETHGateway,
-                  true
-                );
-                await tx.wait(1);
-                handleNFTApprovalSuccess();
-              } catch (error) {
-                console.log(error);
-              } finally {
-                setApprovalNFTLoading(false);
+      <div className="flex flex-col-reverse justify-center md:flex-row">
+        <div className="flex flex-col space-y-12 m-4">
+          <div className="flex flex-row items-center justify-center mt-8">
+            <Input
+              label={
+                curve == "exponential"
+                  ? "Delta %"
+                  : curve == "linear"
+                  ? "Delta (Amount)"
+                  : "Delta"
               }
-            }}
-          ></Button>
-        )}
-      </div>
-      {selectingNFTs &&
-        (userNFTs.length > 0 ? (
-          <div className="flex flex-row grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {userNFTs.map((nft, _) => (
-              <div
-                key={BigNumber.from(nft.tokenId).toNumber()}
-                className="flex items-center justify-center max-w-[300px]"
-              >
-                <Card
-                  sx={{
-                    borderRadius: 4,
-                    background: selectedNFTs.includes(
-                      BigNumber.from(nft.tokenId).toNumber()
-                    )
-                      ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
-                      : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
-                  }}
-                >
-                  <CardActionArea
-                    onClick={function () {
-                      //If it's selected we unselect and if its unselected we select
-                      var newSelectedNFTs = selectedNFTs.slice();
-                      var index = newSelectedNFTs.findIndex(
-                        (element) =>
-                          element == BigNumber.from(nft.tokenId).toNumber()
-                      );
-                      if (index == -1) {
-                        newSelectedNFTs.push(
-                          BigNumber.from(nft.tokenId).toNumber()
-                        );
-                        setNFTAmount(nftAmount + 1);
-                      } else {
-                        newSelectedNFTs.splice(index, 1);
-                        setNFTAmount(nftAmount - 1);
-                      }
-                      setSelectedNFTs(newSelectedNFTs);
-                    }}
+              value={delta}
+              type="number"
+              step="any"
+              placeholder={
+                curve == "exponential"
+                  ? "20 %"
+                  : curve == "linear"
+                  ? "0.01 ETH"
+                  : "0"
+              }
+              description="The LP price change after each buy/sell"
+              validation={{
+                numberMin: 0,
+              }}
+              onChange={handleDeltaChange}
+            />
+          </div>
+          <div className="flex flex-row items-center justify-center">
+            <Input
+              label="Initial Price"
+              type="number"
+              placeholder="0.01 ETH"
+              value={initialPrice}
+              step="any"
+              description="The initial price of the LP"
+              validation={{
+                numberMin: formatUnits("1", 18),
+              }}
+              onChange={handleInitialPriceChange}
+            />
+          </div>
+          <div className="flex flex-row items-center justify-center">
+            <Input
+              label="ETH Amount"
+              type="number"
+              placeholder="2.5 ETH"
+              value={tokenAmount}
+              step="any"
+              validation={{
+                numberMin: 0,
+              }}
+              description="Amount of ETH to deposit."
+              onChange={handleTokenAmountChange}
+            />
+          </div>
+          <div className="flex flex-row items-center justify-center">
+            <Input
+              label="Fee %"
+              type="number"
+              placeholder="0.05 %"
+              value={fee}
+              step="any"
+              validation={{
+                numberMin: 0,
+              }}
+              description="Fee charged by your LP"
+              onChange={handleFeeChange}
+            />
+          </div>
+          <div className="flex flex-row items-center justify-center m-8">
+            {approvedNFT ? (
+              <Button
+                text={
+                  nftAmount ? "Selected " + nftAmount + " NFTs" : "Select NFTs"
+                }
+                theme="secondary"
+                isFullWidth
+                loadingProps={{
+                  spinnerColor: "#000000",
+                  spinnerType: "loader",
+                  direction: "right",
+                  size: "24",
+                }}
+                loadingText=""
+                onClick={async function () {
+                  setSelectingNFTs(!selectingNFTs);
+                }}
+              />
+            ) : (
+              <Button
+                text="Approve NFT"
+                theme="secondary"
+                isFullWidth
+                loadingProps={{
+                  spinnerColor: "#000000",
+                  spinnerType: "loader",
+                  direction: "right",
+                  size: "24",
+                }}
+                loadingText=""
+                isLoading={approvalNFTLoading}
+                onClick={async function () {
+                  try {
+                    setApprovalNFTLoading(true);
+                    console.log("signer.", signer);
+                    const nftContract = new ethers.Contract(
+                      props.nft,
+                      erc721,
+                      signer
+                    );
+                    const tx = await nftContract.setApprovalForAll(
+                      addresses.WETHGateway,
+                      true
+                    );
+                    await tx.wait(1);
+                    handleNFTApprovalSuccess();
+                  } catch (error) {
+                    console.log(error);
+                  } finally {
+                    setApprovalNFTLoading(false);
+                  }
+                }}
+              ></Button>
+            )}
+          </div>
+          {selectingNFTs &&
+            (userNFTs.length > 0 ? (
+              <div className="flex flex-row grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {userNFTs.map((nft, _) => (
+                  <div
+                    key={BigNumber.from(nft.tokenId).toNumber()}
+                    className="flex items-center justify-center max-w-[300px]"
                   >
-                    <div className="flex flex-col items-center p-1">
-                      {nft.media ? (
-                        <Image
-                          loader={() => nft.media.mediaCollection.low.url}
-                          src={nft.media.mediaCollection.low.url}
-                          height="100"
-                          width="100"
-                          className="rounded-xl"
-                        />
-                      ) : (
-                        <Box
-                          className="flex m-2 justify-center items-center w-[100px] h-[100px]"
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "caption",
-                          }}
-                        >
-                          No Image
-                        </Box>
-                      )}
-                      <Box
-                        className="mt-1"
-                        sx={{
-                          fontFamily: "Monospace",
-                          fontSize: "caption",
+                    <Card
+                      sx={{
+                        borderRadius: 4,
+                        background: selectedNFTs.includes(
+                          BigNumber.from(nft.tokenId).toNumber()
+                        )
+                          ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
+                          : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
+                      }}
+                    >
+                      <CardActionArea
+                        onClick={function () {
+                          //If it's selected we unselect and if its unselected we select
+                          var newSelectedNFTs = selectedNFTs.slice();
+                          var index = newSelectedNFTs.findIndex(
+                            (element) =>
+                              element == BigNumber.from(nft.tokenId).toNumber()
+                          );
+                          if (index == -1) {
+                            newSelectedNFTs.push(
+                              BigNumber.from(nft.tokenId).toNumber()
+                            );
+                            setNFTAmount(nftAmount + 1);
+                          } else {
+                            newSelectedNFTs.splice(index, 1);
+                            setNFTAmount(nftAmount - 1);
+                          }
+                          setSelectedNFTs(newSelectedNFTs);
                         }}
                       >
-                        {BigNumber.from(nft.tokenId).toNumber()}
-                      </Box>
-                    </div>
-                  </CardActionArea>
-                </Card>
+                        <div className="flex flex-col items-center p-1">
+                          {nft.media ? (
+                            <Image
+                              loader={() => nft.media.mediaCollection.low.url}
+                              src={nft.media.mediaCollection.low.url}
+                              height="100"
+                              width="100"
+                              className="rounded-xl"
+                            />
+                          ) : (
+                            <Box
+                              className="flex m-2 justify-center items-center w-[100px] h-[100px]"
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "caption",
+                              }}
+                            >
+                              No Image
+                            </Box>
+                          )}
+                          <Box
+                            className="mt-1"
+                            sx={{
+                              fontFamily: "Monospace",
+                              fontSize: "caption",
+                            }}
+                          >
+                            {BigNumber.from(nft.tokenId).toNumber()}
+                          </Box>
+                        </div>
+                      </CardActionArea>
+                    </Card>
+                  </div>
+                ))}
               </div>
+            ) : (
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle2.fontSize",
+                  fontWeight: "bold",
+                }}
+                className="flex m-2 justify-center items-center text-center"
+              >
+                {"Couldn't find any " + props.nftName + "'s in your wallet"}
+              </Box>
             ))}
-          </div>
-        ) : (
-          <Box
-            sx={{
-              fontFamily: "Monospace",
-              fontSize: "subtitle2.fontSize",
-              fontWeight: "bold",
-            }}
-            className="flex m-2 justify-center items-center text-center"
-          >
-            {"Couldn't find any " + props.nftName + "'s in your wallet"}
-          </Box>
-        ))}
+        </div>
+        <div className="flex flex-col justify-center m-4 w-5/12">
+          <CurveChart
+            curveType={curve}
+            delta={delta ? delta : "2000"}
+            initialPrice={initialPrice ? initialPrice : "0.01"}
+          />
+        </div>
+      </div>
       <div className="flex flex-row items-center justify-center m-8">
         <Button
           text={

@@ -67,7 +67,7 @@ export default function Test() {
   const handleDripTokenSuccess = async function () {
     dispatch({
       type: "success",
-      message: "Faucet dripped 50 LE to your wallet.",
+      message: "Faucet dripped 1000 LE to your wallet.",
       title: "Successful!",
       position: "bottomL",
     });
@@ -121,9 +121,8 @@ export default function Test() {
             <li>
               <Box sx={{ fontSize: "larger" }}>
                 - Due to Balancer not being available on the Sepolia testnet
-                yet, the minting function for the{" "}
-                <strong>Genesis NFT is currently not mintable</strong> in the
-                sepolia testing environment.
+                yet, <strong>Genesis NFT minting is not available</strong> in
+                the sepolia testing environment.
               </Box>
             </li>
           </ol>

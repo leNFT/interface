@@ -414,7 +414,7 @@ export default function TradingPoolGauge() {
                   </div>
                 </div>
 
-                <div className="flex flex-col m-2 space-y-1 p-3 border-4 border-rose-800 rounded-lg">
+                <div className="flex flex-col m-2 space-y-1 p-3 border-4 border-slate-400 rounded-lg">
                   <Box
                     sx={{
                       fontFamily: "Monospace",

@@ -9,8 +9,6 @@ import {
   ResponsiveContainer,
   Label,
 } from "recharts";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 // Custom label component for the x-axis
 // Custom label component for the x-axis
@@ -54,7 +52,9 @@ const CurveChart = ({
       } else if (curveType === "exponential") {
         y = Number(initialPrice) * (1 + delta / 100) ** i;
       }
-      data.push({ x: i, y });
+      if (y >= 0) {
+        data.push({ x: i, y });
+      }
     }
     return data;
   };
@@ -76,9 +76,29 @@ const CurveChart = ({
           />
         </XAxis>
 
-        <YAxis></YAxis>
+        <YAxis />
         <Tooltip />
-        <Line type="monotone" dataKey="y" stroke="#8884d8" />
+        <Line
+          dot={({ cx, cy, index }) => (
+            <circle
+              cx={cx}
+              cy={cy}
+              r={5}
+              fill={
+                index === 5
+                  ? "white"
+                  : index < curveData.length / 2
+                  ? "red"
+                  : "green"
+              }
+              stroke={index === 5 ? "#8884d8" : "none"}
+            />
+          )}
+          type="monotone"
+          strokeWidth={3}
+          dataKey="y"
+          stroke="#8884d8"
+        />
       </LineChart>
     </ResponsiveContainer>
   );

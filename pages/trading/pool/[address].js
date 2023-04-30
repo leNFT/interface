@@ -278,7 +278,9 @@ export default function TradingPool() {
                 },
               }}
             >
-              {(price ? formatUnits(price.buyPrice, 18) : "0.00") + " ETH"}
+              {(price
+                ? Number(formatUnits(price.buyPrice, 18)).toFixed(6)
+                : "0.00") + " ETH"}
             </Box>
           </div>
           <div className="flex flex-col border-r-2 sm:pr-8 md:border-black justify-center items-center text-center">
@@ -303,7 +305,9 @@ export default function TradingPool() {
                 },
               }}
             >
-              {(price ? formatUnits(price.sellPrice, 18) : "0.00") + " ETH"}
+              {(price
+                ? Number(formatUnits(price.sellPrice, 18)).toFixed(6)
+                : "0.00") + " ETH"}
             </Box>
           </div>
           <div className="flex flex-col justify-center items-center text-center">

@@ -543,7 +543,7 @@ export default function Sell() {
         </div>
         {loadingPriceQuote && <Loading className="m-12" size="xl" />}
         {priceQuote && (
-          <div className="flex flex-col sm:flex-row items-start justify-center">
+          <div className="flex flex-col sm:flex-row items-center justify-center">
             <div className="flex flex-col sm:w-6/12 items-center text-center justify-center p-4 m-4 rounded-3xl bg-black/5 shadow-lg">
               <Box
                 className="mb-4"

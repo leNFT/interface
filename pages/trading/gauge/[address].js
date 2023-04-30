@@ -436,7 +436,7 @@ export default function TradingPoolGauge() {
                       fontWeight: "bold",
                     }}
                   >
-                    {maturityMultiplier / 10000 + "x Time Multiplier"}
+                    {maturityMultiplier / 10000 + "x 🕚 Multiplier"}
                   </Box>
                 </div>
               </div>

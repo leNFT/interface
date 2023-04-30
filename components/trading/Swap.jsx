@@ -66,6 +66,8 @@ export default function Swap() {
     useState("");
   const [sellCollectionThumbnailURL, setSellCollectionThumbnailURL] =
     useState("");
+  const [buyNFTImages, setBuyNFTImages] = useState([]);
+  const [sellNFTImages, setSellNFTImages] = useState([]);
   const { data: ethBalance } = useBalance({
     addressOrName: address,
   });
@@ -155,7 +157,7 @@ export default function Swap() {
         console.log("newSwapQuote", newSwapQuote);
       }
 
-      // Warn user if the quote is couldnt be fully generated
+      // Warn user if the quote couldnt be fully generated
       if (newSwapQuote.sellLps.length < sellAmount) {
         dispatch({
           type: "warning",
@@ -195,6 +197,14 @@ export default function Swap() {
         setSelectedSellNFTs(newSelectedSellNFTs);
       }
 
+      // Get the sell NFT images
+      const sellNFTImages = await Promise.all(
+        newSelectedSellNFTs.map(async (nft) => {
+          return await getNFTImage(sellNFTAddress, nft, chain.id);
+        })
+      );
+      setSellNFTImages(sellNFTImages);
+
       setBuyAmount(newSwapQuote.buyLps.length);
       // Fill the selected NFTs array
       var newSelectedBuyNFTs = [];
@@ -218,6 +228,14 @@ export default function Swap() {
         console.log("newSelectedBuyNFTs", newSelectedBuyNFTs);
         setSelectedBuyNFTs(newSelectedBuyNFTs);
       }
+
+      // Get the sell NFT images
+      const buyNFTImages = await Promise.all(
+        newSelectedBuyNFTs.map(async (nft) => {
+          return await getNFTImage(buyNFTAddress, nft, chain.id);
+        })
+      );
+      setBuyNFTImages(buyNFTImages);
     } else {
       setPriceQuote();
     }
@@ -1052,138 +1070,171 @@ export default function Swap() {
       </div>
       {loadingPriceQuote && <Loading className="m-12" size="xl" />}
       {priceQuote && (
-        <div className="flex flex-col items-center text-center justify-center p-4 m-4 rounded-3xl bg-black/5 shadow-lg">
-          <Box
-            className="mb-4"
-            sx={{
-              fontFamily: "Monospace",
-              fontSize: "subtitle2.fontSize",
-              fontWeight: "bold",
-            }}
-          >
-            Your swap quote
-          </Box>
-          <div className="flex flex-row w-full justify-center items-center m-2">
-            <Divider style={{ width: "100%" }}>
-              <Chip
-                label={
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle2.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {sellNFTName ? sellAmount + " " + sellNFTName : "?"}
-                  </Box>
-                }
-                variant="outlined"
-                component="a"
-                clickable={sellNFTAddress != ""}
-                target="_blank"
-                href={
-                  isConnected
-                    ? sellNFTAddress != ""
-                      ? chain.id == 1
-                        ? "https://etherscan.io/address/" + sellNFTAddress
-                        : "https://sepolia.etherscan.io/address/" +
-                          sellNFTAddress
-                      : ""
-                    : "https://sepolia.etherscan.io/address/" + sellNFTAddress
-                }
-              />
-              <ArrowForwardOutlinedIcon className="mx-1" />
-              <Chip
-                label={
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle2.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {buyNFTName ? buyAmount + " " + buyNFTName : "?"}
-                  </Box>
-                }
-                variant="outlined"
-                component="a"
-                clickable={buyNFTAddress != ""}
-                target="_blank"
-                href={
-                  isConnected
-                    ? buyNFTAddress != ""
-                      ? chain.id == 1
-                        ? "https://etherscan.io/address/" + sellNFTAddress
-                        : "https://sepolia.etherscan.io/address/" +
-                          sellNFTAddress
-                      : ""
-                    : "https://sepolia.etherscan.io/address/" + sellNFTAddress
-                }
-              />
-            </Divider>
-          </div>
-          <div className="flex flex-row m-4 items-left">
+        <div className="flex flex-col lg:flex-row items-center justify-center">
+          <div className="flex flex-col items-center text-center justify-center p-4 m-4 rounded-3xl bg-black/5 shadow-lg">
             <Box
-              className="m-2"
+              className="mb-4"
               sx={{
                 fontFamily: "Monospace",
-                fontSize: "h6.fontSize",
+                fontSize: "subtitle2.fontSize",
                 fontWeight: "bold",
-                color: BigNumber.from(priceQuote.buyPrice).gt(
-                  priceQuote.sellPrice
-                )
-                  ? "#e60000"
-                  : "green",
               }}
             >
-              {BigNumber.from(priceQuote.buyPrice).gt(priceQuote.sellPrice)
-                ? "− " +
-                  formatUnits(
-                    BigNumber.from(priceQuote.buyPrice).sub(
-                      priceQuote.sellPrice
-                    ),
-                    18
-                  ) +
-                  " WETH"
-                : "＋ " +
-                  formatUnits(
-                    BigNumber.from(priceQuote.sellPrice).sub(
-                      priceQuote.buyPrice
-                    ),
-                    18
-                  ) +
-                  " ETH"}
+              Your swap quote
             </Box>
-            <Tooltip
-              content="The 'change' resulting from the swap. Negative you pay, positive you receive."
-              position="right"
-              minWidth={200}
-            >
-              <HelpCircle fontSize="20px" color="#000000" />
-            </Tooltip>
+            <div className="flex flex-row w-full justify-center items-center m-2">
+              <Divider style={{ width: "100%" }}>
+                <Chip
+                  label={
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle2.fontSize",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {sellNFTName ? sellAmount + " " + sellNFTName : "?"}
+                    </Box>
+                  }
+                  variant="outlined"
+                  component="a"
+                  clickable={sellNFTAddress != ""}
+                  target="_blank"
+                  href={
+                    isConnected
+                      ? sellNFTAddress != ""
+                        ? chain.id == 1
+                          ? "https://etherscan.io/address/" + sellNFTAddress
+                          : "https://sepolia.etherscan.io/address/" +
+                            sellNFTAddress
+                        : ""
+                      : "https://sepolia.etherscan.io/address/" + sellNFTAddress
+                  }
+                />
+                <ArrowForwardOutlinedIcon className="mx-1" />
+                <Chip
+                  label={
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle2.fontSize",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {buyNFTName ? buyAmount + " " + buyNFTName : "?"}
+                    </Box>
+                  }
+                  variant="outlined"
+                  component="a"
+                  clickable={buyNFTAddress != ""}
+                  target="_blank"
+                  href={
+                    isConnected
+                      ? buyNFTAddress != ""
+                        ? chain.id == 1
+                          ? "https://etherscan.io/address/" + sellNFTAddress
+                          : "https://sepolia.etherscan.io/address/" +
+                            sellNFTAddress
+                        : ""
+                      : "https://sepolia.etherscan.io/address/" + sellNFTAddress
+                  }
+                />
+              </Divider>
+            </div>
+            <div className="flex flex-row m-4 items-left">
+              <Box
+                className="m-2"
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "h6.fontSize",
+                  fontWeight: "bold",
+                  color: BigNumber.from(priceQuote.buyPrice).gt(
+                    priceQuote.sellPrice
+                  )
+                    ? "#e60000"
+                    : "green",
+                }}
+              >
+                {BigNumber.from(priceQuote.buyPrice).gt(priceQuote.sellPrice)
+                  ? "− " +
+                    formatUnits(
+                      BigNumber.from(priceQuote.buyPrice).sub(
+                        priceQuote.sellPrice
+                      ),
+                      18
+                    ) +
+                    " WETH"
+                  : "＋ " +
+                    formatUnits(
+                      BigNumber.from(priceQuote.sellPrice).sub(
+                        priceQuote.buyPrice
+                      ),
+                      18
+                    ) +
+                    " ETH"}
+              </Box>
+              <Tooltip
+                content="The 'change' resulting from the swap. Negative you pay, positive you receive."
+                position="right"
+                minWidth={200}
+              >
+                <HelpCircle fontSize="20px" color="#000000" />
+              </Tooltip>
+            </div>
+            {priceQuote.buyPriceImpact != undefined && (
+              <Box
+                className="m-1"
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle1.fontSize",
+                }}
+              >
+                {"Buy Side Impact: +" + priceQuote.buyPriceImpact / 100 + "%"}
+              </Box>
+            )}
+            {priceQuote.sellPriceImpact != undefined && (
+              <Box
+                className="m-1"
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle1.fontSize",
+                }}
+              >
+                {"Sell Side Impact: -" + priceQuote.sellPriceImpact / 100 + "%"}
+              </Box>
+            )}
           </div>
-          {priceQuote.buyPriceImpact != undefined && (
-            <Box
-              className="m-1"
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle1.fontSize",
-              }}
-            >
-              {"Buy Side Impact: +" + priceQuote.buyPriceImpact / 100 + "%"}
-            </Box>
-          )}
-          {priceQuote.sellPriceImpact != undefined && (
-            <Box
-              className="m-1"
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle1.fontSize",
-              }}
-            >
-              {"Sell Side Impact: -" + priceQuote.sellPriceImpact / 100 + "%"}
-            </Box>
-          )}
+          <div className="flex flex-col items-center">
+            <div className="grid grid-cols-3 gap-4 p-4 mx-4 my-2 rounded-3xl bg-black/5 shadow-lg">
+              {sellNFTImages.map((imageUrl, index) => (
+                <div key={index} className="flex items-center justify-center">
+                  <Image
+                    loader={() => imageUrl}
+                    src={imageUrl}
+                    height="80"
+                    width="80"
+                    unoptimized={true}
+                    className="rounded-3xl"
+                  />
+                </div>
+              ))}
+            </div>
+            <ArrowDownwardOutlinedIcon />
+            <div className="grid grid-cols-3 gap-4 p-4 mx-4 my-2 rounded-3xl bg-black/5 shadow-lg">
+              {buyNFTImages.map((imageUrl, index) => (
+                <div key={index} className="flex items-center justify-center">
+                  <Image
+                    loader={() => imageUrl}
+                    src={imageUrl}
+                    height="80"
+                    width="80"
+                    unoptimized={true}
+                    className="rounded-3xl"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
       <div className="flex flex-row m-6 w-8/12 md:w-6/12">

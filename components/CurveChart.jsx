@@ -35,9 +35,9 @@ const CurveChart = ({
     for (let i = -numPoints / 2; i <= numPoints / 2; i++) {
       let y;
       if (curveType === "linear") {
-        y = Number(initialPrice) + delta * i;
+        y = Number(Number(initialPrice) + delta * i).toFixed(6);
       } else if (curveType === "exponential") {
-        y = Number(initialPrice) * (1 + delta / 100) ** i;
+        y = Number(Number(initialPrice) * (1 + delta / 100) ** i).toFixed(6);
       }
       if (y >= 0) {
         data.push({ x: i, y });

@@ -57,7 +57,6 @@ export default function Buy() {
   const [buyLoading, setBuyLoading] = useState(false);
   const [nftName, setNFTName] = useState("");
   const [collectionThumbnailURL, setCollectionThumbnailURL] = useState("");
-  const [poolHistory, setPoolHistory] = useState([]);
   const [nftImages, setNFTImages] = useState([]);
 
   const dispatch = useNotification();
@@ -114,13 +113,6 @@ export default function Buy() {
     getNFTName(collection);
     setPoolAddress(updatedPool);
     getAvailableNFTs(updatedPool, collection);
-
-    // Get history
-    const updatedHistory = await getTradingPoolHistory(
-      isConnected ? chain.id : 1,
-      updatedPool
-    );
-    setPoolHistory(updatedHistory);
 
     if (isConnected) {
       getTokenAllowance(updatedPool);
@@ -722,50 +714,6 @@ export default function Buy() {
           />
         </div>
       </div>
-      {poolAddress && (
-        <div className="flex flex-col items-center justify-center">
-          <Table
-            shadow={false}
-            bordered={false}
-            aria-label="Trading Pool Activity"
-            css={{
-              height: "auto",
-              width: "60vw",
-              fontFamily: "Monospace",
-            }}
-          >
-            <Table.Header>
-              <Table.Column>Type</Table.Column>
-              <Table.Column>Date</Table.Column>
-              <Table.Column>Amount</Table.Column>
-              <Table.Column>Price</Table.Column>
-            </Table.Header>
-            <Table.Body>
-              {poolHistory.map((data, i) => (
-                <Table.Row key={i}>
-                  <Table.Cell>
-                    {data.type.charAt(0).toUpperCase() + data.type.slice(1)}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {timeago.format(data.timestamp * 1000)}
-                  </Table.Cell>
-                  <Table.Cell>{data.nftIds.length}</Table.Cell>
-                  <Table.Cell>
-                    {formatUnits(data.price, 18) + " ETH"}
-                  </Table.Cell>
-                </Table.Row>
-              ))}
-            </Table.Body>
-            <Table.Pagination
-              noMargin
-              color={"secondary"}
-              align="center"
-              rowsPerPage={5}
-              onPageChange={(page) => console.log({ page })}
-            />
-          </Table>
-        </div>
-      )}
     </div>
   );
 }

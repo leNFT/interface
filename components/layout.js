@@ -34,7 +34,7 @@ export default function Layout({ children }) {
       />
       <Head>
         <title>leNFT App</title>
-        <meta name="description" content="lend NFTs" />
+        <meta name="description" content="Do more with your NFTs" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <HeaderController />

@@ -1205,34 +1205,40 @@ export default function Swap() {
             )}
           </div>
           <div className="flex flex-col items-center">
-            <div className="grid grid-cols-3 gap-4 p-4 mx-4 my-2 rounded-3xl bg-black/5 shadow-lg">
-              {sellNFTImages.map((imageUrl, index) => (
-                <div key={index} className="flex items-center justify-center">
-                  <Image
-                    loader={() => imageUrl}
-                    src={imageUrl}
-                    height="80"
-                    width="80"
-                    unoptimized={true}
-                    className="rounded-3xl"
-                  />
-                </div>
-              ))}
+            <div className="flex flex-col items-center text-center justify-center p-2 m-4 rounded-3xl bg-black/5 shadow-lg">
+              <Typography variant="h4">From</Typography>
+              <div className="grid grid-cols-3 gap-4 m-4">
+                {sellNFTImages.map((imageUrl, index) => (
+                  <div key={index} className="flex items-center justify-center">
+                    <Image
+                      loader={() => imageUrl}
+                      src={imageUrl}
+                      height="80"
+                      width="80"
+                      unoptimized={true}
+                      className="rounded-3xl"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
             <ArrowDownwardOutlinedIcon />
-            <div className="grid grid-cols-3 gap-4 p-4 mx-4 my-2 rounded-3xl bg-black/5 shadow-lg">
-              {buyNFTImages.map((imageUrl, index) => (
-                <div key={index} className="flex items-center justify-center">
-                  <Image
-                    loader={() => imageUrl}
-                    src={imageUrl}
-                    height="80"
-                    width="80"
-                    unoptimized={true}
-                    className="rounded-3xl"
-                  />
-                </div>
-              ))}
+            <div className="flex flex-col items-center text-center justify-center p-2 m-4 rounded-3xl bg-black/5 shadow-lg">
+              <Typography variant="h4">To</Typography>
+              <div className="grid grid-cols-3 gap-4 m-4">
+                {buyNFTImages.map((imageUrl, index) => (
+                  <div key={index} className="flex items-center justify-center">
+                    <Image
+                      loader={() => imageUrl}
+                      src={imageUrl}
+                      height="80"
+                      width="80"
+                      unoptimized={true}
+                      className="rounded-3xl"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>

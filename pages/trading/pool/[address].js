@@ -558,8 +558,9 @@ export default function TradingPool() {
                       isConnected
                         ? chain.id == 1
                           ? "https://etherscan.io/tx/" + data.transaction
-                          : "https://goerli.etherscan.io/tx/" + data.transaction
-                        : "https://goerli.etherscan.io/tx/" + data.transaction
+                          : "https://sepolia.etherscan.io/tx/" +
+                            data.transaction
+                        : "https://sepolia.etherscan.io/tx/" + data.transaction
                     }
                   ></LinkTo>
                 </Table.Cell>
@@ -570,7 +571,7 @@ export default function TradingPool() {
                 <Table.Cell>
                   {data.address.slice(0, 6) + ".." + data.address.slice(-4)}
                 </Table.Cell>
-                <Table.Cell>{data.nftIds}</Table.Cell>
+                <Table.Cell>{data.nftIds.join(",")}</Table.Cell>
                 <Table.Cell>{formatUnits(data.price, 18) + " ETH"}</Table.Cell>
               </Table.Row>
             ))}

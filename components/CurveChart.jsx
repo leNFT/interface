@@ -22,6 +22,42 @@ const CustomXAxisLabel = ({ viewBox }) => {
   );
 };
 
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    let actionText;
+    const price = payload[0].value;
+
+    if (label < 0) {
+      actionText = `Sell ${Math.abs(label)}`;
+    } else if (label > 0) {
+      actionText = `Buy ${label}`;
+    } else {
+      actionText = "Initial Price";
+    }
+
+    return (
+      <div
+        style={{
+          backgroundColor: "#f5f5f5",
+          border: "1px solid #ccc",
+          padding: "5px",
+        }}
+      >
+        {label === 0 ? (
+          <p>{`${actionText}: ${price}`}</p>
+        ) : (
+          <>
+            <p>{actionText}</p>
+            <p>{`Price: ${price}`}</p>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  return null;
+};
+
 const CurveChart = ({
   curveType = "exponential",
   delta = 20,
@@ -63,7 +99,7 @@ const CurveChart = ({
           />
         </XAxis>
         <YAxis />
-        <Tooltip />
+        <Tooltip content={<CustomTooltip />} />
         <Line
           dot={({ cx, cy, index }) => (
             <circle

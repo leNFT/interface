@@ -40,6 +40,7 @@ export default function TradingPools() {
 
     for (const [key, value] of Object.entries(tradingPools)) {
       console.log("pushed: key", key);
+      console.log("pushed: value", value);
       newTableData.push([
         value.nft.image && (
           <Image

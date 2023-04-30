@@ -161,7 +161,7 @@ export default function Home() {
             <div className={styles.indexDescribeSubtitle}>
               <li>Trade your NFTs</li>
               <li>Borrow ETH using your NFTs as collateral</li>
-              <li>Earn interest on your ETH</li>
+              <li>Earn interest on your ETH & NFTs</li>
               <li>Bring liquidity into your NFT&apos;s ecosystem</li>
             </div>
             <div className={styles.indexDescribeSubtitle}>

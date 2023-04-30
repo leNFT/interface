@@ -206,7 +206,7 @@ export default function DepositTradingPool(props) {
           </Dropdown.Menu>
         </Dropdown>
       </div>
-      <div className="flex flex-col-reverse justify-center md:flex-row">
+      <div className="flex flex-col-reverse justify-center lg:flex-row">
         <div className="flex flex-col space-y-12 m-4">
           <div className="flex flex-row items-center justify-center mt-8">
             <Input
@@ -418,7 +418,7 @@ export default function DepositTradingPool(props) {
               </Box>
             ))}
         </div>
-        <div className="flex flex-col items-center justify-center m-4 w-full md:w-5/12">
+        <div className="flex flex-col items-center justify-center pr-8 w-full lg:w-5/12">
           <CurveChart
             curveType={curve}
             delta={delta ? delta : "20"}

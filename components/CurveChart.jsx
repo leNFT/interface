@@ -39,7 +39,7 @@ const CustomTick = ({ x, y, payload }) => {
 
 const CurveChart = ({
   curveType = "exponential",
-  delta = 2000,
+  delta = 20,
   initialPrice = 0.1,
 }) => {
   console.log("CurveChart render", { curveType, delta, initialPrice });
@@ -50,9 +50,9 @@ const CurveChart = ({
     for (let i = -numPoints / 2; i <= numPoints / 2; i++) {
       let y;
       if (curveType === "linear") {
-        y = initialPrice + delta * i;
+        y = Number(initialPrice) + delta * i;
       } else if (curveType === "exponential") {
-        y = initialPrice * (1 + delta / 100) ** i;
+        y = Number(initialPrice) * (1 + delta / 100) ** i;
       }
       data.push({ x: i, y });
     }

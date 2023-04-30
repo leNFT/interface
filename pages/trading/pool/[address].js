@@ -201,7 +201,7 @@ export default function TradingPool() {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row justify-between items-center p-8 rounded-3xl m-8 lg:mx-16 bg-black/5 shadow-lg">
+      <div className="flex flex-col xl:flex-row justify-between items-center p-8 rounded-3xl m-8 lg:mx-16 bg-black/5 shadow-lg">
         <div className="flex flex-row justify-center items-center">
           <LinkTo
             type="external"

@@ -418,7 +418,7 @@ export default function DepositTradingPool(props) {
               </Box>
             ))}
         </div>
-        <div className="flex flex-col items-center justify-center pr-8 w-full lg:w-5/12">
+        <div className="flex flex-col items-center justify-center pr-8 w-full lg:w-6/12">
           <CurveChart
             curveType={curve}
             delta={delta ? delta : "20"}

@@ -240,7 +240,7 @@ export default function CreateLoan(props) {
     props.setVisibility(false);
     dispatch({
       type: "success",
-      message: "Newly created loans can take up to 5 minutes to appear.",
+      message: "Yey! You just borrowed some money.",
       title: "Loan Created!",
       position: "bottomL",
     });

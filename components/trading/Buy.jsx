@@ -620,7 +620,7 @@ export default function Buy() {
                   fontWeight: "bold",
                 }}
               >
-                {formatUnits(priceQuote.price, 18)} ETH
+                {Number(formatUnits(priceQuote.price, 18)).toPrecision(6)} ETH
               </Box>
               {priceQuote.priceImpact != undefined && (
                 <Box

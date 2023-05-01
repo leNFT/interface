@@ -38,7 +38,7 @@ export default function WithdrawNativeToken(props) {
   });
 
   async function getUnlockTime() {
-    const updatedUnlockTime = await votingEscrowProvider.locked(address);
+    const updatedUnlockTime = await votingEscrowProvider.locked(props.lockId);
     console.log(
       "updatedUnlockTime:",
       BigNumber.from(updatedUnlockTime.end).toNumber()
@@ -63,14 +63,6 @@ export default function WithdrawNativeToken(props) {
       position: "bottomL",
     });
   };
-
-  function handleInputChange(e) {
-    if (e.target.value != "") {
-      setAmount(parseUnits(e.target.value, 18).toString());
-    } else {
-      setAmount("0");
-    }
-  }
 
   return (
     <div>
@@ -98,7 +90,7 @@ export default function WithdrawNativeToken(props) {
             onClick={async function () {
               try {
                 setUnlockLoading(true);
-                const tx = await votingEscrowSigner.withdraw();
+                const tx = await votingEscrowSigner.withdraw(props.lockId);
                 await tx.wait(1);
                 handleUnlockSuccess();
               } catch (error) {

@@ -447,6 +447,7 @@ export default function Lock() {
           setVisibility={setVisibleUnlockModal}
           voteTokenBalance={voteTokenBalance}
           updateUI={updateUI}
+          lockId={selectedLock ? selectedLock : 0}
         />
       </StyledModal>
       <StyledModal

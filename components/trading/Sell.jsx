@@ -588,7 +588,7 @@ export default function Sell() {
                   fontWeight: "bold",
                 }}
               >
-                {formatUnits(priceQuote.price, 18)} WETH
+                {Number(formatUnits(priceQuote.price, 18)).toPrecision(6)} WETH
               </Box>
               {priceQuote.priceImpact != undefined && (
                 <Box

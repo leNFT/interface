@@ -22,6 +22,10 @@ const CustomXAxisLabel = ({ viewBox }) => {
   );
 };
 
+const formatYAxisTick = (value) => {
+  return parseFloat(value).toPrecision(3);
+};
+
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     let actionText;
@@ -44,11 +48,11 @@ const CustomTooltip = ({ active, payload, label }) => {
         }}
       >
         {label === 0 ? (
-          <p>{`${actionText}: ${price}`}</p>
+          <p>{`${actionText}: ${parseFloat(price).toPrecision(3)}`}</p>
         ) : (
           <>
             <p>{actionText}</p>
-            <p>{`Price: ${price}`}</p>
+            <p>{`Price: ${parseFloat(price).toPrecision(3)}`}</p>
           </>
         )}
       </div>
@@ -64,6 +68,7 @@ const CurveChart = ({
   initialPrice = 0.1,
 }) => {
   console.log("CurveChart render", { curveType, delta, initialPrice });
+
   const generateCurveData = () => {
     const data = [];
     const numPoints = 10;
@@ -83,6 +88,8 @@ const CurveChart = ({
   };
 
   const curveData = generateCurveData();
+  const yMin = Math.min(...curveData.map((d) => d.y));
+  const yMax = Math.max(...curveData.map((d) => d.y));
 
   return (
     <ResponsiveContainer width="100%" height={300}>
@@ -98,7 +105,8 @@ const CurveChart = ({
             position="insideBottom"
           />
         </XAxis>
-        <YAxis />
+        <YAxis domain={[yMin, yMax]} tickFormatter={formatYAxisTick} />
+
         <Tooltip content={<CustomTooltip />} />
         <Line
           dot={({ cx, cy, index }) => (
@@ -107,11 +115,11 @@ const CurveChart = ({
               cy={cy}
               r={5}
               fill={
-                index === 5
+                index == Math.floor(curveData.length / 2)
                   ? "white"
                   : index < curveData.length / 2
                   ? "red"
-                  : "green"
+                  : "#4CBB17"
               }
               stroke={index === 5 ? "#8884d8" : "none"}
             />

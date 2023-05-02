@@ -113,7 +113,7 @@ export default function Withdraw(props) {
           </Typography>
         </div>
       </div>
-      <div className="flex flex-row items-center justify-center mx-8 mt-12 mb-2">
+      <div className="flex flex-row items-center justify-center md:mx-8 mt-12 mb-2">
         <Input
           label="Amount"
           type="number"
@@ -163,7 +163,7 @@ export default function Withdraw(props) {
         </div>
       </div>
       {props.assetSymbol != "ETH" || approved ? (
-        <div className="m-8">
+        <div className="my-8 md:m-8">
           <Button
             text="Withdraw"
             theme="secondary"
@@ -220,7 +220,7 @@ export default function Withdraw(props) {
           />
         </div>
       ) : (
-        <div className="m-8">
+        <div className="my-8 md:m-8">
           <Button
             text="Approve"
             theme="secondary"

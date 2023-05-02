@@ -102,7 +102,7 @@ export default function DepositLendingPool(props) {
   }
 
   return (
-    <div className={styles.container}>
+    <div>
       <div className="flex flex-row items-center justify-center">
         <div className="flex flex-col">
           <Typography variant="subtitle2">My Balance</Typography>
@@ -111,7 +111,7 @@ export default function DepositLendingPool(props) {
           </Typography>
         </div>
       </div>
-      <div className="flex flex-row items-center justify-center m-8">
+      <div className="flex flex-row items-center justify-center w-full my-8 md:m-8">
         <Input
           label="Amount"
           type="number"
@@ -125,7 +125,7 @@ export default function DepositLendingPool(props) {
         />
       </div>
       {approved ? (
-        <div className="m-8 mt-2">
+        <div className="mb-8 md:m-8 mt-2">
           <Button
             text="Deposit"
             theme="secondary"
@@ -181,7 +181,7 @@ export default function DepositLendingPool(props) {
           ></Button>
         </div>
       ) : (
-        <div className="m-8 mt-2">
+        <div className="mb-8 md:m-8 mt-2">
           <Button
             text="Approve"
             theme="secondary"

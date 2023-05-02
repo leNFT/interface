@@ -116,7 +116,7 @@ export default function CreateTradingPool(props) {
         />
       </div>
 
-      <div className="flex flex-row items-center justify-center my-8 mx-2 md:mx-8">
+      <div className="flex flex-row items-center justify-center my-12 mx-2 md:mx-8">
         <FormControl fullWidth>
           <InputLabel>Asset</InputLabel>
           <Select

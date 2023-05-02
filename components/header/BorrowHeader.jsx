@@ -130,7 +130,7 @@ export default function BorrowHeader() {
                     fontWeight: "bold",
                   }}
                 >
-                  Loans
+                  Loan Library
                 </Box>
               ),
               onClick: () => {
@@ -214,7 +214,7 @@ export default function BorrowHeader() {
                       fontFamily: "Monospace",
                       fontSize: "subtitle2.fontSize",
                       fontWeight: "bold",
-                      letterSpacing: 4,
+                      letterSpacing: 2,
                     }}
                   >
                     Trade
@@ -243,7 +243,7 @@ export default function BorrowHeader() {
                       fontFamily: "Monospace",
                       fontSize: "subtitle2.fontSize",
                       fontWeight: "bold",
-                      letterSpacing: 4,
+                      letterSpacing: 2,
                     }}
                   >
                     Borrow
@@ -274,7 +274,7 @@ export default function BorrowHeader() {
                       fontFamily: "Monospace",
                       fontSize: "subtitle2.fontSize",
                       fontWeight: "bold",
-                      letterSpacing: 4,
+                      letterSpacing: 2,
                     }}
                   >
                     Pools
@@ -305,10 +305,10 @@ export default function BorrowHeader() {
                       fontFamily: "Monospace",
                       fontSize: "subtitle2.fontSize",
                       fontWeight: "bold",
-                      letterSpacing: 4,
+                      letterSpacing: 2,
                     }}
                   >
-                    Loans
+                    Loan Library
                   </Box>
                 </div>
               }
@@ -336,7 +336,7 @@ export default function BorrowHeader() {
                       fontFamily: "Monospace",
                       fontSize: "subtitle2.fontSize",
                       fontWeight: "bold",
-                      letterSpacing: 4,
+                      letterSpacing: 2,
                     }}
                   >
                     Lock
@@ -367,7 +367,7 @@ export default function BorrowHeader() {
                       fontFamily: "Monospace",
                       fontSize: "subtitle2.fontSize",
                       fontWeight: "bold",
-                      letterSpacing: 4,
+                      letterSpacing: 2,
                     }}
                   >
                     leGenesis

@@ -187,7 +187,7 @@ export default function TradeHeader() {
                       fontFamily: "Monospace",
                       fontSize: "subtitle2.fontSize",
                       fontWeight: "bold",
-                      letterSpacing: 4,
+                      letterSpacing: 2,
                     }}
                   >
                     Trade
@@ -216,7 +216,7 @@ export default function TradeHeader() {
                       fontFamily: "Monospace",
                       fontSize: "subtitle2.fontSize",
                       fontWeight: "bold",
-                      letterSpacing: 4,
+                      letterSpacing: 2,
                     }}
                   >
                     Borrow
@@ -247,7 +247,7 @@ export default function TradeHeader() {
                       fontFamily: "Monospace",
                       fontSize: "subtitle2.fontSize",
                       fontWeight: "bold",
-                      letterSpacing: 4,
+                      letterSpacing: 2,
                     }}
                   >
                     Pools
@@ -279,7 +279,7 @@ export default function TradeHeader() {
                       fontFamily: "Monospace",
                       fontSize: "subtitle2.fontSize",
                       fontWeight: "bold",
-                      letterSpacing: 4,
+                      letterSpacing: 2,
                     }}
                   >
                     Lock
@@ -310,7 +310,7 @@ export default function TradeHeader() {
                       fontFamily: "Monospace",
                       fontSize: "subtitle2.fontSize",
                       fontWeight: "bold",
-                      letterSpacing: 4,
+                      letterSpacing: 2,
                     }}
                   >
                     leGenesis

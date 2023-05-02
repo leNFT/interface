@@ -1,4 +1,5 @@
 import styles from "../styles/Home.module.css";
+import { formatUnits } from "ethers/lib/utils";
 import { getAssetsPrice } from "../helpers/getAssetsPrice.js";
 import { ethers } from "ethers";
 import { getLendingNFTCollections } from "../helpers/getLendingNFTCollections.js";
@@ -10,7 +11,6 @@ import { getAddress } from "@ethersproject/address";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import loanCenterContract from "../contracts/LoanCenter.json";
-import nftOracleContract from "../contracts/NFTOracle.json";
 import { useState, useEffect } from "react";
 import { useAccount, useNetwork } from "wagmi";
 import { calculateHealthLevel } from "../helpers/healthLevel";
@@ -37,6 +37,7 @@ export default function Loans() {
   const [selectedLoan, setSelectedLoan] = useState();
   const [visibleLiquidateModal, setVisibleLiquidateModal] = useState(false);
   const { address, isConnected } = useAccount();
+  const [floorPrice, setFloorPrice] = useState(0);
   const { chain } = useNetwork();
   const provider = useProvider();
   var addresses = contractAddresses["11155111"];
@@ -70,10 +71,15 @@ export default function Loans() {
 
     console.log("collectionNFTs", collectionNFTs);
 
+    // Update floor price
+    const floorPrice = await getAssetsPrice(selectedCollection, [0], chain.id);
+
+    setFloorPrice(floorPrice.price);
+
     for (let i = 0; i < collectionNFTs.length; i++) {
       // Get the loan ID of each NFT
       const loanId = await loanCenter.getNFTLoanId(
-        collectionNFTs[i].contract.address,
+        collectionNFTs[i].tokenAddress,
         BigNumber.from(collectionNFTs[i].tokenId).toNumber()
       );
 
@@ -93,14 +99,14 @@ export default function Loans() {
       console.log("loan", loan);
 
       // Get checksumed token address
-      collectionNFTs[i].contract.address = getAddress(
-        collectionNFTs[i].contract.address
+      collectionNFTs[i].tokenAddress = getAddress(
+        collectionNFTs[i].tokenAddress
       );
 
       // Find the valuation given by the protocol to this specific asset
       const assetPrice = (
         await getAssetsPrice(
-          collectionNFTs[i].contract.address,
+          collectionNFTs[i].tokenAddress,
           loan.nftTokenIds,
           chain.id
         )
@@ -108,7 +114,7 @@ export default function Loans() {
 
       //Get token URI for image
       const tokenURI = await getNFTImage(
-        collectionNFTs[i].contract.address,
+        collectionNFTs[i].tokenAddress,
         BigNumber.from(collectionNFTs[i].tokenId).toNumber(),
         chain.id
       );
@@ -120,7 +126,7 @@ export default function Loans() {
         maxLTV: loan.maxLTV,
         borrowRate: loan.borrowRate,
         boost: loan.boost,
-        tokenAddress: collectionNFTs[i].contract.address,
+        tokenAddress: collectionNFTs[i].tokenAddress,
         tokenIds: loan.nftTokenIds,
         tokenURI: tokenURI,
         price: assetPrice,
@@ -309,7 +315,7 @@ export default function Loans() {
                   fontSize: "subtitle1.fontSize",
                 }}
               >
-                {"0 ETH"}
+                {formatUnits(floorPrice, 18) + " ETH"}
               </Box>
             </div>
           </div>

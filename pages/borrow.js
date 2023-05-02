@@ -418,7 +418,7 @@ export default function Borrow() {
                         {isConnected
                           ? "You can use " +
                             supportedAssets.length +
-                            " of your NFTs to borrow."
+                            " of your NFTs to borrow. Just click on them!"
                           : "Connect wallet to view your NFTs."}
                       </div>
                     </Box>

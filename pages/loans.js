@@ -457,7 +457,7 @@ export default function Loans() {
             >
               {selectedCollection
                 ? "No loans found for this collection."
-                : "Please select a supported collection with active loans."}
+                : "Select a collection to browse all leNFT loans."}
             </Box>
           </div>
         )}

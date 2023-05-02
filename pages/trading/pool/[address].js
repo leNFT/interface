@@ -392,7 +392,8 @@ export default function TradingPool() {
                   fontWeight: "bold",
                 }}
               >
-                {formatUnits(totalTokenAmount, 18) + " ETH"}
+                {Number(formatUnits(totalTokenAmount, 18)).toPrecision(6) +
+                  " ETH"}
               </Box>
               <Box
                 sx={{

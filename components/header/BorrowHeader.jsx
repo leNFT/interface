@@ -52,8 +52,8 @@ export default function BorrowHeader() {
                   className="m-1"
                   sx={{
                     fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                    letterSpacing: 2,
+                    fontSize: "h6.fontSize",
+                    fontWeight: "bold",
                   }}
                 >
                   Trade
@@ -76,8 +76,8 @@ export default function BorrowHeader() {
                   className="m-1"
                   sx={{
                     fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                    letterSpacing: 2,
+                    fontSize: "h6.fontSize",
+                    fontWeight: "bold",
                   }}
                 >
                   Borrow
@@ -101,8 +101,8 @@ export default function BorrowHeader() {
                   className="m-1"
                   sx={{
                     fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                    letterSpacing: 2,
+                    fontSize: "h6.fontSize",
+                    fontWeight: "bold",
                   }}
                 >
                   Lending Pools
@@ -126,8 +126,8 @@ export default function BorrowHeader() {
                   className="m-1"
                   sx={{
                     fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                    letterSpacing: 2,
+                    fontSize: "h6.fontSize",
+                    fontWeight: "bold",
                   }}
                 >
                   Loans
@@ -151,11 +151,11 @@ export default function BorrowHeader() {
                   className="m-1"
                   sx={{
                     fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                    letterSpacing: 2,
+                    fontSize: "h6.fontSize",
+                    fontWeight: "bold",
                   }}
                 >
-                  LOck
+                  Lock
                 </Box>
               ),
               onClick: () => {
@@ -176,8 +176,8 @@ export default function BorrowHeader() {
                   className="m-1"
                   sx={{
                     fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                    letterSpacing: 2,
+                    fontSize: "h6.fontSize",
+                    fontWeight: "bold",
                   }}
                 >
                   leGenesis

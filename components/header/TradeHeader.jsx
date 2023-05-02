@@ -52,8 +52,8 @@ export default function TradeHeader() {
                   className="m-1"
                   sx={{
                     fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                    letterSpacing: 2,
+                    fontSize: "h6.fontSize",
+                    fontWeight: "bold",
                   }}
                 >
                   Trade
@@ -76,8 +76,8 @@ export default function TradeHeader() {
                   className="m-1"
                   sx={{
                     fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                    letterSpacing: 2,
+                    fontSize: "h6.fontSize",
+                    fontWeight: "bold",
                   }}
                 >
                   Borrow
@@ -101,8 +101,8 @@ export default function TradeHeader() {
                   className="m-1"
                   sx={{
                     fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                    letterSpacing: 2,
+                    fontSize: "h6.fontSize",
+                    fontWeight: "bold",
                   }}
                 >
                   Trading Pools
@@ -125,8 +125,8 @@ export default function TradeHeader() {
                   className="m-1"
                   sx={{
                     fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                    letterSpacing: 2,
+                    fontSize: "h6.fontSize",
+                    fontWeight: "bold",
                   }}
                 >
                   Lock
@@ -149,8 +149,8 @@ export default function TradeHeader() {
                   className="m-1"
                   sx={{
                     fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                    letterSpacing: 2,
+                    fontSize: "h6.fontSize",
+                    fontWeight: "bold",
                   }}
                 >
                   leGenesis

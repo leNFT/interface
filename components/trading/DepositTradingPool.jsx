@@ -451,6 +451,7 @@ export default function DepositTradingPool(props) {
             delta={delta ? delta : "20"}
             initialPrice={initialPrice ? formatUnits(initialPrice, 18) : "0.1"}
           />
+
           <Box
             className="flex mx-4 justify-center items-center"
             sx={{
@@ -459,9 +460,16 @@ export default function DepositTradingPool(props) {
               fontWeight: "bold",
             }}
           >
-            {"LP Gauge Value: " +
-              Number(formatUnits(lpGaugeValue, 18)).toPrecision(3) +
-              " ETH"}
+            <Link
+              href="https://lenft.gitbook.io/lenft-docs/fundamentals/trading-lp-parameters"
+              underline="none"
+              target="_blank"
+              color={"blue"}
+              className="mr-2"
+            >
+              {"LP Gauge Value: "}
+            </Link>
+            {Number(formatUnits(lpGaugeValue, 18)).toPrecision(3) + " ETH"}
           </Box>
         </div>
       </div>

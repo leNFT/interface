@@ -571,10 +571,38 @@ export default function TradingPool() {
                 </Table.Cell>
                 <Table.Cell>{timeago.format(data.timestamp * 1000)}</Table.Cell>
                 <Table.Cell>
-                  {data.address.slice(0, 6) + ".." + data.address.slice(-4)}
+                  <LinkTo
+                    type="external"
+                    iconLayout="none"
+                    text={
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: {
+                            xs: "caption.fontSize",
+                            sm: "subtitle2.fontSize",
+                          },
+                        }}
+                      >
+                        {data.address.slice(0, 6) +
+                          ".." +
+                          data.address.slice(-4)}
+                      </Box>
+                    }
+                    address={
+                      isConnected
+                        ? chain.id == 1
+                          ? "https://etherscan.io/address/" + data.address
+                          : "https://sepolia.etherscan.io/address/" +
+                            data.address
+                        : "https://sepolia.etherscan.io/address/" + data.address
+                    }
+                  ></LinkTo>
                 </Table.Cell>
                 <Table.Cell>{data.nftIds.join(",")}</Table.Cell>
-                <Table.Cell>{formatUnits(data.price, 18) + " ETH"}</Table.Cell>
+                <Table.Cell>
+                  {Number(formatUnits(data.price, 18)).toPrecision(6) + " ETH"}
+                </Table.Cell>
               </Table.Row>
             ))}
           </Table.Body>

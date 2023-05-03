@@ -131,35 +131,50 @@ export default function Genesis() {
               </Link>
             </Box>
           </div>
-          <div className="flex flex-col md:flex-row m-2">
-            <div className="flex flex-col m-8 rounded-2xl bg-black/5 shadow-lg p-4">
-              <div className="flex flex-row justify-center m-2">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "h6.fontSize",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Price
-                </Box>
-              </div>
-              <div className="flex flex-row justify-center text-center m-2">
-                {price ? (
+          <div className="flex flex-col md:flex-row m-2 items-center">
+            <div className="flex flex-row m-8 items-center space-x-4 justify-between rounded-2xl bg-black/5 shadow-lg p-4">
+              <div className="flex flex-col w-6/12">
+                <div className="flex flex-row justify-center m-2">
                   <Box
                     sx={{
                       fontFamily: "Monospace",
-                      fontSize: "h5.fontSize",
+                      fontSize: "h6.fontSize",
+                      fontWeight: "bold",
                     }}
                   >
-                    {formatUnits(price ? price : "0", 18) + " ETH"}
+                    Price
                   </Box>
-                ) : (
-                  <Loading className="px-10" size={25} spinnerColor="#000000" />
-                )}
+                </div>
+                <div className="flex flex-col justify-center text-center m-2">
+                  {price ? (
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "h6.fontSize",
+                      }}
+                    >
+                      {formatUnits(price ? price : "0", 18) + " ETH"}
+                    </Box>
+                  ) : (
+                    <Loading
+                      className="px-10"
+                      size={25}
+                      spinnerColor="#000000"
+                    />
+                  )}
+                </div>
               </div>
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "caption.fontSize",
+                }}
+                className="text-gray-600 w-6/12"
+              >
+                Receive up to 0.2 ETH back when you burn your Genesis NFT.
+              </Box>
             </div>
-            <div className="flex flex-col justify-center text-center m-8 rounded-2xl bg-black/5 shadow-lg p-4">
+            <div className="flex flex-col justify-center text-center m-8 w-8/12 rounded-2xl bg-black/5 shadow-lg p-4">
               <Box
                 sx={{
                   fontFamily: "Monospace",

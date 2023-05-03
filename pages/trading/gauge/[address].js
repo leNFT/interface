@@ -323,7 +323,8 @@ export default function TradingPoolGauge() {
                       fontSize: "subtitle1.fontSize",
                     }}
                   >
-                    {formatUnits(totalLockedValue, 18) + " ETH"}
+                    {Number(formatUnits(totalLockedValue, 18)).toPrecision(4) +
+                      " ETH"}
                   </Box>
                 </div>
               </div>

@@ -303,7 +303,7 @@ export default function TradingPoolGauge() {
                     fontSize: "subtitle1.fontSize",
                   }}
                 >
-                  {formatUnits(totalLocked, 18).toString() +
+                  {Number(formatUnits(totalLocked, 18)).toPrecision(4) +
                     " " +
                     lpTokenSymbol}
                 </Box>

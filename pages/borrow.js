@@ -212,9 +212,7 @@ export default function Borrow() {
 
     function searchFilter(asset) {
       const stringToMatch =
-        asset.contractMetadata.name +
-        " " +
-        BigNumber.from(asset.tokenId).toString();
+        asset.name + " " + BigNumber.from(asset.tokenId).toString();
 
       console.log("stringToMatch", stringToMatch);
 
@@ -690,9 +688,7 @@ export default function Borrow() {
                       >
                         <CardActionArea
                           onClick={() =>
-                            handleUnsupportedAssetClick(
-                              unsupportedAsset.contractMetadata.name
-                            )
+                            handleUnsupportedAssetClick(unsupportedAsset.name)
                           }
                         >
                           <CardContent>

@@ -66,6 +66,7 @@ export default function TradingPool() {
       chain.id,
       router.query.address
     );
+    console.log("priceResponse", priceResponse);
     setPrice(priceResponse);
 
     // Get number of user NFTs

@@ -266,12 +266,12 @@ export default function Genesis() {
                       }}
                     >
                       <CardContent>
-                        {nft.media ? (
+                        {nft.media[0] ? (
                           <div className="flex flex-col items-center">
                             <Image
-                              loader={() => nft.media.mediaCollection.low.url}
+                              loader={() => nft.media[0].gateway}
                               alt="Supported Asset"
-                              src={nft.media.mediaCollection.low.url}
+                              src={nft.media[0].gateway}
                               height="200"
                               width="200"
                               className="rounded-2xl"

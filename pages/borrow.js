@@ -563,9 +563,7 @@ export default function Borrow() {
                                 BigNumber.from(data.tokenId).toNumber()
                               );
                               newSelectedAssetsImages.push(
-                                data.media
-                                  ? data.media.mediaCollection.low.url
-                                  : ""
+                                data.media[0] ? data.media[0].gateway : ""
                               );
                             }
                             console.log(

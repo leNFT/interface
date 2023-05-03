@@ -488,10 +488,10 @@ export default function Sell() {
                         }}
                       >
                         <div className="flex flex-col items-center p-1">
-                          {nft.media ? (
+                          {nft.media[0] ? (
                             <Image
-                              loader={() => nft.media.mediaCollection.low.url}
-                              src={nft.media.mediaCollection.low.url}
+                              loader={() => nft.media[0].gateway}
+                              src={nft.media[0].gateway}
                               height="100"
                               width="100"
                               className="rounded-xl"

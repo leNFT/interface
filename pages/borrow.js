@@ -78,7 +78,7 @@ export default function Borrow() {
 
     for (let i = 0; i < addressNFTs.length; i++) {
       if (
-        getAddress(addressNFTs[i].tokenAddress) ==
+        getAddress(addressNFTs[i].contract.address) ==
         contractAddresses[chain.id].DebtToken
       ) {
         // Get loan details
@@ -117,7 +117,7 @@ export default function Borrow() {
           maxLTV: loan.maxLTV,
         });
       } else if (
-        updatedSupportedNFTs[getAddress(addressNFTs[i].tokenAddress)] !=
+        updatedSupportedNFTs[getAddress(addressNFTs[i].contract.address)] !=
         undefined
       ) {
         // Add asset to supported assets
@@ -167,8 +167,9 @@ export default function Borrow() {
       if (selectedCollection == "") {
         for (let i = 0; i < addressCollectionNFTs.length; i++) {
           if (
-            supportedNFTs[getAddress(addressCollectionNFTs[i].tokenAddress)] !=
-            undefined
+            supportedNFTs[
+              getAddress(addressCollectionNFTs[i].contract.address)
+            ] != undefined
           ) {
             selectedCollectionNFTs.push(addressCollectionNFTs[i]);
           }
@@ -382,7 +383,7 @@ export default function Borrow() {
                       setVisibility={setVisibleLoanModal}
                       loan_id={selectedLoan.loanId}
                       token_name={selectedLoan.tokenName}
-                      token_address={selectedLoan.tokenAddress}
+                      token_address={selectedLoan.contract.address}
                       token_ids={selectedLoan.tokenIds}
                       token_images={selectedLoan.tokenImages}
                       updateUI={setupUI}
@@ -436,7 +437,7 @@ export default function Borrow() {
                         " " +
                         supportedAssets.find(
                           (element) =>
-                            element.tokenAddress == selectedCollection
+                            element.contract.address == selectedCollection
                         ).name +
                         "s"}
                     </div>
@@ -515,7 +516,7 @@ export default function Borrow() {
                 <div className="flex flex-row grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
                   {searchPageData.map((data) => (
                     <div
-                      key={data.tokenId + data.tokenAddress}
+                      key={data.tokenId + data.contract.address}
                       className="flex m-4 items-center justify-center max-w-[300px]"
                     >
                       <Card
@@ -554,7 +555,7 @@ export default function Borrow() {
                               }
                             } else {
                               if (selectedAssets.length == 0) {
-                                setSelectedCollection(data.tokenAddress);
+                                setSelectedCollection(data.contract.address);
                               }
 
                               // If the asset is not selected, add it to the array
@@ -576,20 +577,12 @@ export default function Borrow() {
                           }}
                         >
                           <CardContent>
-                            {data.media ? (
+                            {data.media[0] ? (
                               <div className="flex flex-col items-center">
                                 <Image
-                                  loader={() =>
-                                    data.media.mediaCollection
-                                      ? data.media.mediaCollection.low.url
-                                      : data.metadata.image
-                                  }
+                                  loader={() => data.media[0].gateway}
                                   alt="Supported Asset"
-                                  src={
-                                    data.media.mediaCollection
-                                      ? data.media.mediaCollection.low.url
-                                      : data.metadata.image
-                                  }
+                                  src={data.media[0].gateway}
                                   height="200"
                                   width="200"
                                   className="rounded-2xl"
@@ -663,7 +656,8 @@ export default function Borrow() {
                 {unsupportedAssets.map((unsupportedAsset, index) => (
                   <div
                     key={
-                      unsupportedAsset.tokenId + unsupportedAsset.tokenAddress
+                      unsupportedAsset.tokenId +
+                      unsupportedAsset.contract.address
                     }
                     className="flex m-4 items-center justify-center max-w-[220px]"
                   >
@@ -692,21 +686,13 @@ export default function Borrow() {
                           }
                         >
                           <CardContent>
-                            {unsupportedAsset.media ? (
+                            {unsupportedAsset.media[0] ? (
                               <div className="flex flex-col items-center">
                                 <Image
                                   loader={() =>
-                                    unsupportedAsset.media.mediaCollection
-                                      ? unsupportedAsset.media.mediaCollection
-                                          .low.url
-                                      : unsupportedAsset.metadata.image
+                                    unsupportedAsset.media[0].gateway
                                   }
-                                  src={
-                                    unsupportedAsset.media.mediaCollection
-                                      ? unsupportedAsset.media.mediaCollection
-                                          .low.url
-                                      : unsupportedAsset.metadata.image
-                                  }
+                                  src={unsupportedAsset.media[0].gateway}
                                   height="120"
                                   width="120"
                                   className="rounded-2xl"

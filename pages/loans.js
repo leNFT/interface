@@ -79,7 +79,7 @@ export default function Loans() {
     for (let i = 0; i < collectionNFTs.length; i++) {
       // Get the loan ID of each NFT
       const loanId = await loanCenter.getNFTLoanId(
-        collectionNFTs[i].tokenAddress,
+        collectionNFTs[i].contract.address,
         BigNumber.from(collectionNFTs[i].tokenId).toNumber()
       );
 
@@ -99,14 +99,14 @@ export default function Loans() {
       console.log("loan", loan);
 
       // Get checksumed token address
-      collectionNFTs[i].tokenAddress = getAddress(
-        collectionNFTs[i].tokenAddress
+      collectionNFTs[i].contract.address = getAddress(
+        collectionNFTs[i].contract.address
       );
 
       // Find the valuation given by the protocol to this specific asset
       const assetPrice = (
         await getAssetsPrice(
-          collectionNFTs[i].tokenAddress,
+          collectionNFTs[i].contract.address,
           loan.nftTokenIds,
           chain.id
         )
@@ -114,7 +114,7 @@ export default function Loans() {
 
       //Get token URI for image
       const tokenURI = await getNFTImage(
-        collectionNFTs[i].tokenAddress,
+        collectionNFTs[i].contract.address,
         BigNumber.from(collectionNFTs[i].tokenId).toNumber(),
         chain.id
       );
@@ -126,7 +126,7 @@ export default function Loans() {
         maxLTV: loan.maxLTV,
         borrowRate: loan.borrowRate,
         boost: loan.boost,
-        tokenAddress: collectionNFTs[i].tokenAddress,
+        tokenAddress: collectionNFTs[i].contract.address,
         tokenIds: loan.nftTokenIds,
         tokenURI: tokenURI,
         price: assetPrice,

@@ -135,6 +135,7 @@ export default function TradingPool() {
           setVisibility={setVisibleDepositModal}
           pool={router.query.address}
           token={poolInfo?.token.address}
+          gauge={poolInfo?.gauge}
           nft={poolInfo?.nft.address}
           nftName={poolInfo?.nft.name}
           updateUI={updateUI}

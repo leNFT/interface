@@ -29,6 +29,7 @@ import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import tradingPoolContract from "../../contracts/TradingPool.json";
+import tradingGaugeContract from "../../contracts/TradingGauge.json";
 import wethGatewayContract from "../../contracts/WETHGateway.json";
 import erc20 from "../../contracts/erc20.json";
 import erc721 from "../../contracts/erc721.json";
@@ -46,6 +47,7 @@ export default function DepositTradingPool(props) {
   const [approvedToken, setApprovedToken] = useState(false);
   const [approvedNFT, setApprovedNFT] = useState(false);
   const [approvalNFTLoading, setApprovalNFTLoading] = useState(false);
+  const [lpGaugeValue, setLPGaugeValue] = useState("0");
   const { address, isConnected } = useAccount();
   const { data: signer } = useSigner();
   const [depositLoading, setDepositLoading] = useState(false);
@@ -83,6 +85,23 @@ export default function DepositTradingPool(props) {
     }
   }
 
+  async function getLPGaugeValue() {
+    const gauge = new ethers.Contract(
+      props.gauge,
+      tradingGaugeContract.abi,
+      provider
+    );
+    const value = await gauge.calculateLpValue(
+      selectedNFTs.length,
+      tokenAmount,
+      initialPrice
+    );
+
+    console.log("Got lp gauge value:", value);
+
+    setLPGaugeValue(value);
+  }
+
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
     if (props.pool && props.token && props.nft && isConnected) {
@@ -92,12 +111,20 @@ export default function DepositTradingPool(props) {
     }
   }, [props.pool, props.token, props.nft, address]);
 
+  // Update the LP gauge value when the token amount, select NFTs or initial price changes
+  useEffect(() => {
+    if (isConnected && initialPrice && tokenAmount) {
+      getLPGaugeValue();
+    }
+  }, [tokenAmount, selectedNFTs, initialPrice]);
+
   const handleDepositSuccess = async function () {
     // Reset the UI
     setSelectedNFTs([]);
     setInitialPrice("");
     setTokenAmount("");
     setDelta("");
+    setLPGaugeValue("0");
     setFee("");
     setNFTAmount(0);
 
@@ -124,18 +151,18 @@ export default function DepositTradingPool(props) {
   function handleTokenAmountChange(e) {
     if (e.target.value != "") {
       console.log("newTokenAmount", parseUnits(e.target.value, 18));
-      setTokenAmount(e.target.value);
+      setTokenAmount(parseUnits(e.target.value, 18));
     } else {
-      setTokenAmount("0");
+      setTokenAmount("");
     }
   }
 
   function handleInitialPriceChange(e) {
     if (e.target.value != "") {
       console.log("newInitialPrice", parseUnits(e.target.value, 18));
-      setInitialPrice(e.target.value);
+      setInitialPrice(parseUnits(e.target.value, 18));
     } else {
-      setInitialPrice("0");
+      setInitialPrice("");
     }
   }
 
@@ -149,7 +176,7 @@ export default function DepositTradingPool(props) {
 
   function handleFeeChange(e) {
     if (e.target.value != "") {
-      setFee(e.target.value);
+      setFee(e.target.value * 100);
     } else {
       setFee("");
     }
@@ -239,7 +266,7 @@ export default function DepositTradingPool(props) {
               label="Initial Price"
               type="number"
               placeholder="0.01 ETH"
-              value={initialPrice}
+              value={initialPrice ? Number(formatUnits(initialPrice, 18)) : ""}
               step="any"
               description="The initial price of the LP"
               validation={{
@@ -253,7 +280,7 @@ export default function DepositTradingPool(props) {
               label="ETH Amount"
               type="number"
               placeholder="2.5 ETH"
-              value={tokenAmount}
+              value={tokenAmount ? Number(formatUnits(tokenAmount, 18)) : ""}
               step="any"
               validation={{
                 numberMin: 0,
@@ -267,7 +294,7 @@ export default function DepositTradingPool(props) {
               label="Fee %"
               type="number"
               placeholder="0.05 %"
-              value={fee}
+              value={fee / 100}
               step="any"
               validation={{
                 numberMin: 0,
@@ -422,15 +449,27 @@ export default function DepositTradingPool(props) {
           <CurveChart
             curveType={curve}
             delta={delta ? delta : "20"}
-            initialPrice={initialPrice ? initialPrice : "0.1"}
+            initialPrice={initialPrice ? formatUnits(initialPrice, 18) : "0.1"}
           />
+          <Box
+            className="flex mx-4 justify-center items-center"
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "subtitle2.fontSize",
+              fontWeight: "bold",
+            }}
+          >
+            {"LP Gauge Value: " +
+              Number(formatUnits(lpGaugeValue, 18)).toPrecision(3) +
+              " ETH"}
+          </Box>
         </div>
       </div>
       <div className="flex flex-row items-center justify-center m-8">
         <Button
           text={
             "Deposit (" +
-            (tokenAmount ? tokenAmount : 0) +
+            (tokenAmount ? formatUnits(tokenAmount, 18) : 0) +
             " tokens, " +
             (nftAmount ? nftAmount : 0) +
             " NFTs)"
@@ -468,16 +507,17 @@ export default function DepositTradingPool(props) {
                 curveAddress = addresses.LinearCurve;
                 curveDelta = parseUnits(delta, 18);
               }
+
               const tx = await wethGatewaySigner.depositTradingPool(
                 props.pool,
                 0,
                 selectedNFTs,
-                parseUnits(initialPrice, 18).toString(),
+                initialPrice,
                 curveAddress,
                 curveDelta,
-                fee * 100,
+                fee,
                 {
-                  value: parseUnits(tokenAmount, 18).toString(),
+                  value: tokenAmount,
                 }
               );
               await tx.wait(1);

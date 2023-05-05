@@ -40,9 +40,9 @@ export default function HeaderController() {
               iconLayout: "icon-only",
               icon:
                 chain.id == 1 ? (
-                  <Reload fontSize="28px" color="#000000" title="Reload Icon" />
+                  <Reload fontSize="30px" color="#000000" title="Reload Icon" />
                 ) : (
-                  <Roadmap fontSize="28px" color="#000000" title="Help Icon" />
+                  <Roadmap fontSize="30px" color="white" title="Help Icon" />
                 ),
             }}
             text={

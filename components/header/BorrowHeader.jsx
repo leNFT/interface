@@ -208,7 +208,7 @@ export default function BorrowHeader() {
                 setOption("trade");
               }}
               label={
-                <div className="flex md:hidden xl:flex">
+                <div className="flex sm:hidden md:flex">
                   <Box
                     sx={{
                       fontFamily: "Monospace",
@@ -237,7 +237,7 @@ export default function BorrowHeader() {
                 setOption("borrow");
               }}
               label={
-                <div className="flex md:hidden xl:flex">
+                <div className="flex sm:hidden md:flex">
                   <Box
                     sx={{
                       fontFamily: "Monospace",
@@ -268,7 +268,7 @@ export default function BorrowHeader() {
                 setOption("pools");
               }}
               label={
-                <div className="flex md:hidden xl:flex">
+                <div className="hidden lg:flex">
                   <Box
                     sx={{
                       fontFamily: "Monospace",
@@ -283,7 +283,7 @@ export default function BorrowHeader() {
               }
               icon={
                 <div className="pl-[10px]">
-                  <Plus fontSize="16px" color="#000000" />
+                  <Plus fontSize="20px" color="#000000" />
                 </div>
               }
             />
@@ -299,7 +299,7 @@ export default function BorrowHeader() {
                 setOption("loans");
               }}
               label={
-                <div className="flex md:hidden xl:flex">
+                <div className="hidden lg:flex">
                   <Box
                     sx={{
                       fontFamily: "Monospace",
@@ -330,7 +330,7 @@ export default function BorrowHeader() {
                 setOption("lock");
               }}
               label={
-                <div className="flex md:hidden xl:flex">
+                <div className="hidden lg:flex">
                   <Box
                     sx={{
                       fontFamily: "Monospace",
@@ -361,7 +361,7 @@ export default function BorrowHeader() {
                 setOption("genesis");
               }}
               label={
-                <div className="flex md:hidden xl:flex">
+                <div className="hidden lg:flex">
                   <Box
                     sx={{
                       fontFamily: "Monospace",

@@ -181,7 +181,7 @@ export default function TradeHeader() {
                 setOption("trade");
               }}
               label={
-                <div className="flex md:hidden xl:flex">
+                <div className="flex sm:hidden md:flex">
                   <Box
                     sx={{
                       fontFamily: "Monospace",
@@ -210,7 +210,7 @@ export default function TradeHeader() {
                 setOption("borrow");
               }}
               label={
-                <div className="flex md:hidden xl:flex">
+                <div className="flex sm:hidden md:flex">
                   <Box
                     sx={{
                       fontFamily: "Monospace",
@@ -241,7 +241,7 @@ export default function TradeHeader() {
                 setOption("pools");
               }}
               label={
-                <div className="flex md:hidden xl:flex">
+                <div className="hidden lg:flex">
                   <Box
                     sx={{
                       fontFamily: "Monospace",
@@ -256,13 +256,12 @@ export default function TradeHeader() {
               }
               icon={
                 <div className="pl-[10px]">
-                  <Plus fontSize="16px" color="#000000" />
+                  <Plus fontSize="20px" color="#000000" />
                 </div>
               }
             />
           </Link>
         </div>
-
         <div className="flex flex-col m-2">
           <Link href="/lock">
             <Button
@@ -273,7 +272,7 @@ export default function TradeHeader() {
                 setOption("lock");
               }}
               label={
-                <div className="flex md:hidden xl:flex">
+                <div className="hidden lg:flex">
                   <Box
                     sx={{
                       fontFamily: "Monospace",
@@ -304,7 +303,7 @@ export default function TradeHeader() {
                 setOption("genesis");
               }}
               label={
-                <div className="flex md:hidden xl:flex">
+                <div className="hidden lg:flex">
                   <Box
                     sx={{
                       fontFamily: "Monospace",

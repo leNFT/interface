@@ -1,15 +1,10 @@
-import Link from "next/link";
 import BorrowHeader from "./BorrowHeader";
 import TradeHeader from "./TradeHeader";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { BannerStrip } from "@web3uikit/core";
 import { Reload, Roadmap } from "@web3uikit/icons";
-import Box from "@mui/material/Box";
 import { useAccount, useNetwork } from "wagmi";
 import { useSwitchNetwork } from "wagmi";
-import { useState, useEffect } from "react";
-import ToggleButton from "@mui/material/ToggleButton";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Router from "next/router";
 import { useRouter } from "next/router";
 var mode;
@@ -29,7 +24,7 @@ export default function HeaderController() {
   return (
     <div>
       {chain && isConnected && (
-        <div className="mb-6">
+        <div className="mb-4">
           <BannerStrip
             buttonDisplayed
             buttonConfig={{
@@ -55,7 +50,7 @@ export default function HeaderController() {
                 ? "leNFT is live on the Sepolia testnet. Change networks to use the beta."
                 : "Follow the flag to mint testnet assets"
             }
-            type={chain.id == 1 ? "warning" : "success"}
+            type={chain.id == 1 ? "error" : "info"}
           />
         </div>
       )}

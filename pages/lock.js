@@ -640,49 +640,51 @@ export default function Lock() {
           </div>
         </div>
         <div className="flex flex-col 4 p-4 m-4 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
-          <div className="flex p-4">
-            <Autocomplete
-              disablePortal
-              ListboxProps={{
-                style: {
-                  backgroundColor: "rgb(253, 241, 244)",
-                  fontFamily: "Monospace",
-                },
-              }}
-              options={lockedPositions.map((option) => option.tokenId)}
-              sx={{ minWidth: { xs: 215, sm: 300, md: 380 } }}
-              onInputChange={handleLockChange}
-              renderOption={(props, option, state) => (
-                <div className="flex flex-row m-2" {...props}>
-                  {"veLE #" + option}
-                </div>
-              )}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Select a lock"
-                  sx={{
-                    "& label": {
-                      paddingLeft: (theme) => theme.spacing(2),
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle1.fontSize",
-                    },
-                    "& input": {
-                      paddingLeft: (theme) => theme.spacing(3.5),
-                      fontFamily: "Monospace",
-                    },
-                    "& fieldset": {
-                      paddingLeft: (theme) => theme.spacing(2.5),
-                      borderRadius: "20px",
+          <div className="flex flex-col lg:flex-row max-w-[100%] justify-center items-center">
+            <div className="flex flex-col p-4 m-4 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
+              <div className="flex p-4">
+                <Autocomplete
+                  disablePortal
+                  ListboxProps={{
+                    style: {
+                      backgroundColor: "rgb(253, 241, 244)",
                       fontFamily: "Monospace",
                     },
                   }}
+                  options={lockedPositions.map((option) => option.tokenId)}
+                  sx={{
+                    minWidth: { xs: 215, sm: 300, md: 380 },
+                  }}
+                  onInputChange={handleLockChange}
+                  renderOption={(props, option, state) => (
+                    <div className="flex flex-row m-2" {...props}>
+                      {"veLE #" + option}
+                    </div>
+                  )}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Lock ID"
+                      sx={{
+                        "& label": {
+                          paddingLeft: (theme) => theme.spacing(2),
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle1.fontSize",
+                        },
+                        "& input": {
+                          paddingLeft: (theme) => theme.spacing(3.5),
+                          fontFamily: "Monospace",
+                        },
+                        "& fieldset": {
+                          paddingLeft: (theme) => theme.spacing(2.5),
+                          borderRadius: "20px",
+                          fontFamily: "Monospace",
+                        },
+                      }}
+                    />
+                  )}
                 />
-              )}
-            />
-          </div>
-          <div className="flex flex-col lg:flex-row max-w-[100%] justify-center items-center">
-            <div className="flex flex-col p-4 m-4 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
+              </div>
               <div className="flex flex-col-reverse md:flex-row items-center justify-center">
                 <div className="flex flex-row md:flex-col items-center m-4 lg:ml-8">
                   <div className="flex flex-row m-2">

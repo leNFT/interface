@@ -199,7 +199,7 @@ export default function DepositTradingPool(props) {
             fontFamily: "Monospace",
             fontSize: "subtitle2.fontSize",
           }}
-          className="border-b-2 border-pink-200"
+          className="border-b-2 border-pink-200 text-center"
         >
           <Link
             href="https://lenft.gitbook.io/lenft-docs/fundamentals/trading-lp-parameters"
@@ -244,7 +244,7 @@ export default function DepositTradingPool(props) {
           </Dropdown>
         </div>
         <Box
-          className="flex justify-center items-center w-6/12 text-center"
+          className="flex justify-center items-center md:w-4/12 text-center p-2 border-2 border-pink-200 rounded-xl"
           sx={{
             fontFamily: "Monospace",
             fontSize: "subtitle2.fontSize",

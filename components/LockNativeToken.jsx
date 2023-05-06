@@ -182,7 +182,7 @@ export default function LockNativeToken(props) {
           <div className="flex flex-row items-left w-full p-2 space-x-4">
             <Typography variant="subtitle2">My Balance:</Typography>
             <Typography variant="body16">
-              {formatUnits(balance, 18) + " LE"}
+              {Number(formatUnits(balance, 18)).toPrecision(6) + " LE"}
             </Typography>
           </div>
           <Input

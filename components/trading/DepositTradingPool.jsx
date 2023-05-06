@@ -244,7 +244,7 @@ export default function DepositTradingPool(props) {
           </Dropdown>
         </div>
         <Box
-          className="flex justify-center items-center md:w-4/12 text-center p-2 border-2 border-pink-200 rounded-xl"
+          className="flex justify-center items-center w-10/12 md:w-4/12 text-center p-2 border-2 border-pink-200 rounded-xl"
           sx={{
             fontFamily: "Monospace",
             fontSize: "subtitle2.fontSize",

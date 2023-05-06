@@ -299,8 +299,8 @@ export default function Buy() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className="flex flex-col items-center text-center w-full py-8 md:w-fit md:p-8 justify-center m-4 rounded-3xl bg-black/5 shadow-lg">
+    <div className="flex flex-col items-center text-center w-full py-8 md:w-fit md:p-8 justify-center m-4 rounded-3xl bg-black/5 shadow-lg">
+      <div className="flex flex-col">
         <div className="flex flex-col m-4">
           <div className="flex flex-row justify-center items-center mx-2">
             <Autocomplete

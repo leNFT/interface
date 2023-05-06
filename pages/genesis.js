@@ -145,7 +145,7 @@ export default function Genesis() {
                     Price
                   </Box>
                 </div>
-                <div className="flex flex-col justify-center text-center m-2">
+                <div className="flex flex-col justify-center items-center text-center m-2">
                   {price ? (
                     <Box
                       sx={{
@@ -171,7 +171,7 @@ export default function Genesis() {
                 }}
                 className="text-gray-600 w-6/12"
               >
-                Receive up to 0.2 ETH + trading fees if you burn your Genesis
+                Receive up to 0.2 ETH + trading fees when you burn your Genesis
                 NFT.
               </Box>
             </div>

@@ -628,6 +628,7 @@ export default function TradingPool() {
           }}
         >
           <Table.Header>
+            <Table.Column>Tx</Table.Column>
             <Table.Column>Type</Table.Column>
             <Table.Column>Date</Table.Column>
             <Table.Column>Price</Table.Column>
@@ -636,10 +637,41 @@ export default function TradingPool() {
             {poolHistory.map((data, i) => (
               <Table.Row key={i}>
                 <Table.Cell>
+                  <LinkTo
+                    type="external"
+                    iconLayout="none"
+                    text={
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: {
+                            xs: "caption.fontSize",
+                            sm: "subtitle2.fontSize",
+                          },
+                        }}
+                      >
+                        {data.transaction.slice(0, 3) +
+                          "." +
+                          data.transaction.slice(-2)}
+                      </Box>
+                    }
+                    address={
+                      isConnected
+                        ? chain.id == 1
+                          ? "https://etherscan.io/tx/" + data.transaction
+                          : "https://sepolia.etherscan.io/tx/" +
+                            data.transaction
+                        : "https://sepolia.etherscan.io/tx/" + data.transaction
+                    }
+                  ></LinkTo>
+                </Table.Cell>
+                <Table.Cell>
                   {data.type.charAt(0).toUpperCase() + data.type.slice(1)}
                 </Table.Cell>
                 <Table.Cell>{timeago.format(data.timestamp * 1000)}</Table.Cell>
-                <Table.Cell>{formatUnits(data.price, 18) + " ETH"}</Table.Cell>
+                <Table.Cell>
+                  {Number(formatUnits(data.price, 18)).toPrecision(3) + " ETH"}
+                </Table.Cell>
               </Table.Row>
             ))}
           </Table.Body>

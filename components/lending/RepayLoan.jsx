@@ -301,12 +301,6 @@ export default function RepayLoan(props) {
               </div>
             )}
           </div>
-          <div className="flex flex-row m-2">
-            <div className="flex flex-col">
-              <Typography variant="subtitle2">Max LTV (+ Boost)</Typography>
-              {loan && <Typography variant="body16"></Typography>}
-            </div>
-          </div>
           <div className="flex flex-row items-center m-2">
             <div className="flex flex-col">
               <Typography variant="subtitle2">
@@ -341,7 +335,7 @@ export default function RepayLoan(props) {
                 </div>
                 <LinearProgressWithLabel
                   color="success"
-                  value={calculateHealthLevel(debt, 200)}
+                  value={calculateHealthLevel(debt, liquidationThreshold)}
                 />
               </div>
             </div>

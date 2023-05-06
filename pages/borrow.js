@@ -440,7 +440,7 @@ export default function Borrow() {
                         supportedAssets.find(
                           (element) =>
                             element.contract.address == selectedCollection
-                        ).name +
+                        ).contract.name +
                         "s"}
                     </div>
                   </Box>
@@ -577,12 +577,12 @@ export default function Borrow() {
                           }}
                         >
                           <CardContent>
-                            {data.media[0] ? (
+                            {data.tokenUri ? (
                               <div className="flex flex-col items-center">
                                 <Image
-                                  loader={() => data.media[0].gateway}
+                                  loader={() => data.tokenUri.gateway}
                                   alt="Supported Asset"
-                                  src={data.media[0].gateway}
+                                  src={data.tokenUri.gateway}
                                   height="200"
                                   width="200"
                                   className="rounded-2xl"

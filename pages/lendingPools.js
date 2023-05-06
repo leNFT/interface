@@ -272,7 +272,7 @@ export default function LendingPools() {
                 }}
                 key="4"
               >
-                APRs
+                Borrow/Supply
               </Box>
               <div className="flex flex-col ml-1">
                 <Tooltip

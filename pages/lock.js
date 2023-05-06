@@ -1030,7 +1030,7 @@ export default function Lock() {
                             </Box>
                           </div>
                         </div>
-                        {selectedLock && (
+                        {selectedLock ? (
                           <div className="flex flex-col justify-center space-y-2 m-2 border-4 rounded-xl p-6 border-slate-500 w-full">
                             <div className="flex flex-row">
                               <Box
@@ -1093,6 +1093,17 @@ export default function Lock() {
                                 }}
                               />
                             </div>
+                          </div>
+                        ) : (
+                          <div className="flex p-8 text-center justify-center">
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "subtitle1.fontSize",
+                              }}
+                            >
+                              Select a lock to vote
+                            </Box>
                           </div>
                         )}
                       </div>

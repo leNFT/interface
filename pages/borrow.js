@@ -283,7 +283,7 @@ export default function Borrow() {
                 </Box>
               </div>
             ) : (
-              <div className="flex grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div className="flex grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {loans.map((loan, _) => (
                   <div
                     key={loan.loanId}
@@ -515,7 +515,7 @@ export default function Borrow() {
             )}
             {searchPageData.length != 0 && (
               <div>
-                <div className="flex flex-row grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                <div className="flex flex-row grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
                   {searchPageData.map((data) => (
                     <div
                       key={data.tokenId + data.contract.address}

@@ -609,7 +609,11 @@ export default function Borrow() {
                               }}
                             >
                               <div className="flex flex-col mt-2 items-center text-center">
-                                <div>{data.symbol}</div>
+                                <div>
+                                  {data.contract.symbol
+                                    ? data.contract.symbol
+                                    : "No Name Found"}
+                                </div>
                                 <div>
                                   {"#" +
                                     BigNumber.from(data.tokenId).toNumber()}

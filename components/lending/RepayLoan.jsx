@@ -137,12 +137,11 @@ export default function RepayLoan(props) {
     console.log("price", updatedPrice.price);
   }
 
-  function updateLiquidationThreshold() {
-    const updatedLiquidationThreshold = BigNumber.from(loan.maxLTV)
-      .add(loan.boost)
-      .mul(tokenPrice)
-      .div(10000)
-      .toString();
+  async function updateLiquidationThreshold() {
+    const updatedLiquidationThreshold = await loanCenter.getLoanMaxDebt(
+      props.loan_id,
+      tokenPrice
+    );
 
     console.log("updatedliquidationThreshold", updatedLiquidationThreshold);
     setLiquidationThreshold(updatedLiquidationThreshold);
@@ -297,7 +296,7 @@ export default function RepayLoan(props) {
               <div className="flex flex-col">
                 <Typography variant="subtitle2">Interest Rate</Typography>
                 <Typography variant="body16">
-                  {loan.borrowRate.toNumber() / 100}%
+                  {loan.borrowRate / 100}%
                 </Typography>
               </div>
             )}
@@ -305,18 +304,7 @@ export default function RepayLoan(props) {
           <div className="flex flex-row m-2">
             <div className="flex flex-col">
               <Typography variant="subtitle2">Max LTV (+ Boost)</Typography>
-              {loan && (
-                <Typography variant="body16">
-                  {tokenPrice != "0"
-                    ? loan.maxLTV.toNumber() / 100 +
-                      "% + " +
-                      loan.boost.toNumber() / 100 +
-                      "% = " +
-                      loan.maxLTV.add(loan.boost).toNumber() / 100 +
-                      "%"
-                    : "Token Price Appraisal Error"}
-                </Typography>
-              )}
+              {loan && <Typography variant="body16"></Typography>}
             </div>
           </div>
           <div className="flex flex-row items-center m-2">
@@ -353,14 +341,7 @@ export default function RepayLoan(props) {
                 </div>
                 <LinearProgressWithLabel
                   color="success"
-                  value={calculateHealthLevel(
-                    debt,
-                    BigNumber.from(loan.maxLTV)
-                      .add(loan.boost)
-                      .mul(tokenPrice)
-                      .div(10000)
-                      .toString()
-                  )}
+                  value={calculateHealthLevel(debt, 200)}
                 />
               </div>
             </div>

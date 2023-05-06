@@ -101,6 +101,15 @@ export default function Borrow() {
           );
         }
 
+        // Get the max debt for the loan
+        const tokenPrice = (
+          await getAssetsPrice(loan.nftAsset, loan.nftTokenIds, chain.id)
+        ).price;
+        const maxDebt = await loanCenter.getLoanMaxDebt(
+          BigNumber.from(addressNFTs[i].tokenId).toNumber(),
+          tokenPrice
+        );
+
         // Save relevant loan info
         updatedLoans.push({
           loanId: BigNumber.from(addressNFTs[i].tokenId).toNumber(),
@@ -109,12 +118,9 @@ export default function Borrow() {
           tokenIds: loan.nftTokenIds,
           tokenImages: tokenImages,
           amount: loan.amount,
-          boost: loan.boost,
           debt: debt,
-          tokenPrice: (
-            await getAssetsPrice(loan.nftAsset, loan.nftTokenIds, chain.id)
-          ).price,
-          maxLTV: loan.maxLTV,
+          tokenPrice: tokenPrice,
+          maxDebt: maxDebt,
         });
       } else if (
         updatedSupportedNFTs[getAddress(addressNFTs[i].contract.address)] !=
@@ -357,11 +363,7 @@ export default function Borrow() {
                               color="success"
                               value={calculateHealthLevel(
                                 loan.debt,
-                                BigNumber.from(loan.maxLTV)
-                                  .add(loan.boost)
-                                  .mul(loan.tokenPrice)
-                                  .div(10000)
-                                  .toString()
+                                loan.maxDebt
                               )}
                             />
                           </div>
@@ -383,7 +385,7 @@ export default function Borrow() {
                       setVisibility={setVisibleLoanModal}
                       loan_id={selectedLoan.loanId}
                       token_name={selectedLoan.tokenName}
-                      token_address={selectedLoan.contract.address}
+                      token_address={selectedLoan.tokenAddress}
                       token_ids={selectedLoan.tokenIds}
                       token_images={selectedLoan.tokenImages}
                       updateUI={setupUI}

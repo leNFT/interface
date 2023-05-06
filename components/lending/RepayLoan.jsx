@@ -244,7 +244,7 @@ export default function RepayLoan(props) {
 
   return (
     <div className="p-2">
-      <div className="flex flex-col xl:flex-row lg:mb-4 lg:mx-8 justify-center">
+      <div className="flex flex-col xl:flex-row m-2 lg:mb-4 lg:mx-8 xl:mx-4 justify-center">
         <div className="flex flex-col mb-4 lg:m-8 justify-center">
           <div
             className={

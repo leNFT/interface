@@ -656,17 +656,17 @@ export default function Borrow() {
               </div>
             )}
             {unsupportedAssets.length != 0 && (
-              <div className="flex flex-row grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2">
+              <div className="flex flex-row grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
                 {unsupportedAssets.map((unsupportedAsset, index) => (
                   <div
                     key={
                       unsupportedAsset.tokenId +
                       unsupportedAsset.contract.address
                     }
-                    className="flex m-4 items-center justify-center max-w-[220px]"
+                    className="flex m-4 items-center justify-center max-w-[120px]"
                   >
                     {index == 4 && unsupportedAssets.length == 5 ? (
-                      <div className="flex items-center p-6">
+                      <div className="flex items-center">
                         <Box
                           sx={{
                             fontFamily: "Monospace",
@@ -703,17 +703,15 @@ export default function Borrow() {
                                 />
                               </div>
                             ) : (
-                              <div className="flex flex-col w-[120px] h-[120px] items-center justify-center">
-                                <Box
-                                  sx={{
-                                    fontFamily: "Monospace",
-                                    fontSize: 12,
-                                  }}
-                                  className="text-center"
-                                >
-                                  No Image
-                                </Box>
-                              </div>
+                              <Box
+                                sx={{
+                                  fontFamily: "Monospace",
+                                  fontSize: 12,
+                                }}
+                                className="flex flex-col w-[120px] py-8"
+                              >
+                                No Image
+                              </Box>
                             )}
                             <Box
                               sx={{
@@ -723,7 +721,7 @@ export default function Borrow() {
                               }}
                             >
                               <div className="flex flex-col mt-4 items-center text-center">
-                                <div>{unsupportedAsset.symbol}</div>
+                                <div>{unsupportedAsset.contract.symbol}</div>
                                 <div>
                                   {"#" +
                                     BigNumber.from(

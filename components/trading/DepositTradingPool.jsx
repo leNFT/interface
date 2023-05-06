@@ -39,6 +39,7 @@ export default function DepositTradingPool(props) {
   const [delta, setDelta] = useState("");
   const [fee, setFee] = useState("");
   const [initialPrice, setInitialPrice] = useState("");
+  const [lpType, setLPType] = useState("trade");
   const [tokenAmount, setTokenAmount] = useState("");
   const [nftAmount, setNFTAmount] = useState(0);
   const [userNFTs, setUserNFTs] = useState([]);
@@ -186,6 +187,10 @@ export default function DepositTradingPool(props) {
     setCurve(e);
   }
 
+  function handleLPTypeChange(e) {
+    setLPType(e);
+  }
+
   return (
     <div>
       <div className="flex items-center justify-center flex-row">
@@ -206,32 +211,51 @@ export default function DepositTradingPool(props) {
           </Link>
         </Box>
       </div>
-      <div className="flex flex-row items-center justify-center mt-8 m-4">
+      <div className="flex flex-col md:flex-row items-center justify-center mt-8 m-4 space-x-2 space-y-2">
+        <div className="flex flex-row items-center justify-center">
+          <Box
+            className="flex mx-4 justify-center items-center"
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "subtitle2.fontSize",
+              fontWeight: "bold",
+            }}
+          >
+            LP Mode:
+          </Box>
+          <Dropdown>
+            <Dropdown.Button flat>
+              {lpType &&
+                lpType
+                  .replace(/([a-z])([A-Z])/g, "$1 $2")
+                  .replace(/^./, lpType[0].toUpperCase())}
+            </Dropdown.Button>
+            <Dropdown.Menu
+              aria-label="Static Actions"
+              selectionMode="single"
+              onAction={handleLPTypeChange}
+              disallowEmptySelection
+              selectedKeys={[lpType]}
+            >
+              <Dropdown.Item key="trade">Trade</Dropdown.Item>
+              <Dropdown.Item key="tradeUp">Trade Up</Dropdown.Item>
+              <Dropdown.Item key="tradeDown">Trade Down</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
         <Box
-          className="flex mx-4 justify-center items-center"
+          className="flex justify-center items-center w-6/12 text-center"
           sx={{
             fontFamily: "Monospace",
             fontSize: "subtitle2.fontSize",
-            fontWeight: "bold",
           }}
         >
-          Price Curve:
+          {lpType == "trade"
+            ? "'Trade' mode will allow your price to go up and down with the market."
+            : lpType == "tradeUp"
+            ? "'Trade Up' mode will only allow your price to go up with the market."
+            : "'Trade Down' mode will only allow your price to go down with the market."}
         </Box>
-        <Dropdown>
-          <Dropdown.Button flat>
-            {curve && curve.replace(/^./, curve[0].toUpperCase())}
-          </Dropdown.Button>
-          <Dropdown.Menu
-            aria-label="Static Actions"
-            selectionMode="single"
-            onAction={handleCurveChange}
-            disallowEmptySelection
-            selectedKeys={[curve]}
-          >
-            <Dropdown.Item key="exponential">Exponential</Dropdown.Item>
-            <Dropdown.Item key="linear">Linear</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
       </div>
       <div className="flex flex-col-reverse justify-center lg:flex-row">
         <div className="flex flex-col space-y-12 m-4">
@@ -446,6 +470,33 @@ export default function DepositTradingPool(props) {
             ))}
         </div>
         <div className="flex flex-col items-center justify-center pr-8 w-full lg:w-6/12">
+          <div className="flex flex-row items-center justify-center mt-8 m-4">
+            <Box
+              className="flex mx-4 justify-center items-center"
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+                fontWeight: "bold",
+              }}
+            >
+              Price Change:
+            </Box>
+            <Dropdown>
+              <Dropdown.Button flat>
+                {curve && curve.replace(/^./, curve[0].toUpperCase())}
+              </Dropdown.Button>
+              <Dropdown.Menu
+                aria-label="Static Actions"
+                selectionMode="single"
+                onAction={handleCurveChange}
+                disallowEmptySelection
+                selectedKeys={[curve]}
+              >
+                <Dropdown.Item key="exponential">Exponential</Dropdown.Item>
+                <Dropdown.Item key="linear">Linear</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
           <CurveChart
             curveType={curve}
             delta={delta ? delta : "20"}
@@ -507,6 +558,7 @@ export default function DepositTradingPool(props) {
               console.log("Depositing to trading pool", props.pool);
               var curveAddress = "";
               var curveDelta = 0;
+              var type = 0;
               console.log("delta", delta);
               if (curve == "exponential") {
                 curveAddress = addresses.ExponentialCurve;
@@ -516,9 +568,15 @@ export default function DepositTradingPool(props) {
                 curveDelta = parseUnits(delta, 18);
               }
 
+              if (lpType == "tradeUp") {
+                type = 1;
+              } else if (lpType == "tradeDown") {
+                type = 2;
+              }
+
               const tx = await wethGatewaySigner.depositTradingPool(
                 props.pool,
-                0,
+                console,
                 selectedNFTs,
                 initialPrice,
                 curveAddress,

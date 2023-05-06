@@ -39,15 +39,17 @@ export default function CreateLoan(props) {
   const [amount, setAmount] = useState("0");
   const [maxAmount, setMaxAmount] = useState("0");
   const [tokenPrice, setTokenPrice] = useState("0");
-  const [maxCollateralization, setMaxCollateralization] = useState(0);
+  const [maxLTV, setMaxLTV] = useState(0);
   const [collateralizationBoost, setCollateralizationBoost] = useState(0);
   const [nftApproved, setNFTApproved] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [loadingMaxAmount, setLoadingMaxAmount] = useState(false);
   const [loadingBorrowRate, setLoadingBorrowRate] = useState(false);
+  const [loadingAssetPricing, setLoadingAssetPricing] = useState(false);
   const [lendingPoolAddress, setLendingPoolAddress] = useState("");
   const [borrowLoading, setBorrowLoading] = useState(false);
   const [borrowRate, setBorrowRate] = useState(0);
+  const [liquidationThreshold, setLiquidationThreshold] = useState(0);
   const { address, isConnected } = useAccount();
   const { data: signer } = useSigner();
   const { chain } = useNetwork();
@@ -121,9 +123,9 @@ export default function CreateLoan(props) {
     //Find an NFT that's not being used by a loan
     for (let i = 0; i < userGenesisNFTs.length; i++) {
       const id = Number(userGenesisNFTs[i].tokenId);
-      const activeState = await genesisNFTProvider.getActiveState(id);
-      console.log("Active state for " + id + " is " + activeState);
-      if (activeState == false) {
+      const lockedState = await genesisNFTProvider.getLockedState(id);
+      console.log("Locked state for " + id + " is " + lockedState);
+      if (lockedState == false) {
         console.log("Using token ID for boost", id);
         setGenesisNFTId(id);
         break;
@@ -163,12 +165,20 @@ export default function CreateLoan(props) {
 
     console.log("priceResponse", priceResponse);
     setTokenPrice(priceResponse.price);
+    setLoadingAssetPricing(false);
 
-    //Get token max collateralization
-    const updatedMaxCollateralization =
-      await loanCenter.getCollectionMaxCollaterization(props.token_address);
-    console.log("maxCollateralization updated", updatedMaxCollateralization);
-    setMaxCollateralization(updatedMaxCollateralization);
+    // Get max debt
+    const updatedLiquidationThreshold =
+      await loanCenter.getCollectionLiquidationThreshold(props.token_address);
+    console.log("updatedLiquidationThreshold", updatedLiquidationThreshold);
+    setLiquidationThreshold(updatedLiquidationThreshold);
+
+    //Get token max LTV
+    const updatedMaxLTV = await loanCenter.getCollectionMaxLTV(
+      props.token_address
+    );
+    console.log("updatedMaxLTV updated", updatedMaxLTV);
+    setMaxLTV(updatedMaxLTV);
 
     //Get genesis boost
     var genesisBoostAmount = "0";
@@ -184,7 +194,7 @@ export default function CreateLoan(props) {
     ).toString();
     console.log("tokenETHPrice", tokenETHPrice);
     console.log("props.token_ids.length", props.token_ids.length);
-    const maxCollateralization = BigNumber.from(updatedMaxCollateralization)
+    const maxLTV = BigNumber.from(updatedMaxLTV)
       .mul(props.token_ids.length)
       .add(genesisBoostAmount)
       .mul(priceResponse.price)
@@ -193,16 +203,16 @@ export default function CreateLoan(props) {
       .div(PRICE_PRECISION)
       .div(2)
       .toString();
-    console.log("maxCollateralization", maxCollateralization);
+    console.log("maxLTV", maxLTV);
     const lendingPoolUnderlying = (
       await lendingPool.getUnderlyingBalance()
     ).toString();
     console.log("lendingPoolUnderlying", lendingPoolUnderlying);
-    const updatedMaxAmount = BigNumber.from(maxCollateralization).gt(
+    const updatedMaxAmount = BigNumber.from(maxLTV).gt(
       BigNumber.from(lendingPoolUnderlying)
     )
       ? lendingPoolUnderlying
-      : maxCollateralization;
+      : maxLTV;
     console.log("Updated Max Borrow Amount:", updatedMaxAmount);
     setMaxAmount(updatedMaxAmount);
     setLoadingMaxAmount(false);
@@ -228,6 +238,7 @@ export default function CreateLoan(props) {
     if (isConnected && address && props.token_address && props.token_ids) {
       console.log("wethGateway", addresses.WETHGateway);
       setLoadingMaxAmount(true);
+      setLoadingAssetPricing(true);
 
       getLendingPool();
       getGenesisNFT();
@@ -339,7 +350,7 @@ export default function CreateLoan(props) {
             <div className="flex flex-row m-2">
               <div className="flex flex-col">
                 <Typography variant="subtitle2">Asset Pricing</Typography>
-                {loadingMaxAmount ? (
+                {loadingAssetPricing ? (
                   <div className="m-2">
                     <Loading size={14} spinnerColor="#000000" />
                   </div>
@@ -362,12 +373,11 @@ export default function CreateLoan(props) {
                 ) : (
                   <Typography variant="body16">
                     {tokenPrice != "0"
-                      ? maxCollateralization / 100 +
+                      ? maxLTV / 100 +
                         "% + " +
                         collateralizationBoost / 100 +
                         "% = " +
-                        (parseInt(maxCollateralization) +
-                          parseInt(collateralizationBoost)) /
+                        (parseInt(maxLTV) + parseInt(collateralizationBoost)) /
                           100 +
                         "%"
                       : "Token Price Appraisal Error"}
@@ -382,11 +392,9 @@ export default function CreateLoan(props) {
                 </Typography>
                 <Typography variant="caption16">
                   {formatUnits(
-                    BigNumber.from(maxCollateralization)
-                      .add(collateralizationBoost)
+                    BigNumber.from(liquidationThreshold)
                       .mul(tokenPrice)
-                      .div(10000)
-                      .toString(),
+                      .div(10000),
                     18
                   ) +
                     " " +

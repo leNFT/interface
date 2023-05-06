@@ -504,7 +504,7 @@ export default function DepositTradingPool(props) {
           />
 
           <Box
-            className="flex mx-4 justify-center items-center"
+            className="flex mx-4 justify-center items-center border-2 border-black rounded-xl p-2"
             sx={{
               fontFamily: "Monospace",
               fontSize: "subtitle2.fontSize",

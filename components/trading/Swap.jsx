@@ -1153,20 +1153,24 @@ export default function Swap() {
               >
                 {BigNumber.from(priceQuote.buyPrice).gt(priceQuote.sellPrice)
                   ? "− " +
-                    formatUnits(
-                      BigNumber.from(priceQuote.buyPrice).sub(
-                        priceQuote.sellPrice
-                      ),
-                      18
-                    ) +
+                    Number(
+                      formatUnits(
+                        BigNumber.from(priceQuote.buyPrice).sub(
+                          priceQuote.sellPrice
+                        ),
+                        18
+                      )
+                    ).toPrecision(6) +
                     " WETH"
                   : "＋ " +
-                    formatUnits(
-                      BigNumber.from(priceQuote.sellPrice).sub(
-                        priceQuote.buyPrice
-                      ),
-                      18
-                    ) +
+                    Number(
+                      formatUnits(
+                        BigNumber.from(priceQuote.sellPrice).sub(
+                          priceQuote.buyPrice
+                        ),
+                        18
+                      )
+                    ).toPrecision(6) +
                     " ETH"}
               </Box>
               <Tooltip

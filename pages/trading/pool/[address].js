@@ -156,8 +156,8 @@ export default function TradingPool() {
           updateUI={updateUI}
         />
       </StyledModal>
-      <div className="flex flex-row justify-center">
-        <div className="flex flex-col justify-center mr-auto ml-4">
+      <div className="flex flex-row w-full justify-between">
+        <div className="flex flex-col justify-center mr-8">
           <Button
             size="small"
             color="#eae5ea"
@@ -170,17 +170,17 @@ export default function TradingPool() {
             }}
           />
         </div>
-        <div className="flex flex-col justify-center break-all ml-4">
+        <div className="flex flex-row justify-center break-all items-center text-center mx-4">
           <Box
             sx={{
               fontFamily: "Monospace",
               fontSize: "body2.fontSize",
             }}
           >
-            {router.query.address}
+            {router.query.address.slice(0, 10) +
+              "..." +
+              router.query.address.slice(-6)}
           </Box>
-        </div>
-        <div className="flex flex-col justify-center pb-1 mr-auto">
           <Button
             size="large"
             color="#eae5ea"
@@ -201,9 +201,22 @@ export default function TradingPool() {
             }}
           />
         </div>
+        <div className="flex flex-col justify-center">
+          {poolInfo?.gauge && (
+            <Button
+              color="blue"
+              theme="colored"
+              text="Go to Gauge"
+              onClick={async function () {
+                Router.push({
+                  pathname: "/trading/gauge/" + poolInfo?.gauge,
+                });
+              }}
+            />
+          )}
+        </div>
       </div>
-
-      <div className="flex flex-col xl:flex-row justify-between items-center p-8 rounded-3xl m-8 lg:mx-16 bg-black/5 shadow-lg">
+      <div className="flex flex-col xl:flex-row justify-between items-center p-8 rounded-3xl my-8 md:m-8 lg:mx-16 bg-black/5 shadow-lg">
         <div className="flex flex-row justify-center items-center">
           <LinkTo
             type="external"
@@ -226,9 +239,10 @@ export default function TradingPool() {
               isConnected
                 ? chain.id == 1
                   ? "https://etherscan.io/address/" + poolInfo?.nft.address
-                  : "https://goerli.etherscan.io/address/" +
+                  : "https://sepolia.etherscan.io/address/" +
                     poolInfo?.nft.address
-                : "https://goerli.etherscan.io/address/" + poolInfo?.nft.address
+                : "https://sepolia.etherscan.io/address/" +
+                  poolInfo?.nft.address
             }
           ></LinkTo>
           <Box
@@ -342,7 +356,7 @@ export default function TradingPool() {
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:mx-16 !mt-8 bg-black/5 shadow-lg">
+      <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl my-8 md:m-8 lg:mx-16 !mt-8 bg-black/5 shadow-lg">
         <div className="flex flex-col items-center p-4 rounded-3xl m-8 lg:m-16 bg-black/5 shadow-lg">
           <div className="flex flex-col m-4 rounded-2xl">
             <div className="flex flex-row m-2">

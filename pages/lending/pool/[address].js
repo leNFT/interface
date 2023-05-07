@@ -6,6 +6,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 import StyledModal from "../../../components/StyledModal";
 import { formatUnits } from "@ethersproject/units";
 import contractAddresses from "../../../contractAddresses.json";
+import gaugeControllerContract from "../../../contracts/GaugeController.json";
 import { useState, useEffect } from "react";
 import lendingMarketContract from "../../../contracts/LendingMarket.json";
 import tokenOracleContract from "../../../contracts/TokenOracle.json";
@@ -39,6 +40,7 @@ export default function LendingPool() {
   const [loadingPool, setLoadingPool] = useState(false);
   const [poolConfig, setPoolConfig] = useState();
   const [tvlSafeguard, setTVLSafeguard] = useState("0");
+  const [gauge, setGauge] = useState("");
   const provider = useProvider();
   var addresses = contractAddresses["11155111"];
 
@@ -48,12 +50,23 @@ export default function LendingPool() {
     signerOrProvider: provider,
   });
 
+  const gaugeController = useContract({
+    contractInterface: gaugeControllerContract.abi,
+    addressOrName: addresses.GaugeController,
+    signerOrProvider: provider,
+  });
+
   async function getLendingPoolDetails() {
     const lendingPool = new ethers.Contract(
       router.query.address,
       lendingPoolContract.abi,
       provider
     );
+
+    // Check if the pool has a gauge
+    const gaugeAddress = await gaugeController.getGauge(router.query.address);
+    console.log("Gauge Address:", gaugeAddress);
+    setGauge(gaugeAddress);
 
     const updatedDebt = await lendingPool.getDebt();
     console.log("Updated Debt:", updatedDebt);
@@ -163,8 +176,8 @@ export default function LendingPool() {
           updateUI={getLendingPoolDetails}
         />
       </StyledModal>
-      <div className="flex flex-row justify-center">
-        <div className="flex flex-col justify-center mr-auto ml-4">
+      <div className="flex flex-row w-full justify-between">
+        <div className="flex flex-col justify-center mr-8">
           <Button
             size="small"
             color="#eae5ea"
@@ -177,17 +190,17 @@ export default function LendingPool() {
             }}
           />
         </div>
-        <div className="flex flex-col justify-center break-all ml-4">
+        <div className="flex flex-row justify-center items-center">
           <Box
             sx={{
               fontFamily: "Monospace",
               fontSize: "body2.fontSize",
             }}
           >
-            {router.query.address}
+            {router.query.address.slice(0, 10) +
+              "..." +
+              router.query.address.slice(-6)}
           </Box>
-        </div>
-        <div className="flex flex-col justify-center pb-1 mr-auto">
           <Button
             size="large"
             color="#eae5ea"
@@ -199,7 +212,7 @@ export default function LendingPool() {
                   "https://etherscan.io/address/" + router.query.address,
                   "_blank"
                 );
-              } else if (chain.id == 5) {
+              } else {
                 window.open(
                   "https://sepolia.etherscan.io/address/" +
                     router.query.address,
@@ -208,6 +221,20 @@ export default function LendingPool() {
               }
             }}
           />
+        </div>
+        <div className="flex flex-col justify-center">
+          {gauge != ethers.constants.AddressZero && (
+            <Button
+              color="blue"
+              theme="colored"
+              text="Go to Gauge"
+              onClick={async function () {
+                Router.push({
+                  pathname: "/lending/gauge/" + gauge,
+                });
+              }}
+            />
+          )}
         </div>
       </div>
       <div className="flex flex-row justify-center items-center mt-4">

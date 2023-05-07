@@ -300,419 +300,415 @@ export default function Buy() {
 
   return (
     <div className="flex flex-col items-center text-center w-full py-8 md:w-fit md:p-8 justify-center m-4 rounded-3xl bg-black/5 shadow-lg">
-      <div className="flex flex-col">
-        <div className="flex flex-col m-4">
-          <div className="flex flex-row justify-center items-center mx-2">
-            <Autocomplete
-              autoComplete
-              freeSolo
-              disablePortal
-              ListboxProps={{
-                style: {
-                  backgroundColor: "rgb(253, 241, 244)",
-                  fontFamily: "Monospace",
-                },
-              }}
-              options={tradingCollections.map((option) => option.name)}
-              sx={{ minWidth: { xs: 215, sm: 300, md: 380 } }}
-              onInputChange={handleNFTAddressChange}
-              renderOption={(props, option, state) => (
-                <div className="flex flex-row m-4" {...props}>
-                  <div className="flex w-3/12 h-[50px]">
-                    {tradingCollections.find(
-                      (collection) => collection.name == option
-                    ).image != "" && (
-                      <Image
-                        loader={() =>
-                          tradingCollections.find(
-                            (collection) => collection.name == option
-                          ).image
-                        }
-                        src={
-                          tradingCollections.find(
-                            (collection) => collection.name == option
-                          ).image
-                        }
-                        height="50"
-                        width="50"
-                        className="rounded-xl"
-                      />
-                    )}
-                  </div>
-                  <div className="flex mx-2">{option}</div>
+      <div className="flex flex-col m-4">
+        <div className="flex flex-row justify-center items-center mx-2">
+          <Autocomplete
+            autoComplete
+            freeSolo
+            disablePortal
+            ListboxProps={{
+              style: {
+                backgroundColor: "rgb(253, 241, 244)",
+                fontFamily: "Monospace",
+              },
+            }}
+            options={tradingCollections.map((option) => option.name)}
+            sx={{ minWidth: { xs: 215, sm: 300, md: 380 } }}
+            onInputChange={handleNFTAddressChange}
+            renderOption={(props, option, state) => (
+              <div className="flex flex-row m-4" {...props}>
+                <div className="flex w-3/12 h-[50px]">
+                  {tradingCollections.find(
+                    (collection) => collection.name == option
+                  ).image != "" && (
+                    <Image
+                      loader={() =>
+                        tradingCollections.find(
+                          (collection) => collection.name == option
+                        ).image
+                      }
+                      src={
+                        tradingCollections.find(
+                          (collection) => collection.name == option
+                        ).image
+                      }
+                      height="50"
+                      width="50"
+                      className="rounded-xl"
+                    />
+                  )}
                 </div>
-              )}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="NFT Name or Address"
-                  sx={{
-                    "& label": {
-                      paddingLeft: (theme) => theme.spacing(2),
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle1.fontSize",
-                    },
-                    "& input": {
-                      paddingLeft: (theme) => theme.spacing(3.5),
-                      fontFamily: "Monospace",
-                    },
-                    "& fieldset": {
-                      paddingLeft: (theme) => theme.spacing(2.5),
-                      borderRadius: "20px",
-                      fontFamily: "Monospace",
-                    },
-                  }}
-                />
-              )}
-            />
-            {collectionThumbnailURL && (
-              <div className="flex ml-4">
-                <Image
-                  loader={() => collectionThumbnailURL}
-                  src={collectionThumbnailURL}
-                  alt="NFT Thumbnail"
-                  height="60"
-                  width="60"
-                  className="rounded-xl"
-                />
+                <div className="flex mx-2">{option}</div>
               </div>
             )}
-          </div>
-          {nftAddress && (
-            <div className="flex flex-row mt-1 justify-center">
-              <Box
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="NFT Name or Address"
                 sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "caption.fontSize",
-                  fontWeight: "bold",
-                  letterSpacing: 2,
+                  "& label": {
+                    paddingLeft: (theme) => theme.spacing(2),
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                  },
+                  "& input": {
+                    paddingLeft: (theme) => theme.spacing(3.5),
+                    fontFamily: "Monospace",
+                  },
+                  "& fieldset": {
+                    paddingLeft: (theme) => theme.spacing(2.5),
+                    borderRadius: "20px",
+                    fontFamily: "Monospace",
+                  },
                 }}
-              >
-                {poolAddress
-                  ? "Pool: " +
-                    poolAddress.slice(0, 5) +
-                    ".." +
-                    poolAddress.slice(-2)
-                  : "No pool found"}
-              </Box>
+              />
+            )}
+          />
+          {collectionThumbnailURL && (
+            <div className="flex ml-4">
+              <Image
+                loader={() => collectionThumbnailURL}
+                src={collectionThumbnailURL}
+                alt="NFT Thumbnail"
+                height="60"
+                width="60"
+                className="rounded-xl"
+              />
             </div>
           )}
         </div>
-        <div className="flex flex-col justify-center m-4">
-          <div className="flex flex-col md:flex-row justify-center items-center">
-            <div className="flex flex-col w-[200px] justify-center m-2">
-              <Input
-                labelLeft={
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "h6.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Buy
-                  </Box>
+        {nftAddress && (
+          <div className="flex flex-row mt-1 justify-center">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "caption.fontSize",
+                fontWeight: "bold",
+                letterSpacing: 2,
+              }}
+            >
+              {poolAddress
+                ? "Pool: " +
+                  poolAddress.slice(0, 5) +
+                  ".." +
+                  poolAddress.slice(-2)
+                : "No pool found"}
+            </Box>
+          </div>
+        )}
+      </div>
+      <div className="flex flex-col justify-center m-4">
+        <div className="flex flex-col md:flex-row justify-center items-center">
+          <div className="flex flex-col w-[200px] justify-center m-2">
+            <Input
+              labelLeft={
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "h6.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Buy
+                </Box>
+              }
+              bordered
+              size="xl"
+              aria-label="NFTs"
+              labelRight={
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "h6.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  NFTs
+                </Box>
+              }
+              placeholder="0"
+              value={amount}
+              onChange={handleAmountInputChange}
+              css={{ textAlignLast: "center" }}
+            />
+          </div>
+          <div className="flex flex-row">
+            <div className="flex flex-col text-center justify-center m-2">
+              OR
+            </div>
+            <div className="flex flex-col text-center justify-center m-2">
+              <Button
+                primary
+                size="medium"
+                color="#d2c6d2"
+                onClick={() => {
+                  // Reset selected NFTs
+                  setSelectedNFTs([]);
+                  setSelectingNFTs(!selectingNFTs);
+                }}
+                disabled={!nftAddress}
+                label={
+                  <div className="flex">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle2.fontSize",
+                        fontWeight: "bold",
+                        letterSpacing: 2,
+                      }}
+                    >
+                      Select NFTs
+                    </Box>
+                  </div>
                 }
-                bordered
-                size="xl"
-                aria-label="NFTs"
-                labelRight={
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "h6.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    NFTs
-                  </Box>
-                }
-                placeholder="0"
-                value={amount}
-                onChange={handleAmountInputChange}
-                css={{ textAlignLast: "center" }}
               />
             </div>
-            <div className="flex flex-row">
-              <div className="flex flex-col text-center justify-center m-2">
-                OR
-              </div>
-              <div className="flex flex-col text-center justify-center m-2">
-                <Button
-                  primary
-                  size="medium"
-                  color="#d2c6d2"
-                  onClick={() => {
-                    // Reset selected NFTs
-                    setSelectedNFTs([]);
-                    setSelectingNFTs(!selectingNFTs);
-                  }}
-                  disabled={!nftAddress}
-                  label={
-                    <div className="flex">
-                      <Box
-                        sx={{
-                          fontFamily: "Monospace",
-                          fontSize: "subtitle2.fontSize",
-                          fontWeight: "bold",
-                          letterSpacing: 2,
-                        }}
-                      >
-                        Select NFTs
-                      </Box>
-                    </div>
-                  }
-                />
-              </div>
-            </div>
           </div>
-          {selectingNFTs &&
-            (availableNFTs.length > 0 ? (
-              <div className="flex flex-col justify-center items-center m-4">
-                <div className="flex flex-row items-center text-center justify-center">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "caption.fontSize",
-                      fontWeight: "bold",
-                      color: "#be4d25",
-                    }}
+        </div>
+        {selectingNFTs &&
+          (availableNFTs.length > 0 ? (
+            <div className="flex flex-col justify-center items-center m-4">
+              <div className="flex flex-row items-center text-center justify-center">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "caption.fontSize",
+                    fontWeight: "bold",
+                    color: "#be4d25",
+                  }}
+                >
+                  {"Selecting NFTs doesn't guarantee the best buy price."}
+                </Box>
+              </div>
+              <div className="m-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 overflow-auto max-h-[24rem]">
+                {availableNFTs.map((nft, _) => (
+                  <div
+                    key={BigNumber.from(nft.tokenId).toNumber()}
+                    className="flex m-2 items-center justify-center max-w-[300px]"
                   >
-                    {"Selecting NFTs doesn't guarantee the best buy price."}
-                  </Box>
-                </div>
-                <div className="m-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 overflow-auto max-h-[24rem]">
-                  {availableNFTs.map((nft, _) => (
-                    <div
-                      key={BigNumber.from(nft.tokenId).toNumber()}
-                      className="flex m-2 items-center justify-center max-w-[300px]"
+                    <Card
+                      sx={{
+                        borderRadius: 4,
+                        background: selectedNFTs.includes(
+                          BigNumber.from(nft.tokenId).toNumber()
+                        )
+                          ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
+                          : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
+                      }}
                     >
-                      <Card
-                        sx={{
-                          borderRadius: 4,
-                          background: selectedNFTs.includes(
-                            BigNumber.from(nft.tokenId).toNumber()
-                          )
-                            ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
-                            : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
+                      <CardActionArea
+                        onClick={function () {
+                          //If it's selected we unselect and if its unselected we select
+                          console.log("Clicked on ID", nft.tokenId);
+                          var newSelectedNFTs = selectedNFTs.slice();
+                          var index = newSelectedNFTs.findIndex(
+                            (element) =>
+                              element == BigNumber.from(nft.tokenId).toNumber()
+                          );
+                          if (index == -1) {
+                            newSelectedNFTs.push(
+                              BigNumber.from(nft.tokenId).toNumber()
+                            );
+                          } else {
+                            newSelectedNFTs.splice(index, 1);
+                          }
+                          console.log(newSelectedNFTs);
+                          setSelectedNFTs(newSelectedNFTs);
                         }}
                       >
-                        <CardActionArea
-                          onClick={function () {
-                            //If it's selected we unselect and if its unselected we select
-                            console.log("Clicked on ID", nft.tokenId);
-                            var newSelectedNFTs = selectedNFTs.slice();
-                            var index = newSelectedNFTs.findIndex(
-                              (element) =>
-                                element ==
-                                BigNumber.from(nft.tokenId).toNumber()
-                            );
-                            if (index == -1) {
-                              newSelectedNFTs.push(
-                                BigNumber.from(nft.tokenId).toNumber()
-                              );
-                            } else {
-                              newSelectedNFTs.splice(index, 1);
-                            }
-                            console.log(newSelectedNFTs);
-                            setSelectedNFTs(newSelectedNFTs);
-                          }}
-                        >
-                          <div className="flex flex-col items-center p-1">
-                            {nft.media[0] ? (
-                              <Image
-                                loader={() => nft.media[0].gateway}
-                                src={nft.media[0].gateway}
-                                height="100"
-                                width="100"
-                                className="rounded-xl"
-                              />
-                            ) : (
-                              <Box
-                                className="flex m-2 justify-center items-center w-[100px] h-[100px]"
-                                sx={{
-                                  fontFamily: "Monospace",
-                                  fontSize: "caption",
-                                }}
-                              >
-                                No Image
-                              </Box>
-                            )}
+                        <div className="flex flex-col items-center p-1">
+                          {nft.media[0] ? (
+                            <Image
+                              loader={() => nft.media[0].gateway}
+                              src={nft.media[0].gateway}
+                              height="100"
+                              width="100"
+                              className="rounded-xl"
+                            />
+                          ) : (
                             <Box
-                              className="mt-1"
+                              className="flex m-2 justify-center items-center w-[100px] h-[100px]"
                               sx={{
                                 fontFamily: "Monospace",
                                 fontSize: "caption",
                               }}
                             >
-                              {BigNumber.from(nft.tokenId).toNumber()}
+                              No Image
                             </Box>
-                          </div>
-                        </CardActionArea>
-                      </Card>
-                    </div>
-                  ))}
-                </div>
+                          )}
+                          <Box
+                            className="mt-1"
+                            sx={{
+                              fontFamily: "Monospace",
+                              fontSize: "caption",
+                            }}
+                          >
+                            {BigNumber.from(nft.tokenId).toNumber()}
+                          </Box>
+                        </div>
+                      </CardActionArea>
+                    </Card>
+                  </div>
+                ))}
               </div>
-            ) : (
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "subtitle2.fontSize",
-                  fontWeight: "bold",
-                }}
-                className="flex mt-4 justify-center items-center text-center"
-              >
-                {"Pool has no " + nftName + "'s left."}
-              </Box>
-            ))}
-        </div>
-        {loadingPriceQuote && <Loading className="m-12" size="xl" />}
-        {priceQuote && (
-          <div className="flex flex-col sm:flex-row items-center justify-center">
-            <div className="flex flex-col sm:w-6/12 items-center text-center justify-center p-4 m-4 rounded-3xl bg-black/5 shadow-lg">
-              <Box
-                className="mb-4"
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "subtitle2.fontSize",
-                  fontWeight: "bold",
-                }}
-              >
-                Your buy quote
-              </Box>
-              <div className="flex flex-row w-full justify-center items-center m-2">
-                <Divider style={{ width: "100%" }}>
-                  {nftName && (
-                    <Chip
-                      label={
-                        <Box
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "subtitle2.fontSize",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          {nftName ? amount + " " + nftName : "?"}
-                        </Box>
-                      }
-                      variant="outlined"
-                      component="a"
-                      clickable
-                      target="_blank"
-                      href={
-                        isConnected
-                          ? chain.id == 1
-                            ? "https://etherscan.io/address/" + nftAddress
-                            : "https://sepolia.etherscan.io/address/" +
-                              nftAddress
+            </div>
+          ) : (
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+                fontWeight: "bold",
+              }}
+              className="flex mt-4 justify-center items-center text-center"
+            >
+              {"Pool has no " + nftName + "'s left."}
+            </Box>
+          ))}
+      </div>
+      {loadingPriceQuote && <Loading className="m-12" size="xl" />}
+      {priceQuote && (
+        <div className="flex flex-col sm:flex-row items-center justify-center">
+          <div className="flex flex-col sm:w-6/12 items-center text-center justify-center p-4 m-4 rounded-3xl bg-black/5 shadow-lg">
+            <Box
+              className="mb-4"
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+                fontWeight: "bold",
+              }}
+            >
+              Your buy quote
+            </Box>
+            <div className="flex flex-row w-full justify-center items-center m-2">
+              <Divider style={{ width: "100%" }}>
+                {nftName && (
+                  <Chip
+                    label={
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle2.fontSize",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {nftName ? amount + " " + nftName : "?"}
+                      </Box>
+                    }
+                    variant="outlined"
+                    component="a"
+                    clickable
+                    target="_blank"
+                    href={
+                      isConnected
+                        ? chain.id == 1
+                          ? "https://etherscan.io/address/" + nftAddress
                           : "https://sepolia.etherscan.io/address/" + nftAddress
-                      }
-                    />
-                  )}
-                </Divider>
-              </div>
+                        : "https://sepolia.etherscan.io/address/" + nftAddress
+                    }
+                  />
+                )}
+              </Divider>
+            </div>
+            <Box
+              className="m-4"
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "h6.fontSize",
+                fontWeight: "bold",
+              }}
+            >
+              {Number(formatUnits(priceQuote.price, 18)).toPrecision(6)} ETH
+            </Box>
+            {priceQuote.priceImpact != undefined && (
               <Box
-                className="m-4"
+                className="m-1"
                 sx={{
                   fontFamily: "Monospace",
-                  fontSize: "h6.fontSize",
-                  fontWeight: "bold",
+                  fontSize: "subtitle1.fontSize",
                 }}
               >
-                {Number(formatUnits(priceQuote.price, 18)).toPrecision(6)} ETH
+                Price Impact: {priceQuote.priceImpact / 100}%
               </Box>
-              {priceQuote.priceImpact != undefined && (
+            )}
+          </div>
+          <div className="grid sm:w-6/12 grid-cols-3 gap-4 p-4 m-4 rounded-3xl bg-black/5 shadow-lg">
+            {nftImages.map((imageUrl, index) => (
+              <div key={index} className="flex items-center justify-center">
+                <Image
+                  loader={() => imageUrl}
+                  src={imageUrl}
+                  height="80"
+                  width="80"
+                  unoptimized={true}
+                  className="rounded-3xl"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      <div className="flex flex-row m-6 w-8/12 md:w-6/12">
+        <Button
+          primary
+          fill="horizontal"
+          size="large"
+          disabled={buyLoading}
+          color="#063970"
+          onClick={async function () {
+            if (!isConnected) {
+              dispatch({
+                type: "info",
+                message: "Connect your wallet first",
+                title: "Connect",
+                position: "bottomL",
+              });
+              return;
+            }
+            if (priceQuote.price > ethBalance) {
+              dispatch({
+                type: "info",
+                message: "You don't have enough ETH",
+                title: "Insufficient ETH",
+                position: "bottomL",
+              });
+            }
+            setBuyLoading(true);
+            try {
+              const tx = await wethGatewaySigner.buy(
+                poolAddress,
+                selectingNFTs ? selectedNFTs : priceQuote.exampleNFTs,
+                priceQuote.price,
+                {
+                  value: priceQuote.price,
+                }
+              );
+              await tx.wait(1);
+              handleBuySuccess();
+            } catch (error) {
+              console.log(error);
+            } finally {
+              setBuyLoading(false);
+            }
+          }}
+          label={
+            <div className="flex justify-center">
+              {buyLoading ? (
+                <Spinner color={"black"} size="small" />
+              ) : (
                 <Box
-                  className="m-1"
                   sx={{
                     fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
+                    fontSize: "subtitle2.fontSize",
+                    fontWeight: "bold",
+                    letterSpacing: 2,
                   }}
                 >
-                  Price Impact: {priceQuote.priceImpact / 100}%
+                  {"BUY " + amount + " " + (nftName ? nftName : "NFTs")}
                 </Box>
               )}
             </div>
-            <div className="grid sm:w-6/12 grid-cols-3 gap-4 p-4 m-4 rounded-3xl bg-black/5 shadow-lg">
-              {nftImages.map((imageUrl, index) => (
-                <div key={index} className="flex items-center justify-center">
-                  <Image
-                    loader={() => imageUrl}
-                    src={imageUrl}
-                    height="80"
-                    width="80"
-                    unoptimized={true}
-                    className="rounded-3xl"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        <div className="flex flex-row m-6 w-8/12 md:w-6/12">
-          <Button
-            primary
-            fill="horizontal"
-            size="large"
-            disabled={buyLoading}
-            color="#063970"
-            onClick={async function () {
-              if (!isConnected) {
-                dispatch({
-                  type: "info",
-                  message: "Connect your wallet first",
-                  title: "Connect",
-                  position: "bottomL",
-                });
-                return;
-              }
-              if (priceQuote.price > ethBalance) {
-                dispatch({
-                  type: "info",
-                  message: "You don't have enough ETH",
-                  title: "Insufficient ETH",
-                  position: "bottomL",
-                });
-              }
-              setBuyLoading(true);
-              try {
-                const tx = await wethGatewaySigner.buy(
-                  poolAddress,
-                  selectingNFTs ? selectedNFTs : priceQuote.exampleNFTs,
-                  priceQuote.price,
-                  {
-                    value: priceQuote.price,
-                  }
-                );
-                await tx.wait(1);
-                handleBuySuccess();
-              } catch (error) {
-                console.log(error);
-              } finally {
-                setBuyLoading(false);
-              }
-            }}
-            label={
-              <div className="flex justify-center">
-                {buyLoading ? (
-                  <Spinner color={"black"} size="small" />
-                ) : (
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle2.fontSize",
-                      fontWeight: "bold",
-                      letterSpacing: 2,
-                    }}
-                  >
-                    {"BUY " + amount + " " + (nftName ? nftName : "NFTs")}
-                  </Box>
-                )}
-              </div>
-            }
-          />
-        </div>
+          }
+        />
       </div>
     </div>
   );

@@ -309,7 +309,9 @@ export default function LendingPool() {
                     fontSize: "subtitle1.fontSize",
                   }}
                 >
-                  {formatUnits(maxAmount, 18) + " " + assetSymbol}
+                  {Number(formatUnits(maxAmount, 18)).toPrecision(6) +
+                    " " +
+                    assetSymbol}
                 </Box>
               )}
             </div>

@@ -175,7 +175,7 @@ export default function Genesis() {
                 Genesis NFT.
               </Box>
             </div>
-            <div className="flex flex-col justify-center text-center m-8 w-8/12 rounded-2xl bg-black/5 shadow-lg p-4">
+            <div className="flex flex-col justify-center text-center mt-2 mb-8 md:m-8 w-8/12 rounded-2xl bg-black/5 shadow-lg p-4">
               <Box
                 sx={{
                   fontFamily: "Monospace",
@@ -220,7 +220,7 @@ export default function Genesis() {
             />
           </div>
           {chain?.id != 1 && (
-            <div className="flex flex-row justify-center text-center mb-4">
+            <div className="flex flex-row justify-center text-center mb-4 w-10/12">
               <Typography
                 variant="subtitle2"
                 color="#BF6958"
@@ -245,7 +245,7 @@ export default function Genesis() {
             </Box>
           </div>
           {userGenesisNFTs.length != 0 ? (
-            <div className="flex flex-row grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2">
+            <div className="flex flex-row grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
               {userGenesisNFTs.map((nft) => (
                 <div
                   key={nft.tokenId}

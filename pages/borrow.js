@@ -245,7 +245,7 @@ export default function Borrow() {
                 }}
               >
                 <div className="text-md md:text-2xl justify-center text-center">
-                  {"Loading loans and NFTs..."}
+                  {"Loading your wallet & loans..."}
                 </div>
               </Box>
             </Typography>

@@ -177,9 +177,10 @@ export default function TradingPool() {
               fontSize: "body2.fontSize",
             }}
           >
-            {router.query.address.slice(0, 10) +
-              "..." +
-              router.query.address.slice(-6)}
+            {router.query.address &&
+              router.query.address.slice(0, 10) +
+                "..." +
+                router.query.address.slice(-6)}
           </Box>
           <Button
             size="large"

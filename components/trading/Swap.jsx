@@ -532,7 +532,7 @@ export default function Swap() {
                 }}
                 options={tradingCollections.map((option) => option.name)}
                 sx={{
-                  minWidth: { xs: 180, sm: 250, md: 270, lg: 260, xl: 280 },
+                  minWidth: { xs: 235, sm: 250, md: 270, lg: 260, xl: 280 },
                 }}
                 onInputChange={handleSellNFTAddressChange}
                 renderOption={(props, option, state) => (
@@ -807,7 +807,7 @@ export default function Swap() {
                 }}
                 options={tradingCollections.map((option) => option.name)}
                 sx={{
-                  minWidth: { xs: 200, sm: 250, md: 270, lg: 260, xl: 280 },
+                  minWidth: { xs: 235, sm: 250, md: 270, lg: 260, xl: 280 },
                 }}
                 onInputChange={handleBuyNFTAddressChange}
                 renderOption={(props, option, state) => (

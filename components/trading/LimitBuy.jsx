@@ -197,7 +197,7 @@ export default function Buy() {
               },
             }}
             options={tradingCollections.map((option) => option.name)}
-            sx={{ minWidth: { xs: 215, sm: 300, md: 380 } }}
+            sx={{ minWidth: { xs: 260, sm: 320, md: 380 } }}
             onInputChange={handleNFTAddressChange}
             renderOption={(props, option, state) => (
               <div className="flex flex-row m-4" {...props}>

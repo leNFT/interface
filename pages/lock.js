@@ -958,7 +958,7 @@ export default function Lock() {
                     options={Object.values(gauges).map(
                       (option) => option.pool.name
                     )}
-                    sx={{ minWidth: { xs: 215, sm: 300, md: 380 } }}
+                    sx={{ minWidth: { xs: 260, sm: 320, md: 380 } }}
                     onInputChange={handleGaugeChange}
                     renderOption={(props, option, state) => (
                       <div className="flex flex-row m-4" {...props}>

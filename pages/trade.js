@@ -86,7 +86,7 @@ export default function Trade() {
           />
         </div>
       </div>
-      <div>
+      <div className="flex flex-col items-center">
         {option == "swap" && <Swap />}
         {option == "buy" && <Buy />}
         {option == "sell" && <Sell />}

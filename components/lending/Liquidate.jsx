@@ -28,18 +28,8 @@ import LinearProgressWithLabel from "../LinearProgressWithLabel";
 import erc20 from "../../contracts/erc20.json";
 import * as timeago from "timeago.js";
 
-function isLoanLiquidatable(
-  debt,
-  maxCollateralization,
-  collaterizationBoost,
-  price
-) {
-  return BigNumber.from(debt).gt(
-    BigNumber.from(maxCollateralization)
-      .add(collaterizationBoost)
-      .mul(price)
-      .div(10000)
-  );
+function isLoanLiquidatable(debt, maxDebt) {
+  return debt > maxDebt;
 }
 
 export default function Liquidate(props) {
@@ -89,9 +79,14 @@ export default function Liquidate(props) {
   }
 
   async function getLoanDetails() {
-    const loan = await loanCenterProvider.getLoan(props.loan.loanId);
-
-    setLoanDetails(loan);
+    try {
+      const loan = await loanCenterProvider.getLoanLiquidationData(
+        props.loan.loanId
+      );
+      setLoanDetails(loan);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   async function getAssetPricing() {
@@ -162,9 +157,9 @@ export default function Liquidate(props) {
               <div className="flex flex-col justify-center">
                 <div className="flex flex-row items-center m-2">
                   <div className="flex flex-col">
-                    <Typography variant="subtitle2">Asset ID</Typography>
+                    <Typography variant="subtitle2">Asset IDs</Typography>
                     <Typography variant="body16">
-                      {props.loan.tokenId}
+                      {props.loan.tokenIds.toString()}
                     </Typography>
                   </div>
                 </div>
@@ -172,7 +167,8 @@ export default function Liquidate(props) {
                   <div className="flex flex-col">
                     <Typography variant="subtitle2">Asset Pricing</Typography>
                     <Typography variant="body16">
-                      {formatUnits(tokenPrice, 18) + " WETH"}
+                      {Number(formatUnits(tokenPrice, 18)).toPrecision(6) +
+                        " WETH"}
                     </Typography>
                   </div>
                 </div>
@@ -180,7 +176,8 @@ export default function Liquidate(props) {
                   <div className="flex flex-col">
                     <Typography variant="subtitle2">Debt</Typography>
                     <Typography variant="caption16">
-                      {formatUnits(props.loan.debt, 18)} WETH
+                      {Number(formatUnits(props.loan.debt, 18)).toPrecision(6)}
+                      WETH
                     </Typography>
                   </div>
                 </div>
@@ -190,15 +187,7 @@ export default function Liquidate(props) {
                       Liquidation Threshold
                     </Typography>
                     <Typography variant="caption16">
-                      {formatUnits(
-                        BigNumber.from(props.loan.maxLTV)
-                          .add(props.loan.boost)
-                          .mul(props.loan.price)
-                          .div(10000)
-                          .toString(),
-                        18
-                      )}{" "}
-                      WETH
+                      {formatUnits(props.loan.maxDebt, 18)} WETH
                     </Typography>
                   </div>
                 </div>
@@ -235,81 +224,69 @@ export default function Liquidate(props) {
                       color="success"
                       value={calculateHealthLevel(
                         props.loan.debt,
-                        BigNumber.from(props.loan.maxLTV)
-                          .add(props.loan.boost)
-                          .mul(props.loan.price)
-                          .div(10000)
-                          .toString()
+                        props.loan.maxDebt
                       )}
                     />
                   </div>
                 </div>
               </div>
             </div>
-            <div className="flex flex-col rounded-3xl max-w-max justify-center m-2 p-2">
-              <div className="flex flex-row">
-                <div className="flex flex-col m-4">
-                  <Typography variant="subtitle2">Auction Max Bid</Typography>
-                  <Typography variant="caption16">
-                    {formatUnits(
-                      loanDetails ? loanDetails.auctionMaxBid : "0",
-                      18
-                    )}{" "}
-                    WETH
-                  </Typography>
-                </div>
-                <div className="flex flex-col m-4">
-                  <Typography variant="subtitle2">Time until end</Typography>
-                  <Typography variant="caption16">
-                    {loanDetails
-                      ? BigNumber.from(loanDetails.auctionStartTimestamp).eq(0)
-                        ? "-"
-                        : loanDetails.auctionStartTimestamp + 3600 * 24 >
-                          Date.now() / 1000
-                        ? "Ending in " +
-                          timeago.format(
-                            loanDetails.auctionStartTimestamp * 1000
-                          )
-                        : "Ended " +
-                          timeago.format(
-                            loanDetails.auctionStartTimestamp * 1000
-                          )
-                      : "-"}
-                  </Typography>
-                </div>
+            <div className="grid grid-cols-2 grid-rows-2 gap-4 rounded-3xl max-w-max items-center justify-center m-2 p-2">
+              <div className="flex flex-col m-4">
+                <Typography variant="subtitle2">Auction Max Bid</Typography>
+                <Typography variant="caption16">
+                  {formatUnits(
+                    loanDetails ? loanDetails.auctionMaxBid : "0",
+                    18
+                  )}{" "}
+                  WETH
+                </Typography>
               </div>
-              <div className="flex flex-row">
-                <div className="flex flex-col m-4">
-                  <Typography variant="subtitle2">Highest Bidder</Typography>
-                  <Typography variant="caption16">
-                    {loanDetails?.liquidator.slice(0, 4) +
+              <div className="flex flex-col m-4">
+                <Typography variant="subtitle2">Time until end</Typography>
+                <Typography variant="caption16">
+                  {loanDetails
+                    ? BigNumber.from(loanDetails.auctionStartTimestamp).eq(0)
+                      ? "-"
+                      : loanDetails.auctionStartTimestamp + 3600 * 24 >
+                        Date.now() / 1000
+                      ? "Ending in " +
+                        timeago.format(loanDetails.auctionStartTimestamp * 1000)
+                      : "Ended " +
+                        timeago.format(loanDetails.auctionStartTimestamp * 1000)
+                    : "-"}
+                </Typography>
+              </div>
+              <div className="flex flex-col m-4">
+                <Typography variant="subtitle2">Highest Bidder</Typography>
+                <Typography variant="caption16">
+                  {loanDetails
+                    ? loanDetails?.liquidator.slice(0, 4) +
                       ".." +
-                      loanDetails?.liquidator.slice(-3)}
-                  </Typography>
-                </div>
-                <div className="flex flex-col m-4">
-                  <Typography variant="subtitle2">Auctioner</Typography>
-                  <Typography variant="caption16">
-                    {loanDetails?.auctioner.slice(0, 4) +
+                      loanDetails?.liquidator.slice(-3)
+                    : "..."}
+                </Typography>
+              </div>
+              <div className="flex flex-col m-4">
+                <Typography variant="subtitle2">Auctioner</Typography>
+                <Typography variant="caption16">
+                  {loanDetails
+                    ? loanDetails?.auctioner.slice(0, 4) +
                       ".." +
-                      loanDetails?.auctioner.slice(-3)}
-                  </Typography>
-                </div>
+                      loanDetails?.auctioner.slice(-3)
+                    : "..."}
+                </Typography>
               </div>
             </div>
-            <div className="flex flex-row m-8 items-center justify-center">
+
+            <div className="flex flex-row m-8 items-center items-center justify-center">
               <div className="flex flex-col">
                 {BigNumber.from(
                   loanDetails ? loanDetails.auctionMaxBid : "0"
                 ).lte(BigNumber.from(allowance)) ? (
                   <Button
                     disabled={
-                      !isLoanLiquidatable(
-                        props.loan.debt,
-                        props.loan.maxLTV,
-                        props.loan.boost,
-                        props.loan.price
-                      )
+                      !isLoanLiquidatable(props.loan.debt, props.loan.maxDebt)
                     }
                     loadingProps={{
                       spinnerColor: "#000000",
@@ -351,12 +328,7 @@ export default function Liquidate(props) {
                 ) : (
                   <Button
                     text={
-                      isLoanLiquidatable(
-                        props.loan.debt,
-                        props.loan.maxLTV,
-                        props.loan.boost,
-                        props.loan.price
-                      )
+                      isLoanLiquidatable(props.loan.debt, props.loan.maxDebt)
                         ? "Approve WETH for liquidation"
                         : "Liquidation conditions are not met"
                     }
@@ -366,12 +338,7 @@ export default function Liquidate(props) {
                     radius="5"
                     isLoading={approvalLoading}
                     disabled={
-                      !isLoanLiquidatable(
-                        props.loan.debt,
-                        props.loan.maxLTV,
-                        props.loan.boost,
-                        props.loan.price
-                      )
+                      !isLoanLiquidatable(props.loan.debt, props.loan.maxDebt)
                     }
                     loadingProps={{
                       spinnerColor: "#000000",

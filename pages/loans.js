@@ -31,7 +31,7 @@ import erc721 from "../contracts/erc721.json";
 export default function Loans() {
   const [collectionLoans, setCollectionLoans] = useState([]);
   const [selectedCollection, setSelectedCollection] = useState("");
-  const [maxCollateralization, setMaxCollateralization] = useState("0");
+  const [maxLTV, setMaxLTV] = useState("0");
   const [processedCount, setProcessedCount] = useState(0);
   const [loadingCollectionLoans, setLoadingCollectionLoans] = useState(false);
   const [selectedLoan, setSelectedLoan] = useState();
@@ -57,10 +57,11 @@ export default function Loans() {
     var updatedCollectionLoans = [];
 
     //Get the max collaterization for the collection
-    const updatedMaxCollateralization =
-      await loanCenter.getCollectionMaxCollaterization(selectedCollection);
-    setMaxCollateralization(updatedMaxCollateralization.toString());
-    console.log("maxCollateralization", updatedMaxCollateralization.toString());
+    const updatedMaxLTV = await loanCenter.getCollectionMaxLTV(
+      selectedCollection
+    );
+    setMaxLTV(updatedMaxLTV.toString());
+    console.log("maxLTV", updatedMaxLTV.toString());
 
     // Get the token ids for the selected collection
     const collectionNFTs = await getAddressNFTs(
@@ -112,6 +113,10 @@ export default function Loans() {
         )
       ).price;
 
+      const loanMaxDebt = (
+        await loanCenter.getLoanMaxDebt(loanId, assetPrice)
+      ).toString();
+
       //Get token URI for image
       const tokenURI = await getNFTImage(
         collectionNFTs[i].contract.address,
@@ -123,12 +128,12 @@ export default function Loans() {
       updatedCollectionLoans.push({
         loanId: loanId,
         debt: loanDebt,
-        maxLTV: loan.maxLTV,
+        maxDebt: loanMaxDebt,
         borrowRate: loan.borrowRate,
-        boost: loan.boost,
         tokenAddress: collectionNFTs[i].contract.address,
         tokenIds: loan.nftTokenIds,
         tokenURI: tokenURI,
+        maxLTV: updatedMaxLTV.toString(),
         price: assetPrice,
       });
 
@@ -181,7 +186,7 @@ export default function Loans() {
     } else {
       setSelectedCollection("");
       setCollectionLoans([]);
-      setMaxCollateralization("0");
+      setMaxLTV("0");
     }
   }
 
@@ -257,7 +262,7 @@ export default function Loans() {
                   fontSize: "subtitle1.fontSize",
                 }}
               >
-                {maxCollateralization / 100}%
+                {maxLTV / 100}%
               </Box>
             </div>
           </div>
@@ -344,7 +349,7 @@ export default function Loans() {
           </div>
         ) : collectionLoans.length != 0 ? (
           <div className="flex flex-col rounded-3xl m-4 p-2 bg-black/5 shadow-lg">
-            <div className="flex flex-row grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="flex flex-row grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {collectionLoans.map((collectionLoan) => (
                 <div
                   key={collectionLoan.loanId}
@@ -432,11 +437,7 @@ export default function Loans() {
                             color="success"
                             value={calculateHealthLevel(
                               collectionLoan.debt,
-                              BigNumber.from(collectionLoan.maxLTV)
-                                .add(collectionLoan.boost)
-                                .mul(collectionLoan.price)
-                                .div(10000)
-                                .toString()
+                              collectionLoan.maxDebt
                             )}
                           />
                         </div>

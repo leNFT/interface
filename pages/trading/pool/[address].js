@@ -193,9 +193,10 @@ export default function TradingPool() {
                   "https://etherscan.io/address/" + router.query.address,
                   "_blank"
                 );
-              } else if (chain.id == 5) {
+              } else {
                 window.open(
-                  "https://goerli.etherscan.io/address/" + router.query.address,
+                  "https://sepolia.etherscan.io/address/" +
+                    router.query.address,
                   "_blank"
                 );
               }

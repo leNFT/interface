@@ -20,8 +20,7 @@ export default function TradingPools() {
   const { chain } = useNetwork();
   const [tableData, setTableData] = useState([]);
   const [loadingTableData, setLoadingTableData] = useState(true);
-  const [visibleCreateTradingPoolModal, setVisibleCreateTradingPoolModal] =
-    useState(false);
+
   const EmptyRowsForSkeletonTable = () => (
     <div style={{ width: "100%", height: "100%" }}>
       {[...Array(6)].map((_el, i) => (
@@ -146,150 +145,119 @@ export default function TradingPools() {
   }, [isConnected]);
 
   return (
-    <div>
-      <StyledModal
-        hasFooter={false}
-        title="Create Trading Pool"
-        isVisible={visibleCreateTradingPoolModal}
-        onCloseButtonPressed={function () {
-          setVisibleCreateTradingPoolModal(false);
-        }}
-      >
-        <CreateTradingPool
-          setVisibility={setVisibleCreateTradingPoolModal}
-          updateUI={updateTableData}
-        />
-      </StyledModal>
-      <div className="flex flex-col">
-        <div className="flex flex-row justify-end mb-4">
-          <Button
-            customize={{
-              backgroundColor: "grey",
-              fontSize: 20,
-              textColor: "white",
+    <div className="flex flex-col my-2">
+      <Table
+        columnsConfig="1fr 2fr 2fr 2fr 1fr 0fr"
+        alignCellItems="center"
+        tableBackgroundColor="rgba(255, 255, 255, 0.65)"
+        customLoadingContent={
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              height: "80%",
+              width: "80%",
             }}
-            text="Create Trading Pool"
-            theme="custom"
-            size="large"
-            radius="12"
-            onClick={async function () {
-              setVisibleCreateTradingPoolModal(true);
-            }}
-          />
-        </div>
-        <Table
-          columnsConfig="1fr 2fr 2fr 2fr 1fr 0fr"
-          alignCellItems="center"
-          tableBackgroundColor="rgba(255, 255, 255, 0.65)"
-          customLoadingContent={
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                height: "80%",
-                width: "80%",
+          >
+            <EmptyRowsForSkeletonTable />
+            <EmptyRowsForSkeletonTable />
+          </div>
+        }
+        customNoDataText="No trading pools found."
+        data={tableData}
+        header={[
+          <div key="image"></div>,
+          <div className="flex flex-row" key="nft">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: {
+                  xs: "caption.fontSize",
+                  sm: "subtitle1.fontSize",
+                },
               }}
+              key="4"
             >
-              <EmptyRowsForSkeletonTable />
-              <EmptyRowsForSkeletonTable />
+              NFT
+            </Box>
+            <div className="flex flex-col ml-1">
+              <Tooltip
+                content="NFTs in this pool"
+                position="bottom"
+                minWidth={150}
+              >
+                <HelpCircle fontSize="14px" color="#000000" />
+              </Tooltip>
             </div>
-          }
-          customNoDataText="No trading pools found."
-          data={tableData}
-          header={[
-            <div key="image"></div>,
-            <div className="flex flex-row" key="nft">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: {
-                    xs: "caption.fontSize",
-                    sm: "subtitle1.fontSize",
-                  },
-                }}
-                key="4"
+          </div>,
+          <div className="flex flex-row" key="token">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: {
+                  xs: "caption.fontSize",
+                  sm: "subtitle1.fontSize",
+                },
+              }}
+              key="4"
+            >
+              Token
+            </Box>
+            <div className="flex flex-col ml-1">
+              <Tooltip
+                content="Tokens in this pool."
+                position="bottom"
+                minWidth={170}
               >
-                NFT
-              </Box>
-              <div className="flex flex-col ml-1">
-                <Tooltip
-                  content="NFTs in this pool"
-                  position="bottom"
-                  minWidth={150}
-                >
-                  <HelpCircle fontSize="14px" color="#000000" />
-                </Tooltip>
-              </div>
-            </div>,
-            <div className="flex flex-row" key="token">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: {
-                    xs: "caption.fontSize",
-                    sm: "subtitle1.fontSize",
-                  },
-                }}
-                key="4"
+                <HelpCircle fontSize="14px" color="#000000" />
+              </Tooltip>
+            </div>
+          </div>,
+          <div className="flex flex-row" key="volume">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: {
+                  xs: "caption.fontSize",
+                  sm: "subtitle1.fontSize",
+                },
+              }}
+              key="4"
+            >
+              Volume (24h)
+            </Box>
+          </div>,
+          <div className="flex flex-row" key="rates">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: {
+                  xs: "caption.fontSize",
+                  sm: "subtitle1.fontSize",
+                },
+              }}
+              key="4"
+            >
+              Gauge
+            </Box>
+            <div className="flex flex-col ml-1">
+              <Tooltip
+                content="Gauge for this pool."
+                position="bottom"
+                minWidth={170}
               >
-                Token
-              </Box>
-              <div className="flex flex-col ml-1">
-                <Tooltip
-                  content="Tokens in this pool."
-                  position="bottom"
-                  minWidth={170}
-                >
-                  <HelpCircle fontSize="14px" color="#000000" />
-                </Tooltip>
-              </div>
-            </div>,
-            <div className="flex flex-row" key="volume">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: {
-                    xs: "caption.fontSize",
-                    sm: "subtitle1.fontSize",
-                  },
-                }}
-                key="4"
-              >
-                Volume (24h)
-              </Box>
-            </div>,
-            <div className="flex flex-row" key="rates">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: {
-                    xs: "caption.fontSize",
-                    sm: "subtitle1.fontSize",
-                  },
-                }}
-                key="4"
-              >
-                Gauge
-              </Box>
-              <div className="flex flex-col ml-1">
-                <Tooltip
-                  content="Gauge for this pool."
-                  position="bottom"
-                  minWidth={170}
-                >
-                  <HelpCircle fontSize="14px" color="#000000" />
-                </Tooltip>
-              </div>
-            </div>,
-            "",
-          ]}
-          isLoading={loadingTableData}
-          isColumnSortable={[false, true, true, true, false]}
-          onPageNumberChanged={function noRefCheck() {}}
-          onRowClick={function noRefCheck() {}}
-          pageSize={20}
-        />
-      </div>
+                <HelpCircle fontSize="14px" color="#000000" />
+              </Tooltip>
+            </div>
+          </div>,
+          "",
+        ]}
+        isLoading={loadingTableData}
+        isColumnSortable={[false, true, true, true, false]}
+        onPageNumberChanged={function noRefCheck() {}}
+        onRowClick={function noRefCheck() {}}
+        pageSize={20}
+      />
     </div>
   );
 }

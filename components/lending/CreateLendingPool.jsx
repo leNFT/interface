@@ -75,7 +75,6 @@ export default function CreateLendingPool(props) {
   }, [isConnected]);
 
   const handleCreateReserveSuccess = async function () {
-    props.updateUI();
     props.setVisibility(false);
     dispatch({
       type: "success",

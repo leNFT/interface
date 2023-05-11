@@ -18,8 +18,7 @@ export default function LendingPools() {
   const { chain } = useNetwork();
   const [tableData, setTableData] = useState([]);
   const [loadingTableData, setLoadingTableData] = useState(true);
-  const [visibleCreateLendingPoolModal, setVisibleCreateLendingPoolModal] =
-    useState(false);
+
   const EmptyRowsForSkeletonTable = () => (
     <div style={{ width: "100%", height: "100%" }}>
       {[...Array(6)].map((_el, i) => (
@@ -165,191 +164,155 @@ export default function LendingPools() {
   }, [isConnected]);
 
   return (
-    <div className={styles.container}>
-      <StyledModal
-        hasFooter={false}
-        title="Create Lending Pool"
-        isVisible={visibleCreateLendingPoolModal}
-        onCloseButtonPressed={function () {
-          setVisibleCreateLendingPoolModal(false);
-        }}
-      >
-        <CreateLendingPool
-          setVisibility={setVisibleCreateLendingPoolModal}
-          updateUI={updateTableData}
-        />
-      </StyledModal>
-      <div className="flex flex-col">
-        <div
-          className={
-            "flex flex-row justify-end m-2 mb-4 " +
-            (chain?.id == 1 ? "hidden" : "block")
-          }
-        >
-          <Button
-            customize={{
-              backgroundColor: "grey",
-              fontSize: 20,
-              textColor: "white",
+    <div className="flex flex-col my-2">
+      <Table
+        columnsConfig="2fr 2fr 2fr 2fr 1fr 0fr"
+        alignCellItems="center"
+        tableBackgroundColor="rgba(255, 255, 255, 0.65)"
+        customLoadingContent={
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              height: "80%",
+              width: "80%",
             }}
-            text="Create Lending Pool"
-            theme="custom"
-            size="large"
-            radius="12"
-            onClick={async function () {
-              setVisibleCreateLendingPoolModal(true);
-            }}
-          />
-        </div>
-        <Table
-          columnsConfig="2fr 2fr 2fr 2fr 1fr 0fr"
-          alignCellItems="center"
-          tableBackgroundColor="rgba(255, 255, 255, 0.65)"
-          customLoadingContent={
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                height: "80%",
-                width: "80%",
+          >
+            <EmptyRowsForSkeletonTable />
+            <EmptyRowsForSkeletonTable />
+          </div>
+        }
+        customNoDataText="No lending pools found."
+        data={tableData}
+        header={[
+          <div key="address" className="flex flex-row m-2">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: {
+                  xs: "caption.fontSize",
+                  sm: "subtitle1.fontSize",
+                },
               }}
+              className=""
+              key="1"
             >
-              <EmptyRowsForSkeletonTable />
-              <EmptyRowsForSkeletonTable />
+              Address
+            </Box>
+          </div>,
+          <div key="assets" className="flex flex-row m-2">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: {
+                  xs: "caption.fontSize",
+                  sm: "subtitle1.fontSize",
+                },
+              }}
+              className=""
+              key="1"
+            >
+              Assets
+            </Box>
+            <div className="flex flex-col ml-1">
+              <Tooltip
+                content="Assets that can be used with this lending pool."
+                position="bottom"
+                minWidth={150}
+              >
+                <HelpCircle fontSize="14px" color="#000000" />
+              </Tooltip>
             </div>
-          }
-          customNoDataText="No lending pools found."
-          data={tableData}
-          header={[
-            <div key="address" className="flex flex-row m-2">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: {
-                    xs: "caption.fontSize",
-                    sm: "subtitle1.fontSize",
-                  },
-                }}
-                className=""
-                key="1"
-              >
-                Address
-              </Box>
-            </div>,
-            <div key="assets" className="flex flex-row m-2">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: {
-                    xs: "caption.fontSize",
-                    sm: "subtitle1.fontSize",
-                  },
-                }}
-                className=""
-                key="1"
-              >
-                Assets
-              </Box>
-              <div className="flex flex-col ml-1">
-                <Tooltip
-                  content="Assets that can be used with this lending pool."
-                  position="bottom"
-                  minWidth={150}
-                >
-                  <HelpCircle fontSize="14px" color="#000000" />
-                </Tooltip>
-              </div>
-            </div>,
+          </div>,
 
-            <div className="flex flex-row m-2" key="rates">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: {
-                    xs: "caption.fontSize",
-                    sm: "subtitle1.fontSize",
-                  },
-                }}
-                key="4"
-              >
-                Borrow/Supply
-              </Box>
-              <div className="flex flex-col ml-1">
-                <Tooltip
-                  content={
+          <div className="flex flex-row m-2" key="rates">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: {
+                  xs: "caption.fontSize",
+                  sm: "subtitle1.fontSize",
+                },
+              }}
+              key="4"
+            >
+              Borrow/Supply
+            </Box>
+            <div className="flex flex-col ml-1">
+              <Tooltip
+                content={
+                  <div>
                     <div>
-                      <div>
-                        Borrow APR: interest rate at which new borrowers take
-                        out loans.
-                      </div>
-                      <div className="mt-2">
-                        Supply APR: interest rate at which lenders are
-                        increasing their holdings.
-                      </div>
+                      Borrow APR: interest rate at which new borrowers take out
+                      loans.
                     </div>
-                  }
-                  position="bottom"
-                  minWidth={350}
-                >
-                  <HelpCircle fontSize="14px" color="#000000" />
-                </Tooltip>
-              </div>
-            </div>,
-            <div className="flex flex-row m-2" key="rates">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: {
-                    xs: "caption.fontSize",
-                    sm: "subtitle1.fontSize",
-                  },
-                }}
-                key="4"
+                    <div className="mt-2">
+                      Supply APR: interest rate at which lenders are increasing
+                      their holdings.
+                    </div>
+                  </div>
+                }
+                position="bottom"
+                minWidth={350}
               >
-                TVL
-              </Box>
-              <div className="flex flex-col ml-1">
-                <Tooltip
-                  content="Total Value Locked."
-                  position="bottom"
-                  minWidth={170}
-                >
-                  <HelpCircle fontSize="14px" color="#000000" />
-                </Tooltip>
-              </div>
-            </div>,
-            <div className="flex flex-row m-2" key="gauge">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: {
-                    xs: "caption.fontSize",
-                    sm: "subtitle1.fontSize",
-                  },
-                }}
-                key="4"
+                <HelpCircle fontSize="14px" color="#000000" />
+              </Tooltip>
+            </div>
+          </div>,
+          <div className="flex flex-row m-2" key="rates">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: {
+                  xs: "caption.fontSize",
+                  sm: "subtitle1.fontSize",
+                },
+              }}
+              key="4"
+            >
+              TVL
+            </Box>
+            <div className="flex flex-col ml-1">
+              <Tooltip
+                content="Total Value Locked."
+                position="bottom"
+                minWidth={170}
               >
-                Gauge
-              </Box>
-              <div className="flex flex-col ml-1">
-                <Tooltip
-                  content="Whether this pool has a gauge."
-                  position="bottom"
-                  minWidth={250}
-                >
-                  <HelpCircle fontSize="14px" color="#000000" />
-                </Tooltip>
-              </div>
-            </div>,
-            "",
-          ]}
-          isLoading={loadingTableData}
-          isColumnSortable={[false, true, false, true, false, false]}
-          onPageNumberChanged={function noRefCheck() {}}
-          onRowClick={function noRefCheck() {}}
-          pageSize={5}
-        />
-      </div>
+                <HelpCircle fontSize="14px" color="#000000" />
+              </Tooltip>
+            </div>
+          </div>,
+          <div className="flex flex-row m-2" key="gauge">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: {
+                  xs: "caption.fontSize",
+                  sm: "subtitle1.fontSize",
+                },
+              }}
+              key="4"
+            >
+              Gauge
+            </Box>
+            <div className="flex flex-col ml-1">
+              <Tooltip
+                content="Whether this pool has a gauge."
+                position="bottom"
+                minWidth={250}
+              >
+                <HelpCircle fontSize="14px" color="#000000" />
+              </Tooltip>
+            </div>
+          </div>,
+          "",
+        ]}
+        isLoading={loadingTableData}
+        isColumnSortable={[false, true, false, true, false, false]}
+        onPageNumberChanged={function noRefCheck() {}}
+        onRowClick={function noRefCheck() {}}
+        pageSize={5}
+      />
     </div>
   );
 }

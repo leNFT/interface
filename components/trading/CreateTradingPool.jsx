@@ -60,7 +60,6 @@ export default function CreateTradingPool(props) {
   }, [isConnected]);
 
   const handleCreateTradingPoolSuccess = async function () {
-    props.updateUI();
     setCollection("");
     props.setVisibility(false);
     dispatch({

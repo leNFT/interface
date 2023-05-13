@@ -5,7 +5,6 @@ import { formatUnits } from "@ethersproject/units";
 import { Typography, Tooltip, Input, Button } from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
 import LinearProgressWithLabel from "../LinearProgressWithLabel";
-import styles from "../../styles/Home.module.css";
 import { calculateHealthLevel } from "../../helpers/healthLevel.js";
 import { useState, useEffect } from "react";
 import loanCenterContract from "../../contracts/LoanCenter.json";
@@ -92,6 +91,7 @@ export default function RepayLoan(props) {
   }
 
   async function getTokenAllowance() {
+    console.log("Getting allowance", loan.pool);
     const allowance = await tokenProvider.allowance(address, loan.pool);
 
     console.log("Got allowance:", allowance);
@@ -115,6 +115,7 @@ export default function RepayLoan(props) {
   }
 
   async function getLoanToRepay() {
+    console.log("Getting loan to repay", props.loan_id);
     const updatedLoan = await loanCenter.getLoan(props.loan_id);
     console.log("Updated Loan:", updatedLoan);
     setLoan(updatedLoan);
@@ -133,8 +134,8 @@ export default function RepayLoan(props) {
       chain.id
     );
 
-    setTokenPrice(updatedPrice.price);
     console.log("price", updatedPrice.price);
+    setTokenPrice(updatedPrice.price);
   }
 
   async function updateLiquidationThreshold() {

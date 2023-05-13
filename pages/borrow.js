@@ -73,56 +73,51 @@ export default function Borrow() {
 
     console.log("addressNFTs", addressNFTs);
 
+    // Get all loans
+    const userLoans = await loanCenter.getUserActiveLoans(address);
+
+    for (let i = 0; i < userLoans.length; i++) {
+      // Get loan details
+      const loan = await loanCenter.getLoan(userLoans[i]);
+      console.log("loan", loan);
+
+      const debt = await loanCenter.getLoanDebt(userLoans[i]);
+
+      console.log("debt", debt);
+
+      // Get NFT images
+      var tokenImages = [];
+      for (let j = 0; j < loan.nftTokenIds.length; j++) {
+        tokenImages.push(
+          await getNFTImage(loan.nftAsset, loan.nftTokenIds[j], chain.id)
+        );
+      }
+
+      // Get the max debt for the loan
+      const tokenPrice = (
+        await getAssetsPrice(loan.nftAsset, loan.nftTokenIds, chain.id)
+      ).price;
+      const maxDebt = await loanCenter.getLoanMaxDebt(userLoans[i], tokenPrice);
+
+      // Save relevant loan info
+      updatedLoans.push({
+        loanId: BigNumber.from(userLoans[i]).toNumber(),
+        tokenName: "",
+        tokenAddress: loan.nftAsset,
+        tokenIds: loan.nftTokenIds,
+        tokenImages: tokenImages,
+        amount: loan.amount,
+        debt: debt,
+        tokenPrice: tokenPrice,
+        maxDebt: maxDebt,
+      });
+    }
+
     // Loop through all of tthe user NFTs
     console.log("Found " + addressNFTs.length + " NFTs for user " + address);
 
     for (let i = 0; i < addressNFTs.length; i++) {
       if (
-        getAddress(addressNFTs[i].contract.address) ==
-        contractAddresses[chain.id].DebtToken
-      ) {
-        // Get loan details
-        const loan = await loanCenter.getLoan(
-          BigNumber.from(addressNFTs[i].tokenId).toNumber()
-        );
-        console.log("loan", loan);
-
-        const debt = await loanCenter.getLoanDebt(
-          BigNumber.from(addressNFTs[i].tokenId).toNumber()
-        );
-
-        console.log("debt", debt);
-
-        // Get NFT images
-        var tokenImages = [];
-        for (let j = 0; j < loan.nftTokenIds.length; j++) {
-          tokenImages.push(
-            await getNFTImage(loan.nftAsset, loan.nftTokenIds[j], chain.id)
-          );
-        }
-
-        // Get the max debt for the loan
-        const tokenPrice = (
-          await getAssetsPrice(loan.nftAsset, loan.nftTokenIds, chain.id)
-        ).price;
-        const maxDebt = await loanCenter.getLoanMaxDebt(
-          BigNumber.from(addressNFTs[i].tokenId).toNumber(),
-          tokenPrice
-        );
-
-        // Save relevant loan info
-        updatedLoans.push({
-          loanId: BigNumber.from(addressNFTs[i].tokenId).toNumber(),
-          tokenName: addressNFTs[i].title,
-          tokenAddress: loan.nftAsset,
-          tokenIds: loan.nftTokenIds,
-          tokenImages: tokenImages,
-          amount: loan.amount,
-          debt: debt,
-          tokenPrice: tokenPrice,
-          maxDebt: maxDebt,
-        });
-      } else if (
         updatedSupportedNFTs[getAddress(addressNFTs[i].contract.address)] !=
         undefined
       ) {

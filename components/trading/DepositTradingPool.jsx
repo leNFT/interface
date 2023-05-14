@@ -1,6 +1,5 @@
 import {
   useAccount,
-  useBalance,
   useNetwork,
   useContract,
   useProvider,
@@ -10,31 +9,22 @@ import Link from "@mui/material/Link";
 import Box from "@mui/material/Box";
 import { BigNumber } from "@ethersproject/bignumber";
 import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import { CardActionArea } from "@mui/material";
 import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import Image from "next/image";
 import CurveChart from "../CurveChart.jsx";
-import {
-  useNotification,
-  Button,
-  Input,
-  Typography,
-  Select,
-} from "@web3uikit/core";
+import { useNotification, Button, Input } from "@web3uikit/core";
 import { Dropdown } from "@nextui-org/react";
-import styles from "../../styles/Home.module.css";
 import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import tradingPoolContract from "../../contracts/TradingPool.json";
 import tradingGaugeContract from "../../contracts/TradingGauge.json";
 import wethGatewayContract from "../../contracts/WETHGateway.json";
-import erc20 from "../../contracts/erc20.json";
 import erc721 from "../../contracts/erc721.json";
 
 export default function DepositTradingPool(props) {
+  const { data: signer } = useSigner();
   const [curve, setCurve] = useState("exponential");
   const [delta, setDelta] = useState("");
   const [fee, setFee] = useState("");
@@ -50,7 +40,6 @@ export default function DepositTradingPool(props) {
   const [approvalNFTLoading, setApprovalNFTLoading] = useState(false);
   const [lpGaugeValue, setLPGaugeValue] = useState("0");
   const { address, isConnected } = useAccount();
-  const { data: signer } = useSigner();
   const [depositLoading, setDepositLoading] = useState(false);
   const dispatch = useNotification();
   const { chain } = useNetwork();
@@ -114,7 +103,13 @@ export default function DepositTradingPool(props) {
 
   // Update the LP gauge value when the token amount, select NFTs or initial price changes
   useEffect(() => {
-    if (isConnected && initialPrice && tokenAmount) {
+    if (
+      isConnected &&
+      initialPrice &&
+      tokenAmount &&
+      props.gauge != ethers.constants.AddressZero &&
+      selectedNFTs.length > 0
+    ) {
       getLPGaugeValue();
     }
   }, [tokenAmount, selectedNFTs, initialPrice]);

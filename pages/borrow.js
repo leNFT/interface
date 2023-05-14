@@ -75,6 +75,7 @@ export default function Borrow() {
 
     // Get all loans
     const userLoans = await loanCenter.getUserActiveLoans(address);
+    console.log("userLoans", userLoans);
 
     for (let i = 0; i < userLoans.length; i++) {
       // Get loan details

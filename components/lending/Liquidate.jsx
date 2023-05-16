@@ -271,9 +271,9 @@ export default function Liquidate(props) {
                 <Typography variant="subtitle2">Auctioner</Typography>
                 <Typography variant="caption16">
                   {loanDetails
-                    ? loanDetails?.auctioner.slice(0, 4) +
+                    ? loanDetails?.auctioneer.slice(0, 4) +
                       ".." +
-                      loanDetails?.auctioner.slice(-3)
+                      loanDetails?.auctioneer.slice(-3)
                     : "..."}
                 </Typography>
               </div>

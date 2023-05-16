@@ -120,7 +120,7 @@ export default function TradingPoolGauge() {
     setClaimableRewards(updatedClaimableRewards.toString());
 
     // Get the current epoch
-    const updatedEpoch = await votingEscrowProvider.epoch(
+    const updatedEpoch = await votingEscrowProvider.getEpoch(
       Math.floor(Date.now() / 1000)
     );
     console.log("updatedEpoch", updatedEpoch.toNumber());

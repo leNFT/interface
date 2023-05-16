@@ -126,7 +126,7 @@ export default function Lock() {
   });
 
   async function updateLockDetails() {
-    const updatedLockDetails = await votingEscrowProvider.locked(selectedLock);
+    const updatedLockDetails = await votingEscrowProvider.getLock(selectedLock);
     console.log(
       "updatedUnlockTime:",
       BigNumber.from(updatedLockDetails.end).toNumber()
@@ -135,13 +135,13 @@ export default function Lock() {
     setLockAmount(updatedLockDetails.amount);
 
     //Get the vote token Balance
-    const updatedVoteTokenBalance = await votingEscrowProvider.lockWeight(
+    const updatedVoteTokenBalance = await votingEscrowProvider.getLockWeight(
       selectedLock
     );
     setVoteTokenBalance(updatedVoteTokenBalance.toString());
 
     //Get the vote token Balance
-    const updatedVoteRatio = await gaugeControllerProvider.lockVoteRatio(
+    const updatedVoteRatio = await gaugeControllerProvider.getLockVoteRatio(
       selectedLock
     );
     console.log("address", address);
@@ -170,7 +170,7 @@ export default function Lock() {
 
   async function updateUI() {
     // Get the current epoch
-    const updatedEpoch = await votingEscrowProvider.epoch(
+    const updatedEpoch = await votingEscrowProvider.getEpoch(
       Math.floor(Date.now() / 1000)
     );
     console.log("updatedEpoch", updatedEpoch.toNumber());
@@ -220,7 +220,7 @@ export default function Lock() {
 
     // Get the total locked amount
     const updatedTotalLocked =
-      await votingEscrowProvider.callStatic.totalWeight({
+      await votingEscrowProvider.callStatic.getTotalWeight({
         from: address,
       });
     console.log("updatedTotalLocked", updatedTotalLocked.toString());
@@ -264,7 +264,7 @@ export default function Lock() {
       // Get the number of votes for the gauge
       if (selectedLock) {
         const updatedGaugeVoteRatio =
-          await gaugeControllerProvider.lockVoteRatioForGauge(
+          await gaugeControllerProvider.getLockVoteRatioForGauge(
             selectedLock,
             selectedGauge
           );

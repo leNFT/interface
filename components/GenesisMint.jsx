@@ -58,7 +58,7 @@ export default function GenesisMint(props) {
   });
 
   async function updateMintInfo() {
-    const updatedRewards = await genesisNFTProvider.getNativeTokenReward(
+    const updatedRewards = await genesisNFTProvider.getCurrentLEReward(
       amount,
       locktimeDays * SECONDS_IN_DAY
     );

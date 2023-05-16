@@ -38,7 +38,7 @@ export default function WithdrawNativeToken(props) {
   });
 
   async function getUnlockTime() {
-    const updatedUnlockTime = await votingEscrowProvider.locked(props.lockId);
+    const updatedUnlockTime = await votingEscrowProvider.getLock(props.lockId);
     console.log(
       "updatedUnlockTime:",
       BigNumber.from(updatedUnlockTime.end).toNumber()

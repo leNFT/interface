@@ -56,7 +56,7 @@ export default function EditNativeTokenLock(props) {
   }
 
   async function getUnlockTime() {
-    const updatedLockedDetails = await votingEscrowProvider.locked(address);
+    const updatedLockedDetails = await votingEscrowProvider.getLock(address);
     console.log(
       "updatedUnlockTime:",
       BigNumber.from(updatedLockedDetails.end).toNumber()

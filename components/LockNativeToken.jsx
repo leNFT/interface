@@ -73,7 +73,7 @@ export default function LockNativeToken(props) {
   }
 
   async function getUnlockTime() {
-    const updatedUnlockTime = await votingEscrowProvider.locked(address);
+    const updatedUnlockTime = await votingEscrowProvider.getLock(address);
     console.log(
       "updatedUnlockTime:",
       BigNumber.from(updatedUnlockTime.end).toNumber()
@@ -116,7 +116,7 @@ export default function LockNativeToken(props) {
         setLockWeight(BigNumber.from(simulatedLockWeight).toString());
       };
 
-      simulateBlockWeight();
+      simulateBgetLockWeight();
     }
   }, [amount, lockDuration]);
 

@@ -116,7 +116,7 @@ export default function LockNativeToken(props) {
         setLockWeight(BigNumber.from(simulatedLockWeight).toString());
       };
 
-      simulateBgetLockWeight();
+      simulateBlockWeight();
     }
   }, [amount, lockDuration]);
 
@@ -221,6 +221,7 @@ export default function LockNativeToken(props) {
         <div className="flex flex-row items-center w-full justify-center md:px-8">
           <Slider
             valueLabelDisplay="auto"
+            disabled={BigNumber.from(allowance).lte(amount)}
             onChangeCommitted={handleSliderChange}
             min={2}
             step={1}

@@ -515,7 +515,9 @@ export default function DepositTradingPool(props) {
             >
               {"LP Gauge Value: "}
             </Link>
-            {Number(formatUnits(lpGaugeValue, 18)).toPrecision(3) + " ETH"}
+            {props.gauge != ethers.constants.AddressZero
+              ? Number(formatUnits(lpGaugeValue, 18)).toPrecision(3) + " ETH"
+              : "No gauge for pool"}
           </Box>
         </div>
       </div>

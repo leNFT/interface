@@ -474,7 +474,7 @@ export default function Buy() {
                     fontFamily: "Monospace",
                     fontSize: "caption.fontSize",
                     fontWeight: "bold",
-                    color: "#be4d25",
+                    color: "blue",
                   }}
                 >
                   {"Selecting NFTs doesn't guarantee the best buy price."}

@@ -75,13 +75,13 @@ export default function HeaderController() {
           </div>
         </div>
         <div className="flex flex-row space-x-4 items-center px-8">
-          <Button
+          {/* <Button
             size="small"
             onClick={() => {
               toggleDarkMode();
             }}
             icon={<BedtimeIcon />}
-          />
+          /> */}
           <ConnectButton
             showBalance={false}
             chainStatus={{ smallScreen: "none", largeScreen: "icon" }}

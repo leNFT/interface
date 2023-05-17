@@ -718,7 +718,7 @@ export default function Borrow() {
                             <Box
                               sx={{
                                 fontFamily: "Monospace",
-                                fontSize: "subtitle2.fontSize",
+                                fontSize: "caption.fontSize",
                                 fontWeight: "bold",
                               }}
                             >

@@ -16,8 +16,8 @@ body {
 }
 
 body.dark-mode {
-  @apply bg-gray-700;
-  @apply text-gray-200;
+  @apply bg-gray-500;
+  @apply text-gray-300;
   background-image: none;
 }
 

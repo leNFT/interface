@@ -657,7 +657,7 @@ export default function Borrow() {
               </div>
             )}
             {unsupportedAssets.length != 0 && (
-              <div className="flex flex-row grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
+              <div className="flex flex-row mx-4 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
                 {unsupportedAssets.map((unsupportedAsset, index) => (
                   <div
                     key={
@@ -686,6 +686,7 @@ export default function Borrow() {
                         }}
                       >
                         <CardActionArea
+                          disabled
                           onClick={() =>
                             handleUnsupportedAssetClick(unsupportedAsset.name)
                           }

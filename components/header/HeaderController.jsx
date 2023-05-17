@@ -6,6 +6,9 @@ import { Reload, Roadmap } from "@web3uikit/icons";
 import { useAccount, useNetwork } from "wagmi";
 import { useSwitchNetwork } from "wagmi";
 import Router from "next/router";
+import { Button } from "grommet";
+import { useState } from "react";
+import BedtimeIcon from "@mui/icons-material/Bedtime";
 import { useRouter } from "next/router";
 var mode;
 
@@ -13,11 +16,22 @@ export default function HeaderController() {
   const router = useRouter();
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
+  const [darkMode, setDarkMode] = useState(false);
+
   const { switchNetwork } = useSwitchNetwork();
   console.log("router.locale", router);
   if (router.pathname == "/borrow" || router.pathname == "/trade") {
     mode = router.pathname;
   }
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    if (!darkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
+  };
 
   console.log("mode", mode);
 
@@ -60,11 +74,18 @@ export default function HeaderController() {
             {mode == "/borrow" ? <BorrowHeader /> : <TradeHeader />}
           </div>
         </div>
-        <div className="flex flex-col items-center px-8">
+        <div className="flex flex-row space-x-4 items-center px-8">
+          <Button
+            size="small"
+            onClick={() => {
+              toggleDarkMode();
+            }}
+            icon={<BedtimeIcon />}
+          />
           <ConnectButton
             showBalance={false}
             chainStatus={{ smallScreen: "none", largeScreen: "icon" }}
-            accountStatus={{ smallScreen: "avatar", largeScreen: "address" }}
+            accountStatus={{ smallScreen: "none", largeScreen: "none" }}
           />
         </div>
       </div>

@@ -4,11 +4,21 @@
 
 html,
 body {
-  @apply bg-gradient-to-t from-pink-50 via-rose-50 to-indigo-50;
   padding: 0;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+body {
+  @apply bg-gradient-to-t from-pink-50 via-rose-50 to-indigo-50;
+  @apply text-gray-900;
+}
+
+body.dark-mode {
+  @apply bg-gray-700;
+  @apply text-gray-200;
+  background-image: none;
 }
 
 * {

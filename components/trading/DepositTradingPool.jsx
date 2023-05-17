@@ -564,7 +564,8 @@ export default function DepositTradingPool(props) {
                 curveAddress = addresses.LinearCurve;
                 curveDelta = parseUnits(delta, 18);
               }
-
+              console.log("curveAddress", curveAddress);
+              console.log("curveDelta", curveDelta);
               if (lpType == "tradeUp") {
                 type = 1;
               } else if (lpType == "tradeDown") {

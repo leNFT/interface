@@ -411,14 +411,17 @@ export default function Borrow() {
                         fontFamily: "Monospace",
                       }}
                     >
-                      <div className="text-sm text-center md:text-left md:text-md">
-                        {isConnected
-                          ? "You can use " +
-                            supportedAssets.length +
-                            " of your NFTs to borrow." +
-                            (supportedAssets.length > 0 &&
-                              "Just click on them!")
-                          : "Connect wallet to view your NFTs."}
+                      <div className="flex flex-col text-sm text-center md:text-left md:text-md">
+                        <div>
+                          {isConnected
+                            ? "You can use " +
+                              supportedAssets.length +
+                              " of your NFTs to borrow."
+                            : "Connect wallet to view your NFTs."}
+                        </div>
+                        <div>
+                          {supportedAssets.length > 0 && " Just click on them!"}
+                        </div>
                       </div>
                     </Box>
                   </div>

@@ -427,7 +427,9 @@ export default function LendingPool() {
                   }}
                 >
                   Available:{" "}
-                  {formatUnits(underlyingBalance, 18) + " " + assetSymbol}
+                  {Number(formatUnits(underlyingBalance, 18)).toPrecision(6) +
+                    " " +
+                    assetSymbol}
                 </Box>
               </div>
               <div className="my-2">
@@ -527,7 +529,9 @@ export default function LendingPool() {
                 fontSize: "subtitle2.fontSize",
               }}
             >
-              {formatUnits(BigNumber.from(underlyingBalance).add(debt), 18) +
+              {Number(
+                formatUnits(BigNumber.from(underlyingBalance).add(debt), 18)
+              ).toPrecision(4) +
                 " WETH / " +
                 formatUnits(tvlSafeguard, 18) +
                 " WETH"}

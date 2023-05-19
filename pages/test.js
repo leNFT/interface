@@ -1,10 +1,12 @@
 import { Button } from "grommet";
+import { formatUnits, parseUnits } from "@ethersproject/units";
 import testNFTContract from "../contracts/test/TestNFT.json";
 import styles from "../styles/Home.module.css";
 import contractAddresses from "../contractAddresses.json";
 import nativeTokenFaucetContract from "../contracts/NativeTokenFaucet.json";
+import nativeTokenContract from "../contracts/NativeToken.json";
 import { useNotification } from "@web3uikit/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "@mui/material/Link";
 import { Box } from "@mui/material";
 import {
@@ -14,11 +16,13 @@ import {
   useProvider,
   useSigner,
 } from "wagmi";
+import { ethers } from "ethers";
 export default function Test() {
   const { address, isConnected } = useAccount();
   const [mintingLoading, setMintingLoading] = useState(false);
   const [minting2Loading, setMinting2Loading] = useState(false);
   const [nativeTokenLoading, setNativeTokenLoading] = useState(false);
+  const [faucetBalance, setFaucetBalance] = useState("0");
   const dispatch = useNotification();
 
   const { chain } = useNetwork();
@@ -72,6 +76,21 @@ export default function Test() {
       position: "bottomL",
     });
   };
+
+  useEffect(() => {
+    const getFaucetBalance = async () => {
+      const nativeToken = new ethers.Contract(
+        addresses.NativeToken,
+        nativeTokenContract.abi,
+        signer
+      );
+      const balance = await nativeToken.balanceOf(addresses.NativeTokenFaucet);
+      setFaucetBalance(balance.toString());
+    };
+    if (isConnected) {
+      getFaucetBalance();
+    }
+  }, [isConnected, address]);
 
   return (
     <div className={styles.container}>
@@ -179,6 +198,9 @@ export default function Test() {
               }
             }}
           />
+          <Box sx={{ fontSize: "subtitle2.fontSize" }}>
+            Faucet Balance: {formatUnits(faucetBalance, 18)} LE
+          </Box>
         </div>
       </div>
     </div>

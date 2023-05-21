@@ -24,7 +24,7 @@ export default function Test() {
   const [nativeTokenLoading, setNativeTokenLoading] = useState(false);
   const [faucetBalance, setFaucetBalance] = useState("0");
   const dispatch = useNotification();
-
+  const provider = useProvider();
   const { chain } = useNetwork();
   const { data: signer } = useSigner();
   const testNFTAddress = "0xa7540Eb784A17B9D704330B13F61E07D757010c2";
@@ -48,6 +48,12 @@ export default function Test() {
     contractInterface: nativeTokenFaucetContract.abi,
     addressOrName: addresses.NativeTokenFaucet,
     signerOrProvider: signer,
+  });
+
+  const nativeTokenProvider = useContract({
+    contractInterface: nativeTokenContract.abi,
+    addressOrName: addresses.NativeToken,
+    signerOrProvider: provider,
   });
 
   const handleMintTestNFTSuccess = async function () {
@@ -84,7 +90,10 @@ export default function Test() {
         nativeTokenContract.abi,
         signer
       );
-      const balance = await nativeToken.balanceOf(addresses.NativeTokenFaucet);
+      console.log("Getting faucet balance");
+      const balance = await nativeTokenProvider.balanceOf(
+        addresses.NativeTokenFaucet
+      );
       setFaucetBalance(balance.toString());
     };
     if (isConnected) {

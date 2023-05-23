@@ -77,14 +77,14 @@ export default function TradingPoolGauge() {
     );
 
     // Set gauge details
-    const lpTokenResponse = await gauge.lpToken();
+    const lpTokenResponse = await gauge.getLPToken();
     setLPToken(lpTokenResponse.toString());
 
-    const boostResponse = await gauge.userBoost(address);
+    const boostResponse = await gauge.getUserBoost(address);
     console.log("boostResponse", boostResponse.toNumber());
     setBoost(boostResponse.toNumber());
 
-    const maturityMultiplierResponse = await gauge.userMaturityMultiplier(
+    const maturityMultiplierResponse = await gauge.getUserMaturityMultiplier(
       address
     );
     console.log(
@@ -97,14 +97,14 @@ export default function TradingPoolGauge() {
     console.log("newUserLockedValue", newUserLockedValue.toString());
     setUserLockedValue(newUserLockedValue.toString());
 
-    const stakedLPsBalanceResponse = await gauge.balanceOf(address);
+    const stakedLPsBalanceResponse = await gauge.getBalanceOf(address);
     const stakedLPsAmount = stakedLPsBalanceResponse.toNumber();
 
     // Get staked lp positions
     const newStakedLps = [];
 
     for (let i = 0; i < stakedLPsAmount; i++) {
-      const stakedLPResponse = await gauge.lpOfOwnerByIndex(address, i);
+      const stakedLPResponse = await gauge.getLPOfOwnerByIndex(address, i);
       const stakedLP = stakedLPResponse.toNumber();
 
       newStakedLps.push(stakedLP);

@@ -68,7 +68,7 @@ export default function TradingPoolGauge() {
       provider
     );
     // Set gauge details
-    const lpTokenResponse = await gauge.lpToken();
+    const lpTokenResponse = await gauge.getLPToken();
     setLPToken(lpTokenResponse.toString());
     console.log("lpTokenResponse", lpTokenResponse.toString());
 
@@ -89,7 +89,7 @@ export default function TradingPoolGauge() {
     setEpoch(updatedEpoch.toNumber());
 
     // Get the total locked amount
-    const updatedTotalLocked = await gauge.totalSupply();
+    const updatedTotalLocked = await gauge.getTotalSupply();
     console.log("updatedTotalLocked", updatedTotalLocked.toString());
     setTotalLocked(updatedTotalLocked.toString());
 
@@ -121,10 +121,10 @@ export default function TradingPoolGauge() {
     }
 
     if (isConnected) {
-      const boostResponse = await gauge.userBoost(address);
+      const boostResponse = await gauge.getUserBoost(address);
       setBoost(boostResponse.toNumber());
 
-      const maturityMultiplierResponse = await gauge.userMaturityMultiplier(
+      const maturityMultiplierResponse = await gauge.getUserMaturityMultiplier(
         address
       );
       console.log(
@@ -135,7 +135,7 @@ export default function TradingPoolGauge() {
 
       // Get staked amount
       const stakedAmount = BigNumber.from(
-        await gauge.balanceOf(address)
+        await gauge.getBalanceOf(address)
       ).toString();
       setStakedAmount(stakedAmount);
 

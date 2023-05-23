@@ -247,8 +247,8 @@
     {
       "inputs": [
         {
-          "internalType": "contract IAddressesProvider",
-          "name": "addressProvider",
+          "internalType": "contract IAddressProvider",
+          "name": "AddressProvider",
           "type": "address"
         },
         {

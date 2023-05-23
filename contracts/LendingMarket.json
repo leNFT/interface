@@ -473,8 +473,8 @@
     {
       "inputs": [
         {
-          "internalType": "contract IAddressesProvider",
-          "name": "addressesProvider",
+          "internalType": "contract IAddressProvider",
+          "name": "AddressProvider",
           "type": "address"
         },
         {

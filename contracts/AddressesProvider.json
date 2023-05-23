@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
-  "contractName": "AddressesProvider",
-  "sourceName": "contracts/protocol/AddressesProvider.sol",
+  "contractName": "AddressProvider",
+  "sourceName": "contracts/protocol/addressProvider.sol",
   "abi": [
     {
       "inputs": [],

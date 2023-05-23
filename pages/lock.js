@@ -319,6 +319,7 @@ export default function Lock() {
 
   useEffect(() => {
     if (isConnected && selectedLock) {
+      console.log("Updating Lock Details", selectedLock);
       updateLockDetails();
       if (selectedGauge) {
         updateGaugeDetails();
@@ -461,6 +462,7 @@ export default function Lock() {
         <EditNativeTokenLockAmount
           setVisibility={setVisibleEditLockAmountModal}
           updateUI={updateUI}
+          lockId={selectedLock ? selectedLock : 0}
         />
       </StyledModal>
       <StyledModal
@@ -474,6 +476,7 @@ export default function Lock() {
         <EditNativeTokenLocktime
           setVisibility={setVisibleEditLockTimeModal}
           updateUI={updateUI}
+          lockId={selectedLock ? selectedLock : 0}
         />
       </StyledModal>
       <div className="flex flex-col items-center">

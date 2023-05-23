@@ -72,17 +72,6 @@ export default function LockNativeToken(props) {
     setBalance(updatedBalance.toString());
   }
 
-  async function getUnlockTime() {
-    const updatedUnlockTime = await votingEscrowProvider.getLock(address);
-    console.log(
-      "updatedUnlockTime:",
-      BigNumber.from(updatedUnlockTime.end).toNumber()
-    );
-    if (!BigNumber.from(updatedUnlockTime.end).eq(0)) {
-      setUnlockTime(BigNumber.from(updatedUnlockTime.end).toNumber());
-    }
-  }
-
   async function getTokenAllowance() {
     const allowance = await nativeTokenProvider.allowance(
       address,
@@ -97,8 +86,6 @@ export default function LockNativeToken(props) {
       addresses = contractAddresses[chain.id];
       getTokenAllowance();
       getTokenBalance();
-
-      getUnlockTime();
     }
   }, [isConnected]);
 

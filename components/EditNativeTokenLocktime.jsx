@@ -50,13 +50,17 @@ export default function EditNativeTokenLock(props) {
   });
 
   async function getLockWeight() {
-    const updatedLockWeight = await votingEscrowProvider.balanceOf(address);
+    const updatedLockWeight = await votingEscrowProvider.getLockWeight(
+      props.lockId
+    );
     console.log("Updated Lock Weight:", updatedLockWeight);
     setLockWeight(updatedLockWeight.toString());
   }
 
   async function getUnlockTime() {
-    const updatedLockedDetails = await votingEscrowProvider.getLock(address);
+    const updatedLockedDetails = await votingEscrowProvider.getLock(
+      props.lockId
+    );
     console.log(
       "updatedUnlockTime:",
       BigNumber.from(updatedLockedDetails.end).toNumber()
@@ -68,10 +72,17 @@ export default function EditNativeTokenLock(props) {
   useEffect(() => {
     if (isConnected) {
       addresses = contractAddresses[chain.id];
+    }
+  }, [isConnected]);
+
+  useEffect(() => {
+    if (isConnected && props.lockId) {
+      console.log("Getting lock details", props.lockId);
+
       getLockWeight();
       getUnlockTime();
     }
-  }, [isConnected]);
+  }, [props.lockId]);
 
   async function handleSliderChange(_, newValue) {
     if (newValue != "") {
@@ -92,7 +103,7 @@ export default function EditNativeTokenLock(props) {
     }
   }
 
-  const handleIncreseUnlocktimeSuccess = async function () {
+  const handleIncreaseUnlocktimeSuccess = async function () {
     props.updateUI();
     props.setVisibility(false);
     dispatch({
@@ -130,7 +141,7 @@ export default function EditNativeTokenLock(props) {
             <Typography variant="subtitle2">Unlock Time:</Typography>
             <Typography variant="body16">
               {new Date(
-                (unlockTime + addWeeksToLock * 604800) * 1000
+                (unlockTime + addWeeksToLock * 7 * 24 * 3600) * 1000
               ).toUTCString()}
             </Typography>
           </div>
@@ -174,7 +185,7 @@ export default function EditNativeTokenLock(props) {
                   unlockTime + addWeeksToLock * 604800
                 );
                 await tx.wait(1);
-                handleIncreseUnlocktimeSuccess();
+                handleIncreaseUnlocktimeSuccess();
               } catch (error) {
                 console.log(error);
               } finally {

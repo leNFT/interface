@@ -58,7 +58,9 @@ export default function EditNativeTokenLock(props) {
   });
 
   async function getLockWeight() {
-    const updatedLockWeight = await votingEscrowProvider.balanceOf(address);
+    const updatedLockWeight = await votingEscrowProvider.getLockWeight(
+      props.lockId
+    );
     console.log("Updated Lock Weight:", updatedLockWeight);
     setLockWeight(updatedLockWeight.toString());
   }
@@ -71,7 +73,7 @@ export default function EditNativeTokenLock(props) {
   }
 
   async function getUnlockTime() {
-    const updatedUnlockTime = await votingEscrowProvider.getLock(address);
+    const updatedUnlockTime = await votingEscrowProvider.getLock(props.lockId);
     console.log(
       "updatedUnlockTime:",
       BigNumber.from(updatedUnlockTime.end).toNumber()
@@ -94,12 +96,19 @@ export default function EditNativeTokenLock(props) {
   useEffect(() => {
     if (isConnected) {
       addresses = contractAddresses[chain.id];
+    }
+  }, [isConnected]);
+
+  useEffect(() => {
+    if (isConnected && props.lockId) {
+      console.log("Getting lock details", props.lockId);
+
       getTokenAllowance();
       getTokenBalance();
       getLockWeight();
       getUnlockTime();
     }
-  }, [isConnected]);
+  }, [props.lockId]);
 
   const handleIncreseLockAmountSuccess = async function () {
     props.updateUI();

@@ -49,9 +49,15 @@ export default function WithdrawNativeToken(props) {
   useEffect(() => {
     if (isConnected) {
       addresses = contractAddresses[chain.id];
-      getUnlockTime();
     }
   }, [isConnected]);
+
+  useEffect(() => {
+    if (isConnected && props.lockId) {
+      console.log("Getting unlock time", props.lockId);
+      getUnlockTime();
+    }
+  }, [props.lockId]);
 
   const handleUnlockSuccess = async function () {
     props.updateUI();

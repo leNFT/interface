@@ -134,6 +134,15 @@ export default function DepositTradingPool(props) {
     });
   };
 
+  const handleDepositError = async function (error) {
+    dispatch({
+      type: "error",
+      message: error,
+      title: "Deposit Error!",
+      position: "bottomL",
+    });
+  };
+
   const handleNFTApprovalSuccess = async function () {
     setApprovedNFT(true);
     dispatch({
@@ -206,7 +215,7 @@ export default function DepositTradingPool(props) {
           </Link>
         </Box>
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center mt-8 m-4 space-x-2 space-y-2">
+      <div className="flex flex-col md:flex-row items-center justify-center mt-8 m-4 space-x-4 space-y-2">
         <div className="flex flex-row items-center justify-center">
           <Box
             className="flex mx-4 justify-center items-center"
@@ -239,7 +248,7 @@ export default function DepositTradingPool(props) {
           </Dropdown>
         </div>
         <Box
-          className="flex justify-center items-center w-10/12 md:w-4/12 text-center p-2 border-2 border-pink-200 rounded-xl"
+          className="flex justify-center items-center w-10/12 md:w-4/12 text-center p-2 border-2 border-pink-100 rounded-xl"
           sx={{
             fontFamily: "Monospace",
             fontSize: "subtitle2.fontSize",
@@ -312,7 +321,7 @@ export default function DepositTradingPool(props) {
             <Input
               label="Fee %"
               type="number"
-              placeholder="0.05 %"
+              placeholder="15 %"
               value={fee / 100}
               step="any"
               validation={{
@@ -587,7 +596,17 @@ export default function DepositTradingPool(props) {
               await tx.wait(1);
               handleDepositSuccess();
             } catch (error) {
-              console.log(error);
+              const prefix = "execution reverted: ";
+              const prefixIndex = error.message.indexOf(prefix);
+              if (prefixIndex !== -1) {
+                const start = prefixIndex + prefix.length;
+                // Find the next quotation mark after the prefix
+                const end = error.message.indexOf('"', start);
+                const revertReason = error.message.slice(start, end);
+                handleDepositError(revertReason);
+              } else {
+                handleDepositError("Deposit failed");
+              }
             } finally {
               setDepositLoading(false);
             }

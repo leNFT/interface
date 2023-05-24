@@ -210,15 +210,17 @@ export default function StakeTradingGauge(props) {
                 sx={{
                   width: "180px",
                   borderRadius: 4,
-                  background:
-                    selectedLP == BigNumber.from(lp.tokenId).toNumber()
-                      ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
-                      : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
+                  background: BigNumber.from(lpsValue[index]).eq(0)
+                    ? "#A2A2A2"
+                    : selectedLP == BigNumber.from(lp.tokenId).toNumber()
+                    ? "linear-gradient(to right bottom, #fccb90 0%, #d57eeb 100%)"
+                    : "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                 }}
                 className="flex flex-col justify-self-center"
                 key={BigNumber.from(lp.tokenId).toNumber()}
               >
                 <CardActionArea
+                  disabled={BigNumber.from(lpsValue[index]).eq(0)}
                   onClick={function () {
                     if (selectedLP == BigNumber.from(lp.tokenId).toNumber()) {
                       setSelectedLP();

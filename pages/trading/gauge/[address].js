@@ -93,7 +93,7 @@ export default function TradingPoolGauge() {
     );
     setMaturityMultiplier(maturityMultiplierResponse.toNumber());
 
-    const newUserLockedValue = await gauge.userLPValue(address);
+    const newUserLockedValue = await gauge.getUserLPValue(address);
     console.log("newUserLockedValue", newUserLockedValue.toString());
     setUserLockedValue(newUserLockedValue.toString());
 
@@ -129,7 +129,7 @@ export default function TradingPoolGauge() {
     var nativeTokenPrice = "0";
 
     // Get the total locked amount
-    const updatedTotalLockedValue = await gauge.totalLPValue();
+    const updatedTotalLockedValue = await gauge.getTotalLPValue();
     console.log("updatedTotalLockedValue", updatedTotalLockedValue.toString());
     setTotalLockedValue(updatedTotalLockedValue.toString());
 

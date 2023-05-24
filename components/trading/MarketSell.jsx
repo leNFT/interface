@@ -600,16 +600,16 @@ export default function Sell() {
               </Box>
             )}
           </div>
-          <div className="grid sm:w-6/12 grid-cols-3 gap-4 p-4 m-4 rounded-3xl bg-black/5 shadow-lg">
+          <div className="grid sm:w-6/12 grid-cols-2 gap-4 p-4 m-4 rounded-3xl bg-black/5 shadow-lg">
             {nftImages.map((imageUrl, index) => (
               <div key={index} className="flex items-center justify-center">
                 <Image
                   loader={() => imageUrl}
                   src={imageUrl}
-                  height="80"
-                  width="80"
+                  height="120"
+                  width="120"
                   unoptimized={true}
-                  className="rounded-3xl"
+                  className="rounded-2xl"
                 />
               </div>
             ))}

@@ -181,7 +181,7 @@ export default function DepositTradingPool(props) {
 
   function handleFeeChange(e) {
     if (e.target.value != "") {
-      setFee(e.target.value * 100);
+      setFee(e.target.value);
     } else {
       setFee("");
     }
@@ -321,8 +321,8 @@ export default function DepositTradingPool(props) {
             <Input
               label="Fee %"
               type="number"
-              placeholder="15 %"
-              value={fee / 100}
+              placeholder="10 %"
+              value={fee}
               step="any"
               validation={{
                 numberMin: 0,
@@ -504,6 +504,7 @@ export default function DepositTradingPool(props) {
           <CurveChart
             curveType={curve}
             delta={delta ? delta : "20"}
+            fee={fee ? fee : "10"}
             initialPrice={initialPrice ? formatUnits(initialPrice, 18) : "0.1"}
           />
 
@@ -564,17 +565,22 @@ export default function DepositTradingPool(props) {
               console.log("Depositing to trading pool", props.pool);
               var curveAddress = "";
               var curveDelta = 0;
+              var curveFee = 0;
               var type = 0;
               console.log("delta", delta);
+              console.log("fee", fee);
               if (curve == "exponential") {
                 curveAddress = addresses.ExponentialCurve;
                 curveDelta = delta * 100;
+                curveFee = fee * 100;
               } else if (curve == "linear") {
                 curveAddress = addresses.LinearCurve;
                 curveDelta = parseUnits(delta, 18);
+                curveFee = fee * 100;
               }
               console.log("curveAddress", curveAddress);
               console.log("curveDelta", curveDelta);
+              console.log("curveFee", curveFee);
               if (lpType == "tradeUp") {
                 type = 1;
               } else if (lpType == "tradeDown") {
@@ -588,7 +594,7 @@ export default function DepositTradingPool(props) {
                 initialPrice,
                 curveAddress,
                 curveDelta,
-                fee,
+                curveFee,
                 {
                   value: tokenAmount,
                 }

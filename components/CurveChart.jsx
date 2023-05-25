@@ -29,14 +29,24 @@ const formatYAxisTick = (value) => {
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     let actionText;
-    const price = payload[0].value;
+    let buyPrice, sellPrice;
+    const price = Number(payload[0].value); // Access price here
+    const fee = Number(payload[0].payload.fee); // Access fee here
 
-    if (label < 0) {
+    console.log("CustomTooltip", { price, fee });
+
+    if (label === 0) {
+      actionText = "Initial Price";
+      buyPrice = (price * (100 + fee)) / 100;
+      sellPrice = (price * (100 - fee)) / 100;
+    } else if (label < 0) {
       actionText = `Sell ${Math.abs(label)}`;
+      buyPrice = (price * (100 + fee)) / 100;
+      sellPrice = (price * (100 - fee)) / 100;
     } else if (label > 0) {
       actionText = `Buy ${label}`;
-    } else {
-      actionText = "Initial Price";
+      buyPrice = (price * (100 + fee)) / 100;
+      sellPrice = (price * (100 - fee)) / 100;
     }
 
     return (
@@ -47,13 +57,12 @@ const CustomTooltip = ({ active, payload, label }) => {
           padding: "5px",
         }}
       >
-        {label === 0 ? (
-          <p>{`${actionText}: ${parseFloat(price).toPrecision(3)}`}</p>
-        ) : (
-          <>
-            <p>{actionText}</p>
-            <p>{`Price: ${parseFloat(price).toPrecision(3)}`}</p>
-          </>
+        <p>{actionText}</p>
+        {buyPrice && (
+          <p>{`Buy Price: ${parseFloat(buyPrice).toPrecision(3)}`}</p>
+        )}
+        {sellPrice && (
+          <p>{`Sell Price: ${parseFloat(sellPrice).toPrecision(3)}`}</p>
         )}
       </div>
     );
@@ -65,6 +74,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 const CurveChart = ({
   curveType = "exponential",
   delta = 20,
+  fee = 10,
   initialPrice = 0.1,
 }) => {
   console.log("CurveChart render", { curveType, delta, initialPrice });
@@ -81,7 +91,7 @@ const CurveChart = ({
         y = Number(Number(initialPrice) * (1 + delta / 100) ** i).toFixed(6);
       }
       if (y >= 0) {
-        data.push({ x: i, y });
+        data.push({ x: i, y, fee });
       }
     }
     return data;

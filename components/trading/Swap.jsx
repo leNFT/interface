@@ -1142,7 +1142,7 @@ export default function Swap() {
                         18
                       )
                     ).toPrecision(6) +
-                    " WETH"
+                    " ETH"
                   : "＋ " +
                     Number(
                       formatUnits(

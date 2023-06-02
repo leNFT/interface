@@ -491,19 +491,6 @@ export default function Swap() {
 
   return (
     <div className="flex flex-col items-center text-center w-full py-8 md:w-fit justify-center m-4 rounded-3xl bg-black/5 shadow-lg">
-      {sellPoolAddress == buyPoolAddress && sellPoolAddress != "" && (
-        <div className="flex flex-row w-full p-4 justify-center">
-          <Box
-            sx={{
-              fontFamily: "Monospace",
-              fontSize: "subtitle1.fontSize",
-              fontWeight: "bold",
-            }}
-          >
-            Please select two different collections
-          </Box>
-        </div>
-      )}
       <div className="flex flex-col lg:flex-row items-center justify-center m-2 md:m-8">
         <div className="flex flex-col items-center text-center justify-center p-8 m-4 w-full rounded-3xl bg-black/5 shadow-lg">
           <div className="flex flex-col mb-2">

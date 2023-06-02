@@ -126,13 +126,7 @@ export default function Swap() {
   ) {
     console.log("Getting swap quote");
 
-    if (
-      buyAmount > 0 &&
-      sellAmount > 0 &&
-      buyPoolAddress &&
-      sellPoolAddress &&
-      buyPoolAddress != sellPoolAddress
-    ) {
+    if (buyAmount > 0 && sellAmount > 0 && buyPoolAddress && sellPoolAddress) {
       setPriceQuote();
       setLoadingPriceQuote(true);
       var newSwapQuote;

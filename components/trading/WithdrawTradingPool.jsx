@@ -121,7 +121,9 @@ export default function WithdrawTradingPool(props) {
       <div className="flex flex-col items-center justify-center border-4 rounded-xl p-4">
         <div className="flex flex-row items-center m-2">
           <Typography variant="subtitle2">
-            {(lp ? formatUnits(lp.tokenAmount, 18) : "0") + " ETH"}
+            {(lp
+              ? Number(formatUnits(lp.tokenAmount, 18)).toPrecision(6)
+              : "0") + " ETH"}
           </Typography>
         </div>
         <div className="flex flex-row items-center  m-2">

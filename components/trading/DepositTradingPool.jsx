@@ -27,6 +27,7 @@ export default function DepositTradingPool(props) {
   const { data: signer } = useSigner();
   const [curve, setCurve] = useState("exponential");
   const [delta, setDelta] = useState("");
+  const [maxFee, setMaxFee] = useState("100");
   const [fee, setFee] = useState("");
   const [initialPrice, setInitialPrice] = useState("");
   const [lpType, setLPType] = useState("trade");
@@ -174,6 +175,24 @@ export default function DepositTradingPool(props) {
   function handleDeltaChange(e) {
     if (e.target.value != "") {
       setDelta(e.target.value);
+
+      // Update the max fee
+      if (curve == "exponential") {
+        setMaxFee(
+          Math.floor(
+            ((Number(e.target.value) * 100) / (100 + Number(e.target.value))) *
+              100
+          ) / 100
+        );
+      } else if (curve == "linear") {
+        if (BigNumber.from(spotPrice).gt(Number(e.target.value))) {
+          setMaxFee(
+            BigNumber.from(Number(e.target.value))
+              .mul(100)
+              .div(BigNumber.from(spotPrice).sub(Number(e.target.value)))
+          );
+        }
+      }
     } else {
       setDelta("");
     }
@@ -181,7 +200,11 @@ export default function DepositTradingPool(props) {
 
   function handleFeeChange(e) {
     if (e.target.value != "") {
-      setFee(e.target.value);
+      if (Number(e.target.value) > maxFee) {
+        setFee(maxFee);
+      } else {
+        setFee(e.target.value);
+      }
     } else {
       setFee("");
     }
@@ -265,32 +288,6 @@ export default function DepositTradingPool(props) {
         <div className="flex flex-col space-y-12 m-4">
           <div className="flex flex-row items-center justify-center mt-8">
             <Input
-              label={
-                curve == "exponential"
-                  ? "Delta %"
-                  : curve == "linear"
-                  ? "Delta (Amount)"
-                  : "Delta"
-              }
-              value={delta}
-              type="number"
-              step="any"
-              placeholder={
-                curve == "exponential"
-                  ? "20 %"
-                  : curve == "linear"
-                  ? "0.01 ETH"
-                  : "0"
-              }
-              description="The LP price change after each buy/sell"
-              validation={{
-                numberMin: 0,
-              }}
-              onChange={handleDeltaChange}
-            />
-          </div>
-          <div className="flex flex-row items-center justify-center">
-            <Input
               label="Initial Price"
               type="number"
               placeholder="0.01 ETH"
@@ -305,6 +302,57 @@ export default function DepositTradingPool(props) {
           </div>
           <div className="flex flex-row items-center justify-center">
             <Input
+              label={
+                curve == "exponential"
+                  ? "Delta %"
+                  : curve == "linear"
+                  ? "Delta (Amount)"
+                  : "Delta"
+              }
+              value={delta}
+              type="number"
+              step="any"
+              placeholder={
+                curve == "exponential"
+                  ? "10 %"
+                  : curve == "linear"
+                  ? "0.01 ETH"
+                  : "0"
+              }
+              description="The price change after each buy or sell"
+              validation={{
+                numberMin: 0,
+              }}
+              onChange={handleDeltaChange}
+            />
+          </div>
+          <div className="flex flex-col items-center justify-center">
+            <Box
+              className="mb-4"
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+                fontWeight: "bold",
+              }}
+            >
+              {"Max Fee: " + maxFee + " %"}
+            </Box>
+            <Input
+              label="Fee %"
+              type="number"
+              placeholder="20 %"
+              value={fee}
+              step="any"
+              validation={{
+                numberMin: 0,
+                numberMax: maxFee,
+              }}
+              description="Fee charged by your LP"
+              onChange={handleFeeChange}
+            />
+          </div>
+          <div className="flex flex-row items-center justify-center">
+            <Input
               label="ETH Amount"
               type="number"
               placeholder="2.5 ETH"
@@ -315,20 +363,6 @@ export default function DepositTradingPool(props) {
               }}
               description="Amount of ETH to deposit."
               onChange={handleTokenAmountChange}
-            />
-          </div>
-          <div className="flex flex-row items-center justify-center">
-            <Input
-              label="Fee %"
-              type="number"
-              placeholder="10 %"
-              value={fee}
-              step="any"
-              validation={{
-                numberMin: 0,
-              }}
-              description="Fee charged by your LP"
-              onChange={handleFeeChange}
             />
           </div>
           <div className="flex flex-row items-center justify-center m-8">
@@ -503,8 +537,8 @@ export default function DepositTradingPool(props) {
           </div>
           <CurveChart
             curveType={curve}
-            delta={delta ? delta : "20"}
-            fee={fee ? fee : "10"}
+            delta={delta ? delta : "10"}
+            fee={fee ? fee : "20"}
             initialPrice={initialPrice ? formatUnits(initialPrice, 18) : "0.1"}
           />
 

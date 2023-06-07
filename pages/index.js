@@ -101,7 +101,7 @@ export default function Home() {
                   borrow
                 </a>
               </Link>{" "}
-              using your NFTs.
+              with your NFTs.
             </div>
             <div className={styles.indexDescribeSubtitle}>
               (beta live on ETH sepolia)

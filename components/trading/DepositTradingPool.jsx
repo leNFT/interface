@@ -27,7 +27,7 @@ export default function DepositTradingPool(props) {
   const { data: signer } = useSigner();
   const [curve, setCurve] = useState("exponential");
   const [delta, setDelta] = useState("");
-  const [maxFee, setMaxFee] = useState("100");
+  const [maxDelta, setMaxDelta] = useState("100");
   const [fee, setFee] = useState("");
   const [initialPrice, setInitialPrice] = useState("");
   const [lpType, setLPType] = useState("trade");
@@ -174,24 +174,10 @@ export default function DepositTradingPool(props) {
 
   function handleDeltaChange(e) {
     if (e.target.value != "") {
-      setDelta(e.target.value);
-
-      // Update the max fee
-      if (curve == "exponential") {
-        setMaxFee(
-          Math.floor(
-            ((Number(e.target.value) * 100) / (100 + Number(e.target.value))) *
-              100
-          ) / 100
-        );
-      } else if (curve == "linear") {
-        if (BigNumber.from(spotPrice).gt(Number(e.target.value))) {
-          setMaxFee(
-            BigNumber.from(Number(e.target.value))
-              .mul(100)
-              .div(BigNumber.from(spotPrice).sub(Number(e.target.value)))
-          );
-        }
+      if (Number(e.target.value) > maxDelta) {
+        setDelta(maxDelta);
+      } else {
+        setDelta(e.target.value);
       }
     } else {
       setDelta("");
@@ -200,11 +186,26 @@ export default function DepositTradingPool(props) {
 
   function handleFeeChange(e) {
     if (e.target.value != "") {
-      if (Number(e.target.value) > maxFee) {
-        setFee(maxFee);
-      } else {
-        setFee(e.target.value);
+      // Update the max fee
+      if (curve == "exponential") {
+        setMaxDelta(
+          Number(
+            ((1 + Number(e.target.value) / 100) /
+              (1 - Number(e.target.value) / 100) -
+              1) *
+              100
+          ).toPrecision(4)
+        );
+      } else if (curve == "linear") {
+        if (BigNumber.from(initialPrice).gt(Number(e.target.value))) {
+          setMaxDelta(
+            BigNumber.from(Number(e.target.value))
+              .mul(100)
+              .div(BigNumber.from(initialPrice).sub(Number(e.target.value)))
+          );
+        }
       }
+      setFee(e.target.value);
     } else {
       setFee("");
     }
@@ -302,6 +303,30 @@ export default function DepositTradingPool(props) {
           </div>
           <div className="flex flex-row items-center justify-center">
             <Input
+              label="Fee %"
+              type="number"
+              placeholder="20 %"
+              value={fee}
+              step="any"
+              validation={{
+                numberMin: 0,
+              }}
+              description="Fee charged by your LP"
+              onChange={handleFeeChange}
+            />
+          </div>
+          <div className="flex flex-col items-center justify-center">
+            <Box
+              className="mb-4"
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+                fontWeight: "bold",
+              }}
+            >
+              {"Max Delta: " + maxDelta + " %"}
+            </Box>
+            <Input
               label={
                 curve == "exponential"
                   ? "Delta %"
@@ -322,33 +347,9 @@ export default function DepositTradingPool(props) {
               description="The price change after each buy or sell"
               validation={{
                 numberMin: 0,
+                numberMax: maxDelta,
               }}
               onChange={handleDeltaChange}
-            />
-          </div>
-          <div className="flex flex-col items-center justify-center">
-            <Box
-              className="mb-4"
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle2.fontSize",
-                fontWeight: "bold",
-              }}
-            >
-              {"Max Fee: " + maxFee + " %"}
-            </Box>
-            <Input
-              label="Fee %"
-              type="number"
-              placeholder="20 %"
-              value={fee}
-              step="any"
-              validation={{
-                numberMin: 0,
-                numberMax: maxFee,
-              }}
-              description="Fee charged by your LP"
-              onChange={handleFeeChange}
             />
           </div>
           <div className="flex flex-row items-center justify-center">

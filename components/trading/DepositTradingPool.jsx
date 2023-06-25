@@ -197,13 +197,26 @@ export default function DepositTradingPool(props) {
           ).toPrecision(4)
         );
       } else if (curve == "linear") {
-        if (BigNumber.from(initialPrice).gt(Number(e.target.value))) {
-          setMaxDelta(
-            BigNumber.from(Number(e.target.value))
-              .mul(100)
-              .div(BigNumber.from(initialPrice).sub(Number(e.target.value)))
-          );
-        }
+        console.log("linear");
+        console.log(
+          (initialPrice * (1 - Number(e.target.value))) /
+            (1 + Number(e.target.value)) -
+            initialPrice
+        );
+        console.log("initialPrice", initialPrice);
+        console.log("fee", Number(e.target.value));
+        setMaxDelta(
+          Number(
+            formatUnits(
+              initialPrice.sub(
+                initialPrice
+                  .mul(100 - Number(e.target.value))
+                  .div(100 + Number(e.target.value))
+              ),
+              18
+            )
+          ).toPrecision(4)
+        );
       }
       setFee(e.target.value);
     } else {
@@ -324,7 +337,9 @@ export default function DepositTradingPool(props) {
                 fontWeight: "bold",
               }}
             >
-              {"Max Delta: " + maxDelta + " %"}
+              {"Max Delta: " +
+                maxDelta +
+                (curve == "exponential" ? " %" : " ETH")}
             </Box>
             <Input
               label={

@@ -197,14 +197,6 @@ export default function DepositTradingPool(props) {
           ).toPrecision(4)
         );
       } else if (curve == "linear") {
-        console.log("linear");
-        console.log(
-          (initialPrice * (1 - Number(e.target.value))) /
-            (1 + Number(e.target.value)) -
-            initialPrice
-        );
-        console.log("initialPrice", initialPrice);
-        console.log("fee", Number(e.target.value));
         setMaxDelta(
           Number(
             formatUnits(

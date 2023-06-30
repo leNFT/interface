@@ -31,8 +31,7 @@ export default function Bribe(props) {
   const [amount, setAmount] = useState("0");
 
   const dispatch = useNotification();
-  var addresses = contractAddresses["11155111"];
-
+  var addresses = contractAddresses[1];
   const wethGatewaySigner = useContract({
     contractInterface: wethGatewayContract.abi,
     addressOrName: addresses.WETHGateway,

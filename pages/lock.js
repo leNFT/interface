@@ -75,8 +75,7 @@ export default function Lock() {
   const [userBribes, setUserBribes] = useState("0");
   const [gaugeBribes, setGaugeBribes] = useState("0");
 
-  var addresses = contractAddresses["11155111"];
-
+  var addresses = contractAddresses[1];
   const votingEscrowProvider = useContract({
     contractInterface: votingEscrowContract.abi,
     addressOrName: addresses.VotingEscrow,

@@ -42,8 +42,7 @@ export default function LendingPool() {
   const [tvlSafeguard, setTVLSafeguard] = useState("0");
   const [gauge, setGauge] = useState("");
   const provider = useProvider();
-  var addresses = contractAddresses["11155111"];
-
+  var addresses = contractAddresses[1];
   const lendingMarket = useContract({
     contractInterface: lendingMarketContract.abi,
     addressOrName: addresses.LendingMarket,

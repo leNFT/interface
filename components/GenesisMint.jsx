@@ -1,7 +1,6 @@
 import { formatUnits } from "@ethersproject/units";
 import { useNotification, Button, Typography, Input } from "@web3uikit/core";
 import styles from "../styles/Home.module.css";
-import genesisNFTURIs from "../genesisNFTURIs.json";
 import contractAddresses from "../contractAddresses.json";
 import {
   useAccount,
@@ -35,7 +34,7 @@ export default function GenesisMint(props) {
   const [mintIds, setMintIds] = useState([]);
   const [mintPrice, setMintPrice] = useState("0");
 
-  var addresses = contractAddresses["11155111"];
+  var addresses = contractAddresses[1];
 
   const dispatch = useNotification();
 
@@ -236,10 +235,14 @@ export default function GenesisMint(props) {
               setMintingLoading(true);
               console.log("Minting...");
               console.log("mintPrice: ", mintPrice);
+              console.log("amount: ", mintIds.length);
+              console.log("value: ", BigNumber.from(mintPrice));
               const tx = await genesisNFTSigner.mint(
                 locktimeDays * SECONDS_IN_DAY,
-                mintIds.map((id) => genesisNFTURIs[id - 1]),
-                { value: mintPrice }
+                mintIds.length,
+                {
+                  value: BigNumber.from(mintPrice),
+                }
               );
               await tx.wait(1);
               await handleMintingSuccess();

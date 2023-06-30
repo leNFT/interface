@@ -48,8 +48,7 @@ export default function Borrow() {
 
   const provider = useProvider();
   const dispatch = useNotification();
-  var addresses = contractAddresses["11155111"];
-
+  var addresses = contractAddresses[1];
   const loanCenter = useContract({
     contractInterface: loanCenterContract.abi,
     addressOrName: addresses.LoanCenter,

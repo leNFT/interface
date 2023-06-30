@@ -45,8 +45,7 @@ export default function DepositTradingPool(props) {
   const dispatch = useNotification();
   const { chain } = useNetwork();
   const provider = useProvider();
-  var addresses = contractAddresses["11155111"];
-
+  var addresses = contractAddresses[1];
   const wethGatewaySigner = useContract({
     contractInterface: wethGatewayContract.abi,
     addressOrName: addresses.WETHGateway,

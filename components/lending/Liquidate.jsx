@@ -43,8 +43,7 @@ export default function Liquidate(props) {
   const { data: signer } = useSigner();
   const provider = useProvider();
   const dispatch = useNotification();
-  var addresses = contractAddresses["11155111"];
-
+  var addresses = contractAddresses[1];
   const lendingMarketSigner = useContract({
     contractInterface: lendingMarketContract.abi,
     addressOrName: addresses.LendingMarket,

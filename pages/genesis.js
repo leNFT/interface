@@ -37,7 +37,7 @@ export default function Genesis() {
   const { chain } = useNetwork();
   const provider = useProvider();
   const dispatch = useNotification();
-  var addresses = contractAddresses["11155111"];
+  var addresses = contractAddresses[1];
 
   const genesisNFTProvider = useContract({
     contractInterface: genesisNFTContract.abi,
@@ -201,7 +201,6 @@ export default function Genesis() {
                 textColor: "white",
               }}
               text={"Mint Genesis NFT"}
-              disabled={chainId != 1}
               theme="custom"
               size="large"
               radius="12"

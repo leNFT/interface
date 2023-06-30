@@ -54,8 +54,7 @@ export default function TradingPoolGauge() {
   const [loadingHistory, setLoadingHistory] = useState(true);
   const dispatch = useNotification();
 
-  var addresses = contractAddresses["11155111"];
-
+  var addresses = contractAddresses[1];
   const votingEscrowProvider = useContract({
     contractInterface: votingEscrowContract.abi,
     addressOrName: addresses.VotingEscrow,

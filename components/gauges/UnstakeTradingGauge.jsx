@@ -21,8 +21,7 @@ export default function UnstakeTradingGauge(props) {
   const { chain } = useNetwork();
   const provider = useProvider();
   const { data: signer } = useSigner();
-  var addresses = contractAddresses["11155111"];
-
+  var addresses = contractAddresses[1];
   async function getLPImage() {
     const lpImage = await getNFTImage(
       props.lpToken,

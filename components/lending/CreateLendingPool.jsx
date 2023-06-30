@@ -31,8 +31,7 @@ export default function CreateLendingPool(props) {
 
   const dispatch = useNotification();
 
-  var addresses = contractAddresses["11155111"];
-
+  var addresses = contractAddresses[1];
   const lendingMarketContractSigner = useContract({
     contractInterface: lendingMarketContract.abi,
     addressOrName: addresses.LendingMarket,

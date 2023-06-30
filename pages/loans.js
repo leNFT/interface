@@ -40,8 +40,7 @@ export default function Loans() {
   const [floorPrice, setFloorPrice] = useState(0);
   const { chain } = useNetwork();
   const provider = useProvider();
-  var addresses = contractAddresses["11155111"];
-
+  var addresses = contractAddresses[1];
   const [collections, setCollections] = useState([]);
 
   const loanCenter = useContract({

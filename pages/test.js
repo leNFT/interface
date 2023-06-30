@@ -30,8 +30,7 @@ export default function Test() {
   const testNFTAddress = "0xa7540Eb784A17B9D704330B13F61E07D757010c2";
   const testNFT2Address = "0x8e06B6b9d28C3dc3a296099525Bf58F0B3F2c0DD";
 
-  var addresses = contractAddresses["11155111"];
-
+  var addresses = contractAddresses[1];
   const testNFTSigner = useContract({
     contractInterface: testNFTContract.abi,
     addressOrName: testNFTAddress,

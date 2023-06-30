@@ -39,8 +39,7 @@ export default function LockNativeToken(props) {
   const [allowance, setAllowance] = useState("0");
 
   const dispatch = useNotification();
-  var addresses = contractAddresses["11155111"];
-
+  var addresses = contractAddresses[1];
   const nativeTokenProvider = useContract({
     contractInterface: nativeTokenContract.abi,
     addressOrName: addresses.NativeToken,

@@ -35,8 +35,7 @@ export default function StakeTradingGauge(props) {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const [lpsValue, setLpsValue] = useState([]);
-  var addresses = contractAddresses["11155111"];
-
+  var addresses = contractAddresses[1];
   console.log("props.lpToken", props.lpToken);
 
   const poolProvider = useContract({

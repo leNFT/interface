@@ -29,8 +29,8 @@ export default function GenesisMint(props) {
   const [mintingLoading, setMintingLoading] = useState(false);
   const [rewards, setRewards] = useState("0");
   const [lockedRewards, setLockedRewards] = useState("0");
-  const [locktimeDays, setLocktimeDays] = useState(14);
-  const [sliderValue, setSliderValue] = useState(14);
+  const [locktimeDays, setLocktimeDays] = useState(30);
+  const [sliderValue, setSliderValue] = useState(30);
   const [mintIds, setMintIds] = useState([]);
   const [mintPrice, setMintPrice] = useState("0");
 
@@ -200,7 +200,7 @@ export default function GenesisMint(props) {
             valueLabelDisplay="auto"
             onChangeCommitted={handleSliderCommitedChange}
             onChange={handleSliderChange}
-            min={14}
+            min={21}
             step={1}
             max={120}
           />

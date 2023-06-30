@@ -171,7 +171,7 @@ export default function Genesis() {
                 }}
                 className="text-gray-600 w-6/12"
               >
-                Receive up to 0.2 ETH (in LE) + trading fees when you burn your
+                Receive up to 0.1 ETH (in LE) + trading fees when you burn your
                 Genesis NFT.
               </Box>
             </div>

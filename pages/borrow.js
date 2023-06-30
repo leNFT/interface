@@ -724,13 +724,13 @@ export default function Borrow() {
                               <div className="flex flex-col mt-4 items-center text-center">
                                 <div>{unsupportedAsset.contract.symbol}</div>
                                 <div>
-                                  {"#" +
-                                    BigNumber.from(unsupportedAsset.tokenId)
-                                      .toString()
-                                      .slice(0, 10) +
-                                    (BigNumber.from(
-                                      unsupportedAsset.tokenId
-                                    ).toString().length > 10 && "...")}
+                                  {BigNumber.from(
+                                    unsupportedAsset.tokenId
+                                  ).toString().length < 8 &&
+                                    "#" +
+                                      BigNumber.from(
+                                        unsupportedAsset.tokenId
+                                      ).toString()}
                                 </div>
                               </div>
                             </Box>

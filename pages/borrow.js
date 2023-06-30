@@ -725,9 +725,12 @@ export default function Borrow() {
                                 <div>{unsupportedAsset.contract.symbol}</div>
                                 <div>
                                   {"#" +
-                                    BigNumber.from(
+                                    BigNumber.from(unsupportedAsset.tokenId)
+                                      .toString()
+                                      .slice(0, 10) +
+                                    (BigNumber.from(
                                       unsupportedAsset.tokenId
-                                    ).toNumber()}
+                                    ).toString().length > 10 && "...")}
                                 </div>
                               </div>
                             </Box>

@@ -215,10 +215,11 @@ export default function GenesisMint(props) {
           <div className="m-2 md:m-4">
             <Typography variant="subtitle2">Circulating Market Cap</Typography>
             <Typography variant="body16">
-              {Math.floor(
-                ((1950 * 0.15) / formatUnits(rewards, 18)) *
-                  formatUnits(totalSupply, 18)
-              ) + "$"}
+              {"$" +
+                Math.floor(
+                  ((1950 * 0.15) / formatUnits(rewards, 18)) *
+                    formatUnits(totalSupply, 18)
+                )}
             </Typography>
           </div>
         </div>

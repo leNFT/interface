@@ -189,8 +189,8 @@ export default function DepositTradingPool(props) {
       if (curve == "exponential") {
         setMaxDelta(
           Number(
-            ((1 + Number(e.target.value) / 100) /
-              (1 - Number(e.target.value) / 100) -
+            ((1 + Number(e.target.value * 0.9) / 100) /
+              (1 - (Number(e.target.value) * 0.9) / 100) -
               1) *
               100
           ).toPrecision(4)
@@ -201,8 +201,8 @@ export default function DepositTradingPool(props) {
             formatUnits(
               initialPrice.sub(
                 initialPrice
-                  .mul(100 - Number(e.target.value))
-                  .div(100 + Number(e.target.value))
+                  .mul(100 - Number(e.target.value) * 0.9)
+                  .div(100 + Number(e.target.value) * 0.9)
               ),
               18
             )

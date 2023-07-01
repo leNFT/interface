@@ -191,31 +191,30 @@ export default function GenesisMint(props) {
         />
       </div>
       <div className="flex flex-col p-2 border-4 rounded-3xl w-full md:w-8/12">
-        <div className="flex flex-col md:flex-row items-center justify-center mt-2 text-center">
-          <div className="flex flex-col m-2 md:m-4">
-            <Typography variant="subtitle1">Lock Time</Typography>
-            <Typography variant="body18">{locktimeDays + " days"}</Typography>
+        <div className="grid grid-cols-2 xs:grid-cols-4 gap-2 items-center justify-center mt-2 text-center">
+          <div className="m-2 md:m-4">
+            <Typography variant="subtitle2">Lock Time</Typography>
+            <Typography variant="body16">{locktimeDays + " days"}</Typography>
           </div>
-          <div className="flex flex-col m-2 md:m-4">
-            <Typography variant="subtitle1">LE Rewards</Typography>
-            <Typography variant="body18">
+          <div className="m-2 md:m-4">
+            <Typography variant="subtitle2">LE Rewards</Typography>
+            <Typography variant="body16">
               {formatUnits(rewards, 18) +
                 " LE = " +
                 Number(formatUnits(lockedRewards, 18)).toPrecision(4) +
                 " veLE"}
             </Typography>
           </div>
-        </div>
-        <div className="flex flex-col md:flex-row items-center justify-center text-center">
-          <div className="flex flex-col m-2 md:m-4">
-            <Typography variant="subtitle1">Price</Typography>
-            <Typography variant="body18">
-              {Number(0.15 / formatUnits(rewards, 18)).toPrecision(4) + " ETH"}
+          <div className="m-2 md:m-4">
+            <Typography variant="subtitle2">Price</Typography>
+            <Typography variant="body16">
+              {Number(0.15 / formatUnits(rewards, 18)).toPrecision(4) +
+                " LE / ETH"}
             </Typography>
           </div>
-          <div className="flex flex-col m-2 md:m-4">
-            <Typography variant="subtitle1">Circulating Market Cap</Typography>
-            <Typography variant="body18">
+          <div className="m-2 md:m-4">
+            <Typography variant="subtitle2">Circulating Market Cap</Typography>
+            <Typography variant="body16">
               {Math.floor(
                 ((1950 * 0.15) / formatUnits(rewards, 18)) *
                   formatUnits(totalSupply, 18)
@@ -223,6 +222,7 @@ export default function GenesisMint(props) {
             </Typography>
           </div>
         </div>
+
         <div className="flex flex-row items-center justify-center p-4">
           <Slider
             value={sliderValue}

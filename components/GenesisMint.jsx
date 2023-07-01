@@ -13,6 +13,7 @@ import {
 import { useState, useEffect } from "react";
 import Slider from "@mui/material/Slider";
 import genesisNFTContract from "../contracts/GenesisNFT.json";
+import nativeTokenContract from "../contracts/NativeToken.json";
 import votingEscrowContract from "../contracts/VotingEscrow.json";
 import { BigNumber } from "@ethersproject/bignumber";
 
@@ -31,6 +32,7 @@ export default function GenesisMint(props) {
   const [lockedRewards, setLockedRewards] = useState("0");
   const [locktimeDays, setLocktimeDays] = useState(30);
   const [sliderValue, setSliderValue] = useState(30);
+  const [totalSupply, setTotalSupply] = useState("0");
   const [mintIds, setMintIds] = useState([]);
   const [mintPrice, setMintPrice] = useState("0");
 
@@ -56,6 +58,12 @@ export default function GenesisMint(props) {
     signerOrProvider: signer,
   });
 
+  const nativeTokenProvider = useContract({
+    contractInterface: nativeTokenContract.abi,
+    addressOrName: addresses.NativeToken,
+    signerOrProvider: provider,
+  });
+
   async function updateMintInfo() {
     const updatedRewards = await genesisNFTProvider.getCurrentLEReward(
       amount,
@@ -74,6 +82,10 @@ export default function GenesisMint(props) {
       Math.floor(Date.now() / 1000) + locktimeDays * SECONDS_IN_DAY
     );
     setLockedRewards(updateLockedRewards.toString());
+
+    const updatedTotalSupply = await nativeTokenProvider.totalSupply();
+    console.log("updatedTotalSupply: ", updatedTotalSupply.toString());
+    setTotalSupply(updatedTotalSupply.toString());
   }
 
   useEffect(() => {
@@ -188,9 +200,26 @@ export default function GenesisMint(props) {
             <Typography variant="subtitle1">LE Rewards</Typography>
             <Typography variant="body18">
               {formatUnits(rewards, 18) +
-                " LE -> " +
+                " LE = " +
                 Number(formatUnits(lockedRewards, 18)).toPrecision(4) +
                 " veLE"}
+            </Typography>
+          </div>
+        </div>
+        <div className="flex flex-col md:flex-row items-center justify-center text-center">
+          <div className="flex flex-col m-2 md:m-4">
+            <Typography variant="subtitle1">Price</Typography>
+            <Typography variant="body18">
+              {Number(0.15 / formatUnits(rewards, 18)).toPrecision(4) + " ETH"}
+            </Typography>
+          </div>
+          <div className="flex flex-col m-2 md:m-4">
+            <Typography variant="subtitle1">Circulating Market Cap</Typography>
+            <Typography variant="body18">
+              {Math.floor(
+                ((1950 * 0.15) / formatUnits(rewards, 18)) *
+                  formatUnits(totalSupply, 18)
+              ) + "$"}
             </Typography>
           </div>
         </div>

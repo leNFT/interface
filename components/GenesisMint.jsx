@@ -202,7 +202,7 @@ export default function GenesisMint(props) {
             onChange={handleSliderChange}
             min={21}
             step={1}
-            max={120}
+            max={180}
           />
         </div>
       </div>

@@ -17,6 +17,7 @@ import { Input } from "@nextui-org/react";
 import { Button, Loading, Typography, useNotification } from "@web3uikit/core";
 import Autocomplete from "@mui/material/Autocomplete";
 import { getLockHistory } from "../helpers/getLockHistory.js";
+import { getNativeTokenPrice } from "../helpers/getNativeTokenPrice.js";
 import { getGauges } from "../helpers/getGauges";
 import LockNativeToken from "../components/LockNativeToken";
 import Bribe from "../components/Bribe";
@@ -214,7 +215,7 @@ export default function Lock() {
     console.log("updatedLockedPositions", updatedLockedPositions);
     setLockedPositions(updatedLockedPositions);
 
-    const updateNativeTokenPrice = "0";
+    const updateNativeTokenPrice = await getNativeTokenPrice(chain.id);
     setTokenPrice(updateNativeTokenPrice);
 
     // Get the total locked amount
@@ -225,6 +226,12 @@ export default function Lock() {
     console.log("updatedTotalLocked", updatedTotalLocked.toString());
     setTotalLocked(updatedTotalLocked.toString());
 
+    // Get the history
+    const historyResponse = await getLockHistory(chain.id);
+    setHistory(historyResponse);
+    setLoadingHistory(false);
+
+    // Calculate the APR
     if (
       updateNativeTokenPrice.toString() == "0" ||
       updatedTotalLocked.toString() == "0"
@@ -232,18 +239,14 @@ export default function Lock() {
       setAPR(0);
     } else {
       setAPR(
-        BigNumber.from(updatedTotalFees)
+        BigNumber.from(historyResponse[0].rewards)
+          .mul(52)
           .mul(100)
           .div(updatedTotalLocked)
           .div(updateNativeTokenPrice)
           .toNumber()
       );
     }
-
-    // Get the history
-    const historyResponse = await getLockHistory(chain.id);
-    setHistory(historyResponse);
-    setLoadingHistory(false);
 
     // Get the gauges
     const updatedGauges = await getGauges(chain.id);
@@ -489,7 +492,7 @@ export default function Lock() {
               }}
               className="my-2 border-2 border-stone-600 rounded-2xl p-2 px-4 w-fit"
             >
-              {Number(formatUnits(tokenPrice, 18)).toFixed(5) + " LE / ETH"}
+              {Number(tokenPrice).toPrecision(4) + " LE / ETH"}
             </Box>
             <div className="flex flex-row items-center justify-center">
               <div className="flex flex-col items-start m-2 mx-4 space-y-2">

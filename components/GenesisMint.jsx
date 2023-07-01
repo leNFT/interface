@@ -193,12 +193,14 @@ export default function GenesisMint(props) {
       <div className="flex flex-col p-2 border-4 rounded-3xl w-full md:w-8/12">
         <div className="grid grid-cols-2 xs:grid-cols-4 gap-2 items-center justify-center mt-2 text-center">
           <div className="m-2 md:m-4">
-            <Typography variant="subtitle2">Lock Time</Typography>
-            <Typography variant="body16">{locktimeDays + " days"}</Typography>
+            <Typography variant="body14">Lock Time</Typography>
+            <Typography variant="subtitle2">
+              {locktimeDays + " days"}
+            </Typography>
           </div>
           <div className="m-2 md:m-4">
-            <Typography variant="subtitle2">LE Rewards</Typography>
-            <Typography variant="body16">
+            <Typography variant="body14">LE Rewards</Typography>
+            <Typography variant="subtitle2">
               {formatUnits(rewards, 18) +
                 " LE = " +
                 Number(formatUnits(lockedRewards, 18)).toPrecision(4) +
@@ -206,15 +208,15 @@ export default function GenesisMint(props) {
             </Typography>
           </div>
           <div className="m-2 md:m-4">
-            <Typography variant="subtitle2">Price</Typography>
-            <Typography variant="body16">
+            <Typography variant="body14">Price</Typography>
+            <Typography variant="subtitle2">
               {Number(0.15 / formatUnits(rewards, 18)).toPrecision(4) +
                 " LE / ETH"}
             </Typography>
           </div>
           <div className="m-2 md:m-4">
-            <Typography variant="subtitle2">Circulating Market Cap</Typography>
-            <Typography variant="body16">
+            <Typography variant="body14">Circulating Market Cap</Typography>
+            <Typography variant="subtitle2">
               {"$" +
                 Math.floor(
                   ((1950 * 0.15) / formatUnits(rewards, 18)) *

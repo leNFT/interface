@@ -1,7 +1,6 @@
 import BorrowHeader from "./BorrowHeader";
 import TradeHeader from "./TradeHeader";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { BannerStrip } from "@web3uikit/core";
 import { useAccount, useNetwork } from "wagmi";
 import { useSwitchNetwork } from "wagmi";
 import Router from "next/router";

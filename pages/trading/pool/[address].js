@@ -203,18 +203,19 @@ export default function TradingPool() {
           />
         </div>
         <div className="flex flex-col justify-center">
-          {poolInfo?.gauge && (
-            <Button
-              color="blue"
-              theme="colored"
-              text="Go to Gauge"
-              onClick={async function () {
-                Router.push({
-                  pathname: "/trading/gauge/" + poolInfo?.gauge,
-                });
-              }}
-            />
-          )}
+          {poolInfo?.gauge &&
+            poolInfo?.gauge != ethers.constants.AddressZero && (
+              <Button
+                color="blue"
+                theme="colored"
+                text="Go to Gauge"
+                onClick={async function () {
+                  Router.push({
+                    pathname: "/trading/gauge/" + poolInfo?.gauge,
+                  });
+                }}
+              />
+            )}
         </div>
       </div>
       <div className="flex flex-col xl:flex-row justify-between items-center p-8 rounded-3xl my-8 md:m-8 lg:mx-16 bg-black/5 shadow-lg">

@@ -14,6 +14,7 @@ import UnstakeTradingGauge from "../../../components/gauges/UnstakeTradingGauge"
 import Box from "@mui/material/Box";
 import { ethers } from "ethers";
 import Card from "@mui/material/Card";
+import { getNativeTokenPrice } from "../../../helpers/getNativeTokenPrice.js";
 import { CardActionArea } from "@mui/material";
 import CardContent from "@mui/material/CardContent";
 import { Table } from "@nextui-org/react";
@@ -127,8 +128,6 @@ export default function TradingPoolGauge() {
     console.log("updatedEpoch", updatedEpoch.toNumber());
     setEpoch(updatedEpoch.toNumber());
 
-    var nativeTokenPrice = "0";
-
     // Get the total locked amount
     const updatedTotalLockedValue = await gauge.getTotalLPValue();
     console.log("updatedTotalLockedValue", updatedTotalLockedValue.toString());
@@ -141,20 +140,19 @@ export default function TradingPoolGauge() {
         updatedEpoch.toNumber() == 0 ? 0 : updatedEpoch.toNumber() - 1
       );
     setLastEpochRewards(previousGaugeRewards.toString());
-    if (
-      nativeTokenPrice.toString() == "0" ||
-      updatedTotalLockedValue.toString() == "0"
-    ) {
+
+    const updateNativeTokenPrice = await getNativeTokenPrice(chain.id);
+    console.log("updateNativeTokenPrice", updateNativeTokenPrice);
+
+    if (updatedTotalLockedValue.toString() == "0") {
       setAPR(0);
     } else {
       setAPR(
         BigNumber.from(previousGaugeRewards)
-          .mul(nativeTokenPrice)
           .mul(100)
           .mul(52)
-          .div(ethers.constants.WeiPerEther)
           .div(updatedTotalLockedValue)
-          .toNumber()
+          .toNumber() * updateNativeTokenPrice
       );
     }
 
@@ -305,7 +303,7 @@ export default function TradingPoolGauge() {
                       fontSize: "subtitle1.fontSize",
                     }}
                   >
-                    {apr + " %"}
+                    {Number(apr).toFixed(2) + " %"}
                   </Box>
                 </div>
                 <div className="flex flex-col items-end text-right mt-2">

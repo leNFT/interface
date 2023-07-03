@@ -114,23 +114,54 @@ export default function Genesis() {
         />
       </StyledModal>
       <div className="flex flex-col items-center">
-        <div className="flex flex-col w-full md:w-10/12 xl:w-6/12 items-center justify-center border-4 m-2 md:mt-8 rounded-3xl bg-black/5 shadow-lg">
-          <div className="flex flex-row mt-4">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle2.fontSize",
-              }}
+        <div className="flex flex-col w-full md:w-8/12 xl:w-4/12 items-center justify-center border-4 m-2 p-2 md:mt-8 rounded-3xl bg-black/5 shadow-lg">
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "h5.fontSize",
+              marginTop: 1,
+              marginBottom: 3,
+            }}
+          >
+            Mint Instructions
+          </Box>
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "subtitle2.fontSize",
+              textAlign: "left",
+              width: "90%",
+            }}
+          >
+            <div className="my-1">
+              - Connect your wallet to Ethereum Mainnet
+            </div>
+            <div className="my-1">- Click the 'Mint Genesis NFT' button</div>
+            <div className="my-1">- Choose a locktime</div>
+            <div className="my-1">
+              - Mint the NFT and confirm the transaction in your wallet
+            </div>
+            <div className="my-1">
+              - Your NFT will now appear at the bottom of this page
+            </div>
+          </Box>
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "subtitle2.fontSize",
+              marginTop: 2,
+            }}
+          >
+            <Link
+              href="https://lenft.gitbook.io/lenft-docs/basics/genesis-mint"
+              underline="hover"
+              target="_blank"
             >
-              <Link
-                href="https://lenft.gitbook.io/lenft-docs/basics/genesis-mint"
-                underline="hover"
-                target="_blank"
-              >
-                {"How does this work?"}
-              </Link>
-            </Box>
-          </div>
+              {"Genesis Docs"}
+            </Link>
+          </Box>
+        </div>
+        <div className="flex flex-col w-full md:w-10/12 xl:w-6/12 items-center justify-center border-4 m-2 md:mt-8 rounded-3xl bg-black/5 shadow-lg">
           <div className="flex flex-col md:flex-row m-2 items-center">
             <div className="flex flex-row m-8 items-center space-x-4 justify-between rounded-2xl bg-black/5 shadow-lg p-4">
               <div className="flex flex-col w-6/12">
@@ -230,6 +261,7 @@ export default function Genesis() {
             </div>
           )}
         </div>
+
         <div className="flex flex-col border-4 m-2 mt-8 p-2 md:m-8 rounded-3xl bg-black/5 shadow-lg max-w-3xl">
           <div className="flex flex-row p-4 md:p-8">
             <Box

@@ -60,14 +60,6 @@ export default function TradingPool() {
     console.log("poolInfo", poolInfo);
     setPoolInfo(poolInfo);
 
-    // Get the best price the pool LPs can offer
-    const priceResponse = await getTradingPoolPrice(
-      chain.id,
-      router.query.address
-    );
-    console.log("priceResponse", priceResponse);
-    setPrice(priceResponse);
-
     // Get number of user NFTs
     setUserNFTsAmount(
       (await getAddressNFTs(address, poolInfo.nft.address, chain.id)).length
@@ -75,11 +67,13 @@ export default function TradingPool() {
 
     // Get lp positions
     if (address) {
+      console.log("Get LP positions", address);
       const addressNFTs = await getAddressNFTs(
         address,
         router.query.address,
         chain.id
       );
+      console.log("addressNFTs", addressNFTs);
       const newLpPositions = [];
       var newTotalNFTs = 0;
       var newTotalTokenAmount = "0";
@@ -99,6 +93,7 @@ export default function TradingPool() {
       setTotalTokenAmount(newTotalTokenAmount);
 
       setLpPositions(newLpPositions);
+      console.log("lpPositions", lpPositions);
     }
 
     // Get pool history
@@ -108,6 +103,23 @@ export default function TradingPool() {
     );
     console.log("updatePoolHistory", updatePoolHistory);
     setPoolHistory(updatePoolHistory);
+
+    // Get the best price the pool LPs can offer
+    try {
+      const priceResponse = await getTradingPoolPrice(
+        chain.id,
+        router.query.address
+      );
+      console.log("priceResponse", priceResponse);
+      setPrice(priceResponse);
+    } catch (e) {
+      console.log("Error getting price", e);
+      setPrice({
+        price: "0",
+        buyPrice: "0",
+        sellPrice: "0",
+      });
+    }
 
     setLoadingTradingPool(false);
   }

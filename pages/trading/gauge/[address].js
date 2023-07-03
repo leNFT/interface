@@ -95,8 +95,10 @@ export default function TradingPoolGauge() {
     const newUserLockedValue = await gauge.getUserLPValue(address);
     console.log("newUserLockedValue", newUserLockedValue.toString());
     setUserLockedValue(newUserLockedValue.toString());
+    console.log("userLockedValue", userLockedValue);
 
     const stakedLPsBalanceResponse = await gauge.getBalanceOf(address);
+    console.log("stakedLPsBalanceResponse", stakedLPsBalanceResponse);
     const stakedLPsAmount = stakedLPsBalanceResponse.toNumber();
 
     // Get staked lp positions

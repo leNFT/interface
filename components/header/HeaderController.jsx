@@ -44,7 +44,9 @@ export default function HeaderController() {
           backgroundColor: "#4caf50", // You can customize this
           color: "white", // You can customize this
           textAlign: "center",
+          fontWeight: "bold",
           padding: "6px", // You can customize this
+          letterSpacing: "1px",
           zIndex: 999, // Make sure the banner always on top
           cursor: "pointer",
         }}

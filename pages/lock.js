@@ -243,7 +243,6 @@ export default function Lock() {
           .mul(52)
           .mul(100)
           .div(updatedTotalLocked)
-          .div(updateNativeTokenPrice)
           .toNumber()
       );
     }

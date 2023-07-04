@@ -45,8 +45,8 @@ export default function TradingPools() {
           <Image
             loader={() => value.nft.image}
             src={value.nft.image}
-            height="50"
-            width="50"
+            height="80"
+            width="80"
             className="rounded-xl"
             key={"image" + key}
           />

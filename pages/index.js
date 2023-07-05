@@ -137,6 +137,7 @@ export default function Home() {
                   <Button
                     icon={<AccountBalanceIcon />}
                     rounded
+                    disabled
                     shadow
                     ghost
                     bordered
@@ -147,12 +148,13 @@ export default function Home() {
                     <Box
                       sx={{
                         fontFamily: "Monospace",
-                        fontSize: "h6.fontSize",
+                        fontSize: 16,
                         fontWeight: "bold",
-                        letterSpacing: 6,
+                        letterSpacing: 2,
                       }}
                     >
-                      BORROW
+                      <div className="h-[50px]">Borrow</div>
+                      <div className="flex items-end h-[25px]">(soon™)</div>
                     </Box>
                   </Button>
                 </a>

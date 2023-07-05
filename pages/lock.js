@@ -1265,16 +1265,24 @@ export default function Lock() {
         <div className="flex flex-col w-full xl:w-[60%] 4 p-4 m-4 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
           <div className="flex flex-col lg:flex-row items-center justify-center w-full">
             <div className="flex flex-col w-full lg:w-6/12 justify-center p-8">
-              <PieChartComponent
-                title={"Mock Gauge Vote Weights"}
-                data={allGaugeWeights}
-              />
+              {epoch > 0 ? (
+                <PieChartComponent
+                  title={"Gauge Vote Weights"}
+                  data={allGaugeWeights}
+                />
+              ) : (
+                "Gauge weights will be available after the first epoch."
+              )}
             </div>
             <div className="flex flex-col w-full lg:w-6/12 justify-center p-8">
-              <PieChartComponent
-                title={"Mock Next Epoch Bribes"}
-                data={allGaugeBribes}
-              />
+              {epoch > 0 ? (
+                <PieChartComponent
+                  title={"Next Epoch Bribes"}
+                  data={allGaugeBribes}
+                />
+              ) : (
+                "Bribes will be available after the first epoch."
+              )}
             </div>
           </div>
         </div>

@@ -12,7 +12,7 @@ const PieChartComponent = ({ data, title }) => {
 
   return (
     <div className="flex flex-col justify-center">
-      <h3 className="text-center mb-2">{title}</h3>
+      <div className="text-center text-lg font-extrabold mb-2">{title}</div>
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie

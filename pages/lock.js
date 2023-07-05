@@ -13,12 +13,14 @@ import {
 import { getAddressNFTs } from "../helpers/getAddressNFTs";
 import TextField from "@mui/material/TextField";
 import Slider from "@mui/material/Slider";
-import { Input } from "@nextui-org/react";
 import { Button, Loading, Typography, useNotification } from "@web3uikit/core";
 import Autocomplete from "@mui/material/Autocomplete";
 import { getLockHistory } from "../helpers/getLockHistory.js";
 import { getNativeTokenPrice } from "../helpers/getNativeTokenPrice.js";
 import { getGauges } from "../helpers/getGauges";
+import { PieChartComponent } from "../components/PieChartComponent";
+import { getGaugeBribes } from "../helpers/getGaugeBribes";
+import { getGaugeVoteWeights } from "../helpers/getGaugeVoteWeights";
 import LockNativeToken from "../components/LockNativeToken";
 import Bribe from "../components/Bribe";
 import RemoveBribe from "../components/RemoveBribe";
@@ -75,6 +77,8 @@ export default function Lock() {
   const [lockedRatio, setLockedRatio] = useState("0");
   const [userBribes, setUserBribes] = useState("0");
   const [gaugeBribes, setGaugeBribes] = useState("0");
+  const [allGaugeBribes, setAllGaugeBribes] = useState({});
+  const [allGaugeWeights, setAllGaugeVoteWeights] = useState({});
 
   var addresses = contractAddresses[1];
   const votingEscrowProvider = useContract({
@@ -251,6 +255,16 @@ export default function Lock() {
     const updatedGauges = await getGauges(chain.id);
     console.log("updatedGauges", updatedGauges);
     setGauges(updatedGauges);
+
+    // Get the gauge weights
+    const updatedGaugeVoteWeights = await getGaugeVoteWeights(chain.id);
+    console.log("updatedGaugeVoteWeights", updatedGaugeVoteWeights);
+    setAllGaugeVoteWeights(updatedGaugeVoteWeights);
+
+    // Get the gauge bribes
+    const updatedGaugeBribes = await getGaugeBribes(chain.id);
+    console.log("updatedGaugeBribes", updatedGaugeBribes);
+    setAllGaugeBribes(updatedGaugeBribes);
   }
 
   async function updateGaugeDetails() {
@@ -1245,6 +1259,22 @@ export default function Lock() {
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col w-full xl:w-[60%] 4 p-4 m-4 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
+          <div className="flex flex-col lg:flex-row items-center justify-center w-full">
+            <div className="flex flex-col w-full lg:w-6/12 justify-center p-8">
+              <PieChartComponent
+                title={"Mock Gauge Weights"}
+                data={allGaugeWeights}
+              />
+            </div>
+            <div className="flex flex-col w-full lg:w-6/12 justify-center p-8">
+              <PieChartComponent
+                title={"Mock Next Epoch Bribes"}
+                data={allGaugeBribes}
+              />
             </div>
           </div>
         </div>

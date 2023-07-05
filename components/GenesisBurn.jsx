@@ -48,7 +48,7 @@ export default function GenesisBurn(props) {
     setUnlockTimestamp(updatedUnlockTimestamp);
 
     const updatedLPValue = (
-      await genesisNFTProvider.getLPValue([props.tokenId])
+      await genesisNFTSigner.callStatic.getLPValueInLE([props.tokenId])
     ).toString();
     console.log("updatedLPValue", updatedLPValue);
     setLPValue(updatedLPValue);
@@ -95,7 +95,7 @@ export default function GenesisBurn(props) {
             <Typography variant="caption10">(available on burn)</Typography>
           </div>
           <Typography variant="body16">
-            {Number(formatUnits(lpValue, 18)).toPrecision(3) + " LE"}
+            {Number(formatUnits(lpValue, 18)).toFixed(3) + " LE"}
           </Typography>
         </div>
       </div>

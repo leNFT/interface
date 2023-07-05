@@ -348,7 +348,24 @@ export default function TradeHeader() {
               }
               icon={
                 <div className="pl-[10px]">
-                  <Rocket fontSize="20px" color="#000000" />
+                  <div className="flex lg:hidden">
+                    <Badge
+                      disableOutline
+                      color="success"
+                      content="LIVE"
+                      size="sm"
+                      shape="rectangle"
+                      horizontalOffset="-150%"
+                      verticalOffset="-30%"
+                    >
+                      <Rocket fontSize="20px" color="#000000" />
+                    </Badge>
+                  </div>
+                  <Rocket
+                    className="hidden lg:flex"
+                    fontSize="20px"
+                    color="#000000"
+                  />
                 </div>
               }
             />

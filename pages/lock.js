@@ -1266,7 +1266,7 @@ export default function Lock() {
           <div className="flex flex-col lg:flex-row items-center justify-center w-full">
             <div className="flex flex-col w-full lg:w-6/12 justify-center p-8">
               <PieChartComponent
-                title={"Mock Gauge Weights"}
+                title={"Mock Gauge Vote Weights"}
                 data={allGaugeWeights}
               />
             </div>

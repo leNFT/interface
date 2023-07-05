@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button, Menu } from "grommet";
+import { Badge } from "@nextui-org/react";
 import {
   Home,
   Search,
@@ -70,30 +71,31 @@ export default function TradeHeader() {
                 </div>
               ),
             },
-            {
-              label: (
-                <Box
-                  className="m-1"
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "caption.fontSize",
-                  }}
-                >
-                  Borrow (soon)
-                </Box>
-              ),
-              onClick: () => {
-                // Router.push({
-                //   pathname: "/borrow",
-                //   options: { locale: "borrow" },
-                // });
-              },
-              icon: (
-                <div className="flex items-center justify-center mr-1 mt-1">
-                  <AccountBalanceIcon fontSize="15px" />
-                </div>
-              ),
-            },
+            // {
+            //   label: (
+            //     <Box
+            //       className="m-1"
+            //       sx={{
+            //         fontFamily: "Monospace",
+            //         fontSize: "h6.fontSize",
+            //         fontWeight: "bold",
+            //       }}
+            //     >
+            //       Borrow
+            //     </Box>
+            //   ),
+            //   onClick: () => {
+            //     // Router.push({
+            //     //   pathname: "/borrow",
+            //     //   options: { locale: "borrow" },
+            //     // });
+            //   },
+            //   icon: (
+            //     <div className="flex items-center justify-center mr-1 mt-1">
+            //       <AccountBalanceIcon fontSize="15px" />
+            //     </div>
+            //   ),
+            // },
             {
               label: (
                 <Box
@@ -144,16 +146,25 @@ export default function TradeHeader() {
             },
             {
               label: (
-                <Box
-                  className="m-1"
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "h6.fontSize",
-                    fontWeight: "bold",
-                  }}
+                <Badge
+                  disableOutline
+                  color="success"
+                  content="LIVE"
+                  size="xs"
+                  shape="rectangle"
+                  horizontalOffset="-10%"
                 >
-                  leGenesis
-                </Box>
+                  <Box
+                    className="m-1"
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "h6.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    leGenesis
+                  </Box>
+                </Badge>
               ),
               onClick: () => {
                 Router.push({
@@ -170,7 +181,7 @@ export default function TradeHeader() {
         />
       </div>
       <div className="hidden md:flex flex-row md:items-center">
-        <div className="flex flex-col m-2 space-y-1 border-r-2 p-2 pr-4">
+        <div className="flex flex-col m-2 space-y-3 border-r-2 p-2 pr-4">
           <Link href="/trade">
             <Button
               primary
@@ -201,33 +212,43 @@ export default function TradeHeader() {
             />
           </Link>
           <Link href="/borrow">
-            <Button
-              primary
-              disabled
-              size="medium"
-              color={UNSELECTED_COLOR}
-              onClick={() => {
-                setOption("borrow");
-              }}
-              label={
-                <div className="flex sm:hidden md:flex">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "caption.fontSize",
-                      letterSpacing: 1,
-                    }}
-                  >
-                    Borrow (soon)
-                  </Box>
-                </div>
-              }
-              icon={
-                <div className="flex items-center justify-center pl-[10px]">
-                  <AccountBalanceIcon fontSize="20px" color="#000000" />
-                </div>
-              }
-            />
+            <Badge
+              disableOutline
+              enableShadow
+              color="neutral"
+              content="soon™"
+              size="md"
+              shape="rectangle"
+            >
+              <Button
+                primary
+                disabled
+                size="medium"
+                color={UNSELECTED_COLOR}
+                onClick={() => {
+                  setOption("borrow");
+                }}
+                label={
+                  <div className="flex sm:hidden md:flex">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                        fontWeight: "bold",
+                        letterSpacing: 2,
+                      }}
+                    >
+                      Borrow
+                    </Box>
+                  </div>
+                }
+                icon={
+                  <div className="flex items-center justify-center pl-[10px]">
+                    <AccountBalanceIcon fontSize="20px" color="#000000" />
+                  </div>
+                }
+              />
+            </Badge>
           </Link>
         </div>
         <div className="flex flex-col m-2">
@@ -294,33 +315,41 @@ export default function TradeHeader() {
         </div>
         <div className="flex flex-col m-2">
           <Link href="/genesis">
-            <Button
-              primary
-              size="medium"
-              color={option == "genesis" ? SELECTED_COLOR : UNSELECTED_COLOR}
-              onClick={() => {
-                setOption("genesis");
-              }}
-              label={
-                <div className="hidden lg:flex">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle2.fontSize",
-                      fontWeight: "bold",
-                      letterSpacing: 2,
-                    }}
-                  >
-                    leGenesis
-                  </Box>
-                </div>
-              }
-              icon={
-                <div className="pl-[10px]">
-                  <Rocket fontSize="20px" color="#000000" />
-                </div>
-              }
-            />
+            <Badge
+              disableOutline
+              color="success"
+              content="LIVE"
+              size="md"
+              shape="rectangle"
+            >
+              <Button
+                primary
+                size="medium"
+                color={option == "genesis" ? SELECTED_COLOR : UNSELECTED_COLOR}
+                onClick={() => {
+                  setOption("genesis");
+                }}
+                label={
+                  <div className="hidden lg:flex">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle2.fontSize",
+                        fontWeight: "bold",
+                        letterSpacing: 2,
+                      }}
+                    >
+                      leGenesis
+                    </Box>
+                  </div>
+                }
+                icon={
+                  <div className="pl-[10px]">
+                    <Rocket fontSize="20px" color="#000000" />
+                  </div>
+                }
+              />
+            </Badge>
           </Link>
         </div>
       </div>

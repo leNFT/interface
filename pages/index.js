@@ -1,6 +1,6 @@
 import styles from "../styles/Home.module.css";
 import Link from "next/link";
-import { Button } from "@nextui-org/react";
+import { Badge, Button } from "@nextui-org/react";
 import Box from "@mui/material/Box";
 import { Trending } from "@web3uikit/icons";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
@@ -132,33 +132,38 @@ export default function Home() {
                   </Button>
                 </a>
               </Link>
-              <Link href="/borrow">
-                <a>
-                  <Button
-                    icon={<AccountBalanceIcon />}
-                    rounded
-                    disabled
-                    shadow
-                    ghost
-                    bordered
-                    color="gradient"
-                    size="xl"
-                    className="m-4"
+              <Badge
+                disableOutline
+                enableShadow
+                color="primary"
+                content="soon™"
+                variant="flat"
+                size="lg"
+                shape="circle"
+              >
+                <Button
+                  icon={<AccountBalanceIcon />}
+                  rounded
+                  disabled
+                  shadow
+                  ghost
+                  bordered
+                  color="gradient"
+                  size="xl"
+                  className="m-4"
+                >
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "h6.fontSize",
+                      fontWeight: "bold",
+                      letterSpacing: 6,
+                    }}
                   >
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: 16,
-                        fontWeight: "bold",
-                        letterSpacing: 2,
-                      }}
-                    >
-                      <div className="h-[50px]">Borrow</div>
-                      <div className="flex items-end h-[25px]">(soon™)</div>
-                    </Box>
-                  </Button>
-                </a>
-              </Link>
+                    BORROW
+                  </Box>
+                </Button>
+              </Badge>
             </div>
             <div className={styles.indexDescribeSubtitle}>
               <li>Trade your NFTs</li>

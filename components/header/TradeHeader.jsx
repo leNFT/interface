@@ -315,23 +315,24 @@ export default function TradeHeader() {
         </div>
         <div className="flex flex-col m-2">
           <Link href="/genesis">
-            <Badge
-              disableOutline
-              color="success"
-              content="LIVE"
-              size="md"
-              shape="rectangle"
-              verticalOffset="-10%"
-            >
-              <Button
-                primary
-                size="medium"
-                color={option == "genesis" ? SELECTED_COLOR : UNSELECTED_COLOR}
-                onClick={() => {
-                  setOption("genesis");
-                }}
-                label={
-                  <div className="hidden lg:flex">
+            <Button
+              primary
+              size="medium"
+              color={option == "genesis" ? SELECTED_COLOR : UNSELECTED_COLOR}
+              onClick={() => {
+                setOption("genesis");
+              }}
+              label={
+                <div className="hidden lg:flex">
+                  <Badge
+                    disableOutline
+                    color="success"
+                    content="LIVE"
+                    size="md"
+                    shape="rectangle"
+                    horizontalOffset="-25%"
+                    verticalOffset="-25%"
+                  >
                     <Box
                       sx={{
                         fontFamily: "Monospace",
@@ -342,15 +343,15 @@ export default function TradeHeader() {
                     >
                       leGenesis
                     </Box>
-                  </div>
-                }
-                icon={
-                  <div className="pl-[10px]">
-                    <Rocket fontSize="20px" color="#000000" />
-                  </div>
-                }
-              />
-            </Badge>
+                  </Badge>
+                </div>
+              }
+              icon={
+                <div className="pl-[10px]">
+                  <Rocket fontSize="20px" color="#000000" />
+                </div>
+              }
+            />
           </Link>
         </div>
       </div>

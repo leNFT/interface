@@ -243,7 +243,7 @@ export default function BorrowHeader() {
                       fontFamily: "Monospace",
                       fontSize: "subtitle2.fontSize",
                       fontWeight: "bold",
-                      letterSpacing: 2,
+                      letterSpacing: 1,
                     }}
                   >
                     Borrow

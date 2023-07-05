@@ -76,22 +76,21 @@ export default function TradeHeader() {
                   className="m-1"
                   sx={{
                     fontFamily: "Monospace",
-                    fontSize: "h6.fontSize",
-                    fontWeight: "bold",
+                    fontSize: "caption.fontSize",
                   }}
                 >
-                  Borrow
+                  Borrow (soon)
                 </Box>
               ),
               onClick: () => {
-                Router.push({
-                  pathname: "/borrow",
-                  options: { locale: "borrow" },
-                });
+                // Router.push({
+                //   pathname: "/borrow",
+                //   options: { locale: "borrow" },
+                // });
               },
               icon: (
                 <div className="flex items-center justify-center mr-1 mt-1">
-                  <AccountBalanceIcon fontSize="20px" />
+                  <AccountBalanceIcon fontSize="15px" />
                 </div>
               ),
             },
@@ -185,7 +184,7 @@ export default function TradeHeader() {
                   <Box
                     sx={{
                       fontFamily: "Monospace",
-                      fontSize: "subtitle2.fontSize",
+                      fontSize: "subtitle1.fontSize",
                       fontWeight: "bold",
                       letterSpacing: 2,
                     }}
@@ -196,7 +195,7 @@ export default function TradeHeader() {
               }
               icon={
                 <div className="pl-[10px]">
-                  <Trending fontSize="20px" color="#000000" />
+                  <Trending fontSize="25px" color="#000000" />
                 </div>
               }
             />
@@ -204,6 +203,7 @@ export default function TradeHeader() {
           <Link href="/borrow">
             <Button
               primary
+              disabled
               size="medium"
               color={UNSELECTED_COLOR}
               onClick={() => {
@@ -214,12 +214,11 @@ export default function TradeHeader() {
                   <Box
                     sx={{
                       fontFamily: "Monospace",
-                      fontSize: "subtitle2.fontSize",
-                      fontWeight: "bold",
-                      letterSpacing: 2,
+                      fontSize: "caption.fontSize",
+                      letterSpacing: 1,
                     }}
                   >
-                    Borrow
+                    Borrow (soon)
                   </Box>
                 </div>
               }

@@ -199,12 +199,9 @@ export default function GenesisMint(props) {
             </Typography>
           </div>
           <div className="m-2 md:m-4">
-            <Typography variant="body14">LE Rewards</Typography>
+            <Typography variant="body14">Locked LE Rewards</Typography>
             <Typography variant="subtitle2">
-              {formatUnits(rewards, 18) +
-                " LE = " +
-                Number(formatUnits(lockedRewards, 18)).toPrecision(4) +
-                " veLE"}
+              {formatUnits(rewards, 18) + " LE"}
             </Typography>
           </div>
           <div className="m-2 md:m-4">
@@ -215,13 +212,15 @@ export default function GenesisMint(props) {
             </Typography>
           </div>
           <div className="m-2 md:m-4">
-            <Typography variant="body14">Circulating Market Cap</Typography>
-            <Typography variant="subtitle2">
-              {"$" +
-                Math.floor(
-                  ((1950 * 0.15) / formatUnits(rewards, 18)) *
-                    formatUnits(totalSupply, 18)
-                )}
+            <Typography variant="caption">
+              0.1 ETH will deposited in leNFT's{" "}
+              <a
+                href="https://app.balancer.fi/#/ethereum/pool/0x8e6c196e201942246cef85718c5d3a5622518053000200000000000000000582"
+                style={{ color: "blue", textDecoration: "underline" }}
+              >
+                Balancer pool
+              </a>
+              .
             </Typography>
           </div>
         </div>

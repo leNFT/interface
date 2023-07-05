@@ -315,21 +315,23 @@ export default function TradeHeader() {
         </div>
         <div className="flex flex-col m-2">
           <Link href="/genesis">
-            <Badge
-              disableOutline
-              color="success"
-              content="LIVE"
-              size="md"
-              shape="rectangle"
-            >
-              <Button
-                primary
-                size="medium"
-                color={option == "genesis" ? SELECTED_COLOR : UNSELECTED_COLOR}
-                onClick={() => {
-                  setOption("genesis");
-                }}
-                label={
+            <Button
+              primary
+              size="medium"
+              color={option == "genesis" ? SELECTED_COLOR : UNSELECTED_COLOR}
+              onClick={() => {
+                setOption("genesis");
+              }}
+              label={
+                <Badge
+                  disableOutline
+                  color="success"
+                  content="LIVE"
+                  size="md"
+                  shape="rectangle"
+                  horizontalOffset="-25%"
+                  verticalOffset="-20%"
+                >
                   <div className="hidden lg:flex">
                     <Box
                       sx={{
@@ -342,14 +344,14 @@ export default function TradeHeader() {
                       leGenesis
                     </Box>
                   </div>
-                }
-                icon={
-                  <div className="pl-[10px]">
-                    <Rocket fontSize="20px" color="#000000" />
-                  </div>
-                }
-              />
-            </Badge>
+                </Badge>
+              }
+              icon={
+                <div className="pl-[10px]">
+                  <Rocket fontSize="20px" color="#000000" />
+                </div>
+              }
+            />
           </Link>
         </div>
       </div>

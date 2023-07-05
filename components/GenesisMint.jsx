@@ -213,7 +213,7 @@ export default function GenesisMint(props) {
           </div>
           <div className="m-2 md:m-4">
             <Typography variant="caption">
-              0.1 ETH will deposited in leNFT&apos;'s{" "}
+              0.1 ETH will deposited in leNFT&apos;s{" "}
               <a
                 href="https://app.balancer.fi/#/ethereum/pool/0x8e6c196e201942246cef85718c5d3a5622518053000200000000000000000582"
                 style={{ color: "blue", textDecoration: "underline" }}

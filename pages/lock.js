@@ -29,6 +29,7 @@ import EditNativeTokenLocktime from "../components/EditNativeTokenLocktime";
 import contractAddresses from "../contractAddresses.json";
 import UnlockNativeToken from "../components/UnlockNativeToken";
 import votingEscrowContract from "../contracts/VotingEscrow.json";
+import nativeTokenContract from "../contracts/NativeToken.json";
 import feeDistributorContract from "../contracts/FeeDistributor.json";
 import gaugeControllerContract from "../contracts/GaugeController.json";
 import bribes from "../contracts/Bribes.json";
@@ -63,6 +64,7 @@ export default function Lock() {
   const [totalVoteRatio, setTotalVoteRatio] = useState(0);
   const [epoch, setEpoch] = useState(0);
   const [apr, setAPR] = useState("0");
+  const [totalWeight, setTotalWeight] = useState("0");
   const [totalLocked, setTotalLocked] = useState("0");
   const [tokenPrice, setTokenPrice] = useState("0");
   const [history, setHistory] = useState([]);
@@ -127,6 +129,12 @@ export default function Lock() {
     contractInterface: gaugeControllerContract.abi,
     addressOrName: addresses.GaugeController,
     signerOrProvider: signer,
+  });
+
+  const nativeTokenProvider = useContract({
+    contractInterface: nativeTokenContract.abi,
+    addressOrName: addresses.NativeToken,
+    signerOrProvider: provider,
   });
 
   async function updateLockDetails() {
@@ -222,11 +230,19 @@ export default function Lock() {
     const updateNativeTokenPrice = await getNativeTokenPrice(chain.id);
     setTokenPrice(updateNativeTokenPrice);
 
-    // Get the total locked amount
-    const updatedTotalLocked =
+    // Get the total weight amount
+    const updatedTotalWeight =
       await votingEscrowProvider.callStatic.getTotalWeight({
         from: address,
       });
+    console.log("updatedTotalWeight", updatedTotalWeight.toString());
+    setTotalWeight(updatedTotalWeight.toString());
+
+    // Get the total locked amount
+    const updatedTotalLocked = await nativeTokenProvider.balanceOf(
+      addresses.VotingEscrow
+    );
+
     console.log("updatedTotalLocked", updatedTotalLocked.toString());
     setTotalLocked(updatedTotalLocked.toString());
 
@@ -238,7 +254,7 @@ export default function Lock() {
     // Calculate the APR
     if (
       updateNativeTokenPrice.toString() == "0" ||
-      updatedTotalLocked.toString() == "0"
+      updatedTotalWeight.toString() == "0"
     ) {
       setAPR(0);
     } else {
@@ -246,7 +262,7 @@ export default function Lock() {
         BigNumber.from(historyResponse[0].rewards)
           .mul(52)
           .mul(100)
-          .div(updatedTotalLocked)
+          .div(updatedTotalWeight)
           .toNumber()
       );
     }
@@ -556,16 +572,34 @@ export default function Lock() {
                       fontWeight: "bold",
                     }}
                   >
-                    Total Locked
+                    Locked Weight
                   </Box>
-
                   <Box
                     sx={{
                       fontFamily: "Monospace",
                       fontSize: "subtitle1.fontSize",
                     }}
                   >
-                    {Math.floor(Number(formatUnits(totalLocked, 18))) + " veLE"}
+                    {Math.floor(Number(formatUnits(totalWeight, 18))) + " veLE"}
+                  </Box>
+                </div>
+                <div className="flex flex-col items-end text-right my-4">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Total Locked
+                  </Box>
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle1.fontSize",
+                    }}
+                  >
+                    {Math.floor(Number(formatUnits(totalLocked, 18))) + " LE"}
                   </Box>
                   <Box
                     sx={{

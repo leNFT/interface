@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { Button, Tooltip, Loading, useNotification } from "@web3uikit/core";
+import {
+  Button,
+  Tooltip,
+  Loading,
+  useNotification,
+  Typography,
+} from "@web3uikit/core";
 import { HelpCircle } from "@web3uikit/icons";
 import { BigNumber } from "@ethersproject/bignumber";
 import StyledModal from "../../../components/StyledModal";
@@ -50,7 +56,6 @@ export default function TradingPoolGauge() {
   const [apr, setAPR] = useState("0");
   const [totalLockedValue, setTotalLockedValue] = useState("0");
   const [userLockedValue, setUserLockedValue] = useState("0");
-  const [lastEpochRewards, setLastEpochRewards] = useState("0");
   const [history, setHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const dispatch = useNotification();
@@ -137,9 +142,10 @@ export default function TradingPoolGauge() {
     const previousGaugeRewards =
       await gaugeControllerProvider.callStatic.getGaugeRewards(
         router.query.address,
-        updatedEpoch.toNumber() == 0 ? 0 : updatedEpoch.toNumber() - 1
+        updatedEpoch.toNumber()
       );
-    setLastEpochRewards(previousGaugeRewards.toString());
+
+    console.log("previousGaugeRewards", previousGaugeRewards.toString());
 
     const updateNativeTokenPrice = await getNativeTokenPrice(chain.id);
     console.log("updateNativeTokenPrice", updateNativeTokenPrice);
@@ -331,7 +337,8 @@ export default function TradingPoolGauge() {
           </div>
           <div className="flex flex-col items-center m-2 rounded-3xl bg-black/5 shadow-lg">
             {loadingHistory ? (
-              <div className="m-28">
+              <div className="flex flex-col items-center space-y-4 m-28">
+                <Typography variant="h5">Loading Gauge History</Typography>
                 <Loading size={40} spinnerColor="#000000" />
               </div>
             ) : (

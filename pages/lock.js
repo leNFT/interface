@@ -553,7 +553,7 @@ export default function Lock() {
                       fontWeight: "bold",
                     }}
                   >
-                    Protocol Fees APR
+                    Fees APR
                   </Box>
                   <Box
                     sx={{

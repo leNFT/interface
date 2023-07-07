@@ -9,7 +9,7 @@ import Link from "@mui/material/Link";
 import Box from "@mui/material/Box";
 import { BigNumber } from "@ethersproject/bignumber";
 import Card from "@mui/material/Card";
-import { CardActionArea } from "@mui/material";
+import { CardActionArea, Typography } from "@mui/material";
 import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import Image from "next/image";
@@ -40,6 +40,7 @@ export default function DepositTradingPool(props) {
   const [approvedNFT, setApprovedNFT] = useState(false);
   const [approvalNFTLoading, setApprovalNFTLoading] = useState(false);
   const [lpGaugeValue, setLPGaugeValue] = useState("0");
+  const [advancedMode, setAdvancedMode] = useState(false);
   const { address, isConnected } = useAccount();
   const [depositLoading, setDepositLoading] = useState(false);
   const dispatch = useNotification();
@@ -153,6 +154,18 @@ export default function DepositTradingPool(props) {
     });
   };
 
+  function handleAdvancedModeChange(e) {
+    if (e.target.checked == false) {
+      setDelta("10");
+      setFee("20");
+    } else {
+      setDelta("");
+      setFee("");
+    }
+
+    setAdvancedMode(e.target.checked);
+  }
+
   function handleTokenAmountChange(e) {
     if (e.target.value != "") {
       console.log("newTokenAmount", parseUnits(e.target.value, 18));
@@ -225,58 +238,69 @@ export default function DepositTradingPool(props) {
 
   return (
     <div>
-      <div className="flex items-center justify-center flex-row">
-        <Box
-          sx={{
-            fontFamily: "Monospace",
-            fontSize: "subtitle2.fontSize",
-          }}
-          className="border-b-2 border-pink-200 text-center"
-        >
-          <Link
-            href="https://lenft.gitbook.io/lenft-docs/fundamentals/trading-lp-parameters"
-            underline="none"
-            target="_blank"
-            color={"blue"}
-          >
-            {"Need help choosing your LP's parameters?"}
-          </Link>
-        </Box>
+      <div className="flex flex-row space-x-4 items-center justify-center">
+        <Typography variant="h6" className="pt-1">
+          Advanced Mode:
+        </Typography>
+        <Switch size="lg" onChange={handleAdvancedModeChange} />
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center mt-12 space-x-4">
-        <Dropdown>
-          <Dropdown.Button flat>
-            {lpType &&
-              lpType
-                .replace(/([a-z])([A-Z])/g, "$1 $2")
-                .replace(/^./, lpType[0].toUpperCase())}
-          </Dropdown.Button>
-          <Dropdown.Menu
-            aria-label="Static Actions"
-            selectionMode="single"
-            onAction={handleLPTypeChange}
-            disallowEmptySelection
-            selectedKeys={[lpType]}
-          >
-            <Dropdown.Item key="trade">Trade</Dropdown.Item>
-            <Dropdown.Item key="tradeUp">Trade Up</Dropdown.Item>
-            <Dropdown.Item key="tradeDown">Trade Down</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-        <Box
-          className="fw-10/12 md:w-4/12 text-center p-2 border-2 border-pink-100 rounded-xl"
-          sx={{
-            fontFamily: "Monospace",
-            fontSize: "subtitle2.fontSize",
-          }}
-        >
-          {lpType == "trade"
-            ? "Your LP's price will increase and decrease."
-            : lpType == "tradeUp"
-            ? "Your LP's price will only increase."
-            : "Your LP's price will only decrease."}
-        </Box>
-      </div>
+      {advancedMode && (
+        <div>
+          <div className="flex items-center mt-8 justify-center">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+              }}
+              className="border-b-2 border-pink-200 text-center"
+            >
+              <Link
+                href="https://lenft.gitbook.io/lenft-docs/fundamentals/trading-lp-parameters"
+                underline="none"
+                target="_blank"
+                color={"blue"}
+              >
+                {"Need help choosing your LP's parameters?"}
+              </Link>
+            </Box>
+          </div>
+
+          <div className="flex flex-col md:flex-row items-center justify-center mt-8 space-x-4">
+            <Dropdown>
+              <Dropdown.Button flat>
+                {lpType &&
+                  lpType
+                    .replace(/([a-z])([A-Z])/g, "$1 $2")
+                    .replace(/^./, lpType[0].toUpperCase())}
+              </Dropdown.Button>
+              <Dropdown.Menu
+                aria-label="Static Actions"
+                selectionMode="single"
+                onAction={handleLPTypeChange}
+                disallowEmptySelection
+                selectedKeys={[lpType]}
+              >
+                <Dropdown.Item key="trade">Trade</Dropdown.Item>
+                <Dropdown.Item key="tradeUp">Trade Up</Dropdown.Item>
+                <Dropdown.Item key="tradeDown">Trade Down</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+            <Box
+              className="fw-10/12 md:w-4/12 text-center p-2 border-2 border-pink-100 rounded-xl"
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+              }}
+            >
+              {lpType == "trade"
+                ? "Your LP's price will increase and decrease."
+                : lpType == "tradeUp"
+                ? "Your LP's price will only increase."
+                : "Your LP's price will only decrease."}
+            </Box>
+          </div>
+        </div>
+      )}
       <div className="flex flex-col-reverse justify-center lg:flex-row">
         <div className="flex flex-col space-y-12 m-4">
           <div className="flex flex-row items-center justify-center mt-8">
@@ -286,66 +310,70 @@ export default function DepositTradingPool(props) {
               placeholder="0.01 ETH"
               value={initialPrice ? Number(formatUnits(initialPrice, 18)) : ""}
               step="any"
-              description="The initial price of the LP"
+              description="The initial spot price of the LP"
               validation={{
                 numberMin: formatUnits("1", 18),
               }}
               onChange={handleInitialPriceChange}
             />
           </div>
-          <div className="flex flex-row items-center justify-center">
-            <Input
-              label="Fee %"
-              type="number"
-              placeholder="20 %"
-              value={fee}
-              step="any"
-              validation={{
-                numberMin: 0,
-              }}
-              description="Fee charged by your LP"
-              onChange={handleFeeChange}
-            />
-          </div>
-          <div className="flex flex-col items-center justify-center">
-            <Box
-              className="mb-4"
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle2.fontSize",
-                fontWeight: "bold",
-              }}
-            >
-              {"Max Delta: " +
-                maxDelta +
-                (curve == "exponential" ? " %" : " ETH")}
-            </Box>
-            <Input
-              label={
-                curve == "exponential"
-                  ? "Delta %"
-                  : curve == "linear"
-                  ? "Delta (Amount)"
-                  : "Delta"
-              }
-              value={delta}
-              type="number"
-              step="any"
-              placeholder={
-                curve == "exponential"
-                  ? "10 %"
-                  : curve == "linear"
-                  ? "0.01 ETH"
-                  : "0"
-              }
-              description="The price change after each buy or sell"
-              validation={{
-                numberMin: 0,
-                numberMax: maxDelta,
-              }}
-              onChange={handleDeltaChange}
-            />
-          </div>
+          {advancedMode && (
+            <div>
+              <div className="flex flex-row items-center justify-center">
+                <Input
+                  label="Fee %"
+                  type="number"
+                  placeholder="20 %"
+                  value={fee}
+                  step="any"
+                  validation={{
+                    numberMin: 0,
+                  }}
+                  description="Fee charged by your LP"
+                  onChange={handleFeeChange}
+                />
+              </div>
+              <div className="flex flex-col items-center justify-center">
+                <Box
+                  className="mt-8 mb-4"
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle2.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {"Max Delta: " +
+                    maxDelta +
+                    (curve == "exponential" ? " %" : " ETH")}
+                </Box>
+                <Input
+                  label={
+                    curve == "exponential"
+                      ? "Delta %"
+                      : curve == "linear"
+                      ? "Delta (Amount)"
+                      : "Delta"
+                  }
+                  value={delta}
+                  type="number"
+                  step="any"
+                  placeholder={
+                    curve == "exponential"
+                      ? "10 %"
+                      : curve == "linear"
+                      ? "0.01 ETH"
+                      : "0"
+                  }
+                  description="The price change after each buy or sell"
+                  validation={{
+                    numberMin: 0,
+                    numberMax: maxDelta,
+                  }}
+                  onChange={handleDeltaChange}
+                />
+              </div>
+            </div>
+          )}
           <div className="flex flex-row items-center justify-center">
             <Input
               label="ETH Amount"
@@ -502,34 +530,36 @@ export default function DepositTradingPool(props) {
               </Box>
             ))}
         </div>
-        <div className="flex flex-col items-center justify-center pr-8 w-full lg:w-6/12">
-          <div className="flex flex-row items-center justify-center mt-8 m-4">
-            <Box
-              className="flex mx-4 justify-center items-center"
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle2.fontSize",
-                fontWeight: "bold",
-              }}
-            >
-              Price Change:
-            </Box>
-            <Dropdown>
-              <Dropdown.Button flat>
-                {curve && curve.replace(/^./, curve[0].toUpperCase())}
-              </Dropdown.Button>
-              <Dropdown.Menu
-                aria-label="Static Actions"
-                selectionMode="single"
-                onAction={handleCurveChange}
-                disallowEmptySelection
-                selectedKeys={[curve]}
+        <div className="flex flex-col items-center justify-center pr-8 mt-8 w-full lg:w-6/12">
+          {advancedMode && (
+            <div className="flex flex-row items-center justify-center m-4">
+              <Box
+                className="flex mx-4 justify-center items-center"
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle2.fontSize",
+                  fontWeight: "bold",
+                }}
               >
-                <Dropdown.Item key="exponential">Exponential</Dropdown.Item>
-                <Dropdown.Item key="linear">Linear</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </div>
+                Price Change:
+              </Box>
+              <Dropdown>
+                <Dropdown.Button flat>
+                  {curve && curve.replace(/^./, curve[0].toUpperCase())}
+                </Dropdown.Button>
+                <Dropdown.Menu
+                  aria-label="Static Actions"
+                  selectionMode="single"
+                  onAction={handleCurveChange}
+                  disallowEmptySelection
+                  selectedKeys={[curve]}
+                >
+                  <Dropdown.Item key="exponential">Exponential</Dropdown.Item>
+                  <Dropdown.Item key="linear">Linear</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+          )}
           <CurveChart
             curveType={curve}
             delta={delta ? delta : "10"}

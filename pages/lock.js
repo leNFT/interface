@@ -1296,9 +1296,9 @@ export default function Lock() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col w-full xl:w-[60%] 4 p-4 m-4 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
+        <div className="flex flex-col w-full xl:w-[80%] 4 p-4 m-4 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
           <div className="flex flex-col lg:flex-row items-center justify-center w-full">
-            <div className="flex flex-col w-full lg:w-6/12 justify-center items-center p-8">
+            <div className="flex flex-col w-full lg:w-8/12 justify-center items-center p-8 border-b-2 lg:border-b-0 lg:border-r-2 border-black">
               {epoch > 0 ? (
                 <PieChartComponent
                   title={"Gauge Vote Weights"}

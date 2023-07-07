@@ -1,5 +1,6 @@
 import React from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import { formatUnits, parseUnits } from "@ethersproject/units";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
@@ -7,7 +8,7 @@ const PieChartComponent = ({ data, title }) => {
   const transformedData = Object.entries(data).map(([name, value]) => ({
     name:
       name.length > 10 ? `${name.substring(0, 6)}...${name.slice(-3)}` : name,
-    value,
+    value: Math.floor(parseFloat(formatUnits(value, 18))),
   }));
 
   return (

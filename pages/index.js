@@ -103,9 +103,6 @@ export default function Home() {
               </Link>{" "}
               with your NFTs.
             </div>
-            <div className={styles.indexDescribeSubtitle}>
-              (beta live on ETH sepolia)
-            </div>
             <div className="flex flex-col md:flex-row justify-start items-center m-8">
               <Link href="/trade">
                 <a>

@@ -213,6 +213,7 @@ export default function TradeHeader() {
           </Link>
           <Link href="/borrow">
             <Badge
+              className="z-0"
               disableOutline
               enableShadow
               color="neutral"
@@ -323,7 +324,7 @@ export default function TradeHeader() {
                 setOption("genesis");
               }}
               label={
-                <div className="hidden lg:flex">
+                <div className="hidden lg:flex z-0">
                   <Badge
                     disableOutline
                     color="success"

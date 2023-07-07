@@ -15,7 +15,7 @@ import { formatUnits, parseUnits } from "@ethersproject/units";
 import Image from "next/image";
 import CurveChart from "../CurveChart.jsx";
 import { useNotification, Button, Input } from "@web3uikit/core";
-import { Dropdown } from "@nextui-org/react";
+import { Dropdown, Switch } from "@nextui-org/react";
 import contractAddresses from "../../contractAddresses.json";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
@@ -26,9 +26,9 @@ import erc721 from "../../contracts/erc721.json";
 export default function DepositTradingPool(props) {
   const { data: signer } = useSigner();
   const [curve, setCurve] = useState("exponential");
-  const [delta, setDelta] = useState("");
+  const [delta, setDelta] = useState("10");
   const [maxDelta, setMaxDelta] = useState("100");
-  const [fee, setFee] = useState("");
+  const [fee, setFee] = useState("20");
   const [initialPrice, setInitialPrice] = useState("");
   const [lpType, setLPType] = useState("trade");
   const [tokenAmount, setTokenAmount] = useState("");
@@ -243,50 +243,38 @@ export default function DepositTradingPool(props) {
           </Link>
         </Box>
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center mt-8 m-4 space-x-4 space-y-2">
-        <div className="flex flex-row items-center justify-center">
-          <Box
-            className="flex mx-4 justify-center items-center"
-            sx={{
-              fontFamily: "Monospace",
-              fontSize: "subtitle2.fontSize",
-              fontWeight: "bold",
-            }}
+      <div className="flex flex-col md:flex-row items-center justify-center mt-12 space-x-4">
+        <Dropdown>
+          <Dropdown.Button flat>
+            {lpType &&
+              lpType
+                .replace(/([a-z])([A-Z])/g, "$1 $2")
+                .replace(/^./, lpType[0].toUpperCase())}
+          </Dropdown.Button>
+          <Dropdown.Menu
+            aria-label="Static Actions"
+            selectionMode="single"
+            onAction={handleLPTypeChange}
+            disallowEmptySelection
+            selectedKeys={[lpType]}
           >
-            LP Mode:
-          </Box>
-          <Dropdown>
-            <Dropdown.Button flat>
-              {lpType &&
-                lpType
-                  .replace(/([a-z])([A-Z])/g, "$1 $2")
-                  .replace(/^./, lpType[0].toUpperCase())}
-            </Dropdown.Button>
-            <Dropdown.Menu
-              aria-label="Static Actions"
-              selectionMode="single"
-              onAction={handleLPTypeChange}
-              disallowEmptySelection
-              selectedKeys={[lpType]}
-            >
-              <Dropdown.Item key="trade">Trade</Dropdown.Item>
-              <Dropdown.Item key="tradeUp">Trade Up</Dropdown.Item>
-              <Dropdown.Item key="tradeDown">Trade Down</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
+            <Dropdown.Item key="trade">Trade</Dropdown.Item>
+            <Dropdown.Item key="tradeUp">Trade Up</Dropdown.Item>
+            <Dropdown.Item key="tradeDown">Trade Down</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
         <Box
-          className="flex justify-center items-center w-10/12 md:w-4/12 text-center p-2 border-2 border-pink-100 rounded-xl"
+          className="fw-10/12 md:w-4/12 text-center p-2 border-2 border-pink-100 rounded-xl"
           sx={{
             fontFamily: "Monospace",
             fontSize: "subtitle2.fontSize",
           }}
         >
           {lpType == "trade"
-            ? "'Trade' mode will allow your price to go up and down with the market."
+            ? "Your LP's price will increase and decrease."
             : lpType == "tradeUp"
-            ? "'Trade Up' mode will only allow your price to go up with the market."
-            : "'Trade Down' mode will only allow your price to go down with the market."}
+            ? "Your LP's price will only increase."
+            : "Your LP's price will only decrease."}
         </Box>
       </div>
       <div className="flex flex-col-reverse justify-center lg:flex-row">
@@ -548,7 +536,6 @@ export default function DepositTradingPool(props) {
             fee={fee ? fee : "20"}
             initialPrice={initialPrice ? formatUnits(initialPrice, 18) : "0.1"}
           />
-
           <Box
             className="flex mx-4 justify-center items-center border-2 border-black rounded-xl p-2"
             sx={{

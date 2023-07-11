@@ -29,7 +29,7 @@ export default function LendingPools() {
 
   async function updateTableData() {
     setLoadingTableData(true);
-    const lendingPools = await getLendingPools(isConnected ? chain.id : 5);
+    const lendingPools = await getLendingPools(isConnected ? chain.id : 1);
     console.log("lendingPools", lendingPools);
     var newTableData = [];
     const underlyingSymbol = "WETH";

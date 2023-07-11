@@ -118,7 +118,7 @@ export default function LendingPool() {
     setPoolConfig(updatedPoolConfig);
 
     const updatedPoolSupportedNFTs = await getLendingNFTCollections(
-      isConnected ? chain.id : 5,
+      isConnected ? chain.id : 1,
       router.query.address
     );
     console.log("Updated Pool Supported NFTs:", updatedPoolSupportedNFTs);

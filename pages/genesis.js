@@ -164,196 +164,199 @@ export default function Genesis() {
             </Link>
           </Box>
         </div>
-        <div className="flex flex-col w-full md:w-10/12 xl:w-6/12 items-center justify-center border-4 m-2 md:mt-8 rounded-3xl bg-black/5 shadow-lg">
-          <div className="flex flex-col md:flex-row m-2 items-center">
-            <div className="flex flex-row m-8 items-center space-x-4 justify-between rounded-2xl bg-black/5 shadow-lg p-4">
-              <div className="flex flex-col w-6/12">
-                <div className="flex flex-row justify-center m-2">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "h6.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Price
-                  </Box>
-                </div>
-                <div className="flex flex-col justify-center items-center text-center m-2">
-                  {price ? (
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "h6.fontSize",
-                      }}
-                    >
-                      {formatUnits(price ? price : "0", 18) + " ETH"}
-                    </Box>
-                  ) : (
-                    <Loading
-                      className="px-10"
-                      size={25}
-                      spinnerColor="#000000"
-                    />
-                  )}
-                </div>
-              </div>
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "caption.fontSize",
-                }}
-                className="text-gray-600 w-6/12"
-              >
-                Receive up to 0.1 ETH (in LE) + trading fees when you burn your
-                Genesis NFT.
-              </Box>
-            </div>
-            <div className="flex flex-col justify-center text-center mt-2 mb-8 md:m-8 w-8/12 rounded-2xl bg-black/5 shadow-lg p-4">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "h5.fontSize",
-                }}
-              >
-                <div>{mintCount + " of " + cap}</div>
-                <div>{"minted"}</div>
-              </Box>
-              <div className="mt-4">
-                <LinearProgressWithLabel
-                  color="primary"
-                  value={cap != 0 ? mintCount / cap : 0}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-row justify-center mb-4">
-            <Button
-              customize={{
-                backgroundColor: "grey",
-                fontSize: 20,
-                textColor: "white",
-              }}
-              text={"Mint Genesis NFT"}
-              theme="custom"
-              size="large"
-              radius="12"
-              onClick={async function () {
-                if (!isConnected) {
-                  dispatch({
-                    type: "warning",
-                    message: "You need to connect your wallet first",
-                    title: "Connect Wallet",
-                    position: "bottomL",
-                  });
-                } else {
-                  setVisibleMintModal(true);
-                }
-              }}
-            />
-          </div>
-          {chain?.id != 1 && (
-            <div className="flex flex-row justify-center text-center mb-4 w-10/12">
-              <Typography
-                variant="subtitle2"
-                color="#BF6958"
-                sx={{ fontFamily: "Monospace" }}
-              >
-                {"This feature is only available on Ethereum Mainnet"}
-              </Typography>
-            </div>
-          )}
-        </div>
-
-        <div className="flex flex-col border-4 m-2 mt-8 p-2 md:m-8 rounded-3xl bg-black/5 shadow-lg max-w-3xl">
-          <div className="flex flex-row p-4 md:p-8">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                letterSpacing: 18,
-              }}
-            >
-              <div className="text-xl text-center md:text-left md:text-4xl">
-                Your Genesis NFTs
-              </div>
-            </Box>
-          </div>
-          {userGenesisNFTs.length != 0 ? (
-            <div className="flex flex-row grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-              {userGenesisNFTs.map((nft) => (
-                <div
-                  key={nft.tokenId}
-                  className="flex m-4 items-center justify-center"
-                >
-                  <Card
-                    sx={{
-                      borderRadius: 4,
-                      background:
-                        "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
-                    }}
-                  >
-                    <CardActionArea
-                      onClick={function () {
-                        setSelectedToken(
-                          BigNumber.from(nft.tokenId).toNumber()
-                        );
-                        setVisibleBurnModal(true);
-                      }}
-                    >
-                      <CardContent>
-                        {nft.media[0] ? (
-                          <div className="flex flex-col items-center">
-                            <Image
-                              loader={() => nft.media[0].gateway}
-                              alt="Supported Asset"
-                              src={nft.media[0].gateway}
-                              height="200"
-                              width="200"
-                              className="rounded-2xl"
-                              loading="eager"
-                            />
-                          </div>
-                        ) : (
-                          <div className="flex flex-col w-[150px] h-[150px] text-center items-center justify-center">
-                            <Box
-                              sx={{
-                                fontFamily: "Monospace",
-                                fontSize: 12,
-                              }}
-                            >
-                              No Image
-                            </Box>
-                          </div>
-                        )}
+        {isConnected && (
+          <div className="flex flex-col w-full items-center">
+            <div className="flex flex-col w-full md:w-10/12 xl:w-6/12 items-center justify-center border-4 m-2 md:mt-8 rounded-3xl bg-black/5 shadow-lg">
+              <div className="flex flex-col md:flex-row m-2 items-center">
+                <div className="flex flex-row m-8 items-center space-x-4 justify-between rounded-2xl bg-black/5 shadow-lg p-4">
+                  <div className="flex flex-col w-6/12">
+                    <div className="flex flex-row justify-center m-2">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "h6.fontSize",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Price
+                      </Box>
+                    </div>
+                    <div className="flex flex-col justify-center items-center text-center m-2">
+                      {price ? (
                         <Box
                           sx={{
                             fontFamily: "Monospace",
-                            fontSize: "subtitle1.fontSize",
+                            fontSize: "h6.fontSize",
                           }}
                         >
-                          <div className="flex flex-col mt-2 items-center text-center">
-                            {"#" + BigNumber.from(nft.tokenId).toNumber()}
-                          </div>
+                          {formatUnits(price ? price : "0", 18) + " ETH"}
                         </Box>
-                      </CardContent>
-                    </CardActionArea>
-                  </Card>
+                      ) : (
+                        <Loading
+                          className="px-10"
+                          size={25}
+                          spinnerColor="#000000"
+                        />
+                      )}
+                    </div>
+                  </div>
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "caption.fontSize",
+                    }}
+                    className="text-gray-600 w-6/12"
+                  >
+                    Receive up to 0.1 ETH (in LE) + trading fees when you burn
+                    your Genesis NFT.
+                  </Box>
                 </div>
-              ))}
+                <div className="flex flex-col justify-center text-center mt-2 mb-8 md:m-8 w-8/12 rounded-2xl bg-black/5 shadow-lg p-4">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "h5.fontSize",
+                    }}
+                  >
+                    <div>{mintCount + " of " + cap}</div>
+                    <div>{"minted"}</div>
+                  </Box>
+                  <div className="mt-4">
+                    <LinearProgressWithLabel
+                      color="primary"
+                      value={cap != 0 ? mintCount / cap : 0}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-row justify-center mb-4">
+                <Button
+                  customize={{
+                    backgroundColor: "grey",
+                    fontSize: 20,
+                    textColor: "white",
+                  }}
+                  text={"Mint Genesis NFT"}
+                  theme="custom"
+                  size="large"
+                  radius="12"
+                  onClick={async function () {
+                    if (!isConnected) {
+                      dispatch({
+                        type: "warning",
+                        message: "You need to connect your wallet first",
+                        title: "Connect Wallet",
+                        position: "bottomL",
+                      });
+                    } else {
+                      setVisibleMintModal(true);
+                    }
+                  }}
+                />
+              </div>
+              {chain?.id != 1 && (
+                <div className="flex flex-row justify-center text-center mb-4 w-10/12">
+                  <Typography
+                    variant="subtitle2"
+                    color="#BF6958"
+                    sx={{ fontFamily: "Monospace" }}
+                  >
+                    {"This feature is only available on Ethereum Mainnet"}
+                  </Typography>
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="flex flex-row m-8 p-2">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "subtitle1.fontSize",
-                }}
-              >
-                No Genesis NFTs found.
-              </Box>
+            <div className="flex flex-col border-4 m-2 mt-8 p-2 md:m-8 rounded-3xl bg-black/5 shadow-lg max-w-3xl">
+              <div className="flex flex-row p-4 md:p-8">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    letterSpacing: 18,
+                  }}
+                >
+                  <div className="text-xl text-center md:text-left md:text-4xl">
+                    Your Genesis NFTs
+                  </div>
+                </Box>
+              </div>
+              {userGenesisNFTs.length != 0 ? (
+                <div className="flex flex-row grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                  {userGenesisNFTs.map((nft) => (
+                    <div
+                      key={nft.tokenId}
+                      className="flex m-4 items-center justify-center"
+                    >
+                      <Card
+                        sx={{
+                          borderRadius: 4,
+                          background:
+                            "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
+                        }}
+                      >
+                        <CardActionArea
+                          onClick={function () {
+                            setSelectedToken(
+                              BigNumber.from(nft.tokenId).toNumber()
+                            );
+                            setVisibleBurnModal(true);
+                          }}
+                        >
+                          <CardContent>
+                            {nft.media[0] ? (
+                              <div className="flex flex-col items-center">
+                                <Image
+                                  loader={() => nft.media[0].gateway}
+                                  alt="Supported Asset"
+                                  src={nft.media[0].gateway}
+                                  height="200"
+                                  width="200"
+                                  className="rounded-2xl"
+                                  loading="eager"
+                                />
+                              </div>
+                            ) : (
+                              <div className="flex flex-col w-[150px] h-[150px] text-center items-center justify-center">
+                                <Box
+                                  sx={{
+                                    fontFamily: "Monospace",
+                                    fontSize: 12,
+                                  }}
+                                >
+                                  No Image
+                                </Box>
+                              </div>
+                            )}
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "subtitle1.fontSize",
+                              }}
+                            >
+                              <div className="flex flex-col mt-2 items-center text-center">
+                                {"#" + BigNumber.from(nft.tokenId).toNumber()}
+                              </div>
+                            </Box>
+                          </CardContent>
+                        </CardActionArea>
+                      </Card>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-row m-8 p-2">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle1.fontSize",
+                    }}
+                  >
+                    No Genesis NFTs found.
+                  </Box>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

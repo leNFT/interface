@@ -126,10 +126,9 @@ export default function Buy() {
 
   // Runs once
   useEffect(() => {
-    if (isConnected) {
-      addresses = contractAddresses[chain.id];
-      getTradingCollections(chain.id);
-    }
+    const chain = isConnected ? chain.id : 1;
+    addresses = contractAddresses[chain];
+    getTradingCollections(chain);
 
     console.log("useEffect called");
   }, [isConnected, chain]);
@@ -349,7 +348,7 @@ export default function Buy() {
           primary
           fill="horizontal"
           size="large"
-          disabled={buyLoading}
+          disabled={buyLoading || !isConnected}
           color="#063970"
           onClick={async function () {
             if (!isConnected) {
@@ -404,7 +403,7 @@ export default function Buy() {
                     letterSpacing: 2,
                   }}
                 >
-                  {"CREATE BUY ORDER"}
+                  {isConnected ? "CREATE BUY ORDER" : "Connect Wallet"}
                 </Box>
               )}
             </div>

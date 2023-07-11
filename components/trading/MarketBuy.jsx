@@ -35,6 +35,7 @@ import { Divider } from "@mui/material";
 import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json";
 import wethGateway from "../../contracts/WETHGateway.json";
 import * as timeago from "timeago.js";
+import is from "sharp/lib/is";
 
 export default function Buy() {
   const { chain } = useNetwork();
@@ -79,7 +80,7 @@ export default function Buy() {
     const addressNFTs = await getAddressNFTs(
       pool,
       collection,
-      isConnected ? chain.id : 5
+      isConnected ? chain.id : 1
     );
     setAvailableNFTs(addressNFTs);
   }
@@ -125,13 +126,13 @@ export default function Buy() {
       var newBuyQuote;
       if (selectingNFTs) {
         newBuyQuote = await getBuyExactQuote(
-          isConnected ? chain.id : 11155111,
+          isConnected ? chain.id : 1,
           selectedNFTs,
           poolAddress
         );
       } else {
         newBuyQuote = await getBuyQuote(
-          isConnected ? chain.id : 11155111,
+          isConnected ? chain.id : 1,
           amount,
           poolAddress
         );
@@ -165,7 +166,7 @@ export default function Buy() {
       // Get the NFT images
       const images = await Promise.all(
         newSelectedNFTs.map(async (nft) => {
-          return await getNFTImage(nftAddress, nft, chain.id);
+          return await getNFTImage(nftAddress, nft, isConnected ? chain.id : 1);
         })
       );
       setNFTImages(images);
@@ -206,10 +207,9 @@ export default function Buy() {
 
   // Runs once
   useEffect(() => {
-    if (isConnected) {
-      addresses = contractAddresses[chain.id];
-      getTradingCollections(chain.id);
-    }
+    const chain = isConnected ? chain.id : 1;
+    addresses = contractAddresses[chain];
+    getTradingCollections(chain);
 
     console.log("useEffect called");
   }, [isConnected, chain]);
@@ -653,7 +653,7 @@ export default function Buy() {
           primary
           fill="horizontal"
           size="large"
-          disabled={buyLoading}
+          disabled={buyLoading || !isConnected}
           color="#063970"
           onClick={async function () {
             if (!isConnected) {
@@ -704,7 +704,9 @@ export default function Buy() {
                     letterSpacing: 2,
                   }}
                 >
-                  {"BUY " + amount + " " + (nftName ? nftName : "NFTs")}
+                  {isConnected
+                    ? "BUY " + amount + " " + (nftName ? nftName : "NFTs")
+                    : "Connect Wallet"}
                 </Box>
               )}
             </div>

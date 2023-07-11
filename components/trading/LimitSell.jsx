@@ -93,7 +93,9 @@ export default function Sell() {
 
   // Runs once
   useEffect(() => {
-    getTradingCollections(isConnected ? chain.id : 5);
+    const chain = isConnected ? chain.id : 1;
+    addresses = contractAddresses[chain];
+    getTradingCollections(chain);
 
     console.log("useEffect called");
   }, [isConnected, chain]);
@@ -497,7 +499,7 @@ export default function Sell() {
             primary
             fill="horizontal"
             size="large"
-            disabled={approvalLoading || !nftAddress}
+            disabled={approvalLoading || !nftAddress || !isConnected}
             color="#063970"
             onClick={async function () {
               setApprovalLoading(true);
@@ -529,7 +531,9 @@ export default function Sell() {
                     letterSpacing: 2,
                   }}
                 >
-                  {"Approve " + (nftName ? nftName : "NFT")}
+                  {isConnected
+                    ? "Approve " + (nftName ? nftName : "NFT")
+                    : "Connect Wallet"}
                 </Box>
               </div>
             }
@@ -540,6 +544,7 @@ export default function Sell() {
             fill="horizontal"
             size="large"
             disabled={
+              !isConnected ||
               sellLoading ||
               (selectingNFTs ? selectedNFTs.length == 0 : amount == 0)
             }
@@ -587,7 +592,7 @@ export default function Sell() {
                       letterSpacing: 2,
                     }}
                   >
-                    {"Create Sell Order "}
+                    {isConnected ? "Create Sell Order" : "Connect Wallet"}
                   </Box>
                 )}
               </div>

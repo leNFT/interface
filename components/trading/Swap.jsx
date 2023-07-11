@@ -92,7 +92,7 @@ export default function Swap() {
     const addressNFTs = await getAddressNFTs(
       pool,
       collection,
-      isConnected ? chain.id : 5
+      isConnected ? chain.id : 1
     );
     setAvailableBuyPoolNFTs(addressNFTs);
     console.log("availableBuyPoolNFTs", addressNFTs);
@@ -141,7 +141,7 @@ export default function Swap() {
         console.log("getSwapExactQuote", newSwapQuote);
       } else {
         newSwapQuote = await getSwapQuote(
-          isConnected ? chain.id : 5,
+          isConnected ? chain.id : 1,
           buyAmount,
           sellAmount,
           buyPoolAddress,
@@ -239,7 +239,7 @@ export default function Swap() {
     const addressNFTs = await getAddressNFTs(
       address,
       collection,
-      isConnected ? chain.id : 5
+      isConnected ? chain.id : 1
     );
     console.log("addressNsellCollectionNFTs", addressNFTs);
     setUserNFTs(addressNFTs);
@@ -312,8 +312,12 @@ export default function Swap() {
   }
 
   useEffect(() => {
-    getTradingCollections(isConnected ? chain.id : 5);
-  }, []);
+    const chain = isConnected ? chain.id : 1;
+    addresses = contractAddresses[chain];
+    getTradingCollections(chain);
+
+    console.log("useEffect called");
+  }, [isConnected, chain]);
 
   useEffect(() => {
     setBuyAmount(selectedBuyNFTs.length);
@@ -1231,7 +1235,7 @@ export default function Swap() {
             primary
             fill="horizontal"
             size="large"
-            disabled={nftApprovalLoading || !sellNFTAddress}
+            disabled={nftApprovalLoading || !sellNFTAddress || !isConnected}
             color="#063970"
             onClick={async function () {
               setNFTApprovalLoading(true);
@@ -1263,7 +1267,11 @@ export default function Swap() {
                     letterSpacing: 2,
                   }}
                 >
-                  {sellNFTName ? "Approve " + sellNFTName : "Approve NFT"}
+                  {isConnected
+                    ? sellNFTName
+                      ? "Approve " + sellNFTName
+                      : "Approve NFT"
+                    : "Connect Wallet"}
                 </Box>
               </div>
             }
@@ -1273,7 +1281,7 @@ export default function Swap() {
             primary
             fill="horizontal"
             size="large"
-            disabled={swapLoading || !priceQuote}
+            disabled={swapLoading || !priceQuote || !isConnected}
             color="#063970"
             onClick={async function () {
               if (!isConnected) {
@@ -1364,7 +1372,7 @@ export default function Swap() {
                       letterSpacing: 2,
                     }}
                   >
-                    {"SWAP"}
+                    {isConnected ? "SWAP" : "Connect Wallet"}
                   </Box>
                 )}
               </div>

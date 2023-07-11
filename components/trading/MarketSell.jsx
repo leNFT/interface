@@ -106,7 +106,7 @@ export default function Sell() {
       setPriceQuote();
       setLoadingPriceQuote(true);
       const newSellQuote = await getSellQuote(
-        isConnected ? chain.id : 5,
+        isConnected ? chain.id : 1,
         quotedAmount,
         poolAddress
       );
@@ -156,7 +156,9 @@ export default function Sell() {
 
   // Runs once
   useEffect(() => {
-    getTradingCollections(isConnected ? chain.id : 5);
+    const chain = isConnected ? chain.id : 1;
+    addresses = contractAddresses[chain];
+    getTradingCollections(chain);
 
     console.log("useEffect called");
   }, [isConnected, chain]);
@@ -621,7 +623,7 @@ export default function Sell() {
             primary
             fill="horizontal"
             size="large"
-            disabled={approvalLoading || !nftAddress}
+            disabled={approvalLoading || !nftAddress || !isConnected}
             color="#063970"
             onClick={async function () {
               setApprovalLoading(true);
@@ -653,7 +655,9 @@ export default function Sell() {
                     letterSpacing: 2,
                   }}
                 >
-                  {"Approve " + (nftName ? nftName : "NFT")}
+                  {isConnected
+                    ? "Approve " + (nftName ? nftName : "NFT")
+                    : "Connect Wallet"}
                 </Box>
               </div>
             }
@@ -663,7 +667,7 @@ export default function Sell() {
             primary
             fill="horizontal"
             size="large"
-            disabled={sellLoading}
+            disabled={sellLoading || !isConnected}
             color="#063970"
             onClick={async function () {
               if (!isConnected) {
@@ -706,7 +710,9 @@ export default function Sell() {
                       letterSpacing: 2,
                     }}
                   >
-                    {"SELL " + amount + " " + (nftName ? nftName : "NFTs")}
+                    {isConnected
+                      ? "SELL " + amount + " " + (nftName ? nftName : "NFTs")
+                      : "Connect Wallet"}
                   </Box>
                 )}
               </div>

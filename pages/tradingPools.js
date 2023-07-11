@@ -222,7 +222,7 @@ export default function TradingPools() {
               }}
               key="4"
             >
-              Volume (24h)
+              Volume
             </Box>
           </div>,
           <div className="flex flex-row" key="rates">

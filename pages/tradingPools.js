@@ -31,9 +31,7 @@ export default function TradingPools() {
 
   async function updateTableData() {
     setLoadingTableData(true);
-    const tradingPools = await getTradingPools(
-      isConnected ? chain.id : 11155111
-    );
+    const tradingPools = await getTradingPools(isConnected ? chain.id : 1);
     console.log("TradingPools", tradingPools);
     var newTableData = [];
 

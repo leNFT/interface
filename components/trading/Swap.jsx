@@ -312,7 +312,8 @@ export default function Swap() {
   }
 
   useEffect(() => {
-    const chain = isConnected ? chain.id : 1;
+    const chain = chain ? chain.id : 1;
+
     addresses = contractAddresses[chain];
     getTradingCollections(chain);
 

@@ -11,6 +11,7 @@ import {
   useSigner,
 } from "wagmi";
 import { getAddressNFTs } from "../helpers/getAddressNFTs";
+import { getLockInfo } from "../helpers/getLockInfo";
 import TextField from "@mui/material/TextField";
 import Slider from "@mui/material/Slider";
 import { Button, Loading, Typography, useNotification } from "@web3uikit/core";
@@ -62,10 +63,8 @@ export default function Lock() {
   const [selectedGauge, setSelectedGauge] = useState();
   const [gaugeVoteRatio, setGaugeVoteRatio] = useState(0);
   const [totalVoteRatio, setTotalVoteRatio] = useState(0);
-  const [epoch, setEpoch] = useState(0);
   const [apr, setAPR] = useState("0");
-  const [totalWeight, setTotalWeight] = useState("0");
-  const [totalLocked, setTotalLocked] = useState("0");
+  const [lockInfo, setLockInfo] = useState();
   const [tokenPrice, setTokenPrice] = useState("0");
   const [history, setHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
@@ -74,9 +73,6 @@ export default function Lock() {
   const [gauges, setGauges] = useState({});
   const [lockedPositions, setLockedPositions] = useState([]);
   const [selectedLock, setSelectedLock] = useState();
-  const [lastEpochRewardsCeiling, setLastEpochRewardsCeiling] = useState("0");
-  const [lastEpochRewards, setLastEpochRewards] = useState("0");
-  const [lockedRatio, setLockedRatio] = useState("0");
   const [userBribes, setUserBribes] = useState("0");
   const [gaugeBribes, setGaugeBribes] = useState("0");
   const [allGaugeBribes, setAllGaugeBribes] = useState({});
@@ -181,42 +177,10 @@ export default function Lock() {
   }
 
   async function updateUI() {
-    // Get the current epoch
-    const updatedEpoch = await votingEscrowProvider.getEpoch(
-      Math.floor(Date.now() / 1000)
-    );
-    console.log("updatedEpoch", updatedEpoch.toNumber());
-    setEpoch(updatedEpoch.toNumber());
-
-    // Get the rewards ceiling from the last epoch
-    const updatedLastEpochRewardsCeiling =
-      await gaugeControllerProvider.getRewardsCeiling(updatedEpoch.toNumber());
-    console.log(
-      "updatedLastEpochRewardsCeiling",
-      updatedLastEpochRewardsCeiling.toString()
-    );
-    setLastEpochRewardsCeiling(updatedLastEpochRewardsCeiling.toString());
-
-    const updatedLockedRatio =
-      await votingEscrowProvider.callStatic.getLockedRatioAt(
-        updatedEpoch.toNumber(),
-        {
-          from: address,
-        }
-      );
-    console.log("updatedLockedRatio", updatedLockedRatio.toString());
-    setLockedRatio(updatedLockedRatio.toString());
-
-    // Get the rewards from the last epoch
-    const updatedLastEpochRewards =
-      await gaugeControllerProvider.callStatic.getEpochRewards(
-        updatedEpoch.toNumber(),
-        {
-          from: address,
-        }
-      );
-    console.log("updatedLastEpochRewards", updatedLastEpochRewards.toString());
-    setLastEpochRewards(updatedLastEpochRewards.toString());
+    // Get the lock info
+    const updatedLockInfo = await getLockInfo(chain.id);
+    console.log("updatedLockInfo", updatedLockInfo);
+    setLockInfo(updatedLockInfo);
 
     // Get the NFTs that represent the user's locked positions
     const updatedLockedPositions = await getAddressNFTs(
@@ -230,22 +194,6 @@ export default function Lock() {
     const updateNativeTokenPrice = await getNativeTokenPrice(chain.id);
     setTokenPrice(updateNativeTokenPrice);
 
-    // Get the total weight amount
-    const updatedTotalWeight =
-      await votingEscrowProvider.callStatic.getTotalWeight({
-        from: address,
-      });
-    console.log("updatedTotalWeight", updatedTotalWeight.toString());
-    setTotalWeight(updatedTotalWeight.toString());
-
-    // Get the total locked amount
-    const updatedTotalLocked = await nativeTokenProvider.balanceOf(
-      addresses.VotingEscrow
-    );
-
-    console.log("updatedTotalLocked", updatedTotalLocked.toString());
-    setTotalLocked(updatedTotalLocked.toString());
-
     // Get the history
     const historyResponse = await getLockHistory(chain.id);
     setHistory(historyResponse);
@@ -254,7 +202,7 @@ export default function Lock() {
     // Calculate the APR
     if (
       updateNativeTokenPrice.toString() == "0" ||
-      updatedTotalWeight.toString() == "0"
+      updatedLockInfo.totalWeight.toString() == "0"
     ) {
       setAPR(0);
     } else {
@@ -262,7 +210,7 @@ export default function Lock() {
         BigNumber.from(historyResponse[0].rewards)
           .mul(52)
           .mul(100)
-          .div(updatedTotalWeight)
+          .div(updatedLockInfo.totalWeight)
           .toNumber()
       );
     }
@@ -552,7 +500,7 @@ export default function Lock() {
                         fontSize: "h4.fontSize",
                       }}
                     >
-                      {epoch}
+                      {lockInfo?.epoch}
                     </Box>
                   </div>
                 </div>
@@ -592,8 +540,10 @@ export default function Lock() {
                         fontSize: "subtitle1.fontSize",
                       }}
                     >
-                      {Math.floor(Number(formatUnits(totalWeight, 18))) +
-                        " veLE"}
+                      {lockInfo &&
+                        Math.floor(
+                          Number(formatUnits(lockInfo.totalWeight, 18))
+                        ) + " veLE"}
                     </Box>
                   </div>
                   <div className="flex flex-col items-end text-right my-4">
@@ -612,7 +562,10 @@ export default function Lock() {
                         fontSize: "subtitle1.fontSize",
                       }}
                     >
-                      {Math.floor(Number(formatUnits(totalLocked, 18))) + " LE"}
+                      {lockInfo &&
+                        Math.floor(
+                          Number(formatUnits(lockInfo.totalLocked, 18))
+                        ) + " LE"}
                     </Box>
                     <Box
                       sx={{
@@ -620,7 +573,7 @@ export default function Lock() {
                         fontSize: "subtitle2.fontSize",
                       }}
                     >
-                      {lockedRatio / 100 + "%"}
+                      {lockInfo?.lockedRatio / 100 + "%"}
                     </Box>
                   </div>
                   <div className="flex flex-col items-end text-right mt-4">
@@ -639,7 +592,9 @@ export default function Lock() {
                         fontSize: "subtitle1.fontSize",
                       }}
                     >
-                      {Math.floor(formatUnits(lastEpochRewards, 18)) + " LE"}
+                      {lockInfo &&
+                        Math.floor(formatUnits(lockInfo.epochRewards, 18)) +
+                          " LE"}
                     </Box>
                     <Box
                       sx={{
@@ -647,12 +602,13 @@ export default function Lock() {
                         fontSize: "subtitle2.fontSize",
                       }}
                     >
-                      {(BigNumber.from(lastEpochRewardsCeiling).eq(0)
-                        ? "0"
-                        : BigNumber.from(lastEpochRewards)
-                            .mul(100)
-                            .div(lastEpochRewardsCeiling)
-                            .toString()) + " %"}
+                      {lockInfo &&
+                        (BigNumber.from(lockInfo.rewardsCeiling).eq(0)
+                          ? "0"
+                          : BigNumber.from(lockInfo.epochRewards)
+                              .mul(100)
+                              .div(lockInfo.rewardsCeiling)
+                              .toString()) + " %"}
                     </Box>
                   </div>
                 </div>
@@ -925,9 +881,9 @@ export default function Lock() {
                             fontSize: "subtitle1.fontSize",
                           }}
                         >
-                          {Number(
-                            formatUnits(claimableRebates, 18)
-                          ).toPrecision(2) + " LE"}
+                          {Number(formatUnits(claimableRebates, 18)).toFixed(
+                            2
+                          ) + " LE"}
                         </Box>
                         <div className="ml-4">
                           <Button
@@ -1322,7 +1278,7 @@ export default function Lock() {
           <div className="flex flex-col w-full xl:w-[80%] 4 p-4 m-4 md:m-8 rounded-3xl bg-black/5 items-center shadow-lg">
             <div className="flex flex-col lg:flex-row items-center justify-center w-full">
               <div className="flex flex-col w-full lg:w-8/12 justify-center items-center p-8 border-b-2 lg:border-b-0 lg:border-r-2 border-black">
-                {epoch > 0 ? (
+                {lockInfo?.epoch > 0 ? (
                   <PieChartComponent
                     title={"Gauge Vote Weights"}
                     data={allGaugeWeights}

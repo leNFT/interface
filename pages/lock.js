@@ -182,15 +182,6 @@ export default function Lock() {
     console.log("updatedLockInfo", updatedLockInfo);
     setLockInfo(updatedLockInfo);
 
-    // Get the NFTs that represent the user's locked positions
-    const updatedLockedPositions = await getAddressNFTs(
-      address,
-      addresses.VotingEscrow,
-      chain.id
-    );
-    console.log("updatedLockedPositions", updatedLockedPositions);
-    setLockedPositions(updatedLockedPositions);
-
     const updateNativeTokenPrice = await getNativeTokenPrice(chain.id);
     setTokenPrice(updateNativeTokenPrice);
 
@@ -214,6 +205,15 @@ export default function Lock() {
           .toNumber()
       );
     }
+
+    // Get the NFTs that represent the user's locked positions
+    const updatedLockedPositions = await getAddressNFTs(
+      address,
+      addresses.VotingEscrow,
+      chain.id
+    );
+    console.log("updatedLockedPositions", updatedLockedPositions);
+    setLockedPositions(updatedLockedPositions);
 
     // Get the gauges
     const updatedGauges = await getGauges(chain.id);

@@ -471,18 +471,18 @@ export default function Lock() {
         </Box>
       ) : (
         <div className="flex flex-col items-center">
-          <div className="flex flex-col md:flex-row max-w-[100%] justify-center items-center mb-4">
-            <div className="flex flex-col py-4 px-8 m-8 items-center justify-center text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "subtitle2.fontSize",
-                  fontWeight: "bold",
-                }}
-                className="my-2 border-2 border-stone-600 rounded-2xl p-2 px-4 w-fit"
-              >
-                {Number(tokenPrice).toPrecision(4) + " LE / ETH"}
-              </Box>
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "subtitle2.fontSize",
+              fontWeight: "bold",
+            }}
+            className="my-2 border-2 border-stone-600 rounded-2xl p-2 px-4 w-fit"
+          >
+            {Number(tokenPrice).toPrecision(4) + " LE / ETH"}
+          </Box>
+          <div className="flex flex-col w-full md:flex-row max-w-[100%] justify-center items-center mt-4 mb-8">
+            <div className="flex flex-col py-4 px-8 md:mx-8 items-center justify-center text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
               <div className="flex flex-row items-center justify-center">
                 <div className="flex flex-col items-start m-2 mx-4 space-y-2">
                   <div className="flex flex-col items-start">

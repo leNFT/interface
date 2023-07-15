@@ -22,7 +22,7 @@ import Card from "@mui/material/Card";
 import Link from "@mui/material/Link";
 import CardContent from "@mui/material/CardContent";
 import { BigNumber } from "@ethersproject/bignumber";
-import { formatUnits } from "ethers/lib/utils";
+import { formatUnits, parseUnits } from "ethers/lib/utils";
 import votingEscrowContract from "../contracts/VotingEscrow.json";
 
 export default function Genesis() {
@@ -46,6 +46,7 @@ export default function Genesis() {
   });
 
   async function updateGenesisInfo() {
+    setPrice(parseUnits("0.25", 18));
     // Get supply
     const updatedMintCount = await genesisNFTProvider.mintCount();
     setMintCount(updatedMintCount.toNumber());
@@ -53,10 +54,6 @@ export default function Genesis() {
     // Get cap
     const updatedCap = await genesisNFTProvider.getCap();
     setCap(updatedCap.toNumber());
-    // Get price
-    const updatedPrice = await genesisNFTProvider.getPrice();
-    console.log("updatedPrice", updatedPrice);
-    setPrice(updatedPrice.toString());
   }
 
   async function updateGenesisWallet() {

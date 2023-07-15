@@ -58,18 +58,18 @@ export default function Footer() {
             >
               Trading
             </Box>
-            <Box
+            {/* <Box
               sx={{
                 fontFamily: "Monospace",
                 fontSize: "subtitle2.fontSize",
                 cursor: "pointer",
               }}
               onClick={async function () {
-                setVisibleCreateLendingPoolModal(true);
+                //setVisibleCreateLendingPoolModal(true);
               }}
             >
               Lending
-            </Box>
+            </Box> */}
           </div>
           <div className="flex flex-col space-y-2 items-start">
             <Box

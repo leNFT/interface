@@ -65,7 +65,7 @@ export default function Lock() {
   const [totalVoteRatio, setTotalVoteRatio] = useState(0);
   const [apr, setAPR] = useState("0");
   const [lockInfo, setLockInfo] = useState();
-  const [tokenPrice, setTokenPrice] = useState("0");
+  const [loadingAPR, setLoadingAPR] = useState(true);
   const [history, setHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [gaugeVotes, setGaugeVotes] = useState(0);
@@ -182,17 +182,16 @@ export default function Lock() {
     console.log("updatedLockInfo", updatedLockInfo);
     setLockInfo(updatedLockInfo);
 
-    const updateNativeTokenPrice = await getNativeTokenPrice(chain.id);
-    setTokenPrice(updateNativeTokenPrice);
-
     // Get the history
     const historyResponse = await getLockHistory(chain.id);
     setHistory(historyResponse);
     setLoadingHistory(false);
 
+    const nativeTokenPrice = await getNativeTokenPrice(chain.id);
+
     // Calculate the APR
     if (
-      updateNativeTokenPrice.toString() == "0" ||
+      nativeTokenPrice.toString() == "0" ||
       updatedLockInfo.totalWeight.toString() == "0"
     ) {
       setAPR(0);
@@ -205,6 +204,8 @@ export default function Lock() {
           .toNumber()
       );
     }
+
+    setLoadingAPR(false);
 
     // Get the NFTs that represent the user's locked positions
     const updatedLockedPositions = await getAddressNFTs(
@@ -471,17 +472,7 @@ export default function Lock() {
         </Box>
       ) : (
         <div className="flex flex-col items-center">
-          <Box
-            sx={{
-              fontFamily: "Monospace",
-              fontSize: "subtitle2.fontSize",
-              fontWeight: "bold",
-            }}
-            className="my-2 border-2 border-stone-600 rounded-2xl p-2 px-4 w-fit"
-          >
-            {Number(tokenPrice).toPrecision(4) + " LE / ETH"}
-          </Box>
-          <div className="flex flex-col w-full md:flex-row max-w-[100%] justify-center items-center mt-4 mb-8">
+          <div className="flex flex-col w-full md:flex-row max-w-[100%] justify-center items-center m-4 md:m-8">
             <div className="flex flex-col py-4 px-8 md:mx-8 items-center justify-center text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
               <div className="flex flex-row items-center justify-center">
                 <div className="flex flex-col items-start m-2 mx-4 space-y-2">
@@ -515,14 +506,22 @@ export default function Lock() {
                     >
                       Fees APR
                     </Box>
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "subtitle1.fontSize",
-                      }}
-                    >
-                      {apr + " %"}
-                    </Box>
+                    {loadingAPR ? (
+                      <Loading
+                        className="m-1"
+                        size={16}
+                        spinnerColor="#000000"
+                      />
+                    ) : (
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle1.fontSize",
+                        }}
+                      >
+                        {apr + " %"}
+                      </Box>
+                    )}
                   </div>
                   <div className="flex flex-col items-end text-right my-4">
                     <Box

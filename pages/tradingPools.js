@@ -128,9 +128,7 @@ export default function TradingPools() {
                 fontSize: "1.2em",
                 fontFamily: "monospace",
               }}
-            >
-              Gauge
-            </TableCell>
+            ></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -166,9 +164,9 @@ export default function TradingPools() {
                       disableOutline
                       color="warning"
                       content="SOON"
-                      size="xs"
+                      size="sm"
                       shape="rectangle"
-                      horizontalOffset="-10%"
+                      horizontalOffset="-25%"
                       verticalOffset="-20%"
                     >
                       <Typography variant="subtitle1" fontFamily={"monospace"}>
@@ -181,10 +179,10 @@ export default function TradingPools() {
                       disableOutline
                       color="success"
                       content="NEW"
-                      size="xs"
+                      size="sm"
                       shape="rectangle"
-                      horizontalOffset="-10%"
-                      verticalOffset="-20%"
+                      horizontalOffset="-20%"
+                      verticalOffset="-15%"
                     >
                       <Typography variant="subtitle1" fontFamily={"monospace"}>
                         {row.nft}
@@ -208,11 +206,11 @@ export default function TradingPools() {
                   {row.volume}
                 </Typography>
               </TableCell>
-              <TableCell>
+              <TableCell align="center">
                 <Button
                   primary
                   size="small"
-                  color={row.gauge === "Yes" ? "#063970" : "#8ec1f9"}
+                  color={row.gauge === "Yes" ? "#063970" : "white"}
                   onClick={async (event) => {
                     event.stopPropagation();
                     if (row.gauge === "Yes") {

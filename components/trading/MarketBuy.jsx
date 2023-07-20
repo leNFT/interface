@@ -246,7 +246,7 @@ export default function Buy() {
           availableNFTs.length +
           " " +
           nftName +
-          "s available",
+          " available",
         title: "Amount too high!",
         position: "bottomL",
       });

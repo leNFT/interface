@@ -1,19 +1,25 @@
-import styles from "../styles/Home.module.css";
-import { Button, Table, Skeleton, LinkTo } from "@web3uikit/core";
+import {
+  Tooltip,
+  Typography,
+  TableContainer,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@mui/material";
+import { Badge } from "@nextui-org/react";
+import { Box } from "@mui/system";
+import { Button } from "grommet";
+import { Skeleton } from "@mui/material";
+import { ethers } from "ethers";
+import Image from "next/image";
+import { useAccount, useNetwork } from "wagmi";
 import { getTradingPools } from "../helpers/getTradingPools.js";
 import { formatUnits } from "@ethersproject/units";
-import StyledModal from "../components/StyledModal";
-import CreateTradingPool from "../components/trading/CreateTradingPool";
-import { useAccount, useNetwork } from "wagmi";
-import { Tooltip } from "@web3uikit/core";
-import { HelpCircle } from "@web3uikit/icons";
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import Router from "next/router";
-import { ethers } from "ethers";
-import { ExternalLink } from "@web3uikit/icons";
-import { getNFTImage } from "../helpers/getNFTImage";
-import Box from "@mui/material/Box";
 
 export default function TradingPools() {
   const { isConnected } = useAccount();
@@ -21,116 +27,42 @@ export default function TradingPools() {
   const [tableData, setTableData] = useState([]);
   const [loadingTableData, setLoadingTableData] = useState(true);
 
-  const EmptyRowsForSkeletonTable = () => (
-    <div style={{ width: "100%", height: "100%" }}>
-      {[...Array(6)].map((_el, i) => (
-        <Skeleton key={i} theme="subtitle" width="30%" />
-      ))}
-    </div>
-  );
-
   async function updateTableData() {
     setLoadingTableData(true);
     const tradingPools = await getTradingPools(isConnected ? chain.id : 1);
     console.log("TradingPools", tradingPools);
     var newTableData = [];
 
+    var hiddenPools = [
+      "0xb08369eAD888c671b3c7D763EEF458383CD36FA6",
+      "0x31d098d541796491CAb9a40762F906abECbfD0a5",
+    ];
+    var soonPools = ["0x2609df95dC37B46276182A8A86470085e06B57Ff"];
+    var newPools = ["0xb2FD99528Ce8f7a6AecFC24c286e63E9D19f06F1"];
+
     for (const [key, value] of Object.entries(tradingPools)) {
-      console.log("pushed: key", key);
-      console.log("pushed: value", value);
-      newTableData.push([
-        value.nft.image && (
-          <Image
-            loader={() => value.nft.image}
-            src={value.nft.image}
-            height="80"
-            width="80"
-            className="rounded-xl"
-            key={"image" + key}
-          />
-        ),
-        <Box
-          sx={{
-            fontFamily: "Monospace",
-            fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
-          }}
-          key={"nft" + key}
-        >
-          {value.nft.amount + " " + value.nft.name}
-        </Box>,
-        <Box
-          sx={{
-            fontFamily: "Monospace",
-            fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
-          }}
-          key={"token" + key}
-        >
-          {Number(formatUnits(value.token.amount, 18)).toPrecision(2) + " ETH"}
-        </Box>,
-        <Box
-          sx={{
-            fontFamily: "Monospace",
-            fontSize: { xs: "caption.fontSize", sm: "subtitle1.fontSize" },
-          }}
-          key={"volume" + key}
-        >
-          {Number(formatUnits(value.volume, 18)).toPrecision(2) + " ETH"}
-        </Box>,
-        <div key={"gauge" + key}>
-          <Button
-            customize={{
-              backgroundColor: "black",
-              textColor: "white",
-            }}
-            size="small"
-            theme="custom"
-            text={
-              <Box
-                sx={{
-                  fontSize: {
-                    xs: "caption.fontSize",
-                    sm: "subtitle1.fontSize",
-                  },
-                }}
-              >
-                {value.gauge != ethers.constants.AddressZero ? "Yes" : "No"}
-              </Box>
-            }
-            id={value.gauge}
-            disabled={value.gauge == ethers.constants.AddressZero}
-            onClick={async function () {
-              Router.push({
-                pathname: "/trading/gauge/[address]",
-                query: {
-                  address: value.gauge,
-                },
-              });
-            }}
-          />
-        </div>,
-        <div key={"details" + key}>
-          <Button
-            customize={{
-              backgroundColor: "grey",
-              fontSize: 18,
-              textColor: "white",
-            }}
-            text="+"
-            theme="custom"
-            size="medium"
-            id={key}
-            radius="12"
-            onClick={async function (event) {
-              Router.push({
-                pathname: "/trading/pool/[address]",
-                query: {
-                  address: event.target.id,
-                },
-              });
-            }}
-          />
-        </div>,
-      ]);
+      if (hiddenPools.includes(key)) {
+        continue; // Skip this loop iteration if the pool is a hidden pool
+      }
+      var isSoonPool = soonPools.includes(key);
+      var isNewPool = newPools.includes(key);
+      newTableData.push({
+        key: key,
+        image: value.nft.image,
+        nft: value.nft.name,
+        token: isSoonPool
+          ? "—.— ETH"
+          : Number(formatUnits(value.token.amount, 18)).toPrecision(2) + " ETH",
+        volume: isSoonPool
+          ? "—.— ETH"
+          : Number(formatUnits(value.volume, 18)).toPrecision(2) + " ETH",
+        gauge: value.gauge != ethers.constants.AddressZero ? "Yes" : "No",
+        gaugeAddress: value.gauge,
+        poolAddress: key,
+        clickable: !isSoonPool,
+        isSoonPool: isSoonPool,
+        isNewPool: isNewPool,
+      });
     }
 
     setTableData(newTableData);
@@ -138,124 +70,178 @@ export default function TradingPools() {
   }
 
   useEffect(() => {
-    console.log("updateTableData()");
     updateTableData();
   }, [isConnected]);
 
+  const handleRowClick = (row) => {
+    if (row.clickable) {
+      Router.push({
+        pathname: "/trading/pool/[address]",
+        query: {
+          address: row.key,
+        },
+      });
+    }
+  };
+
   return (
-    <div className="flex flex-col my-2">
-      <Table
-        columnsConfig="1fr 2fr 2fr 2fr 1fr 0fr"
-        alignCellItems="center"
-        tableBackgroundColor="rgba(255, 255, 255, 0.65)"
-        customLoadingContent={
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              height: "80%",
-              width: "80%",
-            }}
-          >
-            <EmptyRowsForSkeletonTable />
-            <EmptyRowsForSkeletonTable />
-          </div>
-        }
-        customNoDataText="No trading pools found."
-        data={tableData}
-        header={[
-          <div key="image"></div>,
-          <div className="flex flex-row" key="nft">
-            <Box
+    <TableContainer
+      sx={{
+        borderRadius: "18px",
+        backgroundColor: "rgba(255, 255, 255, 0.2)",
+      }}
+    >
+      <Table aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell></TableCell>
+            <TableCell
               sx={{
-                fontFamily: "Monospace",
-                fontSize: {
-                  xs: "caption.fontSize",
-                  sm: "subtitle1.fontSize",
-                },
+                fontWeight: "bold",
+                fontSize: "1.2em",
+                fontFamily: "monospace",
               }}
-              key="4"
-            >
-              NFT
-            </Box>
-            <div className="flex flex-col ml-1">
-              <Tooltip
-                content="NFTs in this pool"
-                position="bottom"
-                minWidth={150}
-              >
-                <HelpCircle fontSize="14px" color="#000000" />
-              </Tooltip>
-            </div>
-          </div>,
-          <div className="flex flex-row" key="token">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: {
-                  xs: "caption.fontSize",
-                  sm: "subtitle1.fontSize",
-                },
-              }}
-              key="4"
             >
               Token
-            </Box>
-            <div className="flex flex-col ml-1">
-              <Tooltip
-                content="Tokens in this pool."
-                position="bottom"
-                minWidth={170}
-              >
-                <HelpCircle fontSize="14px" color="#000000" />
-              </Tooltip>
-            </div>
-          </div>,
-          <div className="flex flex-row" key="volume">
-            <Box
+            </TableCell>
+            <TableCell
               sx={{
-                fontFamily: "Monospace",
-                fontSize: {
-                  xs: "caption.fontSize",
-                  sm: "subtitle1.fontSize",
-                },
+                fontWeight: "bold",
+                fontSize: "1.2em",
+                fontFamily: "monospace",
               }}
-              key="4"
+            >
+              TVL
+            </TableCell>
+            <TableCell
+              sx={{
+                fontWeight: "bold",
+                fontSize: "1.2em",
+                fontFamily: "monospace",
+              }}
             >
               Volume
-            </Box>
-          </div>,
-          <div className="flex flex-row" key="rates">
-            <Box
+            </TableCell>
+            <TableCell
               sx={{
-                fontFamily: "Monospace",
-                fontSize: {
-                  xs: "caption.fontSize",
-                  sm: "subtitle1.fontSize",
-                },
+                fontWeight: "bold",
+                fontSize: "1.2em",
+                fontFamily: "monospace",
               }}
-              key="4"
             >
               Gauge
-            </Box>
-            <div className="flex flex-col ml-1">
-              <Tooltip
-                content="Gauge for this pool."
-                position="bottom"
-                minWidth={170}
-              >
-                <HelpCircle fontSize="14px" color="#000000" />
-              </Tooltip>
-            </div>
-          </div>,
-          "",
-        ]}
-        isLoading={loadingTableData}
-        isColumnSortable={[false, true, true, true, false]}
-        onPageNumberChanged={function noRefCheck() {}}
-        onRowClick={function noRefCheck() {}}
-        pageSize={20}
-      />
-    </div>
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {tableData.map((row) => (
+            <TableRow
+              key={row.key}
+              hover
+              onClick={() => row.clickable && handleRowClick(row)}
+              sx={{
+                cursor: "pointer",
+                "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.04)" },
+              }}
+            >
+              <TableCell component="th" scope="row">
+                {row.image ? (
+                  <Image
+                    src={row.image}
+                    height={80}
+                    width={80}
+                    alt="NFT Image"
+                    loader={({ src }) => src}
+                  />
+                ) : (
+                  <Box sx={{ width: 80, height: 80 }}>
+                    <Skeleton variant="rectangular" width={80} height={80} />
+                  </Box>
+                )}
+              </TableCell>
+              <TableCell>
+                <Box>
+                  {row.isSoonPool && (
+                    <Badge
+                      disableOutline
+                      color="warning"
+                      content="SOON"
+                      size="xs"
+                      shape="rectangle"
+                      horizontalOffset="-10%"
+                      verticalOffset="-20%"
+                    >
+                      <Typography variant="subtitle1" fontFamily={"monospace"}>
+                        {row.nft}
+                      </Typography>
+                    </Badge>
+                  )}
+                  {row.isNewPool && (
+                    <Badge
+                      disableOutline
+                      color="success"
+                      content="NEW"
+                      size="xs"
+                      shape="rectangle"
+                      horizontalOffset="-10%"
+                      verticalOffset="-20%"
+                    >
+                      <Typography variant="subtitle1" fontFamily={"monospace"}>
+                        {row.nft}
+                      </Typography>
+                    </Badge>
+                  )}
+                  {!row.isSoonPool && !row.isNewPool && (
+                    <Typography variant="subtitle1" fontFamily={"monospace"}>
+                      {row.nft}
+                    </Typography>
+                  )}
+                </Box>
+              </TableCell>
+              <TableCell>
+                <Typography variant="subtitle1" fontFamily={"monospace"}>
+                  {row.token}
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="subtitle1" fontFamily={"monospace"}>
+                  {row.volume}
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Button
+                  primary
+                  size="small"
+                  color={row.gauge === "Yes" ? "#063970" : "#8ec1f9"}
+                  onClick={async (event) => {
+                    event.stopPropagation();
+                    if (row.gauge === "Yes") {
+                      Router.push(`/trading/gauge/${row.gaugeAddress}`);
+                    } else {
+                      window.open(
+                        "https://discord.com/invite/QNpBmMCWmb",
+                        "_blank"
+                      ); // Replace with your Discord link
+                    }
+                  }}
+                  label={
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "caption.fontSize",
+                        fontWeight: "bold",
+                        letterSpacing: 2,
+                      }}
+                    >
+                      {row.gauge === "Yes" ? "Gauge" : "Request Gauge"}
+                    </Box>
+                  }
+                />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 }

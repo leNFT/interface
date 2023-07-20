@@ -181,7 +181,7 @@ export default function Sell() {
       setAmount(userNFTs.length);
       dispatch({
         type: "warning",
-        message: "You only own " + userNFTs.length + " " + nftName + "s",
+        message: "You only own " + userNFTs.length + " " + nftName,
         title: "Amount too high!",
         position: "bottomL",
       });

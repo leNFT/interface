@@ -435,7 +435,7 @@ export default function Swap() {
       setSellAmount(userNFTs.length);
       dispatch({
         type: "warning",
-        message: "You only own " + userNFTs.length + " " + sellNFTName + "s",
+        message: "You only own " + userNFTs.length + " " + sellNFTName,
         title: "Amount too high!",
         position: "bottomL",
       });

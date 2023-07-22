@@ -186,7 +186,7 @@ export default function TradeHeader() {
             <Button
               primary
               size="medium"
-              color={SELECTED_COLOR}
+              color={option == "trade" ? SELECTED_COLOR : UNSELECTED_COLOR}
               onClick={() => {
                 setOption("trade");
               }}

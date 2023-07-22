@@ -296,7 +296,7 @@ export default function TradingPoolGauge() {
                   </Box>
                   <CircularProgress
                     variant="determinate"
-                    thickness={6}
+                    thickness={4}
                     value={
                       ((Math.floor(Date.now() / 1000) % 604800) / 604800) * 100
                     }

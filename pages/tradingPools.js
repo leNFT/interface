@@ -38,7 +38,15 @@ export default function TradingPools() {
       "0x31d098d541796491CAb9a40762F906abECbfD0a5",
     ];
     var soonPools = ["0x2609df95dC37B46276182A8A86470085e06B57Ff"];
-    var newPools = ["0xb2FD99528Ce8f7a6AecFC24c286e63E9D19f06F1"];
+    var newPools = [
+      "0xb2FD99528Ce8f7a6AecFC24c286e63E9D19f06F1",
+      "0x87C20664b9a353Db35587E63F28F0a90f50cA3a3",
+    ];
+
+    // Initialize the arrays here
+    var newPoolsArray = [];
+    var otherPoolsArray = [];
+    var soonPoolsArray = [];
 
     for (const [key, value] of Object.entries(tradingPools)) {
       if (hiddenPools.includes(key)) {
@@ -46,7 +54,7 @@ export default function TradingPools() {
       }
       var isSoonPool = soonPools.includes(key);
       var isNewPool = newPools.includes(key);
-      newTableData.push({
+      const poolData = {
         key: key,
         image: value.nft.image,
         nft: value.nft.name,
@@ -62,8 +70,22 @@ export default function TradingPools() {
         clickable: !isSoonPool,
         isSoonPool: isSoonPool,
         isNewPool: isNewPool,
-      });
+      };
+
+      if (isNewPool) {
+        newPoolsArray.push(poolData);
+      } else if (isSoonPool) {
+        soonPoolsArray.push(poolData);
+      } else {
+        otherPoolsArray.push(poolData);
+      }
     }
+
+    var newTableData = [
+      ...newPoolsArray,
+      ...soonPoolsArray,
+      ...otherPoolsArray,
+    ];
 
     setTableData(newTableData);
     setLoadingTableData(false);

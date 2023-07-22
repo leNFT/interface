@@ -811,32 +811,47 @@ export default function Lock() {
                           Locked Balance
                         </Box>
                       </div>
-                      <div className="flex flex-col my-2 space-y-1">
-                        <Box
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "subtitle1.fontSize",
-                          }}
-                        >
-                          {Number(formatUnits(voteTokenBalance, 18)).toFixed(
-                            2
-                          ) +
-                            " veLE (" +
-                            Number(formatUnits(lockAmount, 18)).toFixed(2) +
-                            " LE)"}
-                        </Box>
-                        <Box
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "subtitle1.fontSize",
-                          }}
-                        >
-                          {"Locked until " +
-                            (unlockTime > 0
-                              ? new Date(unlockTime * 1000).toLocaleDateString()
-                              : "-")}
-                        </Box>
-                      </div>
+                      {selectedLock ? (
+                        <div className="flex flex-col my-2 space-y-1">
+                          <Box
+                            sx={{
+                              fontFamily: "Monospace",
+                              fontSize: "subtitle1.fontSize",
+                            }}
+                          >
+                            {Number(formatUnits(voteTokenBalance, 18)).toFixed(
+                              2
+                            ) +
+                              " veLE (" +
+                              Number(formatUnits(lockAmount, 18)).toFixed(2) +
+                              " LE)"}
+                          </Box>
+                          <Box
+                            sx={{
+                              fontFamily: "Monospace",
+                              fontSize: "subtitle1.fontSize",
+                            }}
+                          >
+                            {"Locked until " +
+                              (unlockTime > 0
+                                ? new Date(
+                                    unlockTime * 1000
+                                  ).toLocaleDateString()
+                                : "-")}
+                          </Box>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col my-2 space-y-1">
+                          <Box
+                            sx={{
+                              fontFamily: "Monospace",
+                              fontSize: "subtitle1.fontSize",
+                            }}
+                          >
+                            {"No Lock Selected"}
+                          </Box>
+                        </div>
+                      )}
                     </div>
                     <div className="flex flex-col m-2">
                       <div className="flex flex-row">
@@ -850,87 +865,104 @@ export default function Lock() {
                           Claimable Rewards
                         </Box>
                       </div>
-                      <div className="flex flex-row my-2 items-center">
-                        <Box
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "subtitle1.fontSize",
-                          }}
-                        >
-                          {Number(formatUnits(claimableFees, 18)).toPrecision(
-                            3
-                          ) + " wETH"}
-                        </Box>
-                        <div className="ml-4">
-                          <Button
-                            customize={{
-                              backgroundColor: "grey",
-                              fontSize: 16,
-                              textColor: "white",
-                            }}
-                            disabled={BigNumber.from(claimableFees).eq(0)}
-                            text="Claim wETH"
-                            theme="custom"
-                            size="small"
-                            Loading={claimingLoading}
-                            onClick={async function () {
-                              try {
-                                setClaimingLoading(true);
-                                const tx = await feeDistributorSigner.claim(
-                                  addresses.ETH.address
-                                );
-                                await tx.wait(1);
-                                await handleClaimSuccess();
-                              } catch (error) {
-                                console.log(error);
-                              } finally {
-                                setClaimingLoading(false);
-                              }
-                            }}
-                          />
+                      {selectedLock ? (
+                        <div>
+                          <div className="flex flex-row my-2 items-center">
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "subtitle1.fontSize",
+                              }}
+                            >
+                              {Number(
+                                formatUnits(claimableFees, 18)
+                              ).toPrecision(3) + " wETH"}
+                            </Box>
+                            <div className="ml-4">
+                              <Button
+                                customize={{
+                                  backgroundColor: "grey",
+                                  fontSize: 16,
+                                  textColor: "white",
+                                }}
+                                disabled={BigNumber.from(claimableFees).eq(0)}
+                                text="Claim wETH"
+                                theme="custom"
+                                size="small"
+                                Loading={claimingLoading}
+                                onClick={async function () {
+                                  try {
+                                    setClaimingLoading(true);
+                                    const tx = await feeDistributorSigner.claim(
+                                      addresses.ETH.address
+                                    );
+                                    await tx.wait(1);
+                                    await handleClaimSuccess();
+                                  } catch (error) {
+                                    console.log(error);
+                                  } finally {
+                                    setClaimingLoading(false);
+                                  }
+                                }}
+                              />
+                            </div>
+                          </div>
+                          <div className="flex flex-row my-2 items-center">
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "subtitle1.fontSize",
+                              }}
+                            >
+                              {Number(
+                                formatUnits(claimableRebates, 18)
+                              ).toFixed(2) + " LE"}
+                            </Box>
+                            <div className="ml-4">
+                              <Button
+                                customize={{
+                                  backgroundColor: "grey",
+                                  fontSize: 16,
+                                  textColor: "white",
+                                }}
+                                disabled={BigNumber.from(claimableRebates).eq(
+                                  0
+                                )}
+                                text="Claim LE"
+                                theme="custom"
+                                size="small"
+                                Loading={claimingRebatesLoading}
+                                onClick={async function () {
+                                  try {
+                                    setClaimingLoading(true);
+                                    const tx =
+                                      await votingEscrowSigner.claimRebates(
+                                        selectedLock
+                                      );
+                                    await tx.wait(1);
+                                    await handleClaimRebatesSuccess();
+                                  } catch (error) {
+                                    console.log(error);
+                                  } finally {
+                                    setClaimingRebatesLoading(false);
+                                  }
+                                }}
+                              />
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex flex-row my-2 items-center">
-                        <Box
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "subtitle1.fontSize",
-                          }}
-                        >
-                          {Number(formatUnits(claimableRebates, 18)).toFixed(
-                            2
-                          ) + " LE"}
-                        </Box>
-                        <div className="ml-4">
-                          <Button
-                            customize={{
-                              backgroundColor: "grey",
-                              fontSize: 16,
-                              textColor: "white",
+                      ) : (
+                        <div className="flex flex-col my-2 space-y-1">
+                          <Box
+                            sx={{
+                              fontFamily: "Monospace",
+                              fontSize: "subtitle1.fontSize",
                             }}
-                            disabled={BigNumber.from(claimableRebates).eq(0)}
-                            text="Claim LE"
-                            theme="custom"
-                            size="small"
-                            Loading={claimingRebatesLoading}
-                            onClick={async function () {
-                              try {
-                                setClaimingLoading(true);
-                                const tx =
-                                  await votingEscrowSigner.claimRebates(
-                                    selectedLock
-                                  );
-                                await tx.wait(1);
-                                await handleClaimRebatesSuccess();
-                              } catch (error) {
-                                console.log(error);
-                              } finally {
-                                setClaimingRebatesLoading(false);
-                              }
-                            }}
-                          />
+                          >
+                            {"No Lock Selected"}
+                          </Box>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>

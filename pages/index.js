@@ -61,48 +61,7 @@ export default function Home() {
         </div>
         <div className={styles.main}>
           <div className={styles.indexDescribe}>
-            <div className={styles.indexDescribeTitle}>
-              <Link href="/trade">
-                <a
-                  style={{
-                    textDecoration: "underline",
-                  }}
-                >
-                  swap
-                </a>
-              </Link>
-              {", "}
-              <Link href="/trade">
-                <a
-                  style={{
-                    textDecoration: "underline",
-                  }}
-                >
-                  buy
-                </a>
-              </Link>
-              {", "}
-              <Link href="/trade">
-                <a
-                  style={{
-                    textDecoration: "underline",
-                  }}
-                >
-                  sell
-                </a>
-              </Link>
-              {" and "}
-              <Link href="/borrow">
-                <a
-                  style={{
-                    textDecoration: "underline",
-                  }}
-                >
-                  borrow
-                </a>
-              </Link>{" "}
-              with your NFTs.
-            </div>
+            <div className={styles.indexDescribeTitle}>{"use your NFTs."}</div>
             <div className="flex flex-col md:flex-row justify-start items-center m-8">
               <Link href="/trade">
                 <a>
@@ -163,10 +122,10 @@ export default function Home() {
               </Badge>
             </div>
             <div className={styles.indexDescribeSubtitle}>
-              <li>Trade your NFTs</li>
-              <li>Borrow ETH using your NFTs as collateral</li>
-              <li>Earn interest on your ETH & NFTs</li>
-              <li>Bring liquidity into your NFT&apos;s ecosystem</li>
+              <li>Trade your assets</li>
+              <li>Earn yield</li>
+              <li>Increase your project's liquidity</li>
+              <li>Borrow ETH using your NFTs as collateral (soon)</li>
             </div>
             <div className={styles.indexDescribeSubtitle}>
               <Link href="https://discord.gg/cDywBRGcmT">

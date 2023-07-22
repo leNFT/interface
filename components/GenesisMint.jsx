@@ -209,7 +209,7 @@ export default function GenesisMint(props) {
             <Typography variant="subtitle2">
               {Number((amount * 0.15) / formatUnits(rewards, 18)).toPrecision(
                 4
-              ) + " LE / ETH"}
+              ) + " LE/ETH"}
             </Typography>
           </div>
           <div className="m-2 md:m-4">

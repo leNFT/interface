@@ -55,22 +55,32 @@ export default function TradingPool() {
     );
 
     // Set pool details
-    const poolInfo = await getTradingPools(chain.id, router.query.address);
+    console.log("pool", router.query.address);
+    const poolInfo = await getTradingPools(
+      chain ? chain.id : 1,
+      router.query.address
+    );
     console.log("poolInfo", poolInfo);
     setPoolInfo(poolInfo);
 
-    // Get number of user NFTs
-    setUserNFTsAmount(
-      (await getAddressNFTs(address, poolInfo.nft.address, chain.id)).length
-    );
-
     // Get lp positions
     if (address) {
+      // Get number of user NFTs
+      setUserNFTsAmount(
+        (
+          await getAddressNFTs(
+            address,
+            poolInfo.nft.address,
+            chain ? chain.id : 1
+          )
+        ).length
+      );
+
       console.log("Get LP positions", address);
       const addressNFTs = await getAddressNFTs(
         address,
         router.query.address,
-        chain.id
+        chain ? chain.id : 1
       );
       console.log("addressNFTs", addressNFTs);
       const newLpPositions = [];
@@ -97,7 +107,7 @@ export default function TradingPool() {
 
     // Get pool history
     const updatePoolHistory = await getTradingPoolHistory(
-      chain.id,
+      chain ? chain.id : 1,
       router.query.address
     );
     console.log("updatePoolHistory", updatePoolHistory);
@@ -106,7 +116,7 @@ export default function TradingPool() {
     // Get the best price the pool LPs can offer
     try {
       const priceResponse = await getTradingPoolPrice(
-        chain.id,
+        chain ? chain.id : 1,
         router.query.address
       );
       console.log("priceResponse", priceResponse);
@@ -436,8 +446,9 @@ export default function TradingPool() {
                 }}
               >
                 {"(" +
-                  (ethBalance &&
-                    Number(formatUnits(ethBalance.value, 18)).toPrecision(2)) +
+                  (ethBalance
+                    ? Number(formatUnits(ethBalance.value, 18)).toPrecision(2)
+                    : "0") +
                   " ETH available)"}
               </Box>
             </div>

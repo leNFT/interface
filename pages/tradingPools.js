@@ -26,10 +26,8 @@ export default function TradingPools() {
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
   const [tableData, setTableData] = useState([]);
-  const [loadingTableData, setLoadingTableData] = useState(true);
 
   async function updateTableData() {
-    setLoadingTableData(true);
     const tradingPools = await getTradingPools(chain ? chain.id : 1);
     console.log("TradingPools", tradingPools);
     var newTableData = [];
@@ -79,7 +77,6 @@ export default function TradingPools() {
     ];
 
     setTableData(newTableData);
-    setLoadingTableData(false);
   }
 
   useEffect(() => {

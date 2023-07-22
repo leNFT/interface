@@ -93,10 +93,7 @@ export default function TradingPoolGauge() {
     const maturityMultiplierResponse = await gauge.getUserMaturityMultiplier(
       address
     );
-    console.log(
-      "maturityMultiplierResponse",
-      maturityMultiplierResponse.toNumber()
-    );
+
     setMaturityMultiplier(maturityMultiplierResponse.toNumber());
 
     const newUserLockedValue = await gauge.getUserLPValue(address);
@@ -150,14 +147,16 @@ export default function TradingPoolGauge() {
 
     // Get the history
     const historyResponse = await getGaugeHistory(
-      chain.id,
+      chain ? chain.id : 1,
       router.query.address
     );
     setHistory(historyResponse);
     setLoadingHistory(false);
     console.log("historyResponse", historyResponse);
 
-    const updateNativeTokenPrice = await getNativeTokenPrice(chain.id);
+    const updateNativeTokenPrice = await getNativeTokenPrice(
+      chain ? chain.id : 1
+    );
     console.log("updateNativeTokenPrice", updateNativeTokenPrice);
 
     if (updatedTotalLockedValue.toString() == "0") {

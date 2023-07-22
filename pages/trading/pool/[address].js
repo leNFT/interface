@@ -45,7 +45,6 @@ export default function TradingPool() {
   const { data: ethBalance } = useBalance({
     addressOrName: address,
   });
-  console.log("ethBalance", ethBalance);
   const provider = useProvider();
   var addresses = contractAddresses[1];
   async function updateUI() {
@@ -285,9 +284,10 @@ export default function TradingPool() {
               fontWeight: "bold",
             }}
           >
-            {Number(formatUnits(poolInfo?.token.amount)).toPrecision(2) +
-              " " +
-              poolInfo?.token.name}
+            {poolInfo &&
+              Number(formatUnits(poolInfo.token.amount)).toPrecision(2) +
+                " " +
+                poolInfo?.token.name}
           </Box>
         </div>
         <div className="flex flex-col sm:flex-row justify-center items-center sm:space-x-8 space-y-2 sm:space-y-0 mt-4 mx-2 p-6 border-2 rounded-3xl border-black">

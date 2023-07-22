@@ -159,7 +159,7 @@ export default function Genesis() {
               </Link>
             </Box>
           </div>
-          <div className="flex flex-col w-full md:w-10/12 xl:w-6/12 items-center justify-center border-4 m-2 md:mt-8 rounded-3xl bg-black/5 shadow-lg">
+          <div className="flex flex-col w-full md:w-10/12 xl:w-[600px] items-center justify-center border-4 m-2 md:mt-8 rounded-3xl bg-black/5 shadow-lg">
             <div className="flex flex-col md:flex-row m-2 items-center">
               <div className="flex flex-row m-8 items-center space-x-4 justify-between rounded-2xl bg-black/5 shadow-lg p-4">
                 <div className="flex flex-col w-6/12">
@@ -198,7 +198,7 @@ export default function Genesis() {
                     fontFamily: "Monospace",
                     fontSize: "caption.fontSize",
                   }}
-                  className="text-gray-600 w-6/12"
+                  className="text-gray-600 w-6/12 min-w-[100px]"
                 >
                   Receive up to 0.1 ETH (in LE) + trading fees when you burn
                   your Genesis NFT.

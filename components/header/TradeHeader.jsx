@@ -130,7 +130,7 @@ export default function TradeHeader() {
                     fontWeight: "bold",
                   }}
                 >
-                  Lock
+                  Lock LE
                 </Box>
               ),
               onClick: () => {
@@ -302,7 +302,7 @@ export default function TradeHeader() {
                       letterSpacing: 2,
                     }}
                   >
-                    Lock
+                    Lock LE
                   </Box>
                 </div>
               }

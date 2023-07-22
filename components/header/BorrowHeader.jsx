@@ -155,7 +155,7 @@ export default function BorrowHeader() {
                     fontWeight: "bold",
                   }}
                 >
-                  Lock
+                  Lock LE
                 </Box>
               ),
               onClick: () => {
@@ -339,7 +339,7 @@ export default function BorrowHeader() {
                       letterSpacing: 2,
                     }}
                   >
-                    Lock
+                    Lock LE
                   </Box>
                 </div>
               }

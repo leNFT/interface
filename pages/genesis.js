@@ -130,18 +130,18 @@ export default function Genesis() {
               }}
             >
               <div className="my-1">
-                - Connect your wallet to Ethereum Mainnet
+                1 - Connect your wallet to Ethereum Mainnet
               </div>
               <div className="my-1">
-                - Click the &apos;Mint Genesis NFT&apos; button
+                2 - Click the &apos;Mint Genesis NFT&apos; button
               </div>
 
-              <div className="my-1">- Choose a locktime</div>
+              <div className="my-1">3 - Choose a locktime</div>
               <div className="my-1">
-                - Mint the NFT and confirm the transaction in your wallet
+                4 - Mint the NFT and confirm the transaction in your wallet
               </div>
               <div className="my-1">
-                - Your NFT will now appear at the bottom of this page
+                5 - Your NFT will now appear at the bottom of this page
               </div>
             </Box>
             <Box

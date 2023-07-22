@@ -133,7 +133,7 @@ export default function TradingPool() {
   }, [isConnected, router.query.address, address]);
 
   return (
-    <div>
+    <div className="flex flex-col justify-center items-center">
       <StyledModal
         hasFooter={false}
         title={"Deposit LP"}
@@ -230,68 +230,73 @@ export default function TradingPool() {
             )}
         </div>
       </div>
-      <div className="flex flex-col xl:flex-row justify-between items-center p-8 rounded-3xl my-8 md:m-8 lg:mx-16 bg-black/5 shadow-lg">
-        <div className="flex flex-row justify-center items-center">
-          <LinkTo
-            type="external"
-            iconLayout="none"
-            text={
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: {
-                    xs: "caption.fontSize",
-                    sm: "h5.fontSize",
-                  },
-                }}
-                className="m-2"
-              >
-                {poolInfo?.nft.name}
-              </Box>
-            }
-            address={
-              isConnected
-                ? chain.id == 1
-                  ? "https://etherscan.io/address/" + poolInfo?.nft.address
+      <div className="flex flex-col xl:flex-row w-fit xl:w-11/12 justify-between items-center p-8 rounded-3xl my-8 md:m-8 lg:mx-16 bg-black/5 shadow-lg">
+        <div className="flex flex-col justify-center items-center xl:items-start">
+          <div className="flex flex-row justify-center items-center">
+            <Box
+              className="m-2"
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: {
+                  xs: "h6.fontSize",
+                  sm: "h5.fontSize",
+                },
+                fontWeight: "bold",
+              }}
+            >
+              {poolInfo?.nft.amount}
+            </Box>
+            <LinkTo
+              type="external"
+              iconLayout="none"
+              text={
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: {
+                      xs: "h6.fontSize",
+                      sm: "h5.fontSize",
+                    },
+                  }}
+                  className="m-2"
+                >
+                  {poolInfo?.nft.name}
+                </Box>
+              }
+              address={
+                isConnected
+                  ? chain.id == 1
+                    ? "https://etherscan.io/address/" + poolInfo?.nft.address
+                    : "https://sepolia.etherscan.io/address/" +
+                      poolInfo?.nft.address
                   : "https://sepolia.etherscan.io/address/" +
                     poolInfo?.nft.address
-                : "https://sepolia.etherscan.io/address/" +
-                  poolInfo?.nft.address
-            }
-          ></LinkTo>
-          <Box
-            sx={{
-              fontFamily: "Monospace",
-              fontSize: {
-                xs: "caption.fontSize",
-                sm: "h5.fontSize",
-              },
-              fontWeight: "bold",
-            }}
-          >
-            {" / "}
-          </Box>
+              }
+            ></LinkTo>
+          </div>
           <Box
             className="m-2"
             sx={{
               fontFamily: "Monospace",
               fontSize: {
-                xs: "caption.fontSize",
+                xs: "h6.fontSize",
                 sm: "h5.fontSize",
               },
               fontWeight: "bold",
             }}
           >
-            {poolInfo?.token.name}
+            {Number(formatUnits(poolInfo?.token.amount)).toPrecision(2) +
+              " " +
+              poolInfo?.token.name}
           </Box>
         </div>
         <div className="flex flex-col sm:flex-row justify-center items-center sm:space-x-8 space-y-2 sm:space-y-0 mt-4 mx-2 p-6 border-2 rounded-3xl border-black">
-          <div className="flex flex-col border-r-2 sm:pr-8 md:border-black justify-center items-center text-center">
+          <div className="flex flex-col border-r-2 sm:pr-8 md:border-black justify-center items-center space-y-1 text-center">
             <Box
               sx={{
                 fontFamily: "Monospace",
                 fontSize: {
-                  xs: "caption.fontSize",
+                  xs: "subtitle2.fontSize",
                   sm: "h6.fontSize",
                 },
                 fontWeight: "bold",
@@ -303,7 +308,7 @@ export default function TradingPool() {
               sx={{
                 fontFamily: "Monospace",
                 fontSize: {
-                  xs: "caption.fontSize",
+                  xs: "subtitle2.fontSize",
                   sm: "subtitle1.fontSize",
                 },
               }}
@@ -313,12 +318,12 @@ export default function TradingPool() {
                 : "0.00") + " ETH"}
             </Box>
           </div>
-          <div className="flex flex-col border-r-2 sm:pr-8 md:border-black justify-center items-center text-center">
+          <div className="flex flex-col border-r-2 sm:pr-8 space-y-1 md:border-black justify-center items-center text-center">
             <Box
               sx={{
                 fontFamily: "Monospace",
                 fontSize: {
-                  xs: "caption.fontSize",
+                  xs: "subtitle2.fontSize",
                   sm: "h6.fontSize",
                 },
                 fontWeight: "bold",
@@ -330,7 +335,7 @@ export default function TradingPool() {
               sx={{
                 fontFamily: "Monospace",
                 fontSize: {
-                  xs: "caption.fontSize",
+                  xs: "subtitle2.fontSize",
                   sm: "subtitle1.fontSize",
                 },
               }}
@@ -340,12 +345,12 @@ export default function TradingPool() {
                 : "0.00") + " ETH"}
             </Box>
           </div>
-          <div className="flex flex-col justify-center items-center text-center">
+          <div className="flex flex-col justify-center items-center space-y-1 text-center">
             <Box
               sx={{
                 fontFamily: "Monospace",
                 fontSize: {
-                  xs: "caption.fontSize",
+                  xs: "subtitle2.fontSize",
                   sm: "h6.fontSize",
                 },
                 fontWeight: "bold",
@@ -357,7 +362,7 @@ export default function TradingPool() {
               sx={{
                 fontFamily: "Monospace",
                 fontSize: {
-                  xs: "caption.fontSize",
+                  xs: "subtitle2.fontSize",
                   sm: "subtitle1.fontSize",
                 },
               }}
@@ -369,7 +374,6 @@ export default function TradingPool() {
           </div>
         </div>
       </div>
-
       <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl my-8 md:m-8 lg:mx-16 !mt-8 bg-black/5 shadow-lg">
         <div className="flex flex-col items-center p-4 rounded-3xl m-8 lg:m-16 bg-black/5 shadow-lg">
           <div className="flex flex-col m-4 rounded-2xl">
@@ -382,7 +386,7 @@ export default function TradingPool() {
                     fontWeight: "bold",
                   }}
                 >
-                  Total Liquidity Provided:
+                  My Liquidity:
                 </Box>
               </div>
               <div className="flex flex-col ml-1">

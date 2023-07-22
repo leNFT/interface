@@ -229,7 +229,7 @@ export default function TradingPool() {
             )}
         </div>
       </div>
-      <div className="flex flex-col xl:flex-row w-fit xl:w-11/12 justify-between items-center p-8 rounded-3xl my-8 md:m-8 lg:mx-16 bg-black/5 shadow-lg">
+      <div className="flex flex-col xl:flex-row w-fit xl:w-8/12 justify-between items-center p-8 rounded-3xl my-8 md:m-8 lg:mx-16 bg-black/5 shadow-lg">
         <div className="flex flex-col justify-center items-center xl:items-start">
           <div className="flex flex-row justify-center items-center">
             <Box

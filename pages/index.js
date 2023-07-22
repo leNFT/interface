@@ -124,7 +124,7 @@ export default function Home() {
             <div className={styles.indexDescribeSubtitle}>
               <li>Trade your assets</li>
               <li>Earn yield</li>
-              <li>Increase your project's liquidity</li>
+              <li>Increase your project&apos;s liquidity</li>
               <li>Borrow ETH using your NFTs as collateral (soon)</li>
             </div>
             <div className={styles.indexDescribeSubtitle}>

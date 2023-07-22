@@ -116,6 +116,7 @@ export default function Genesis() {
                 fontSize: "h5.fontSize",
                 marginTop: 1,
                 marginBottom: 3,
+                textAlign: "center",
               }}
             >
               Mint Instructions

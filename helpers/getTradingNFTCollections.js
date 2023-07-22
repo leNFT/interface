@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+import collectionsFilters from "../filters/collections.json";
 
 export async function getTradingNFTCollections(chainId) {
   const serverAddress = "https://api-h6nqa.ondigitalocean.app";
@@ -21,5 +22,11 @@ export async function getTradingNFTCollections(chainId) {
     console.log(error);
   }
 
-  return collections;
+  const { hidden: hiddenPools } = collectionsFilters[chainId];
+
+  const filteredCollections = collections.filter(
+    (collection) => !hiddenPools.includes(collection.address)
+  );
+
+  return filteredCollections;
 }

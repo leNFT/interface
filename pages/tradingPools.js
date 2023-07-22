@@ -20,6 +20,7 @@ import { getTradingPools } from "../helpers/getTradingPools.js";
 import { formatUnits } from "@ethersproject/units";
 import { useState, useEffect } from "react";
 import Router from "next/router";
+import poolFilters from "../filters/pools.json";
 
 export default function TradingPools() {
   const { isConnected } = useAccount();
@@ -33,15 +34,7 @@ export default function TradingPools() {
     console.log("TradingPools", tradingPools);
     var newTableData = [];
 
-    var hiddenPools = [
-      "0xb08369eAD888c671b3c7D763EEF458383CD36FA6",
-      "0x31d098d541796491CAb9a40762F906abECbfD0a5",
-    ];
-    var soonPools = ["0x2609df95dC37B46276182A8A86470085e06B57Ff"];
-    var newPools = [
-      "0xb2FD99528Ce8f7a6AecFC24c286e63E9D19f06F1",
-      "0x87C20664b9a353Db35587E63F28F0a90f50cA3a3",
-    ];
+    const { soon: soonPools, new: newPools } = poolFilters[chain.id];
 
     // Initialize the arrays here
     var newPoolsArray = [];
@@ -49,9 +42,6 @@ export default function TradingPools() {
     var soonPoolsArray = [];
 
     for (const [key, value] of Object.entries(tradingPools)) {
-      if (hiddenPools.includes(key)) {
-        continue; // Skip this loop iteration if the pool is a hidden pool
-      }
       var isSoonPool = soonPools.includes(key);
       var isNewPool = newPools.includes(key);
       const poolData = {

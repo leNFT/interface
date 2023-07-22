@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+import gaugesFilters from "../filters/gauges.json";
 
 export async function getGauges(chainId) {
   const serverAddress = "https://api-h6nqa.ondigitalocean.app";
@@ -23,5 +24,12 @@ export async function getGauges(chainId) {
     console.log(error);
   }
 
-  return gauges;
+  // Dont return hidden pools
+  const { hidden: hiddenGauges } = gaugesFilters[chainId];
+
+  const filteredGauges = Object.fromEntries(
+    Object.entries(gauges).filter(([key]) => !hiddenGauges.includes(key))
+  );
+
+  return filteredGauges;
 }

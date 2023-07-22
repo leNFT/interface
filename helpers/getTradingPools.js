@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+import poolFilters from "../filters/pools.json";
 
 export async function getTradingPools(chainId, pool) {
   const serverAddress = "https://api-h6nqa.ondigitalocean.app";
@@ -30,5 +31,12 @@ export async function getTradingPools(chainId, pool) {
     console.log(error);
   }
 
-  return tradingPools;
+  // Dont return hidden pools
+  const { hidden: hiddenPools } = poolFilters[chainId];
+
+  const filteredPools = Object.fromEntries(
+    Object.entries(tradingPools).filter(([key]) => !hiddenPools.includes(key))
+  );
+
+  return filteredPools;
 }

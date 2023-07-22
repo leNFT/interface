@@ -536,7 +536,7 @@ export default function Lock() {
                           fontSize: "subtitle1.fontSize",
                         }}
                       >
-                        {apr + " %"}
+                        {(apr == 0 ? "—" : apr) + " %"}
                       </Box>
                     )}
                   </div>

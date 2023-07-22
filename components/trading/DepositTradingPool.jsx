@@ -237,7 +237,7 @@ export default function DepositTradingPool(props) {
   }
 
   return (
-    <div>
+    <div className="flex flex-col">
       <div className="flex flex-row space-x-4 items-center justify-center">
         <Typography variant="h6" className="pt-1">
           Advanced Mode:
@@ -302,8 +302,8 @@ export default function DepositTradingPool(props) {
         </div>
       )}
       <div className="flex flex-col-reverse justify-center lg:flex-row">
-        <div className="flex flex-col space-y-12 m-4">
-          <div className="flex flex-row items-center justify-center mt-8">
+        <div className="flex flex-col m-4">
+          <div className="flex flex-col items-center justify-center mt-8">
             <Input
               label="Initial Price"
               type="number"
@@ -316,10 +316,49 @@ export default function DepositTradingPool(props) {
               }}
               onChange={handleInitialPriceChange}
             />
+            <div className="flex flex-row items-center justify-center space-x-8 mt-8">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle2.fontSize",
+                }}
+              >
+                {"Buy: " +
+                  (initialPrice && fee
+                    ? Number(
+                        formatUnits(
+                          BigNumber.from(initialPrice)
+                            .mul(100 - Number(fee))
+                            .div(100),
+                          18
+                        )
+                      ).toPrecision(3)
+                    : "—")}
+              </Box>
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle2.fontSize",
+                }}
+              >
+                {"Sell: " +
+                  (initialPrice && fee
+                    ? Number(
+                        formatUnits(
+                          BigNumber.from(initialPrice)
+                            .mul(100 + Number(fee))
+                            .div(100),
+                          18
+                        )
+                      ).toPrecision(3)
+                    : "—")}
+              </Box>
+            </div>
           </div>
+
           {advancedMode && (
             <div>
-              <div className="flex flex-row items-center justify-center">
+              <div className="flex flex-row items-center my-8 justify-center">
                 <Input
                   label="Fee %"
                   type="number"
@@ -333,9 +372,9 @@ export default function DepositTradingPool(props) {
                   onChange={handleFeeChange}
                 />
               </div>
-              <div className="flex flex-col items-center justify-center">
+              <div className="flex flex-col items-center mb-4 justify-center">
                 <Box
-                  className="mt-8 mb-4"
+                  className="mb-4"
                   sx={{
                     fontFamily: "Monospace",
                     fontSize: "subtitle2.fontSize",
@@ -374,7 +413,7 @@ export default function DepositTradingPool(props) {
               </div>
             </div>
           )}
-          <div className="flex flex-row items-center justify-center">
+          <div className="flex flex-row items-center justify-center mt-8 mb-4">
             <Input
               label="ETH Amount"
               type="number"
@@ -579,29 +618,29 @@ export default function DepositTradingPool(props) {
             fee={fee ? fee : "20"}
             initialPrice={initialPrice ? formatUnits(initialPrice, 18) : "0.1"}
           />
-          <Box
-            className="flex mx-4 justify-center items-center border-2 border-black rounded-xl p-2"
-            sx={{
-              fontFamily: "Monospace",
-              fontSize: "subtitle2.fontSize",
-              fontWeight: "bold",
-            }}
-          >
-            <Link
-              href="https://lenft.gitbook.io/lenft-docs/fundamentals/trading-lp-parameters"
-              underline="none"
-              target="_blank"
-              color={"blue"}
-              className="mr-2"
-            >
-              {"LP Gauge Value: "}
-            </Link>
-            {props.gauge != ethers.constants.AddressZero
-              ? Number(formatUnits(lpGaugeValue, 18)).toPrecision(3) + " ETH"
-              : "No gauge for pool"}
-          </Box>
         </div>
       </div>
+      <Box
+        className="flex justify-center m-4 items-center border-2 border-black rounded-xl self-center py-2 px-3 max-w-fit"
+        sx={{
+          fontFamily: "Monospace",
+          fontSize: "subtitle2.fontSize",
+          fontWeight: "bold",
+        }}
+      >
+        <Link
+          href="https://lenft.gitbook.io/lenft-docs/fundamentals/trading-lp-parameters"
+          target="_blank"
+          className="mr-2"
+        >
+          {"LP Gauge Value"}
+        </Link>
+        {props.gauge != ethers.constants.AddressZero
+          ? " = " +
+            Number(formatUnits(lpGaugeValue, 18)).toPrecision(3) +
+            " ETH"
+          : ": No gauge for pool"}
+      </Box>
       <div className="flex flex-row items-center justify-center m-8">
         <Button
           text={

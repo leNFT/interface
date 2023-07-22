@@ -1,4 +1,4 @@
-import styles from "../styles/Home.module.css";
+import CircularProgress from "@mui/material/CircularProgress";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import StyledModal from "../components/StyledModal";
 import { Table } from "@nextui-org/react";
@@ -475,16 +475,17 @@ export default function Lock() {
           <div className="flex flex-col w-full md:flex-row max-w-[100%] justify-center items-center m-4 md:m-8">
             <div className="flex flex-col py-4 px-8 md:mx-8 items-center justify-center text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
               <div className="flex flex-row items-center justify-center">
-                <div className="flex flex-col items-start m-2 mx-4 space-y-2">
-                  <div className="flex flex-col items-start">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "subtitle1.fontSize",
-                      }}
-                    >
-                      Epoch
-                    </Box>
+                <div className="flex flex-col items-center ml-4 mr-8 space-y-6">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle1.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Epoch
+                  </Box>
+                  <Box sx={{ position: "relative" }}>
                     <Box
                       sx={{
                         fontFamily: "Monospace",
@@ -493,7 +494,23 @@ export default function Lock() {
                     >
                       {lockInfo?.epoch}
                     </Box>
-                  </div>
+                    <CircularProgress
+                      variant="determinate"
+                      thickness={6}
+                      value={
+                        ((Math.floor(Date.now() / 1000) % 604800) / 604800) *
+                        100
+                      }
+                      size={80}
+                      sx={{
+                        color: "black",
+                        position: "absolute",
+                        top: -14,
+                        left: -30,
+                        zIndex: 1,
+                      }}
+                    />
+                  </Box>
                 </div>
                 <div className="flex flex-col items-end m-2 border-l-2 border-stone-600 p-6">
                   <div className="flex flex-col items-end text-right mb-4">

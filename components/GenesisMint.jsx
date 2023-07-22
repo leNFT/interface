@@ -101,7 +101,7 @@ export default function GenesisMint(props) {
   }, [props.mintCount]);
 
   useEffect(() => {
-    updateMintInfo();
+    if (amount) updateMintInfo();
   }, [locktimeDays, amount]);
 
   useEffect(() => {
@@ -138,6 +138,7 @@ export default function GenesisMint(props) {
     if (event.target.value == "") {
       setMintIds([]);
       setMintPrice("0");
+      setAmount();
       return;
     }
 
@@ -162,17 +163,19 @@ export default function GenesisMint(props) {
     <div className="flex flex-col w-full items-center">
       <div className="flex flex-col lg:flex-row items-center justify-center m-4 text-center">
         <div className="flex flex-col m-2 lg:mx-8">
-          <Typography variant="subtitle1">Price</Typography>
-          <Typography variant="body18">
+          <Typography variant="body18">Mint Price</Typography>
+          <Typography variant="subtitle1">
             {formatUnits(mintPrice, 18) + " ETH"}
           </Typography>
         </div>
         <div className="flex flex-col m-2 lg:mx-8">
-          <Typography variant="subtitle1">Token ID</Typography>
-          <Typography variant="body18">
-            {amount < 4
-              ? mintIds.toString()
-              : mintIds.slice(0, 2) + "..." + mintIds.slice(-1)}
+          <Typography variant="body18">Token IDs</Typography>
+          <Typography variant="subtitle1">
+            {amount != undefined
+              ? amount < 4
+                ? mintIds.toString()
+                : mintIds.slice(0, 2) + "..." + mintIds.slice(-1)
+              : "—"}
           </Typography>
         </div>
       </div>
@@ -201,15 +204,17 @@ export default function GenesisMint(props) {
           <div className="m-2 md:m-4">
             <Typography variant="body14">Locked LE Rewards</Typography>
             <Typography variant="subtitle2">
-              {formatUnits(rewards, 18) + " LE"}
+              {(amount ? formatUnits(rewards, 18) : "—") + " LE"}
             </Typography>
           </div>
           <div className="m-2 md:m-4">
             <Typography variant="body14">Price</Typography>
             <Typography variant="subtitle2">
-              {Number((amount * 0.15) / formatUnits(rewards, 18)).toPrecision(
-                4
-              ) + " LE/ETH"}
+              {(amount
+                ? Number(
+                    (amount * 0.15) / formatUnits(rewards, 18)
+                  ).toPrecision(4)
+                : "—") + " LE/ETH"}
             </Typography>
           </div>
           <div className="m-2 md:m-4">

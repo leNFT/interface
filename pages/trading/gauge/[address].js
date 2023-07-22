@@ -147,6 +147,15 @@ export default function TradingPoolGauge() {
 
     console.log("previousGaugeRewards", previousGaugeRewards.toString());
 
+    // Get the history
+    const historyResponse = await getGaugeHistory(
+      chain.id,
+      router.query.address
+    );
+    setHistory(historyResponse);
+    setLoadingHistory(false);
+    console.log("historyResponse", historyResponse);
+
     const updateNativeTokenPrice = await getNativeTokenPrice(chain.id);
     console.log("updateNativeTokenPrice", updateNativeTokenPrice);
 
@@ -161,15 +170,6 @@ export default function TradingPoolGauge() {
           .toNumber() * updateNativeTokenPrice
       );
     }
-
-    // Get the history
-    const historyResponse = await getGaugeHistory(
-      chain.id,
-      router.query.address
-    );
-    setHistory(historyResponse);
-    setLoadingHistory(false);
-    console.log("historyResponse", historyResponse);
   }
 
   // Set the rest of the UI when we receive the reserve address

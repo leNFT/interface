@@ -30,11 +30,12 @@ export default function TradingPools() {
 
   async function updateTableData() {
     setLoadingTableData(true);
-    const tradingPools = await getTradingPools(isConnected ? chain.id : 1);
+    const tradingPools = await getTradingPools(chain ? chain.id : 1);
     console.log("TradingPools", tradingPools);
     var newTableData = [];
 
-    const { soon: soonPools, new: newPools } = poolFilters[chain.id];
+    const { soon: soonPools, new: newPools } =
+      poolFilters[chain ? chain.id : 1];
 
     // Initialize the arrays here
     var newPoolsArray = [];

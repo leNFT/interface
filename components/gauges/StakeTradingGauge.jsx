@@ -35,14 +35,7 @@ export default function StakeTradingGauge(props) {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const [lpsValue, setLpsValue] = useState([]);
-  var addresses = contractAddresses[1];
   console.log("props.lpToken", props.lpToken);
-
-  const poolProvider = useContract({
-    contractInterface: tradingPoolContract.abi,
-    addressOrName: props.lpToken,
-    signerOrProvider: provider,
-  });
 
   async function getUserLPs() {
     // Get lp positions
@@ -56,11 +49,17 @@ export default function StakeTradingGauge(props) {
       provider
     );
 
+    const pool = new ethers.Contract(
+      props.lpToken,
+      tradingPoolContract.abi,
+      provider
+    );
+
     // Get lp values
     var newLpsValue = [];
     for (let i = 0; i < addressNFTs.length; i++) {
       console.log("addressNFTs[i].tokenId", addressNFTs[i].tokenId);
-      const lp = await poolProvider.getLP(addressNFTs[i].tokenId);
+      const lp = await pool.getLP(addressNFTs[i].tokenId);
       console.log("lp", lp);
       const lpValue = await gauge.calculateLpValue(
         lp.nftIds.length,

@@ -12,6 +12,8 @@ import { BigNumber } from "@ethersproject/bignumber";
 import StyledModal from "../../../components/StyledModal";
 import { formatUnits, parseUnits } from "@ethersproject/units";
 import { getGaugeHistory } from "../../../helpers/getGaugeHistory.js";
+import { getGauges } from "../../../helpers/getGauges.js";
+import { getEpoch } from "../../../helpers/getEpoch.js";
 import contractAddresses from "../../../contractAddresses.json";
 import votingEscrowContract from "../../../contracts/VotingEscrow.json";
 import gaugeControllerContract from "../../../contracts/GaugeController.json";
@@ -42,7 +44,8 @@ export default function TradingPoolGauge() {
   const { chain } = useNetwork();
   const router = useRouter();
   const { data: signer } = useSigner();
-  const [lpToken, setLPToken] = useState("");
+  const [gaugeInfo, setGaugeInfo] = useState();
+  const [gaugeHistory, setGaugeHistory] = useState([]);
   const [boost, setBoost] = useState(0);
   const [maturityMultiplier, setMaturityMultiplier] = useState(0);
   const [claimableRewards, setClaimableRewards] = useState("0");
@@ -53,26 +56,12 @@ export default function TradingPoolGauge() {
   const [loadingGauge, setLoadingGauge] = useState(false);
   const [clamingLoading, setClaimingLoading] = useState(false);
   const provider = useProvider();
+  loadingGauge;
   const [epoch, setEpoch] = useState(0);
   const [apr, setAPR] = useState("0");
-  const [totalLockedValue, setTotalLockedValue] = useState("0");
   const [userLockedValue, setUserLockedValue] = useState("0");
-  const [history, setHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const dispatch = useNotification();
-
-  var addresses = contractAddresses[1];
-  const votingEscrowProvider = useContract({
-    contractInterface: votingEscrowContract.abi,
-    addressOrName: addresses.VotingEscrow,
-    signerOrProvider: provider,
-  });
-
-  const gaugeControllerProvider = useContract({
-    contractInterface: gaugeControllerContract.abi,
-    addressOrName: addresses.GaugeController,
-    signerOrProvider: provider,
-  });
 
   // Update the UI
   async function updateUI() {
@@ -83,90 +72,82 @@ export default function TradingPoolGauge() {
     );
 
     // Set gauge details
-    const lpTokenResponse = await gauge.getLPToken();
-    setLPToken(lpTokenResponse.toString());
-
-    const boostResponse = await gauge.getUserBoost(address);
-    console.log("boostResponse", boostResponse.toNumber());
-    setBoost(boostResponse.toNumber());
-
-    const maturityMultiplierResponse = await gauge.getUserMaturityMultiplier(
-      address
-    );
-
-    setMaturityMultiplier(maturityMultiplierResponse.toNumber());
-
-    const newUserLockedValue = await gauge.getUserLPValue(address);
-    console.log("newUserLockedValue", newUserLockedValue.toString());
-    setUserLockedValue(newUserLockedValue.toString());
-    console.log("userLockedValue", userLockedValue);
-
-    const stakedLPsBalanceResponse = await gauge.getBalanceOf(address);
-    console.log("stakedLPsBalanceResponse", stakedLPsBalanceResponse);
-    const stakedLPsAmount = stakedLPsBalanceResponse.toNumber();
-
-    // Get staked lp positions
-    const newStakedLps = [];
-
-    for (let i = 0; i < stakedLPsAmount; i++) {
-      const stakedLPResponse = await gauge.getLPOfOwnerByIndex(address, i);
-      const stakedLP = stakedLPResponse.toNumber();
-
-      newStakedLps.push(stakedLP);
-    }
-
-    setStakedLPs(newStakedLps);
-
-    // Get the claimable rewards
-    const updatedClaimableRewards = await gauge.callStatic.claim({
-      from: address,
-    });
-    console.log("updatedClaimableRewards", updatedClaimableRewards);
-    setClaimableRewards(updatedClaimableRewards.toString());
-
-    // Get the current epoch
-    const updatedEpoch = await votingEscrowProvider.getEpoch(
-      Math.floor(Date.now() / 1000)
-    );
-    console.log("updatedEpoch", updatedEpoch.toNumber());
-    setEpoch(updatedEpoch.toNumber());
-
-    // Get the total locked amount
-    const updatedTotalLockedValue = await gauge.getTotalLPValue();
-    console.log("updatedTotalLockedValue", updatedTotalLockedValue.toString());
-    setTotalLockedValue(updatedTotalLockedValue.toString());
-
-    // Get the previous gauge rewards
-    const previousGaugeRewards =
-      await gaugeControllerProvider.callStatic.getGaugeRewards(
-        router.query.address,
-        updatedEpoch.toNumber()
-      );
-
-    console.log("previousGaugeRewards", previousGaugeRewards.toString());
-
-    // Get the history
-    const historyResponse = await getGaugeHistory(
+    const gaugeInfoResponse = await getGauges(
       chain ? chain.id : 1,
       router.query.address
     );
-    setHistory(historyResponse);
+    setGaugeInfo(gaugeInfoResponse);
+    console.log("gaugeInfoResponse", gaugeInfoResponse);
+    const gaugeHistoryResponse = await getGaugeHistory(
+      chain ? chain.id : 1,
+      router.query.address
+    );
+    console.log("gaugeHistoryResponse", gaugeHistoryResponse);
+    setGaugeHistory(gaugeHistoryResponse);
     setLoadingHistory(false);
-    console.log("historyResponse", historyResponse);
+
+    // Only get this part if the user is connected
+    if (isConnected) {
+      const boostResponse = await gauge.getUserBoost(address);
+      console.log("boostResponse", boostResponse.toNumber());
+      setBoost(boostResponse.toNumber());
+
+      const maturityMultiplierResponse = await gauge.getUserMaturityMultiplier(
+        address
+      );
+
+      setMaturityMultiplier(maturityMultiplierResponse.toNumber());
+
+      const newUserLockedValue = await gauge.getUserLPValue(address);
+      console.log("newUserLockedValue", newUserLockedValue.toString());
+      setUserLockedValue(newUserLockedValue.toString());
+      console.log("userLockedValue", userLockedValue);
+
+      const stakedLPsBalanceResponse = await gauge.getBalanceOf(address);
+      console.log("stakedLPsBalanceResponse", stakedLPsBalanceResponse);
+      const stakedLPsAmount = stakedLPsBalanceResponse.toNumber();
+
+      // Get staked lp positions
+      const newStakedLps = [];
+
+      for (let i = 0; i < stakedLPsAmount; i++) {
+        const stakedLPResponse = await gauge.getLPOfOwnerByIndex(address, i);
+        const stakedLP = stakedLPResponse.toNumber();
+
+        newStakedLps.push(stakedLP);
+      }
+
+      setStakedLPs(newStakedLps);
+
+      // Get the claimable rewards
+      const updatedClaimableRewards = await gauge.callStatic.claim({
+        from: address,
+      });
+      console.log("updatedClaimableRewards", updatedClaimableRewards);
+      setClaimableRewards(updatedClaimableRewards.toString());
+    }
+
+    // Get the current epoch
+    const updatedEpoch = getEpoch();
+    console.log("updatedEpoch", updatedEpoch);
+    setEpoch(updatedEpoch);
 
     const updateNativeTokenPrice = await getNativeTokenPrice(
       chain ? chain.id : 1
     );
     console.log("updateNativeTokenPrice", updateNativeTokenPrice);
 
-    if (updatedTotalLockedValue.toString() == "0") {
+    const previousGaugeRewards =
+      gaugeHistoryResponse.length > 0 ? gaugeHistoryResponse[0].rewards : "0";
+
+    if (gaugeInfoResponse.tvl == "0") {
       setAPR(0);
     } else {
       setAPR(
         BigNumber.from(previousGaugeRewards)
           .mul(100)
           .mul(52)
-          .div(updatedTotalLockedValue)
+          .div(gaugeInfoResponse.tvl)
           .toNumber() * updateNativeTokenPrice
       );
     }
@@ -174,9 +155,7 @@ export default function TradingPoolGauge() {
 
   // Set the rest of the UI when we receive the reserve address
   useEffect(() => {
-    if (router.query.address && isConnected && address) {
-      updateUI();
-    }
+    updateUI();
   }, [isConnected, router.query.address, address]);
 
   const handleClaimingSuccess = async function () {
@@ -202,7 +181,7 @@ export default function TradingPoolGauge() {
         <StakeTradingGauge
           setVisibility={setVisibleStakeModal}
           gauge={router.query.address}
-          lpToken={lpToken}
+          lpToken={gaugeInfo?.pool.address}
           updateUI={updateUI}
         />
       </StyledModal>
@@ -218,7 +197,7 @@ export default function TradingPoolGauge() {
         <UnstakeTradingGauge
           setVisibility={setVisibleUnstakeModal}
           gauge={router.query.address}
-          lpToken={lpToken}
+          lpToken={gaugeInfo?.pool.address}
           selectedLP={selectedLP}
           updateUI={updateUI}
         />
@@ -346,8 +325,9 @@ export default function TradingPoolGauge() {
                       fontSize: "subtitle1.fontSize",
                     }}
                   >
-                    {Number(formatUnits(totalLockedValue, 18)).toPrecision(4) +
-                      " ETH"}
+                    {gaugeInfo
+                      ? Number(formatUnits(gaugeInfo.tvl, 18)).toPrecision(4)
+                      : "-" + " ETH"}
                   </Box>
                 </div>
               </div>
@@ -377,7 +357,7 @@ export default function TradingPoolGauge() {
                   <Table.Column width={100}>Rewards</Table.Column>
                 </Table.Header>
                 <Table.Body>
-                  {history.map((data, i) => (
+                  {gaugeHistory.map((data, i) => (
                     <Table.Row key={i}>
                       <Table.Cell>{data.epoch}</Table.Cell>
                       <Table.Cell>{data.stake / 100 + " %"}</Table.Cell>
@@ -392,238 +372,251 @@ export default function TradingPoolGauge() {
             )}
           </div>
         </div>
-        <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">
-          <div className="flex flex-col m-8 lg:mx-16">
-            <div className="flex flex-col items-center p-4 rounded-3xl min-w-[280px] m-2 bg-black/5 shadow-lg">
-              <div className="flex flex-col m-4 rounded-2xl">
-                <div className="flex flex-row m-2">
-                  <div className="flex flex-col">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "h6.fontSize",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      My Gauge Info
-                    </Box>
-                  </div>
-                  <div className="flex flex-col ml-1">
-                    <Tooltip
-                      content="The sum of all your LPs in this pool"
-                      position="top"
-                      minWidth={200}
-                    >
-                      <HelpCircle fontSize="20px" color="#000000" />
-                    </Tooltip>
-                  </div>
-                </div>
-                <div className="flex flex-row m-2 mb-0">
-                  <div className="flex flex-col">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "h5.fontSize",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {stakedLPs.length + " staked LPs"}
-                    </Box>
-                  </div>
-                </div>
-                <div className="flex flex-row mt-0 m-2">
-                  <div className="flex flex-col">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "caption.fontSize",
-                      }}
-                    >
-                      {"worth " + formatUnits(userLockedValue, 18) + " ETH"}
-                    </Box>
-                  </div>
-                </div>
-                <div className="flex flex-col m-2 space-y-1 p-3 border-4 border-slate-400 rounded-lg">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle2.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {boost / 10000 + "x Boost"}
-                  </Box>
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle2.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {maturityMultiplier / 10000 + "x 🕚 Multiplier"}
-                  </Box>
-                </div>
-              </div>
-              <div className="flex flex-row items-center ">
-                <div className="m-4">
-                  <Button
-                    customize={{
-                      backgroundColor: "grey",
-                      fontSize: 20,
-                      textColor: "white",
-                    }}
-                    text="Stake in Gauge"
-                    theme="custom"
-                    size="large"
-                    radius="12"
-                    onClick={async function () {
-                      setVisibleStakeModal(true);
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col items-center rounded-3xl m-2 bg-black/5 shadow-lg">
-              <div className="flex flex-col m-4 rounded-2xl">
-                <div className="flex flex-row m-2">
-                  <div className="flex flex-col">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "h6.fontSize",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Claimable:
-                    </Box>
-                  </div>
-                  <div className="flex flex-col ml-1">
-                    <Tooltip
-                      content="The amount available to claim from this gauge"
-                      position="top"
-                      minWidth={200}
-                    >
-                      <HelpCircle fontSize="20px" color="#000000" />
-                    </Tooltip>
-                  </div>
-                </div>
-                <div className="flex flex-row m-2">
-                  <div className="flex flex-col">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "h6.fontSize",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {Number(formatUnits(claimableRewards, 18)).toFixed(2) +
-                        " LE"}
-                    </Box>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-row items-center ">
-                <div className="mb-4">
-                  <Button
-                    customize={{
-                      backgroundColor: "grey",
-                      fontSize: 20,
-                      textColor: "white",
-                    }}
-                    text="Claim"
-                    theme="custom"
-                    size="large"
-                    radius="12"
-                    loadingProps={{
-                      spinnerColor: "#000000",
-                      spinnerType: "loader",
-                      direction: "right",
-                      size: "24",
-                    }}
-                    disabled={BigNumber.from(claimableRewards).eq(0)}
-                    loadingText=""
-                    isLoading={clamingLoading}
-                    onClick={async function () {
-                      const gauge = new ethers.Contract(
-                        router.query.address,
-                        tradingGaugeContract.abi,
-                        signer
-                      );
-                      try {
-                        setClaimingLoading(true);
-                        console.log("signer.", signer);
-                        const tx = await gauge.claim();
-                        await tx.wait(1);
-                        handleClaimingSuccess();
-                      } catch (error) {
-                        console.log(error);
-                      } finally {
-                        setClaimingLoading(false);
-                      }
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col border-4 border-slate-400 rounded-2xl p-8 m-8 lg:py-16 lg:px-16">
-            {loadingGauge ? (
-              <div className="flex m-4">
-                <Loading size={12} spinnerColor="#000000" />
-              </div>
-            ) : (
-              <div>
-                {stakedLPs.length == 0 ? (
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle1.fontSize",
-                    }}
-                  >
-                    <div>{"No LP Positions staked in this gauge."}</div>
-                  </Box>
-                ) : (
-                  <div className="grid auto-cols-auto gap-2">
-                    {stakedLPs.map((data) => (
-                      <div
-                        key={data}
-                        className="flex m-4 items-center justify-center max-w-[300px]"
+        {isConnected ? (
+          <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">
+            <div className="flex flex-col m-8 lg:mx-16">
+              <div className="flex flex-col items-center p-4 rounded-3xl min-w-[280px] m-2 bg-black/5 shadow-lg">
+                <div className="flex flex-col m-4 rounded-2xl">
+                  <div className="flex flex-row m-2">
+                    <div className="flex flex-col">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "h6.fontSize",
+                          fontWeight: "bold",
+                        }}
                       >
-                        <Card
-                          sx={{
-                            borderRadius: 4,
-                            background:
-                              "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
-                          }}
+                        My Gauge Info
+                      </Box>
+                    </div>
+                    <div className="flex flex-col ml-1">
+                      <Tooltip
+                        content="The sum of all your LPs in this pool"
+                        position="top"
+                        minWidth={200}
+                      >
+                        <HelpCircle fontSize="20px" color="#000000" />
+                      </Tooltip>
+                    </div>
+                  </div>
+                  <div className="flex flex-row m-2 mb-0">
+                    <div className="flex flex-col">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "h5.fontSize",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {stakedLPs.length + " staked LPs"}
+                      </Box>
+                    </div>
+                  </div>
+                  <div className="flex flex-row mt-0 m-2">
+                    <div className="flex flex-col">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "caption.fontSize",
+                        }}
+                      >
+                        {"worth " + formatUnits(userLockedValue, 18) + " ETH"}
+                      </Box>
+                    </div>
+                  </div>
+                  <div className="flex flex-col m-2 space-y-1 p-3 border-4 border-slate-400 rounded-lg">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle2.fontSize",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {boost / 10000 + "x Boost"}
+                    </Box>
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle2.fontSize",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {maturityMultiplier / 10000 + "x 🕚 Multiplier"}
+                    </Box>
+                  </div>
+                </div>
+                <div className="flex flex-row items-center ">
+                  <div className="m-4">
+                    <Button
+                      customize={{
+                        backgroundColor: "grey",
+                        fontSize: 20,
+                        textColor: "white",
+                      }}
+                      text="Stake in Gauge"
+                      theme="custom"
+                      size="large"
+                      radius="12"
+                      onClick={async function () {
+                        setVisibleStakeModal(true);
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col items-center rounded-3xl m-2 bg-black/5 shadow-lg">
+                <div className="flex flex-col m-4 rounded-2xl">
+                  <div className="flex flex-row m-2">
+                    <div className="flex flex-col">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "h6.fontSize",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Claimable:
+                      </Box>
+                    </div>
+                    <div className="flex flex-col ml-1">
+                      <Tooltip
+                        content="The amount available to claim from this gauge"
+                        position="top"
+                        minWidth={200}
+                      >
+                        <HelpCircle fontSize="20px" color="#000000" />
+                      </Tooltip>
+                    </div>
+                  </div>
+                  <div className="flex flex-row m-2">
+                    <div className="flex flex-col">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "h6.fontSize",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {Number(formatUnits(claimableRewards, 18)).toFixed(2) +
+                          " LE"}
+                      </Box>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-row items-center ">
+                  <div className="mb-4">
+                    <Button
+                      customize={{
+                        backgroundColor: "grey",
+                        fontSize: 20,
+                        textColor: "white",
+                      }}
+                      text="Claim"
+                      theme="custom"
+                      size="large"
+                      radius="12"
+                      loadingProps={{
+                        spinnerColor: "#000000",
+                        spinnerType: "loader",
+                        direction: "right",
+                        size: "24",
+                      }}
+                      disabled={BigNumber.from(claimableRewards).eq(0)}
+                      loadingText=""
+                      isLoading={clamingLoading}
+                      onClick={async function () {
+                        const gauge = new ethers.Contract(
+                          router.query.address,
+                          tradingGaugeContract.abi,
+                          signer
+                        );
+                        try {
+                          setClaimingLoading(true);
+                          console.log("signer.", signer);
+                          const tx = await gauge.claim();
+                          await tx.wait(1);
+                          handleClaimingSuccess();
+                        } catch (error) {
+                          console.log(error);
+                        } finally {
+                          setClaimingLoading(false);
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col border-4 border-slate-400 rounded-2xl p-8 m-8 lg:py-16 lg:px-16">
+              {loadingGauge ? (
+                <div className="flex m-4">
+                  <Loading size={12} spinnerColor="#000000" />
+                </div>
+              ) : (
+                <div>
+                  {stakedLPs.length == 0 ? (
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                      }}
+                    >
+                      <div>{"No LP Positions staked in this gauge."}</div>
+                    </Box>
+                  ) : (
+                    <div className="grid auto-cols-auto gap-2">
+                      {stakedLPs.map((data) => (
+                        <div
+                          key={data}
+                          className="flex m-4 items-center justify-center max-w-[300px]"
                         >
-                          <CardActionArea
-                            onClick={function () {
-                              setSelectedLP(data);
-                              setVisibleUnstakeModal(true);
+                          <Card
+                            sx={{
+                              borderRadius: 4,
+                              background:
+                                "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
                             }}
                           >
-                            <Box
-                              sx={{
-                                fontFamily: "Monospace",
-                                fontSize: "subtitle1.fontSize",
+                            <CardActionArea
+                              onClick={function () {
+                                setSelectedLP(data);
+                                setVisibleUnstakeModal(true);
                               }}
-                              className="p-4"
                             >
-                              <div className="flex flex-col mt-2 items-center text-center">
-                                <div>{"LP Position"}</div>
-                                <div>{"#" + data}</div>
-                              </div>
-                            </Box>
-                          </CardActionArea>
-                        </Card>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+                              <Box
+                                sx={{
+                                  fontFamily: "Monospace",
+                                  fontSize: "subtitle1.fontSize",
+                                }}
+                                className="p-4"
+                              >
+                                <div className="flex flex-col mt-2 items-center text-center">
+                                  <div>{"LP Position"}</div>
+                                  <div>{"#" + data}</div>
+                                </div>
+                              </Box>
+                            </CardActionArea>
+                          </Card>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex justify-center m-8 lg:m-16">
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle1.fontSize",
+              }}
+            >
+              {"Please connect your wallet to stake in this gauge."}
+            </Box>
+          </div>
+        )}
       </div>
     </div>
   );

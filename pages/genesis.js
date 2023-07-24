@@ -39,16 +39,10 @@ export default function Genesis() {
   const dispatch = useNotification();
   var addresses = contractAddresses[1];
 
-  const genesisNFTProvider = useContract({
-    contractInterface: genesisNFTContract.abi,
-    addressOrName: addresses.GenesisNFT,
-    signerOrProvider: provider,
-  });
-
   async function updateGenesisInfo() {
     setPrice(parseUnits("0.25", 18));
     // Get supply
-    const updatedMintCount = await getGenesisMintCount(chain.id);
+    const updatedMintCount = await getGenesisMintCount(chain ? chain.id : 1);
     console.log("MintCount", updatedMintCount);
     setMintCount(updatedMintCount);
     // Get cap
@@ -67,13 +61,11 @@ export default function Genesis() {
 
   async function updateUI() {
     updateGenesisInfo();
-    updateGenesisWallet();
+    if (address) updateGenesisWallet();
   }
 
   useEffect(() => {
-    if (isConnected) {
-      updateUI();
-    }
+    updateUI();
   }, [isConnected, address, chain]);
 
   return (

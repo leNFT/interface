@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import gaugesFilters from "../filters/gauges.json";
 
-export async function getGauges(chainId) {
+export async function getGauges(chainId, gauge) {
   const serverAddress = "https://api-h6nqa.ondigitalocean.app";
   const options = {
     method: "GET",
@@ -10,10 +10,15 @@ export async function getGauges(chainId) {
     },
   };
 
-  console.log(serverAddress + "/gauges?chainId=" + chainId);
+  var gaugeURLString = "";
+  if (gauge) {
+    gaugeURLString = "&gauge=" + gauge;
+  }
+
+  console.log(serverAddress + "/gauges?chainId=" + chainId + gaugeURLString);
 
   const gaugesResponse = await fetch(
-    serverAddress + "/gauges?chainId=" + chainId,
+    serverAddress + "/gauges?chainId=" + chainId + gaugeURLString,
     options
   ).catch((err) => console.error(err));
   var gauges;

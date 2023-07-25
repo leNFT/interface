@@ -71,9 +71,9 @@ export default function TradingPools() {
     }
 
     var newTableData = [
+      ...otherPoolsArray,
       ...newPoolsArray,
       ...soonPoolsArray,
-      ...otherPoolsArray,
     ];
 
     setTableData(newTableData);

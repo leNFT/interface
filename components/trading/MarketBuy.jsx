@@ -26,7 +26,7 @@ import Chip from "@mui/material/Chip";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { CardActionArea } from "@mui/material";
-import { formatUnits } from "@ethersproject/units";
+import { formatUnits, parseUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
 import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
@@ -665,7 +665,8 @@ export default function Buy() {
               });
               return;
             }
-            if (priceQuote.price > ethBalance) {
+            if (BigNumber.from(priceQuote.price).gt(ethBalance.value)) {
+              console.log("Not enough ETH");
               dispatch({
                 type: "info",
                 message: "You don't have enough ETH",

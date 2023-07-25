@@ -361,7 +361,11 @@ export default function Buy() {
               });
               return;
             }
-            if (price * amount > ethBalance) {
+            if (
+              BigNumber.from(
+                BigNumber.from(parseUnits(price, 18)).mul(amount)
+              ).gt(ethBalance.value)
+            ) {
               dispatch({
                 type: "info",
                 message: "You don't have enough ETH",

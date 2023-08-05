@@ -7,6 +7,7 @@ const StyledModal = styled(Modal)`
     rgba(240, 230, 245, 0.95),
     rgba(253, 241, 233, 0.95)
   );
+  z-index: 10;
 
   span,
   h2 {

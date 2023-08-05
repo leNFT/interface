@@ -621,7 +621,7 @@ export default function DepositTradingPool(props) {
         </div>
       </div>
       <Box
-        className="flex justify-center m-4 items-center border-2 border-black rounded-xl self-center py-2 px-3 max-w-fit"
+        className="flex flex-col m-4 border-2 border-black rounded-xl self-center py-2 px-3 max-w-fit"
         sx={{
           fontFamily: "Monospace",
           fontSize: "subtitle2.fontSize",
@@ -633,13 +633,11 @@ export default function DepositTradingPool(props) {
           target="_blank"
           className="mr-2"
         >
-          {"LP Gauge Value"}
+          {"LP Gauge Value "}
         </Link>
         {props.gauge != ethers.constants.AddressZero
-          ? " = " +
-            Number(formatUnits(lpGaugeValue, 18)).toPrecision(3) +
-            " ETH"
-          : ": No gauge for pool"}
+          ? Number(formatUnits(lpGaugeValue, 18)).toPrecision(3) + " ETH"
+          : "No gauge for pool"}
       </Box>
       <div className="flex flex-row items-center justify-center m-8">
         <Button

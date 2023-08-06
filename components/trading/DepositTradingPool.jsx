@@ -494,7 +494,7 @@ export default function DepositTradingPool(props) {
                     fontWeight: "bold",
                   }}
                 >
-                  {"Beware: Deposited NFTs may be sold or swapped in the pool."}
+                  {"Beware: Deposited NFTs may be sold or swapped by the pool."}
                 </Box>
                 <div className="flex flex-row grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {userNFTs.map((nft, _) => (

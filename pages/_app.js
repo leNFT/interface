@@ -1,3 +1,4 @@
+import Script from "next/script";
 import "../styles/globals.css";
 import Layout from "../components/layout";
 import SplashLayout from "../components/splashLayout";
@@ -50,13 +51,25 @@ function MyApp({ Component, pageProps }) {
             overlayBlur: "large",
           })}
         >
-          <script
+          <Script
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=G-1T8JPML519"
+          ></Script>
+          <Script>
+            {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-1T8JPML519');
+            `}
+          </Script>
+          <Script
             defer
-            type="text/javascript"
             src="https://api.pirsch.io/pirsch.js"
             id="pirschjs"
             data-code="e2QT8Re8oVzu1JJr0Nxf7hsXT3Psu0JF"
-          />
+          ></Script>
           <LayoutComponent>
             <Component {...pageProps}></Component>
           </LayoutComponent>

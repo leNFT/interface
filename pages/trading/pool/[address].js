@@ -176,8 +176,8 @@ export default function TradingPool() {
           updateUI={updateUI}
         />
       </StyledModal>
-      <div className="flex flex-row w-full justify-between">
-        <div className="flex flex-col justify-center mr-8">
+      <div className="flex flex-row w-full">
+        <div className="flex flex-col justify-center">
           <Button
             size="small"
             color="#eae5ea"
@@ -190,7 +190,7 @@ export default function TradingPool() {
             }}
           />
         </div>
-        <div className="flex flex-row justify-center break-all items-center text-center mx-4">
+        <div className="flex flex-row w-full justify-center break-all items-center text-center mx-4">
           <Box
             sx={{
               fontFamily: "Monospace",
@@ -222,21 +222,6 @@ export default function TradingPool() {
               }
             }}
           />
-        </div>
-        <div className="flex flex-col justify-center">
-          {poolInfo?.gauge &&
-            poolInfo?.gauge != ethers.constants.AddressZero && (
-              <Button
-                color="blue"
-                theme="colored"
-                text="Go to Gauge"
-                onClick={async function () {
-                  Router.push({
-                    pathname: "/trading/gauge/" + poolInfo?.gauge,
-                  });
-                }}
-              />
-            )}
         </div>
       </div>
       <div className="flex flex-col xl:flex-row w-fit xl:w-10/12 justify-between items-center p-8 rounded-3xl my-8 md:m-8 lg:mx-16 bg-black/5 shadow-lg">
@@ -300,88 +285,128 @@ export default function TradingPool() {
                 poolInfo?.token.name}
           </Box>
         </div>
-        <div className="flex flex-col sm:flex-row justify-center items-center sm:space-x-8 space-y-2 sm:space-y-0 mt-4 mx-2 p-6 border-2 rounded-3xl border-black">
-          <div className="flex flex-col border-r-2 sm:pr-8 md:border-black justify-center items-center space-y-1 text-center">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: {
-                  xs: "subtitle2.fontSize",
-                  sm: "h6.fontSize",
-                },
-                fontWeight: "bold",
-              }}
-            >
-              Buy Price
-            </Box>
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: {
-                  xs: "subtitle2.fontSize",
-                  sm: "subtitle1.fontSize",
-                },
-              }}
-            >
-              {(price
-                ? Number(formatUnits(price.buyPrice, 18)).toFixed(6)
-                : "0.00") + " ETH"}
-            </Box>
+        <div className="flex justify-center xl:w-2/3">
+          <div className="flex flex-col sm:flex-row justify-center items-center sm:space-x-8 space-y-2 sm:space-y-0 my-4 mx-2 p-6 border-2 rounded-3xl border-black">
+            <div className="flex flex-col border-r-2 sm:pr-8 md:border-black justify-center items-center space-y-1 text-center">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: {
+                    xs: "subtitle2.fontSize",
+                    sm: "h6.fontSize",
+                  },
+                  fontWeight: "bold",
+                }}
+              >
+                Buy Price
+              </Box>
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: {
+                    xs: "subtitle2.fontSize",
+                    sm: "subtitle1.fontSize",
+                  },
+                }}
+              >
+                {(price
+                  ? Number(formatUnits(price.buyPrice, 18)).toFixed(6)
+                  : "0.00") + " ETH"}
+              </Box>
+            </div>
+            <div className="flex flex-col border-r-2 sm:pr-8 space-y-1 md:border-black justify-center items-center text-center">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: {
+                    xs: "subtitle2.fontSize",
+                    sm: "h6.fontSize",
+                  },
+                  fontWeight: "bold",
+                }}
+              >
+                Sell Price
+              </Box>
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: {
+                    xs: "subtitle2.fontSize",
+                    sm: "subtitle1.fontSize",
+                  },
+                }}
+              >
+                {(price
+                  ? Number(formatUnits(price.sellPrice, 18)).toFixed(6)
+                  : "0.00") + " ETH"}
+              </Box>
+            </div>
+            <div className="flex flex-col justify-center items-center space-y-1 text-center">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: {
+                    xs: "subtitle2.fontSize",
+                    sm: "h6.fontSize",
+                  },
+                  fontWeight: "bold",
+                }}
+              >
+                Volume
+              </Box>
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: {
+                    xs: "subtitle2.fontSize",
+                    sm: "subtitle1.fontSize",
+                  },
+                }}
+              >
+                {(poolInfo
+                  ? Number(formatUnits(poolInfo.volume, 18)).toFixed(3)
+                  : "0.00") + " ETH"}
+              </Box>
+            </div>
           </div>
-          <div className="flex flex-col border-r-2 sm:pr-8 space-y-1 md:border-black justify-center items-center text-center">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: {
-                  xs: "subtitle2.fontSize",
-                  sm: "h6.fontSize",
-                },
-                fontWeight: "bold",
-              }}
-            >
-              Sell Price
-            </Box>
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: {
-                  xs: "subtitle2.fontSize",
-                  sm: "subtitle1.fontSize",
-                },
-              }}
-            >
-              {(price
-                ? Number(formatUnits(price.sellPrice, 18)).toFixed(6)
-                : "0.00") + " ETH"}
-            </Box>
-          </div>
-          <div className="flex flex-col justify-center items-center space-y-1 text-center">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: {
-                  xs: "subtitle2.fontSize",
-                  sm: "h6.fontSize",
-                },
-                fontWeight: "bold",
-              }}
-            >
-              Volume
-            </Box>
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: {
-                  xs: "subtitle2.fontSize",
-                  sm: "subtitle1.fontSize",
-                },
-              }}
-            >
-              {(poolInfo
-                ? Number(formatUnits(poolInfo.volume, 18)).toFixed(3)
-                : "0.00") + " ETH"}
-            </Box>
-          </div>
+        </div>
+        <div className="flex xl:flex-col mt-4 xl:mt-0 space-x-4 xl:space-x-0 xl:space-y-8 justify-center items-center">
+          <Button
+            customize={{
+              backgroundColor: "grey",
+              fontSize: 18,
+              textColor: "white",
+            }}
+            text="Trade"
+            theme="custom"
+            size="large"
+            radius="14"
+            onClick={async function () {
+              Router.push({
+                pathname: "/trade",
+                query: { address: poolInfo?.nft.address },
+              });
+            }}
+          />
+          {poolInfo?.gauge &&
+            poolInfo?.gauge != ethers.constants.AddressZero && (
+              <Button
+                customize={{
+                  backgroundColor: "grey",
+                  fontSize: 18,
+                  textColor: "white",
+                }}
+                text="Gauge"
+                theme="custom"
+                size="large"
+                radius="14"
+                onClick={async function () {
+                  Router.push({
+                    pathname: "/trading/gauge/" + poolInfo?.gauge,
+                  });
+                }}
+              />
+            )}
         </div>
       </div>
       <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl my-8 md:m-8 lg:mx-16 !mt-8 bg-black/5 shadow-lg">

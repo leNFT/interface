@@ -6,11 +6,9 @@ import { getAddressNFTs } from "../../helpers/getAddressNFTs.js";
 import { getTradingNFTCollections } from "../../helpers/getTradingNFTCollections.js";
 import { getNFTImage } from "../../helpers/getNFTImage.js";
 import { ethers } from "ethers";
+import { useRouter } from "next/router";
 import Chip from "@mui/material/Chip";
-import { getTradingPoolHistory } from "../../helpers/getTradingPoolHistory.js";
 import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import { Table } from "@nextui-org/react";
 import Image from "next/image";
 import { CardActionArea } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -30,11 +28,10 @@ import { Divider } from "@mui/material";
 import Box from "@mui/material/Box";
 import erc721 from "../../contracts/erc721.json";
 import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json";
-import tradingPoolContract from "../../contracts/TradingPool.json";
 import wethGateway from "../../contracts/WETHGateway.json";
-import * as timeago from "timeago.js";
 
 export default function Sell() {
+  const router = useRouter();
   const provider = useProvider();
   const [tradingCollections, setTradingCollections] = useState([]);
   const { chain } = useNetwork();
@@ -160,6 +157,15 @@ export default function Sell() {
 
     addresses = contractAddresses[chain];
     getTradingCollections(chain);
+
+    // Get address from the URL
+    const addressFromUrl = router.query.address;
+
+    if (addressFromUrl) {
+      // Here you can call your handle function with the address
+      handleNFTAddressChange(null, addressFromUrl);
+      console.log("addressFromUrl", addressFromUrl);
+    }
 
     console.log("useEffect called");
   }, [isConnected, chain]);
@@ -289,6 +295,7 @@ export default function Sell() {
       <div className="flex flex-col m-4">
         <div className="flex flex-row items-center space-x-2 mx-2">
           <Autocomplete
+            value={nftName}
             autoComplete
             freeSolo
             disablePortal

@@ -1,4 +1,4 @@
-import { useNotification, Typography } from "@web3uikit/core";
+import { useNotification } from "@web3uikit/core";
 import contractAddresses from "../../contractAddresses.json";
 import {
   useAccount,
@@ -8,9 +8,8 @@ import {
   useSigner,
   useProvider,
 } from "wagmi";
-import { Table } from "@nextui-org/react";
+import { useRouter } from "next/router";
 import { ethers } from "ethers";
-import { getTradingPoolHistory } from "../../helpers/getTradingPoolHistory.js";
 import Image from "next/image";
 import erc20 from "../../contracts/erc20.json";
 import erc721 from "../../contracts/erc721.json";
@@ -24,9 +23,8 @@ import { getNFTImage } from "../../helpers/getNFTImage.js";
 import { getBuyExactQuote } from "../../helpers/getBuyExactQuote.js";
 import Chip from "@mui/material/Chip";
 import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import { CardActionArea } from "@mui/material";
-import { formatUnits, parseUnits } from "@ethersproject/units";
+import { formatUnits } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
 import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
@@ -34,10 +32,9 @@ import { Button, Spinner } from "grommet";
 import { Divider } from "@mui/material";
 import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json";
 import wethGateway from "../../contracts/WETHGateway.json";
-import * as timeago from "timeago.js";
-import is from "sharp/lib/is";
 
 export default function Buy() {
+  const router = useRouter();
   const { chain } = useNetwork();
   const { address, isConnected } = useAccount();
   const provider = useProvider();
@@ -211,6 +208,15 @@ export default function Buy() {
     addresses = contractAddresses[chain];
     getTradingCollections(chain);
 
+    // Get address from the URL
+    const addressFromUrl = router.query.address;
+
+    if (addressFromUrl) {
+      // Here you can call your handle function with the address
+      handleNFTAddressChange(null, addressFromUrl);
+      console.log("addressFromUrl", addressFromUrl);
+    }
+
     console.log("useEffect called");
   }, [isConnected, chain]);
 
@@ -302,6 +308,7 @@ export default function Buy() {
       <div className="flex flex-col m-4">
         <div className="flex flex-row justify-center items-center mx-2">
           <Autocomplete
+            value={nftName}
             autoComplete
             freeSolo
             disablePortal

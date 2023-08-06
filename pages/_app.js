@@ -55,7 +55,7 @@ function MyApp({ Component, pageProps }) {
             async
             src="https://www.googletagmanager.com/gtag/js?id=G-1T8JPML519"
           ></Script>
-          <Script>
+          <Script id="gtag-init">
             {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}

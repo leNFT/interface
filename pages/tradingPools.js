@@ -35,7 +35,6 @@ export default function TradingPools() {
     const { soon: soonPools, new: newPools } =
       poolFilters[chain ? chain.id : 1];
 
-    // Initialize the arrays here
     var newPoolsArray = [];
     var otherPoolsArray = [];
     var soonPoolsArray = [];
@@ -70,11 +69,18 @@ export default function TradingPools() {
       }
     }
 
-    var newTableData = [
-      ...otherPoolsArray,
-      ...newPoolsArray,
-      ...soonPoolsArray,
-    ];
+    // Concatenating the new and other pools arrays
+    var combinedPoolsArray = [...newPoolsArray, ...otherPoolsArray];
+
+    // Sorting the combined array by volume in descending order
+    combinedPoolsArray.sort((a, b) => {
+      return (
+        Number(tradingPools[b.poolAddress].token.amount) -
+        Number(tradingPools[a.poolAddress].token.amount)
+      );
+    });
+
+    newTableData = [...combinedPoolsArray, ...soonPoolsArray];
 
     setTableData(newTableData);
   }

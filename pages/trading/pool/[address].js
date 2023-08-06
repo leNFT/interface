@@ -370,7 +370,7 @@ export default function TradingPool() {
             </div>
           </div>
         </div>
-        <div className="flex xl:flex-col mt-4 xl:mt-0 space-x-4 xl:space-x-0 xl:space-y-8 justify-center items-center">
+        <div className="flex xl:flex-col mt-4 xl:mt-0 space-x-4 xl:space-x-0 xl:space-y-6 justify-center items-center">
           <Button
             customize={{
               backgroundColor: "grey",

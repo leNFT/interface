@@ -224,8 +224,8 @@ export default function TradingPool() {
           />
         </div>
       </div>
-      <div className="flex flex-col xl:flex-row w-fit xl:w-10/12 justify-between items-center p-8 rounded-3xl my-8 md:m-8 lg:mx-16 bg-black/5 shadow-lg">
-        <div className="flex flex-col justify-center items-center xl:items-start">
+      <div className="flex flex-col 2xl:flex-row w-fit 2xl:w-10/12 justify-between items-center p-8 rounded-3xl my-8 md:m-8 lg:mx-16 bg-black/5 shadow-lg">
+        <div className="flex flex-col justify-center xl:w-1/3 items-center 2xl:items-start">
           <div className="flex flex-row justify-center items-center">
             <Box
               className="m-2"
@@ -285,7 +285,7 @@ export default function TradingPool() {
                 poolInfo?.token.name}
           </Box>
         </div>
-        <div className="flex justify-center xl:w-2/3">
+        <div className="flex justify-center 2xl:w-2/3">
           <div className="flex flex-col sm:flex-row justify-center items-center sm:space-x-8 space-y-2 sm:space-y-0 my-4 mx-2 p-6 border-2 rounded-3xl border-black">
             <div className="flex flex-col border-r-2 sm:pr-8 md:border-black justify-center items-center space-y-1 text-center">
               <Box
@@ -370,43 +370,45 @@ export default function TradingPool() {
             </div>
           </div>
         </div>
-        <div className="flex xl:flex-col mt-4 xl:mt-0 space-x-4 xl:space-x-0 xl:space-y-6 justify-center items-center">
-          <Button
-            customize={{
-              backgroundColor: "grey",
-              fontSize: 18,
-              textColor: "white",
-            }}
-            text="Trade"
-            theme="custom"
-            size="large"
-            radius="14"
-            onClick={async function () {
-              Router.push({
-                pathname: "/trade",
-                query: { address: poolInfo?.nft.address },
-              });
-            }}
-          />
-          {poolInfo?.gauge &&
-            poolInfo?.gauge != ethers.constants.AddressZero && (
-              <Button
-                customize={{
-                  backgroundColor: "grey",
-                  fontSize: 18,
-                  textColor: "white",
-                }}
-                text="Gauge"
-                theme="custom"
-                size="large"
-                radius="14"
-                onClick={async function () {
-                  Router.push({
-                    pathname: "/trading/gauge/" + poolInfo?.gauge,
-                  });
-                }}
-              />
-            )}
+        <div className="flex justify-end 2xl:w-1/3">
+          <div className="flex 2xl:flex-col mt-4 2xl:mt-0 w-fit space-x-4 2xl:space-x-0 2xl:space-y-6 items-center justify-center">
+            <Button
+              customize={{
+                backgroundColor: "grey",
+                fontSize: 18,
+                textColor: "white",
+              }}
+              text="Trade"
+              theme="custom"
+              size="large"
+              radius="14"
+              onClick={async function () {
+                Router.push({
+                  pathname: "/trade",
+                  query: { address: poolInfo?.nft.address },
+                });
+              }}
+            />
+            {poolInfo?.gauge &&
+              poolInfo?.gauge != ethers.constants.AddressZero && (
+                <Button
+                  customize={{
+                    backgroundColor: "grey",
+                    fontSize: 18,
+                    textColor: "white",
+                  }}
+                  text="Gauge"
+                  theme="custom"
+                  size="large"
+                  radius="14"
+                  onClick={async function () {
+                    Router.push({
+                      pathname: "/trading/gauge/" + poolInfo?.gauge,
+                    });
+                  }}
+                />
+              )}
+          </div>
         </div>
       </div>
       <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl my-8 md:m-8 lg:mx-16 !mt-8 bg-black/5 shadow-lg">

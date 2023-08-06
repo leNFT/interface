@@ -208,7 +208,7 @@ export default function TradingPool() {
             iconLayout="icon-only"
             icon={<ExternalLink fontSize="20px" />}
             onClick={async function (_event) {
-              if (chain.id == 1) {
+              if (!chain || chain.id == 1) {
                 window.open(
                   "https://etherscan.io/address/" + router.query.address,
                   "_blank"

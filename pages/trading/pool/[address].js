@@ -46,7 +46,6 @@ export default function TradingPool() {
     addressOrName: address,
   });
   const provider = useProvider();
-  var addresses = contractAddresses[1];
   async function updateUI() {
     const pool = new ethers.Contract(
       router.query.address,
@@ -224,7 +223,14 @@ export default function TradingPool() {
           />
         </div>
       </div>
-      <div className="flex flex-col 2xl:flex-row w-fit 2xl:w-10/12 justify-between items-center p-8 rounded-3xl my-8 md:m-8 lg:mx-16 bg-black/5 shadow-lg">
+      <div
+        className="flex flex-col 2xl:flex-row w-fit 2xl:w-10/12 justify-between items-center p-8 rounded-3xl my-8 md:m-8 lg:mx-16 bg-black/5 shadow-lg"
+        style={{
+          backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92)), url('${poolInfo?.nft.image}')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
         <div className="flex flex-col justify-center xl:w-1/3 items-center 2xl:items-start">
           <div className="flex flex-row justify-center items-center">
             <Box
@@ -286,7 +292,12 @@ export default function TradingPool() {
           </Box>
         </div>
         <div className="flex justify-center 2xl:w-2/3">
-          <div className="flex flex-col sm:flex-row justify-center items-center sm:space-x-8 space-y-2 sm:space-y-0 my-4 mx-2 p-6 border-2 rounded-3xl border-black">
+          <div
+            className="flex flex-col sm:flex-row justify-center items-center sm:space-x-8 space-y-2 sm:space-y-0 my-4 mx-2 p-6 border-2 rounded-3xl border-black"
+            style={{
+              backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7))`,
+            }}
+          >
             <div className="flex flex-col border-r-2 sm:pr-8 md:border-black justify-center items-center space-y-1 text-center">
               <Box
                 sx={{

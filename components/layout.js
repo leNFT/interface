@@ -39,7 +39,7 @@ export default function Layout({ children }) {
       </Head>
       <HeaderController />
       <main>
-        <div className={styles.container}>
+        <div>
           {isConnected && !supportedChains.includes(chain.id) ? (
             <div className={styles.mainInfo}>
               <Typography variant="h1">Chain ID not supported</Typography>

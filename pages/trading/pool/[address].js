@@ -422,8 +422,8 @@ export default function TradingPool() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl my-8 md:m-8 lg:mx-16 !mt-8 bg-black/5 shadow-lg">
-        <div className="flex flex-col items-center p-4 rounded-3xl m-8 lg:m-16 bg-black/5 shadow-lg">
+      <div className="flex flex-col space-y-8 md:space-x-8 md:space-y-0 md:flex-row items-center justify-center rounded-3xl mx-2 my-8 md:m-8 lg:mx-16 !mt-8">
+        <div className="flex flex-col items-center p-4 rounded-3xl bg-black/5 shadow-lg">
           <div className="flex flex-col m-4 rounded-2xl">
             <div className="flex flex-row m-2">
               <div className="flex flex-col">
@@ -474,7 +474,7 @@ export default function TradingPool() {
                   fontWeight: "bold",
                 }}
               >
-                {Number(formatUnits(totalTokenAmount, 18)).toPrecision(4) +
+                {Number(formatUnits(totalTokenAmount, 18)).toPrecision(3) +
                   " ETH"}
               </Box>
               <Box

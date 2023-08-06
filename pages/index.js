@@ -62,7 +62,7 @@ export default function Home() {
         <div className={styles.main}>
           <div className={styles.indexDescribe}>
             <div className={styles.indexDescribeTitle}>
-              {"liquidity + NFTs = <3"}
+              {"NFTs + liquidity = <3"}
             </div>
             <div className="flex flex-col md:flex-row justify-start items-center m-8">
               <Link href="/trade">

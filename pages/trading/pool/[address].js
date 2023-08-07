@@ -9,6 +9,7 @@ import StyledModal from "../../../components/StyledModal";
 import { formatUnits } from "@ethersproject/units";
 import { getAddressNFTs } from "../../../helpers/getAddressNFTs.js";
 import { getTradingPools } from "../../../helpers/getTradingPools.js";
+import { getNFTImage } from "../../../helpers/getNFTImage.js";
 import contractAddresses from "../../../contractAddresses.json";
 import tradingPoolContract from "../../../contracts/TradingPool.json";
 import DepositTradingPool from "../../../components/trading/DepositTradingPool";
@@ -91,7 +92,11 @@ export default function TradingPool() {
         });
 
         const lp = await pool.getLP(addressNFTs[i].tokenId);
-        console.log("lp", lp);
+        newLpPositions[newLpPositions.length - 1].image = await getNFTImage(
+          poolInfo.nft.address,
+          lp.nftIds[0],
+          chain ? chain.id : 1
+        );
         newTotalNFTs += lp.nftIds.length;
         newTotalTokenAmount = BigNumber.from(lp.tokenAmount)
           .add(newTotalTokenAmount)
@@ -101,7 +106,7 @@ export default function TradingPool() {
       setTotalTokenAmount(newTotalTokenAmount);
 
       setLpPositions(newLpPositions);
-      console.log("lpPositions", lpPositions);
+      console.log("lpPositions", newLpPositions);
     }
 
     // Get pool history
@@ -562,8 +567,10 @@ export default function TradingPool() {
                         <Card
                           sx={{
                             borderRadius: 4,
-                            background:
-                              "linear-gradient(to right bottom, #eff2ff, #f0e5e9)",
+                            backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url(${data.image})`,
+                            backgroundSize: "cover",
+                            backgroundRepeat: "no-repeat",
+                            backgroundPosition: "center",
                           }}
                         >
                           <CardActionArea
@@ -576,12 +583,12 @@ export default function TradingPool() {
                               <Box
                                 sx={{
                                   fontFamily: "Monospace",
-                                  fontSize: "subtitle1.fontSize",
+                                  fontSize: "32px",
+                                  fontWeight: "bolder",
+                                  textAlign: "center",
                                 }}
                               >
-                                <div className="flex flex-col items-center justify-center m-2 text-center">
-                                  {"LP " + BigNumber.from(data.id).toNumber()}
-                                </div>
+                                {"LP " + BigNumber.from(data.id).toNumber()}
                               </Box>
                             </CardContent>
                           </CardActionArea>

@@ -3,6 +3,7 @@ import { formatUnits, parseUnits } from "@ethersproject/units";
 import StyledModal from "../components/StyledModal";
 import { Table } from "@nextui-org/react";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   useAccount,
   useProvider,
@@ -77,6 +78,7 @@ export default function Lock() {
   const [gaugeBribes, setGaugeBribes] = useState("0");
   const [allGaugeBribes, setAllGaugeBribes] = useState({});
   const [allGaugeWeights, setAllGaugeVoteWeights] = useState({});
+  const [nativeTokenPrice, setNativeTokenPrice] = useState("0");
 
   var addresses = contractAddresses[1];
   const votingEscrowProvider = useContract({
@@ -125,12 +127,6 @@ export default function Lock() {
     contractInterface: gaugeControllerContract.abi,
     addressOrName: addresses.GaugeController,
     signerOrProvider: signer,
-  });
-
-  const nativeTokenProvider = useContract({
-    contractInterface: nativeTokenContract.abi,
-    addressOrName: addresses.NativeToken,
-    signerOrProvider: provider,
   });
 
   async function updateLockDetails() {
@@ -187,11 +183,12 @@ export default function Lock() {
     setHistory(historyResponse);
     setLoadingHistory(false);
 
-    const nativeTokenPrice = await getNativeTokenPrice(chain.id);
+    const updatedNativeTokenPrice = await getNativeTokenPrice(chain.id);
+    setNativeTokenPrice(updatedNativeTokenPrice);
 
     // Calculate the APR
     if (
-      nativeTokenPrice.toString() == "0" ||
+      updatedNativeTokenPrice.toString() == "0" ||
       updatedLockInfo.totalWeight.toString() == "0"
     ) {
       setAPR(0);
@@ -474,43 +471,61 @@ export default function Lock() {
         <div className="flex flex-col items-center">
           <div className="flex flex-col w-full md:flex-row max-w-[100%] justify-center items-center m-4 md:m-8">
             <div className="flex flex-col py-4 px-8 md:mx-8 items-center justify-center text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
-              <div className="flex flex-row items-center justify-center">
-                <div className="flex flex-col items-center ml-4 mr-8 space-y-6">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle1.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Epoch
-                  </Box>
-                  <Box sx={{ position: "relative" }}>
+              <div className="flex flex-row justify-center">
+                <div className="flex flex-col items-center ml-4 mr-8">
+                  <div className="flex-grow flex flex-col justify-center items-center space-y-8">
                     <Box
                       sx={{
                         fontFamily: "Monospace",
-                        fontSize: "h4.fontSize",
+                        fontSize: "subtitle1.fontSize",
+                        fontWeight: "bold",
                       }}
                     >
-                      {lockInfo?.epoch}
+                      Epoch
                     </Box>
-                    <CircularProgress
-                      variant="determinate"
-                      thickness={4}
-                      value={
-                        ((Math.floor(Date.now() / 1000) % 604800) / 604800) *
-                        100
-                      }
-                      size={80}
-                      sx={{
-                        color: "black",
-                        position: "absolute",
-                        top: -14,
-                        left: -30,
-                        zIndex: 1,
-                      }}
-                    />
-                  </Box>
+                    <Box sx={{ position: "relative" }}>
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "h4.fontSize",
+                        }}
+                      >
+                        {lockInfo?.epoch}
+                      </Box>
+                      <CircularProgress
+                        variant="determinate"
+                        thickness={4}
+                        value={
+                          ((Math.floor(Date.now() / 1000) % 604800) / 604800) *
+                          100
+                        }
+                        size={80}
+                        sx={{
+                          color: "black",
+                          position: "absolute",
+                          top: -14,
+                          left: -30,
+                          zIndex: 1,
+                        }}
+                      />
+                    </Box>
+                  </div>
+                  <a
+                    href="https://app.balancer.fi/#/ethereum/pool/0x8e6c196e201942246cef85718c5d3a5622518053000200000000000000000582"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <div className="flex flex-col justify-center items-center space-y-2 mb-8">
+                      <img
+                        src="https://altcoinsbox.com/wp-content/uploads/2023/03/balancer-logo.png"
+                        alt="Balancer Exchange"
+                        className="w-6 h-6"
+                      />
+                      <div className="price text-sm font-bold">
+                        {Number(nativeTokenPrice).toPrecision(2) + " LE/ETH"}
+                      </div>
+                    </div>
+                  </a>
                 </div>
                 <div className="flex flex-col items-end m-2 border-l-2 border-stone-600 p-6">
                   <div className="flex flex-col items-end text-right mb-4">

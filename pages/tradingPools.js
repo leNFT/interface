@@ -201,7 +201,7 @@ export default function TradingPools() {
                 </TableCell>
                 <TableCell>
                   <Typography
-                    className="text-sm sm:text-md"
+                    className="text-sm sm:text-md md:text-[18px]"
                     fontFamily={"monospace"}
                   >
                     {row.nft}
@@ -209,7 +209,7 @@ export default function TradingPools() {
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
                   <Typography
-                    className="text-sm sm:text-md "
+                    className="text-sm sm:text-md md:text-[16px] "
                     fontFamily={"monospace"}
                   >
                     {row.token}
@@ -217,7 +217,7 @@ export default function TradingPools() {
                 </TableCell>
                 <TableCell>
                   <Typography
-                    className="text-sm sm:text-md"
+                    className="text-sm sm:text-md md:text-[16px]"
                     fontFamily={"monospace"}
                   >
                     {row.volume}

@@ -522,7 +522,7 @@ export default function TradingPool() {
               fontSize: "subtitle2.fontSize",
             }}
           >
-            my LP Positions
+            My Liquidity Pairs
           </Box>
           <div className="flex flex-col border-4 border-slate-400 rounded-2xl mt-0 p-8 m-8 lg:p-16 w-11/12">
             {loadingTradingPool ? (

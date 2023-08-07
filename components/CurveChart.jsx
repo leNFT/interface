@@ -23,7 +23,7 @@ const CustomXAxisLabel = ({ viewBox }) => {
 };
 
 const formatYAxisTick = (value) => {
-  return parseFloat(value).toPrecision(3);
+  return parseFloat(value).toPrecision(2);
 };
 
 const CustomTooltip = ({ active, payload, label }) => {

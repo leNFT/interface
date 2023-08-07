@@ -53,6 +53,15 @@ export default function DepositTradingPool(props) {
     signerOrProvider: signer,
   });
 
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  useEffect(() => {
+    if (window.innerWidth < 500) {
+      console.log("Small screen detected");
+      setIsSmallScreen(true);
+    }
+  }, []);
+
   async function getUserNFTs() {
     // Get lp positions
     const addressNFTs = await getAddressNFTs(address, props.nft, chain.id);
@@ -616,7 +625,7 @@ export default function DepositTradingPool(props) {
             delta={delta ? delta : "10"}
             fee={fee ? fee : "20"}
             initialPrice={initialPrice ? formatUnits(initialPrice, 18) : "0.1"}
-            hideYLabels={window.innerWidth < 500} // Or any other breakpoint value you prefer
+            hideYLabels={isSmallScreen} // Or any other breakpoint value you prefer
           />
         </div>
       </div>

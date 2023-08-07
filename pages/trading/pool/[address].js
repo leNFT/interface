@@ -181,7 +181,7 @@ export default function TradingPool() {
         />
       </StyledModal>
       <div className="flex flex-row w-full">
-        <div className="flex flex-col justify-center">
+        <div className="flex flex-col justify-center pl-8">
           <Button
             size="small"
             color="#eae5ea"
@@ -194,7 +194,7 @@ export default function TradingPool() {
             }}
           />
         </div>
-        <div className="flex flex-row w-full justify-center break-all items-center text-center mx-4">
+        <div className="flex flex-row w-full pr-12 justify-center break-all items-center text-center mx-4">
           <Box
             sx={{
               fontFamily: "Monospace",

@@ -8,7 +8,6 @@ const StyledModal = styled(Modal)`
     rgba(253, 241, 233, 0.95)
   );
   z-index: 10;
-
   span,
   h2 {
     font-family: Monospace;

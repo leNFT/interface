@@ -239,10 +239,10 @@ export default function DepositTradingPool(props) {
   return (
     <div className="flex flex-col">
       <div className="flex flex-row space-x-4 items-center justify-center">
-        <Typography variant="h6" className="pt-1">
+        <Typography className="text-md md:text-lg pt-1">
           Advanced Mode:
         </Typography>
-        <Switch size="lg" onChange={handleAdvancedModeChange} />
+        <Switch size="md" onChange={handleAdvancedModeChange} />
       </div>
       {advancedMode && (
         <div>
@@ -265,7 +265,7 @@ export default function DepositTradingPool(props) {
             </Box>
           </div>
 
-          <div className="flex flex-col md:flex-row items-center justify-center mt-8 space-x-4">
+          <div className="flex flex-row items-center justify-center mt-8 space-x-2  md:space-x-4">
             <Dropdown>
               <Dropdown.Button flat>
                 {lpType &&
@@ -286,10 +286,10 @@ export default function DepositTradingPool(props) {
               </Dropdown.Menu>
             </Dropdown>
             <Box
-              className="fw-10/12 md:w-4/12 text-center p-2 border-2 border-pink-100 rounded-xl"
+              className="w-10/12 md:w-4/12 text-center p-2 border-2 border-pink-100 rounded-xl"
               sx={{
                 fontFamily: "Monospace",
-                fontSize: "subtitle2.fontSize",
+                fontSize: "caption.fontSize",
               }}
             >
               {lpType == "trade"
@@ -485,12 +485,11 @@ export default function DepositTradingPool(props) {
           </div>
           {selectingNFTs &&
             (userNFTs.length > 0 ? (
-              <div className="flex flex-col items-center justify-center border-zinc-300	 border-4 p-4 border-black rounded-3xl">
+              <div className="flex flex-col items-center justify-center border-zinc-300	border-4 p-2 border-black rounded-3xl">
                 <Box
-                  className="flex mb-4 mx-4 justify-center items-center"
+                  className="flex mb-4 mx-4 justify-center items-center text-xs md:text-md"
                   sx={{
                     fontFamily: "Monospace",
-                    fontSize: "subtitle2.fontSize",
                     fontWeight: "bold",
                   }}
                 >
@@ -582,7 +581,7 @@ export default function DepositTradingPool(props) {
               </Box>
             ))}
         </div>
-        <div className="flex flex-col items-center justify-center pr-8 mt-8 w-full lg:w-6/12">
+        <div className="flex flex-col items-center justify-center md:my-4 mt-8 w-full lg:w-6/12">
           {advancedMode && (
             <div className="flex flex-row items-center justify-center m-4">
               <Box
@@ -617,6 +616,7 @@ export default function DepositTradingPool(props) {
             delta={delta ? delta : "10"}
             fee={fee ? fee : "20"}
             initialPrice={initialPrice ? formatUnits(initialPrice, 18) : "0.1"}
+            hideYLabels={window.innerWidth < 500} // Or any other breakpoint value you prefer
           />
         </div>
       </div>

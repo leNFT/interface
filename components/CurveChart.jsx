@@ -76,6 +76,7 @@ const CurveChart = ({
   delta = 20,
   fee = 10,
   initialPrice = 0.1,
+  hideYLabels = false, // Add this line
 }) => {
   console.log("CurveChart render", { curveType, delta, initialPrice });
 
@@ -100,12 +101,19 @@ const CurveChart = ({
   const curveData = generateCurveData();
   const yMin = Math.min(...curveData.map((d) => d.y));
   const yMax = Math.max(...curveData.map((d) => d.y));
+  const leftMargin = hideYLabels ? 0 : 20; // Adjust as needed
+  const rightMargin = hideYLabels ? 0 : 30; // Adjust to be the same as leftMargin when hideYLabels is true
 
   return (
     <ResponsiveContainer width="100%" height={300}>
       <LineChart
         data={curveData}
-        margin={{ top: 5, right: 30, left: 20, bottom: 30 }}
+        margin={{
+          top: 5,
+          right: rightMargin, // Use the rightMargin variable here
+          left: leftMargin, // Use the leftMargin variable here
+          bottom: 30,
+        }}
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="x" tickLine={false} tickFormatter={() => ""}>
@@ -115,7 +123,9 @@ const CurveChart = ({
             position="insideBottom"
           />
         </XAxis>
-        <YAxis domain={[yMin, yMax]} tickFormatter={formatYAxisTick} />
+        {!hideYLabels && ( // Conditionally render the YAxis here
+          <YAxis domain={[yMin, yMax]} tickFormatter={formatYAxisTick} />
+        )}
 
         <Tooltip content={<CustomTooltip />} />
         <Line

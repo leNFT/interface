@@ -32,10 +32,10 @@ export default function LockNativeToken(props) {
   const [lockedLoading, setLockedLoading] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [unlockTime, setUnlockTime] = useState(
-    Math.floor(Date.now() / 1000) + 86400 * 15
+    Math.floor(Date.now() / 1000) + 86400 * 21
   );
   const [lockWeight, setLockWeight] = useState("0");
-  const [lockDuration, setLockDuration] = useState(2);
+  const [lockDuration, setLockDuration] = useState(3);
   const [allowance, setAllowance] = useState("0");
 
   const dispatch = useNotification();
@@ -144,8 +144,8 @@ export default function LockNativeToken(props) {
       console.log("Slider changed to:");
       console.log(Math.floor(Date.now() / 1000 + newValue * 604800));
     } else {
-      setLockDuration(2);
-      setUnlockTime(Date.now() / 1000 + 86400 * 14);
+      setLockDuration(3);
+      setUnlockTime(Date.now() / 1000 + 86400 * 21);
     }
   }
 
@@ -201,7 +201,7 @@ export default function LockNativeToken(props) {
               fontSize: "caption.fontSize",
             }}
           >
-            (2 weeks to 4 years from today)
+            (3 weeks to 4 years from today)
           </Box>
         </div>
         <div className="flex flex-row items-center w-full justify-center md:px-8">
@@ -209,7 +209,7 @@ export default function LockNativeToken(props) {
             valueLabelDisplay="auto"
             disabled={BigNumber.from(allowance).lte(amount)}
             onChangeCommitted={handleSliderChange}
-            min={2}
+            min={3}
             step={1}
             max={52 * 4}
           />

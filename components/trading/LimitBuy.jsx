@@ -25,7 +25,7 @@ import { Button, Spinner } from "grommet";
 import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json";
 import wethGateway from "../../contracts/WETHGateway.json";
 
-export default function Buy() {
+export default function LimitBuy(props) {
   const { chain } = useNetwork();
   const { address, isConnected } = useAccount();
   const provider = useProvider();
@@ -41,7 +41,6 @@ export default function Buy() {
   const [amount, setAmount] = useState(0);
   const [buyLoading, setBuyLoading] = useState(false);
   const [nftName, setNFTName] = useState("");
-  const [collectionThumbnailURL, setCollectionThumbnailURL] = useState("");
   const [nftImages, setNFTImages] = useState([]);
   const [price, setPrice] = useState(0);
   const dispatch = useNotification();
@@ -73,7 +72,7 @@ export default function Buy() {
       isConnected ? chain.id : 1
     );
     console.log("updatedURL", updatedURL);
-    setCollectionThumbnailURL(updatedURL);
+    props.setBackgroundImage(updatedURL);
   }
 
   async function getTradingPoolAddress(collection) {
@@ -170,7 +169,7 @@ export default function Buy() {
       } else {
         setNFTAddress("0x");
       }
-      setCollectionThumbnailURL("");
+      props.setBackgroundImage("");
       setPoolAddress("");
       setNFTName("");
     }
@@ -247,18 +246,6 @@ export default function Buy() {
               />
             )}
           />
-          {collectionThumbnailURL && (
-            <div className="flex ml-4">
-              <Image
-                loader={() => collectionThumbnailURL}
-                src={collectionThumbnailURL}
-                alt="NFT Thumbnail"
-                height="60"
-                width="60"
-                className="rounded-xl"
-              />
-            </div>
-          )}
         </div>
         {nftAddress && (
           <div className="flex flex-row mt-1 justify-center">

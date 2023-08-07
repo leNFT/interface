@@ -26,7 +26,7 @@ import erc721 from "../../contracts/erc721.json";
 import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json";
 import wethGateway from "../../contracts/WETHGateway.json";
 
-export default function Sell() {
+export default function LimitSell(props) {
   const provider = useProvider();
   const [tradingCollections, setTradingCollections] = useState([]);
   const { chain } = useNetwork();
@@ -42,7 +42,6 @@ export default function Sell() {
   const [sellLoading, setSellLoading] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
   const [nftName, setNFTName] = useState("");
-  const [collectionThumbnailURL, setCollectionThumbnailURL] = useState("");
   const [price, setPrice] = useState(0);
 
   const dispatch = useNotification();
@@ -86,9 +85,13 @@ export default function Sell() {
   }
 
   async function getCollectionThumbnailURL(collection) {
-    const updatedURL = await getNFTImage(collection, 1, chain.id);
+    const updatedURL = await getNFTImage(
+      collection,
+      1,
+      isConnected ? chain.id : 1
+    );
     console.log("updatedURL", updatedURL);
-    setCollectionThumbnailURL(updatedURL);
+    props.setBackgroundImage(updatedURL);
   }
 
   // Runs once
@@ -202,7 +205,7 @@ export default function Sell() {
       } else {
         setNFTAddress("0x");
       }
-      setCollectionThumbnailURL("");
+      props.setBackgroundImage("");
       setPoolAddress("");
       setNFTName("");
     }
@@ -279,18 +282,6 @@ export default function Sell() {
               />
             )}
           />
-          {collectionThumbnailURL && (
-            <div className="flex ml-4">
-              <Image
-                loader={() => collectionThumbnailURL}
-                src={collectionThumbnailURL}
-                alt="NFT Thumbnail"
-                height="60"
-                width="60"
-                className="rounded-xl"
-              />
-            </div>
-          )}
         </div>
         {nftAddress && (
           <div className="flex flex-row mt-1 justify-center">

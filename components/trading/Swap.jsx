@@ -62,10 +62,8 @@ export default function Swap() {
   const [nftApprovalLoading, setNFTApprovalLoading] = useState(false);
   const [sellNFTName, setSellNFTName] = useState("");
   const [buyNFTName, setBuyNFTName] = useState("");
-  const [buyCollectionThumbnailURL, setBuyCollectionThumbnailURL] =
-    useState("");
-  const [sellCollectionThumbnailURL, setSellCollectionThumbnailURL] =
-    useState("");
+  const [buyBackgroundURL, setBuyBackgroundURL] = useState("");
+  const [sellBackgroundURL, setSellBackgroundURL] = useState("");
   const [buyNFTImages, setBuyNFTImages] = useState([]);
   const [sellNFTImages, setSellNFTImages] = useState([]);
   const { data: ethBalance } = useBalance({
@@ -274,13 +272,13 @@ export default function Swap() {
   async function getBuyCollectionThumbnailURL(collection) {
     const updatedURL = await getNFTImage(collection, 1, chain.id);
     console.log("updatedURL", updatedURL);
-    setBuyCollectionThumbnailURL(updatedURL);
+    setBuyBackgroundURL(updatedURL);
   }
 
   async function getSellCollectionThumbnailURL(collection) {
     const updatedURL = await getNFTImage(collection, 1, chain.id);
     console.log("updatedURL", updatedURL);
-    setSellCollectionThumbnailURL(updatedURL);
+    setSellBackgroundURL(updatedURL);
   }
 
   async function getSellTradingPoolAddress(collection) {
@@ -391,7 +389,7 @@ export default function Swap() {
         setSellNFTAddress("0x");
       }
       setPriceQuote();
-      setSellCollectionThumbnailURL("");
+      setSellBackgroundURL("");
       setSellPoolAddress("");
       setSellNFTName("");
     }
@@ -422,7 +420,7 @@ export default function Swap() {
         setBuyNFTAddress("0x");
       }
       setPriceQuote();
-      setBuyCollectionThumbnailURL("");
+      setBuyBackgroundURL("");
       setBuyPoolAddress("");
       setBuyNFTName("");
     }
@@ -490,7 +488,16 @@ export default function Swap() {
   return (
     <div className="flex flex-col items-center text-center w-full py-8 md:w-fit justify-center m-4 rounded-3xl bg-black/5 shadow-lg">
       <div className="flex flex-col lg:flex-row items-center justify-center m-2 md:m-8">
-        <div className="flex flex-col items-center text-center justify-center p-8 m-4 w-full rounded-3xl bg-black/5 shadow-lg">
+        <div
+          className="flex flex-col items-center text-center justify-center p-8 m-4 w-full rounded-3xl bg-black/5 shadow-lg"
+          style={{
+            ...(sellBackgroundURL && {
+              backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.96)), url('${sellBackgroundURL}')`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }),
+          }}
+        >
           <div className="flex flex-col mb-2">
             <Box
               sx={{
@@ -569,18 +576,6 @@ export default function Swap() {
                   />
                 )}
               />
-              {sellCollectionThumbnailURL && (
-                <div className="flex ml-4">
-                  <Image
-                    loader={() => sellCollectionThumbnailURL}
-                    src={sellCollectionThumbnailURL}
-                    alt="NFT Thumbnail"
-                    height="60"
-                    width="60"
-                    className="rounded-xl"
-                  />
-                </div>
-              )}
             </div>
             {sellNFTAddress && (
               <div className="flex flex-row mt-1 justify-center">
@@ -765,7 +760,16 @@ export default function Swap() {
         <div className="flex lg:hidden items-center m-2">
           <ArrowDownwardOutlinedIcon />
         </div>
-        <div className="flex flex-col items-center text-center justify-center p-8 m-4 w-full rounded-3xl bg-black/5 shadow-lg">
+        <div
+          className="flex flex-col items-center text-center justify-center p-8 m-4 w-full rounded-3xl bg-black/5 shadow-lg"
+          style={{
+            ...(buyBackgroundURL && {
+              backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.96)), url('${buyBackgroundURL}')`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }),
+          }}
+        >
           <div className="flex flex-col mb-2">
             <Box
               sx={{
@@ -844,18 +848,6 @@ export default function Swap() {
                   />
                 )}
               />
-              {buyCollectionThumbnailURL && (
-                <div className="flex ml-4">
-                  <Image
-                    loader={() => buyCollectionThumbnailURL}
-                    src={buyCollectionThumbnailURL}
-                    alt="NFT Thumbnail"
-                    height="60"
-                    width="60"
-                    className="rounded-xl"
-                  />
-                </div>
-              )}
             </div>
             {buyPoolAddress && (
               <div className="flex flex-row mt-1 justify-center">

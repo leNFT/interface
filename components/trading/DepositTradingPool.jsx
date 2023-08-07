@@ -590,7 +590,7 @@ export default function DepositTradingPool(props) {
               </Box>
             ))}
         </div>
-        <div className="flex flex-col items-center justify-center md:my-4 mt-8 w-full lg:w-6/12">
+        <div className="flex flex-col items-center justify-center mt-8 w-full lg:w-6/12">
           {advancedMode && (
             <div className="flex flex-row items-center justify-center m-4">
               <Box

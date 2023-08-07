@@ -9,6 +9,17 @@ export async function getLPTradeFees(chainId, pool, lpId) {
     },
   };
 
+  console.log(
+    serverAddress +
+      "/trading/lpTradeFees" +
+      "?chainId=" +
+      chainId +
+      "&pool=" +
+      pool +
+      "&lpId=" +
+      lpId
+  );
+
   const lpTradeFeesResponse = await fetch(
     serverAddress +
       "/trading/lpTradeFees" +

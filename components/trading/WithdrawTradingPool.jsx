@@ -55,9 +55,10 @@ export default function WithdrawTradingPool(props) {
     }
   }
 
-  async function getLPTradeFees() {
+  async function getTradeFees() {
     const newLPTradeFees = await getLPTradeFees(chain.id, props.pool, props.lp);
     setLPTradeFees(newLPTradeFees);
+    console.log("newLPTradeFees", newLPTradeFees);
   }
 
   // Set the rest of the UI when we receive the reserve address
@@ -66,7 +67,7 @@ export default function WithdrawTradingPool(props) {
       console.log("props.lp", props.lp);
       console.log("pool", props.pool);
       getLP();
-      getLPTradeFees();
+      getTradeFees();
     }
   }, [props.pool, props.lp]);
 

@@ -223,7 +223,10 @@ export default function TradingPoolGauge() {
               fontSize: "body2.fontSize",
             }}
           >
-            {router.query.address}
+            {router.query.address &&
+              router.query.address.slice(0, 10) +
+                "..." +
+                router.query.address.slice(-6)}
           </Box>
         </div>
         <div className="flex flex-col justify-center pb-1 mr-auto">
@@ -251,84 +254,106 @@ export default function TradingPoolGauge() {
       </div>
       <div className="flex flex-col items-center">
         <div className="flex flex-col md:flex-row justify-center items-center m-8 mb-2">
-          <div className="flex flex-col py-4 px-8 items-center m-2 justify-center text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
-            <div className="flex flex-row items-center justify-center">
-              <div className="flex flex-col items-center ml-4 mr-8 space-y-6">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Epoch
-                </Box>
-                <Box sx={{ position: "relative" }}>
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "h4.fontSize",
-                    }}
-                  >
-                    {epoch}
-                  </Box>
-                  <CircularProgress
-                    variant="determinate"
-                    thickness={4}
-                    value={
-                      ((Math.floor(Date.now() / 1000) % 604800) / 604800) * 100
-                    }
-                    size={80}
-                    sx={{
-                      color: "black",
-                      position: "absolute",
-                      top: -14,
-                      left: -30,
-                      zIndex: 1,
-                    }}
-                  />
-                </Box>
-              </div>
-              <div className="flex flex-col items-end m-2 border-l-2 border-stone-600 p-6">
-                <div className="flex flex-col items-end text-right mb-2">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle2.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    APR
-                  </Box>
+          <div className="flex flex-col items-center justify-center">
+            <div className="flex flex-col p-4 items-center m-2 justify-center text-center rounded-3xl bg-black/5 shadow-lg w-11/12 space-y-1">
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "subtitle2.fontSize",
+                }}
+              >
+                {"Gauge"}
+              </Box>
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontSize: "h5.fontSize",
+                  fontWeight: "bold",
+                }}
+              >
+                {gaugeInfo?.pool.name}
+              </Box>
+            </div>
+            <div className="flex flex-col py-4 px-8 items-center m-2 justify-center text-center rounded-3xl bg-black/5 shadow-lg max-w-fit">
+              <div className="flex flex-row items-center justify-center">
+                <div className="flex flex-col items-center ml-4 mr-8 space-y-6">
                   <Box
                     sx={{
                       fontFamily: "Monospace",
                       fontSize: "subtitle1.fontSize",
+                      fontWeight: "bold",
                     }}
                   >
-                    {Number(apr).toFixed(2) + " %"}
+                    Epoch
+                  </Box>
+                  <Box sx={{ position: "relative" }}>
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "h4.fontSize",
+                      }}
+                    >
+                      {epoch}
+                    </Box>
+                    <CircularProgress
+                      variant="determinate"
+                      thickness={4}
+                      value={
+                        ((Math.floor(Date.now() / 1000) % 604800) / 604800) *
+                        100
+                      }
+                      size={80}
+                      sx={{
+                        color: "black",
+                        position: "absolute",
+                        top: -14,
+                        left: -30,
+                        zIndex: 1,
+                      }}
+                    />
                   </Box>
                 </div>
-                <div className="flex flex-col items-end text-right mt-2">
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle2.fontSize",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    TVL
-                  </Box>
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle1.fontSize",
-                    }}
-                  >
-                    {gaugeInfo
-                      ? Number(formatUnits(gaugeInfo.tvl, 18)).toPrecision(4)
-                      : "-" + " ETH"}
-                  </Box>
+                <div className="flex flex-col items-end m-2 border-l-2 border-stone-600 p-6">
+                  <div className="flex flex-col items-end text-right mb-2">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle2.fontSize",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      APR
+                    </Box>
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                      }}
+                    >
+                      {Number(apr).toFixed(1) + "%"}
+                    </Box>
+                  </div>
+                  <div className="flex flex-col items-end text-right mt-2">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle2.fontSize",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      TVL
+                    </Box>
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                      }}
+                    >
+                      {gaugeInfo
+                        ? Number(formatUnits(gaugeInfo.tvl, 18)).toPrecision(4)
+                        : "-" + " ETH"}
+                    </Box>
+                  </div>
                 </div>
               </div>
             </div>
@@ -373,7 +398,7 @@ export default function TradingPoolGauge() {
           </div>
         </div>
         {isConnected ? (
-          <div className="flex flex-col md:flex-row items-center justify-center p-4 rounded-3xl m-8 lg:m-16 !mt-8 bg-black/5 shadow-lg">
+          <div className="flex flex-col md:flex-row items-center justify-center p-4 border-grey m-8 lg:m-16 !mt-8">
             <div className="flex flex-col m-8 lg:mx-16">
               <div className="flex flex-col items-center p-4 rounded-3xl min-w-[280px] m-2 bg-black/5 shadow-lg">
                 <div className="flex flex-col m-4 rounded-2xl">

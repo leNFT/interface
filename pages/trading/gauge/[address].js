@@ -350,7 +350,8 @@ export default function TradingPoolGauge() {
                       }}
                     >
                       {gaugeInfo
-                        ? Number(formatUnits(gaugeInfo.tvl, 18)).toPrecision(4)
+                        ? Number(formatUnits(gaugeInfo.tvl, 18)).toFixed(2) +
+                          " ETH"
                         : "-" + " ETH"}
                     </Box>
                   </div>

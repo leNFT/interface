@@ -222,7 +222,7 @@ export default function TradingPools() {
                     fontSize: {
                       xs: "0.875rem",
                       sm: "1rem",
-                      md: "18px",
+                      md: "16px",
                     },
                   }}
                 >
@@ -234,7 +234,7 @@ export default function TradingPools() {
                     fontSize: {
                       xs: "0.875rem",
                       sm: "1rem",
-                      md: "18px",
+                      md: "16px",
                     },
                     display: {
                       xs: "none",
@@ -250,7 +250,7 @@ export default function TradingPools() {
                     fontSize: {
                       xs: "0.875rem",
                       sm: "1rem",
-                      md: "18px",
+                      md: "16px",
                     },
                   }}
                 >

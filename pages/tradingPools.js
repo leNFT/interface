@@ -113,30 +113,47 @@ export default function TradingPools() {
             <TableRow>
               <TableCell></TableCell>
               <TableCell
-                className="text-md sm:text-lg font-bold"
                 sx={{
                   fontFamily: "monospace",
+                  fontSize: { xs: "1rem", sm: "1.125rem" },
+                  fontWeight: "bold",
                 }}
               >
                 Name
               </TableCell>
               <TableCell
-                className="text-md sm:text-lg font-bold hidden md:table-cell"
                 sx={{
                   fontFamily: "monospace",
+                  fontSize: {
+                    xs: "1rem", // equivalent to Tailwind's text-md
+                    sm: "1.125rem", // equivalent to Tailwind's text-lg
+                  },
+                  fontWeight: "bold", // equivalent to Tailwind's font-bold
+                  display: {
+                    xs: "none", // equivalent to Tailwind's hidden
+                    md: "table-cell", // equivalent to Tailwind's md:table-cell
+                  },
                 }}
               >
                 TVL
               </TableCell>
               <TableCell
-                className="text-md sm:text-lg font-bold"
                 sx={{
                   fontFamily: "monospace",
+                  fontSize: { xs: "1rem", sm: "1.125rem" },
+                  fontWeight: "bold",
                 }}
               >
                 Volume
               </TableCell>
-              <TableCell className="hidden md:table-cell"></TableCell>
+              <TableCell
+                sx={{
+                  display: {
+                    xs: "none",
+                    md: "table-cell",
+                  },
+                }}
+              ></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -199,31 +216,55 @@ export default function TradingPools() {
                     </Box>
                   )}
                 </TableCell>
-                <TableCell>
-                  <Typography
-                    className="text-sm sm:text-md md:text-[18px]"
-                    fontFamily={"monospace"}
-                  >
-                    {row.nft}
-                  </Typography>
+                <TableCell
+                  sx={{
+                    fontFamily: "monospace",
+                    fontSize: {
+                      xs: "0.875rem",
+                      sm: "1rem",
+                      md: "18px",
+                    },
+                  }}
+                >
+                  {row.nft}
                 </TableCell>
-                <TableCell className="hidden md:table-cell">
-                  <Typography
-                    className="text-sm sm:text-md md:text-[16px] "
-                    fontFamily={"monospace"}
-                  >
-                    {row.token}
-                  </Typography>
+                <TableCell
+                  sx={{
+                    fontFamily: "monospace",
+                    fontSize: {
+                      xs: "0.875rem",
+                      sm: "1rem",
+                      md: "18px",
+                    },
+                    display: {
+                      xs: "none",
+                      md: "table-cell",
+                    },
+                  }}
+                >
+                  {row.token}
                 </TableCell>
-                <TableCell>
-                  <Typography
-                    className="text-sm sm:text-md md:text-[16px]"
-                    fontFamily={"monospace"}
-                  >
-                    {row.volume}
-                  </Typography>
+                <TableCell
+                  sx={{
+                    fontFamily: "monospace",
+                    fontSize: {
+                      xs: "0.875rem",
+                      sm: "1rem",
+                      md: "18px",
+                    },
+                  }}
+                >
+                  {row.volume}
                 </TableCell>
-                <TableCell align="center" className="hidden md:table-cell">
+                <TableCell
+                  align="center"
+                  sx={{
+                    display: {
+                      xs: "none",
+                      md: "table-cell",
+                    },
+                  }}
+                >
                   <Button
                     primary
                     size="small"

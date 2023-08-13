@@ -2,6 +2,7 @@ import { Button } from "grommet";
 import { Button as ButtonNextUI } from "@nextui-org/react";
 import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
+import Link from "next/link";
 import LimitBuy from "./LimitBuy";
 import MarketBuy from "./MarketBuy";
 import LimitSell from "./LimitSell";
@@ -180,46 +181,19 @@ export default function BuyAndSell(props) {
                 <div className="m-32">
                   <Loading size={18} spinnerColor="#000000" />
                 </div>
-              ) : (
-                orderbook && (
-                  <table>
-                    <tr>
-                      <th className="px-8 py-2">Price (ETH)</th>
-                      <th className="px-8 py-2">Amount</th>
-                    </tr>
-                    {orderbook.sell
-                      .slice()
-                      .reverse()
-                      .map((sellOrder, i) => (
-                        <tr key={i} align="center">
-                          <td className="text-red-500">
-                            <Box
-                              sx={{
-                                fontFamily: "Monospace",
-                                fontSize: "subtitle2.fontSize",
-                              }}
-                            >
-                              {Number(
-                                formatUnits(sellOrder.price, 18)
-                              ).toPrecision(4)}
-                            </Box>
-                          </td>
-                          <td className="text-red-500">{sellOrder.amount}</td>
-                        </tr>
-                      ))}
-                    <tr>
-                      <td colSpan="2">
-                        <Divider
-                          sx={{
-                            marginY: 1,
-                          }}
-                          variant="middle"
-                        />
-                      </td>
-                    </tr>
-                    {orderbook.buy.map((buyOrder, i) => (
+              ) : orderbook &&
+                (orderbook.buy.length || orderbook.buy.length) ? (
+                <table>
+                  <tr>
+                    <th className="px-8 py-2">Price (ETH)</th>
+                    <th className="px-8 py-2">Amount</th>
+                  </tr>
+                  {orderbook.sell
+                    .slice()
+                    .reverse()
+                    .map((sellOrder, i) => (
                       <tr key={i} align="center">
-                        <td className="text-green-500">
+                        <td className="text-red-500">
                           <Box
                             sx={{
                               fontFamily: "Monospace",
@@ -227,15 +201,70 @@ export default function BuyAndSell(props) {
                             }}
                           >
                             {Number(
-                              formatUnits(buyOrder.price, 18)
+                              formatUnits(sellOrder.price, 18)
                             ).toPrecision(4)}
                           </Box>
                         </td>
-                        <td className="text-green-500">{buyOrder.amount}</td>
+                        <td className="text-red-500">{sellOrder.amount}</td>
                       </tr>
                     ))}
-                  </table>
-                )
+                  <tr>
+                    <td colSpan="2">
+                      <Divider
+                        sx={{
+                          marginY: 1,
+                        }}
+                        variant="middle"
+                      />
+                    </td>
+                  </tr>
+                  {orderbook.buy.map((buyOrder, i) => (
+                    <tr key={i} align="center">
+                      <td className="text-green-500">
+                        <Box
+                          sx={{
+                            fontFamily: "Monospace",
+                            fontSize: "subtitle2.fontSize",
+                          }}
+                        >
+                          {Number(formatUnits(buyOrder.price, 18)).toPrecision(
+                            4
+                          )}
+                        </Box>
+                      </td>
+                      <td className="text-green-500">{buyOrder.amount}</td>
+                    </tr>
+                  ))}
+                </table>
+              ) : (
+                <div className="flex flex-col m-8 space-y-2 items-center justify-center">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                    }}
+                  >
+                    Empty Orderbook.
+                  </Box>
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                    }}
+                  >
+                    Be the first to{" "}
+                    <Link href={"/trading/pool/" + pool}>
+                      <a
+                        style={{
+                          textDecoration: "underline",
+                        }}
+                      >
+                        add liquidity
+                      </a>
+                    </Link>
+                    .
+                  </Box>
+                </div>
               )
             ) : (
               <div className="flex flex-col m-8 items-center justify-center">
@@ -253,7 +282,7 @@ export default function BuyAndSell(props) {
         )}
       </div>
       {proMode && (
-        <div className="flex flex-col items-center justify-center py-4 rounded-3xl my-8 md:m-8 lg:mx-16 !mt-8 bg-black/5 shadow-lg">
+        <div className="flex flex-col items-center justify-center md:w-8/12 py-4 rounded-3xl my-8 md:m-8 lg:mx-16 !mt-8 bg-black/5 shadow-lg">
           <Box
             className="mb-2"
             sx={{
@@ -270,7 +299,7 @@ export default function BuyAndSell(props) {
               <div className="m-32">
                 <Loading size={18} spinnerColor="#000000" />
               </div>
-            ) : (
+            ) : poolHistory.length ? (
               <div>
                 <Table
                   shadow={false}
@@ -454,6 +483,17 @@ export default function BuyAndSell(props) {
                     onPageChange={(page) => console.log({ page })}
                   />
                 </Table>
+              </div>
+            ) : (
+              <div className="flex flex-col m-8 items-center justify-center">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle2.fontSize",
+                  }}
+                >
+                  No trades yet
+                </Box>
               </div>
             )
           ) : (

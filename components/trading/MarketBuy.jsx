@@ -487,11 +487,11 @@ export default function MarketBuy(props) {
                   }
                 </Box>
               </div>
-              <div className="m-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 overflow-auto max-h-[24rem]">
+              <div className="m-4 grid grid-cols-2 md:grid-cols-3 overflow-auto max-h-[24rem]">
                 {availableNFTs.map((nft, _) => (
                   <div
                     key={BigNumber.from(nft.tokenId).toNumber()}
-                    className="flex m-2 items-center justify-center max-w-[300px]"
+                    className="flex m-2 items-center justify-center max-w-[320px]"
                   >
                     <Card
                       sx={{
@@ -528,8 +528,8 @@ export default function MarketBuy(props) {
                             <Image
                               loader={() => nft.media[0].gateway}
                               src={nft.media[0].gateway}
-                              height="100"
-                              width="100"
+                              height="120"
+                              width="120"
                               className="rounded-xl"
                             />
                           ) : (

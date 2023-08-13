@@ -681,7 +681,7 @@ export default function Swap() {
               </div>
               {selectingSellNFTs &&
                 (userNFTs.length > 0 ? (
-                  <div className="flex flex-row m-4 grid grid-cols-3 lg:grid-cols-4 overflow-auto max-h-[24rem]">
+                  <div className="flex flex-row m-4 grid grid-cols-3 overflow-auto max-h-[24rem]">
                     {userNFTs.map((nft, _) => (
                       <div
                         key={BigNumber.from(nft.tokenId).toNumber()}
@@ -972,7 +972,7 @@ export default function Swap() {
                         }
                       </Box>
                     </div>
-                    <div className="flex flex-row m-4 grid grid-cols-3 lg:grid-cols-4 overflow-auto max-h-[24rem]">
+                    <div className="flex flex-row m-4 grid grid-cols-3 overflow-auto max-h-[24rem]">
                       {availableBuyPoolNFTs.map((nft, _) => (
                         <div
                           key={BigNumber.from(nft.tokenId).toNumber()}

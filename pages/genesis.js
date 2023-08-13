@@ -105,9 +105,29 @@ export default function Genesis() {
             <Box
               sx={{
                 fontFamily: "Monospace",
-                fontSize: "h5.fontSize",
+                fontSize: "h6.fontSize",
                 marginTop: 1,
-                marginBottom: 3,
+                paddingBottom: 2,
+                borderBottom: 2,
+                textAlign: "center",
+                width: "90%",
+              }}
+            >
+              <Link
+                href="https://lenft.gitbook.io/lenft-docs/basics/genesis-mint"
+                underline="hover"
+                target="_blank"
+              >
+                {"What's a Genesis NFT?"}
+              </Link>
+            </Box>
+            <Box
+              sx={{
+                fontWeight: "bold",
+                fontFamily: "Monospace",
+                fontSize: "h5.fontSize",
+                marginTop: 2,
+                marginBottom: 2,
                 textAlign: "center",
               }}
             >
@@ -135,21 +155,6 @@ export default function Genesis() {
               <div className="my-1">
                 5 - Your NFT will now appear at the bottom of this page
               </div>
-            </Box>
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "subtitle2.fontSize",
-                marginTop: 2,
-              }}
-            >
-              <Link
-                href="https://lenft.gitbook.io/lenft-docs/basics/genesis-mint"
-                underline="hover"
-                target="_blank"
-              >
-                {"Genesis Docs"}
-              </Link>
             </Box>
           </div>
           <div className="flex flex-col w-full md:w-10/12 xl:w-[600px] items-center justify-center border-4 m-2 md:mt-8 rounded-3xl bg-black/5 shadow-lg">

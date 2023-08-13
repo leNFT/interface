@@ -1,9 +1,8 @@
 import { Button } from "grommet";
 import { useState } from "react";
 import Box from "@mui/material/Box";
-import Buy from "../components/trading/Buy";
-import Sell from "../components/trading/Sell";
 import Swap from "../components/trading/Swap";
+import BuyAndSell from "../components/trading/BuyAndSell";
 
 export default function Trade() {
   const SELECTED_COLOR = "#d2c6d2";
@@ -86,10 +85,10 @@ export default function Trade() {
           />
         </div>
       </div>
-      <div className="flex flex-col items-center">
+      <div>
         {option == "swap" && <Swap />}
-        {option == "buy" && <Buy />}
-        {option == "sell" && <Sell />}
+        {option == "buy" && <BuyAndSell option="buy" />}
+        {option == "sell" && <BuyAndSell option="sell" />}
       </div>
     </div>
   );

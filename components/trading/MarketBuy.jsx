@@ -108,6 +108,7 @@ export default function MarketBuy(props) {
     console.log("updatedpool", updatedPool);
     getNFTName(collection);
     setPoolAddress(updatedPool);
+    props.setPool(updatedPool);
     getAvailableNFTs(updatedPool, collection);
 
     if (isConnected) {
@@ -295,7 +296,7 @@ export default function MarketBuy(props) {
       } else {
         setNFTAddress("0x");
       }
-      setCollectionThumbnailURL("");
+      props.setPool("");
       props.setBackgroundImage("");
       setPriceQuote();
       setPoolAddress("");
@@ -356,10 +357,12 @@ export default function MarketBuy(props) {
                     paddingLeft: (theme) => theme.spacing(2),
                     fontFamily: "Monospace",
                     fontSize: "subtitle1.fontSize",
+                    backdropFilter: "blur(10px)",
                   },
                   "& input": {
                     paddingLeft: (theme) => theme.spacing(3.5),
                     fontFamily: "Monospace",
+                    backdropFilter: "blur(10px)",
                   },
                   "& fieldset": {
                     paddingLeft: (theme) => theme.spacing(2.5),
@@ -393,7 +396,7 @@ export default function MarketBuy(props) {
       </div>
       <div className="flex flex-col justify-center m-4">
         <div className="flex flex-col md:flex-row justify-center items-center">
-          <div className="flex flex-col w-[200px] justify-center m-2">
+          <div className="flex flex-col w-[200px] justify-center m-2 backdrop-blur-md">
             <Input
               labelLeft={
                 <Box
@@ -564,7 +567,7 @@ export default function MarketBuy(props) {
       {loadingPriceQuote && <Loading className="m-12" size="xl" />}
       {priceQuote && (
         <div className="flex flex-col sm:flex-row items-center justify-center">
-          <div className="flex flex-col sm:w-6/12 items-center text-center justify-center p-4 m-4 rounded-3xl bg-black/5 shadow-lg">
+          <div className="flex flex-col sm:w-6/12 items-center text-center justify-center p-4 m-4 rounded-3xl bg-black/5 backdrop-blur-md shadow-lg">
             <Box
               className="mb-4"
               sx={{
@@ -627,7 +630,7 @@ export default function MarketBuy(props) {
               </Box>
             )}
           </div>
-          <div className="grid sm:w-6/12 grid-cols-2 gap-4 p-4 m-4 rounded-3xl bg-black/5 shadow-lg">
+          <div className="grid sm:w-6/12 grid-cols-2 gap-4 p-4 m-4 rounded-3xl bg-black/5 backdrop-blur-md shadow-lg">
             {nftImages.map((imageUrl, index) => (
               <div key={index} className="flex items-center justify-center">
                 <Image

@@ -492,7 +492,7 @@ export default function Swap() {
           className="flex flex-col items-center text-center justify-center p-8 m-4 w-full rounded-3xl bg-black/5 shadow-lg"
           style={{
             ...(sellBackgroundURL && {
-              backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.96)), url('${sellBackgroundURL}')`,
+              backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('${sellBackgroundURL}')`,
               backgroundSize: "cover",
               backgroundPosition: "center",
             }),
@@ -562,10 +562,12 @@ export default function Swap() {
                         paddingLeft: (theme) => theme.spacing(2),
                         fontFamily: "Monospace",
                         fontSize: "subtitle1.fontSize",
+                        backdropFilter: "blur(10px)",
                       },
                       "& input": {
                         paddingLeft: (theme) => theme.spacing(3.5),
                         fontFamily: "Monospace",
+                        backdropFilter: "blur(10px)",
                       },
                       "& fieldset": {
                         paddingLeft: (theme) => theme.spacing(2.5),
@@ -600,7 +602,7 @@ export default function Swap() {
           {sellNFTAddress && (
             <div className="flex flex-col justify-center">
               <div className="flex flex-col md:flex-row justify-center items-center">
-                <div className="flex flex-col w-[200px] justify-center m-2">
+                <div className="flex flex-col w-[200px] justify-center m-2 backdrop-blur-md">
                   <Input
                     labelLeft={
                       <Box
@@ -764,7 +766,7 @@ export default function Swap() {
           className="flex flex-col items-center text-center justify-center p-8 m-4 w-full rounded-3xl bg-black/5 shadow-lg"
           style={{
             ...(buyBackgroundURL && {
-              backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.96)), url('${buyBackgroundURL}')`,
+              backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('${buyBackgroundURL}')`,
               backgroundSize: "cover",
               backgroundPosition: "center",
             }),
@@ -834,10 +836,12 @@ export default function Swap() {
                         paddingLeft: (theme) => theme.spacing(2),
                         fontFamily: "Monospace",
                         fontSize: "subtitle1.fontSize",
+                        backdropFilter: "blur(10px)",
                       },
                       "& input": {
                         paddingLeft: (theme) => theme.spacing(3.5),
                         fontFamily: "Monospace",
+                        backdropFilter: "blur(10px)",
                       },
                       "& fieldset": {
                         paddingLeft: (theme) => theme.spacing(2.5),
@@ -872,7 +876,7 @@ export default function Swap() {
           {buyNFTAddress && (
             <div className="flex flex-col justify-center">
               <div className="flex flex-col md:flex-row justify-center items-center">
-                <div className="flex flex-col w-[200px] justify-center m-2">
+                <div className="flex flex-col w-[200px] justify-center m-2 backdrop-blur-md">
                   <Input
                     labelLeft={
                       <Box
@@ -1046,7 +1050,7 @@ export default function Swap() {
       {loadingPriceQuote && <Loading className="m-12" size="xl" />}
       {priceQuote && (
         <div className="flex flex-col lg:flex-row items-center justify-center">
-          <div className="flex flex-col items-center text-center justify-center p-4 m-4 rounded-3xl bg-black/5 shadow-lg">
+          <div className="flex flex-col items-center text-center justify-center p-4 m-4 rounded-3xl bg-black/5 backdrop-blur-md shadow-lg">
             <Box
               className="mb-4"
               sx={{
@@ -1184,7 +1188,7 @@ export default function Swap() {
             )}
           </div>
           <div className="flex flex-col items-center">
-            <div className="flex flex-col items-center text-center justify-center p-2 m-4 rounded-3xl bg-black/5 shadow-lg">
+            <div className="flex flex-col items-center text-center justify-center p-2 m-4 rounded-3xl bg-black/5 backdrop-blur-md shadow-lg">
               <Typography variant="h4">From</Typography>
               <div className="grid grid-cols-2 gap-4 m-4">
                 {sellNFTImages.map((imageUrl, index) => (
@@ -1202,7 +1206,7 @@ export default function Swap() {
               </div>
             </div>
             <ArrowDownwardOutlinedIcon />
-            <div className="flex flex-col items-center text-center justify-center p-2 m-4 rounded-3xl bg-black/5 shadow-lg">
+            <div className="flex flex-col items-center text-center justify-center p-2 m-4 rounded-3xl bg-black/5 backdrop-blur-md shadow-lg">
               <Typography variant="h4">To</Typography>
               <div className="grid grid-cols-2 gap-4 m-4">
                 {buyNFTImages.map((imageUrl, index) => (

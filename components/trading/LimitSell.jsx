@@ -82,6 +82,7 @@ export default function LimitSell(props) {
     getNFTAllowance(collection);
     getNFTName(collection);
     setPoolAddress(updatedPool);
+    props.setPool(updatedPool);
   }
 
   async function getCollectionThumbnailURL(collection) {
@@ -205,6 +206,7 @@ export default function LimitSell(props) {
       } else {
         setNFTAddress("0x");
       }
+      props.setPool("");
       props.setBackgroundImage("");
       setPoolAddress("");
       setNFTName("");
@@ -268,10 +270,12 @@ export default function LimitSell(props) {
                     paddingLeft: (theme) => theme.spacing(2),
                     fontFamily: "Monospace",
                     fontSize: "subtitle1.fontSize",
+                    backdropFilter: "blur(10px)",
                   },
                   "& input": {
                     paddingLeft: (theme) => theme.spacing(3.5),
                     fontFamily: "Monospace",
+                    backdropFilter: "blur(10px)",
                   },
                   "& fieldset": {
                     paddingLeft: (theme) => theme.spacing(2.5),
@@ -306,7 +310,7 @@ export default function LimitSell(props) {
       <div className="flex flex-col justify-center m-4">
         <div className="flex flex-col md:flex-row justify-center items-center">
           <div className="flex flex-col justify-center items-center">
-            <div className="flex flex-col w-[200px] justify-center m-2">
+            <div className="flex flex-col w-[200px] justify-center m-2 backdrop-blur-md">
               <Input
                 labelLeft={
                   <Box
@@ -376,7 +380,7 @@ export default function LimitSell(props) {
             <div className="flex flex-col text-center justify-center m-2">
               @
             </div>
-            <div className="flex flex-col w-[160px] justify-center m-2">
+            <div className="flex flex-col w-[160px] justify-center m-2 backdrop-blur-md">
               <Input
                 bordered
                 size="xl"

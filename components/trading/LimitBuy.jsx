@@ -134,6 +134,12 @@ export default function LimitBuy(props) {
     console.log("useEffect called");
   }, [isConnected, chain]);
 
+  useEffect(() => {
+    if (nftAddress) {
+      handleNFTAddressChange(null, nftAddress);
+    }
+  }, [isConnected]);
+
   const handleBuySuccess = () => {
     dispatch({
       type: "SUCCESS",
@@ -267,7 +273,9 @@ export default function LimitBuy(props) {
                   poolAddress.slice(0, 5) +
                   ".." +
                   poolAddress.slice(-2)
-                : "No pool found"}
+                : isConnected
+                ? "No pool found"
+                : "Connect Wallet"}
             </Box>
           </div>
         )}

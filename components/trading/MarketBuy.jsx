@@ -76,7 +76,7 @@ export default function MarketBuy(props) {
     const addressNFTs = await getAddressNFTs(
       pool,
       collection,
-      isConnected ? chain.id : 1
+      chain ? chain.id : 1
     );
     setAvailableNFTs(addressNFTs);
   }
@@ -229,6 +229,12 @@ export default function MarketBuy(props) {
       setPriceQuote();
     }
   }, [selectedNFTs]);
+
+  useEffect(() => {
+    if (nftAddress) {
+      handleNFTAddressChange(null, nftAddress);
+    }
+  }, [isConnected]);
 
   const handleBuySuccess = async function () {
     setPriceQuote();
@@ -389,7 +395,9 @@ export default function MarketBuy(props) {
                   poolAddress.slice(0, 5) +
                   ".." +
                   poolAddress.slice(-2)
-                : "No pool found"}
+                : isConnected
+                ? "No pool found"
+                : "Connect Wallet"}
             </Box>
           </div>
         )}

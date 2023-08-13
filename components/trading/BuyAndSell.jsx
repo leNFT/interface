@@ -39,11 +39,17 @@ export default function BuyAndSell(props) {
     if (pool && proMode) {
       const fetchProModeInfo = async () => {
         setLoadingProMode(true);
-        const newOrderbook = await getTradingPoolOrderbook(chain.id, pool);
+        const newOrderbook = await getTradingPoolOrderbook(
+          chain ? chain.id : 1,
+          pool
+        );
         console.log("orderbook:", newOrderbook);
         setOrderbook(newOrderbook);
         setLoadingProMode(false);
-        const newPoolHistory = await getTradingPoolHistory(chain.id, pool);
+        const newPoolHistory = await getTradingPoolHistory(
+          chain ? chain.id : 1,
+          pool
+        );
         console.log("poolHistory:", newPoolHistory);
         setPoolHistory(newPoolHistory);
       };
@@ -289,7 +295,9 @@ export default function BuyAndSell(props) {
                     fontSize: "subtitle2.fontSize",
                   }}
                 >
-                  Select a collection to view the orderbook
+                  {isConnected
+                    ? "Select a collection to view the orderbook"
+                    : "Connect Wallet to view the orderbook"}
                 </Box>
               </div>
             )}
@@ -519,7 +527,9 @@ export default function BuyAndSell(props) {
                   fontSize: "subtitle2.fontSize",
                 }}
               >
-                Select a collection to view trades
+                {isConnected
+                  ? " Select a collection to view trades"
+                  : "Connect Wallet to view trades"}
               </Box>
             </div>
           )}

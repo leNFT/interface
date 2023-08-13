@@ -342,6 +342,15 @@ export default function Swap() {
     }
   }, [selectedSellNFTs]);
 
+  useEffect(() => {
+    if (sellNFTAddress) {
+      handleSellNFTAddressChange(null, sellNFTAddress);
+    }
+    if (buyNFTAddress) {
+      handleBuyNFTAddressChange(null, buyNFTAddress);
+    }
+  }, [isConnected]);
+
   const handleNFTApprovalSuccess = async function () {
     setApprovedNFT(true);
     dispatch({
@@ -594,7 +603,9 @@ export default function Swap() {
                       sellPoolAddress.slice(0, 5) +
                       ".." +
                       sellPoolAddress.slice(-2)
-                    : "No pool found"}
+                    : isConnected
+                    ? "No pool found"
+                    : "Connect Wallet"}
                 </Box>
               </div>
             )}
@@ -868,7 +879,9 @@ export default function Swap() {
                       buyPoolAddress.slice(0, 5) +
                       ".." +
                       buyPoolAddress.slice(-2)
-                    : "No pool found"}
+                    : isConnected
+                    ? "No pool found"
+                    : "Connect Wallet"}
                 </Box>
               </div>
             )}

@@ -105,6 +105,12 @@ export default function LimitSell(props) {
     console.log("useEffect called");
   }, [isConnected, chain]);
 
+  useEffect(() => {
+    if (nftAddress) {
+      handleNFTAddressChange(null, nftAddress);
+    }
+  }, [isConnected]);
+
   const handleAmountInputChange = (event) => {
     console.log("handleAmountInputChange", event.target.value);
     setSelectingNFTs(false);
@@ -302,7 +308,9 @@ export default function LimitSell(props) {
                   poolAddress.slice(0, 5) +
                   ".." +
                   poolAddress.slice(-2)
-                : "No pool found"}
+                : isConnected
+                ? "No pool found"
+                : "Connect Wallet"}
             </Box>
           </div>
         )}

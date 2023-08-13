@@ -184,6 +184,12 @@ export default function MarketSell(props) {
     }
   }, [selectedNFTs]);
 
+  useEffect(() => {
+    if (nftAddress) {
+      handleNFTAddressChange(null, nftAddress);
+    }
+  }, [isConnected]);
+
   const handleAmountInputChange = (event) => {
     console.log("handleAmountInputChange", event.target.value);
     setSelectingNFTs(false);
@@ -380,7 +386,9 @@ export default function MarketSell(props) {
                   poolAddress.slice(0, 5) +
                   ".." +
                   poolAddress.slice(-2)
-                : "No pool found"}
+                : isConnected
+                ? "No pool found"
+                : "Connect Wallet"}
             </Box>
           </div>
         )}

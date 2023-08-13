@@ -166,7 +166,6 @@ export default function LimitBuy(props) {
       const nftAddress = tradingCollections.find(
         (collection) => collection.name == value
       ).address;
-      props.setCollection(nftAddress);
       setNFTAddress(nftAddress);
       getCollectionThumbnailURL(nftAddress);
       getTradingPoolAddress(nftAddress);

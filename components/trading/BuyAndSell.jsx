@@ -170,7 +170,7 @@ export default function BuyAndSell(props) {
           )}
         </div>
         {proMode && (
-          <div className="flex flex-col items-center rounded-3xl bg-black/5 w-full shadow-lg p-4">
+          <div className="flex flex-col items-center rounded-3xl bg-black/5 w-fit shadow-lg p-4">
             <Box
               className="mb-2"
               sx={{

@@ -185,15 +185,15 @@ export default function BuyAndSell(props) {
                 (orderbook.buy.length || orderbook.buy.length) ? (
                 <table>
                   <tr>
-                    <th className="px-8 py-2">Price (ETH)</th>
-                    <th className="px-8 py-2">Amount</th>
+                    <th className="px-8 py-2 text-sm">Price (ETH)</th>
+                    <th className="px-8 py-2 text-sm">Amount</th>
                   </tr>
                   {orderbook.sell
                     .slice()
                     .reverse()
                     .map((sellOrder, i) => (
                       <tr key={i} align="center">
-                        <td className="text-red-500">
+                        <td className="text-red-600">
                           <Box
                             sx={{
                               fontFamily: "Monospace",
@@ -205,22 +205,37 @@ export default function BuyAndSell(props) {
                             ).toPrecision(4)}
                           </Box>
                         </td>
-                        <td className="text-red-500">{sellOrder.amount}</td>
+                        <td>{sellOrder.amount}</td>
                       </tr>
                     ))}
                   <tr>
                     <td colSpan="2">
-                      <Divider
+                      <Box
+                        className="text-red-600 text-center"
                         sx={{
-                          marginY: 1,
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle1.fontSize",
+                          fontWeight: "bold",
                         }}
-                        variant="middle"
-                      />
+                      >
+                        Ask
+                      </Box>
+                      <Divider className="my-1" variant="middle" />
+                      <Box
+                        className="text-green-600 text-center"
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle1.fontSize",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Bid
+                      </Box>
                     </td>
                   </tr>
                   {orderbook.buy.map((buyOrder, i) => (
                     <tr key={i} align="center">
-                      <td className="text-green-500">
+                      <td className="text-green-600">
                         <Box
                           sx={{
                             fontFamily: "Monospace",
@@ -232,7 +247,7 @@ export default function BuyAndSell(props) {
                           )}
                         </Box>
                       </td>
-                      <td className="text-green-500">{buyOrder.amount}</td>
+                      <td>{buyOrder.amount}</td>
                     </tr>
                   ))}
                 </table>

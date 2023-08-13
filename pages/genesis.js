@@ -118,7 +118,7 @@ export default function Genesis() {
                 underline="hover"
                 target="_blank"
               >
-                {"What's a Genesis NFT?"}
+                {"What is a Genesis NFT?"}
               </Link>
             </Box>
             <Box

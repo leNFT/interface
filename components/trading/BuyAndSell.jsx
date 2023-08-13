@@ -297,7 +297,7 @@ export default function BuyAndSell(props) {
         )}
       </div>
       {proMode && (
-        <div className="flex flex-col items-center justify-center md:w-8/12 py-4 rounded-3xl my-8 md:m-8 lg:mx-16 !mt-8 bg-black/5 shadow-lg">
+        <div className="flex flex-col items-center min-w-[50%] justify-center py-4 rounded-3xl my-8 md:m-8 lg:mx-16 !mt-8 bg-black/5 shadow-lg">
           <Box
             className="mb-2"
             sx={{

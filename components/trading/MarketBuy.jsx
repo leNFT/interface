@@ -10,6 +10,7 @@ import {
 } from "wagmi";
 import { useRouter } from "next/router";
 import { ethers } from "ethers";
+import { Popover } from "@nextui-org/react";
 import Image from "next/image";
 import erc20 from "../../contracts/erc20.json";
 import erc721 from "../../contracts/erc721.json";
@@ -78,6 +79,7 @@ export default function MarketBuy(props) {
       collection,
       chain ? chain.id : 1
     );
+    console.log("addressNFTs", addressNFTs);
     setAvailableNFTs(addressNFTs);
   }
 
@@ -311,7 +313,7 @@ export default function MarketBuy(props) {
   };
 
   return (
-    <div className="flex flex-col items-center text-center w-full md:w-fit justify-center m-4 rounded-3xl">
+    <div className="flex flex-col items-center text-center w-full md:w-fit justify-center my-4 rounded-3xl">
       <div className="flex flex-col m-4">
         <div className="flex flex-row justify-center items-center mx-2">
           <Autocomplete
@@ -402,7 +404,7 @@ export default function MarketBuy(props) {
           </div>
         )}
       </div>
-      <div className="flex flex-col justify-center m-4">
+      <div className="flex flex-col justify-center my-4">
         <div className="flex flex-col md:flex-row justify-center items-center">
           <div className="flex flex-col w-[200px] justify-center m-2 backdrop-blur-md">
             <Input
@@ -473,7 +475,7 @@ export default function MarketBuy(props) {
         {selectingNFTs &&
           (availableNFTs.length > 0 ? (
             <div className="flex flex-col justify-center items-center m-4">
-              <div className="flex flex-row items-center text-center justify-center">
+              <div className="flex flex-row items-center text-center justify-center mx-8">
                 <Box
                   sx={{
                     fontFamily: "Monospace",
@@ -487,7 +489,7 @@ export default function MarketBuy(props) {
                   }
                 </Box>
               </div>
-              <div className="m-4 grid grid-cols-2 md:grid-cols-3 overflow-auto max-h-[24rem]">
+              <div className="my-4 grid grid-cols-2 md:grid-cols-3 overflow-auto max-h-[24rem]">
                 {availableNFTs.map((nft, _) => (
                   <div
                     key={BigNumber.from(nft.tokenId).toNumber()}
@@ -525,13 +527,58 @@ export default function MarketBuy(props) {
                       >
                         <div className="flex flex-col items-center p-1">
                           {nft.media[0] ? (
-                            <Image
-                              loader={() => nft.media[0].gateway}
-                              src={nft.media[0].gateway}
-                              height="120"
-                              width="120"
-                              className="rounded-xl"
-                            />
+                            <div style={{ position: "relative" }}>
+                              <Image
+                                loader={() => nft.media[0].gateway}
+                                src={nft.media[0].gateway}
+                                height="120"
+                                width="120"
+                                className="rounded-xl"
+                              />
+                              <Popover isBordered disableShadow>
+                                <Popover.Trigger>
+                                  <Button
+                                    style={{
+                                      position: "absolute",
+                                      bottom: "-0.5rem",
+                                      left: "0.2rem",
+                                    }}
+                                    color="#d2c6d2"
+                                    primary
+                                  >
+                                    <Box
+                                      sx={{
+                                        fontFamily: "Monospace",
+                                        fontSize: "11px",
+                                        fontWeight: "bold",
+                                        padding: "0.3rem",
+                                      }}
+                                    >
+                                      Traits
+                                    </Box>
+                                  </Button>
+                                </Popover.Trigger>
+                                <Popover.Content>
+                                  <Box
+                                    sx={{
+                                      fontFamily: "Monospace",
+                                      fontSize: "subtitle2.fontSize",
+                                      fontWeight: "bold",
+                                      padding: "0.6rem",
+                                    }}
+                                  >
+                                    {nft.rawMetadata.attributes.map(
+                                      (attribute) => (
+                                        <div key={attribute.trait_type}>
+                                          {attribute.trait_type}:{" "}
+                                          {attribute.value}
+                                        </div>
+                                      )
+                                    )}
+                                  </Box>
+                                </Popover.Content>
+                              </Popover>
+                            </div>
                           ) : (
                             <Box
                               className="flex m-2 justify-center items-center w-[100px] h-[100px]"
@@ -544,10 +591,11 @@ export default function MarketBuy(props) {
                             </Box>
                           )}
                           <Box
-                            className="mt-1"
+                            className="mr-4 w-full text-end"
                             sx={{
                               fontFamily: "Monospace",
-                              fontSize: "caption",
+                              fontSize: "subtitle2.fontSize",
+                              fontWeight: "bold",
                             }}
                           >
                             {BigNumber.from(nft.tokenId).toNumber()}

@@ -9,6 +9,7 @@ import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import Chip from "@mui/material/Chip";
 import Card from "@mui/material/Card";
+import { Popover } from "@nextui-org/react";
 import Image from "next/image";
 import { CardActionArea } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -302,7 +303,7 @@ export default function MarketSell(props) {
   };
 
   return (
-    <div className="flex flex-col items-center text-center w-full md:w-fit justify-center m-4 rounded-3xl">
+    <div className="flex flex-col items-center text-center w-full md:w-fit justify-center my-4 rounded-3xl">
       <div className="flex flex-col m-4">
         <div className="flex flex-row items-center space-x-2 mx-2">
           <Autocomplete
@@ -393,7 +394,7 @@ export default function MarketSell(props) {
           </div>
         )}
       </div>
-      <div className="flex flex-col justify-center m-4">
+      <div className="flex flex-col justify-center my-4">
         <div className="flex flex-col md:flex-row justify-center items-center">
           <div className="flex flex-col w-[200px] justify-center m-2 backdrop-blur-md">
             <Input
@@ -463,7 +464,7 @@ export default function MarketSell(props) {
         </div>
         {selectingNFTs &&
           (userNFTs.length > 0 ? (
-            <div className="flex flex-row m-4 grid grid-cols-2 md:grid-cols-3 overflow-auto max-h-[24rem]">
+            <div className="flex flex-row m-4 grid grid-cols-2 md:grid-cols-3 overflow-auto mx-8 max-h-[24rem]">
               {userNFTs.map((nft, _) => (
                 <div
                   key={BigNumber.from(nft.tokenId).toNumber()}
@@ -500,13 +501,58 @@ export default function MarketSell(props) {
                     >
                       <div className="flex flex-col items-center p-1">
                         {nft.media[0] ? (
-                          <Image
-                            loader={() => nft.media[0].gateway}
-                            src={nft.media[0].gateway}
-                            height="100"
-                            width="100"
-                            className="rounded-xl"
-                          />
+                          <div style={{ position: "relative" }}>
+                            <Image
+                              loader={() => nft.media[0].gateway}
+                              src={nft.media[0].gateway}
+                              height="120"
+                              width="120"
+                              className="rounded-xl"
+                            />
+                            <Popover isBordered disableShadow>
+                              <Popover.Trigger>
+                                <Button
+                                  style={{
+                                    position: "absolute",
+                                    bottom: "-0.5rem",
+                                    left: "0.2rem",
+                                  }}
+                                  color="#d2c6d2"
+                                  primary
+                                >
+                                  <Box
+                                    sx={{
+                                      fontFamily: "Monospace",
+                                      fontSize: "11px",
+                                      fontWeight: "bold",
+                                      padding: "0.3rem",
+                                    }}
+                                  >
+                                    Traits
+                                  </Box>
+                                </Button>
+                              </Popover.Trigger>
+                              <Popover.Content>
+                                <Box
+                                  sx={{
+                                    fontFamily: "Monospace",
+                                    fontSize: "subtitle2.fontSize",
+                                    fontWeight: "bold",
+                                    padding: "0.6rem",
+                                  }}
+                                >
+                                  {nft.rawMetadata.attributes.map(
+                                    (attribute) => (
+                                      <div key={attribute.trait_type}>
+                                        {attribute.trait_type}:{" "}
+                                        {attribute.value}
+                                      </div>
+                                    )
+                                  )}
+                                </Box>
+                              </Popover.Content>
+                            </Popover>
+                          </div>
                         ) : (
                           <Box
                             className="flex m-2 justify-center items-center w-[100px] h-[100px]"
@@ -519,10 +565,11 @@ export default function MarketSell(props) {
                           </Box>
                         )}
                         <Box
-                          className="mt-1"
+                          className="mr-4 w-full text-end"
                           sx={{
                             fontFamily: "Monospace",
-                            fontSize: "caption",
+                            fontSize: "subtitle2.fontSize",
+                            fontWeight: "bold",
                           }}
                         >
                           {BigNumber.from(nft.tokenId).toNumber()}

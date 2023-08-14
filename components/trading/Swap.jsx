@@ -9,6 +9,7 @@ import {
   useProvider,
   useBalance,
 } from "wagmi";
+import { Popover } from "@nextui-org/react";
 import Autocomplete from "@mui/material/Autocomplete";
 import { getNFTImage } from "../../helpers/getNFTImage.js";
 import TextField from "@mui/material/TextField";
@@ -719,13 +720,58 @@ export default function Swap() {
                           >
                             <div className="flex flex-col items-center p-1">
                               {nft.media[0] ? (
-                                <Image
-                                  loader={() => nft.media[0].gateway}
-                                  src={nft.media[0].gateway}
-                                  height="100"
-                                  width="100"
-                                  className="rounded-xl"
-                                />
+                                <div style={{ position: "relative" }}>
+                                  <Image
+                                    loader={() => nft.media[0].gateway}
+                                    src={nft.media[0].gateway}
+                                    height="120"
+                                    width="120"
+                                    className="rounded-xl"
+                                  />
+                                  <Popover isBordered disableShadow>
+                                    <Popover.Trigger>
+                                      <Button
+                                        style={{
+                                          position: "absolute",
+                                          bottom: "-0.5rem",
+                                          left: "0.2rem",
+                                        }}
+                                        color="#d2c6d2"
+                                        primary
+                                      >
+                                        <Box
+                                          sx={{
+                                            fontFamily: "Monospace",
+                                            fontSize: "11px",
+                                            fontWeight: "bold",
+                                            padding: "0.3rem",
+                                          }}
+                                        >
+                                          Traits
+                                        </Box>
+                                      </Button>
+                                    </Popover.Trigger>
+                                    <Popover.Content>
+                                      <Box
+                                        sx={{
+                                          fontFamily: "Monospace",
+                                          fontSize: "subtitle2.fontSize",
+                                          fontWeight: "bold",
+                                          padding: "0.6rem",
+                                        }}
+                                      >
+                                        {nft.rawMetadata.attributes.map(
+                                          (attribute) => (
+                                            <div key={attribute.trait_type}>
+                                              {attribute.trait_type}:{" "}
+                                              {attribute.value}
+                                            </div>
+                                          )
+                                        )}
+                                      </Box>
+                                    </Popover.Content>
+                                  </Popover>
+                                </div>
                               ) : (
                                 <Box
                                   className="flex m-2 justify-center items-center w-[100px] h-[100px]"
@@ -738,10 +784,11 @@ export default function Swap() {
                                 </Box>
                               )}
                               <Box
-                                className="mt-1"
+                                className="mr-4 w-full text-end"
                                 sx={{
                                   fontFamily: "Monospace",
-                                  fontSize: "caption",
+                                  fontSize: "subtitle2.fontSize",
+                                  fontWeight: "bold",
                                 }}
                               >
                                 {BigNumber.from(nft.tokenId).toNumber()}
@@ -1010,13 +1057,58 @@ export default function Swap() {
                             >
                               <div className="flex flex-col items-center p-1">
                                 {nft.media[0] ? (
-                                  <Image
-                                    loader={() => nft.media[0].gateway}
-                                    src={nft.media[0].gateway}
-                                    height="100"
-                                    width="100"
-                                    className="rounded-xl"
-                                  />
+                                  <div style={{ position: "relative" }}>
+                                    <Image
+                                      loader={() => nft.media[0].gateway}
+                                      src={nft.media[0].gateway}
+                                      height="120"
+                                      width="120"
+                                      className="rounded-xl"
+                                    />
+                                    <Popover isBordered disableShadow>
+                                      <Popover.Trigger>
+                                        <Button
+                                          style={{
+                                            position: "absolute",
+                                            bottom: "-0.5rem",
+                                            left: "0.2rem",
+                                          }}
+                                          color="#d2c6d2"
+                                          primary
+                                        >
+                                          <Box
+                                            sx={{
+                                              fontFamily: "Monospace",
+                                              fontSize: "11px",
+                                              fontWeight: "bold",
+                                              padding: "0.3rem",
+                                            }}
+                                          >
+                                            Traits
+                                          </Box>
+                                        </Button>
+                                      </Popover.Trigger>
+                                      <Popover.Content>
+                                        <Box
+                                          sx={{
+                                            fontFamily: "Monospace",
+                                            fontSize: "subtitle2.fontSize",
+                                            fontWeight: "bold",
+                                            padding: "0.6rem",
+                                          }}
+                                        >
+                                          {nft.rawMetadata.attributes.map(
+                                            (attribute) => (
+                                              <div key={attribute.trait_type}>
+                                                {attribute.trait_type}:{" "}
+                                                {attribute.value}
+                                              </div>
+                                            )
+                                          )}
+                                        </Box>
+                                      </Popover.Content>
+                                    </Popover>
+                                  </div>
                                 ) : (
                                   <Box
                                     className="flex m-2 justify-center items-center w-[100px] h-[100px]"
@@ -1029,10 +1121,11 @@ export default function Swap() {
                                   </Box>
                                 )}
                                 <Box
-                                  className="mt-1"
+                                  className="mr-4 w-full text-end"
                                   sx={{
                                     fontFamily: "Monospace",
-                                    fontSize: "caption",
+                                    fontSize: "subtitle2.fontSize",
+                                    fontWeight: "bold",
                                   }}
                                 >
                                   {BigNumber.from(nft.tokenId).toNumber()}

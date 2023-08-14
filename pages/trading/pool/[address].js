@@ -539,7 +539,7 @@ export default function TradingPool() {
                         fontSize: "subtitle1.fontSize",
                       }}
                     >
-                      No LP Positions found.
+                      No liquidity pairs found.
                     </Box>
                     <Box
                       sx={{
@@ -547,7 +547,7 @@ export default function TradingPool() {
                         fontSize: "caption.fontSize",
                       }}
                     >
-                      {"(Staked positions available in the pool's "}
+                      {"(Staked LPs available in the pool's "}
                       <a
                         href={"/trading/gauge/" + poolInfo.gauge}
                         className="text-blue-600 underline text-sm"

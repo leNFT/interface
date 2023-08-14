@@ -74,7 +74,7 @@ export default function BuyAndSell(props) {
         >
           <div className="flex items-center justify-end mt-4 w-full">
             <ButtonNextUI
-              size="xs"
+              size="sm"
               auto
               color="secondary"
               onClick={() => {
@@ -84,58 +84,60 @@ export default function BuyAndSell(props) {
               {proMode ? "Simple Mode" : "Pro Mode"}
             </ButtonNextUI>
           </div>
-          <div className="flex flex-row">
-            <div className="flex flex-col m-2">
-              <Button
-                primary
-                size="small"
-                color={option == "market" ? SELECTED_COLOR : UNSELECTED_COLOR}
-                onClick={() => {
-                  setBackgroundImageURL("");
-                  setOption("market");
-                }}
-                label={
-                  <div className="flex">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "subtitle2.fontSize",
-                        fontWeight: "bold",
-                        letterSpacing: 2,
-                      }}
-                    >
-                      Market
-                    </Box>
-                  </div>
-                }
-              />
+          {proMode && (
+            <div className="flex flex-row">
+              <div className="flex flex-col m-2">
+                <Button
+                  primary
+                  size="small"
+                  color={option == "market" ? SELECTED_COLOR : UNSELECTED_COLOR}
+                  onClick={() => {
+                    setBackgroundImageURL("");
+                    setOption("market");
+                  }}
+                  label={
+                    <div className="flex">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle2.fontSize",
+                          fontWeight: "bold",
+                          letterSpacing: 2,
+                        }}
+                      >
+                        Market
+                      </Box>
+                    </div>
+                  }
+                />
+              </div>
+              <div className="flex flex-col m-2">
+                <Button
+                  primary
+                  size="small"
+                  color={option == "limit" ? SELECTED_COLOR : UNSELECTED_COLOR}
+                  onClick={() => {
+                    setBackgroundImageURL("");
+                    setOption("limit");
+                  }}
+                  label={
+                    <div className="flex">
+                      <Box
+                        sx={{
+                          fontFamily: "Monospace",
+                          fontSize: "subtitle2.fontSize",
+                          fontWeight: "bold",
+                          letterSpacing: 2,
+                        }}
+                      >
+                        Limit
+                      </Box>
+                    </div>
+                  }
+                />
+              </div>
             </div>
-            <div className="flex flex-col m-2">
-              <Button
-                primary
-                size="small"
-                color={option == "limit" ? SELECTED_COLOR : UNSELECTED_COLOR}
-                onClick={() => {
-                  setBackgroundImageURL("");
-                  setOption("limit");
-                }}
-                label={
-                  <div className="flex">
-                    <Box
-                      sx={{
-                        fontFamily: "Monospace",
-                        fontSize: "subtitle2.fontSize",
-                        fontWeight: "bold",
-                        letterSpacing: 2,
-                      }}
-                    >
-                      Limit
-                    </Box>
-                  </div>
-                }
-              />
-            </div>
-          </div>
+          )}
           {props.option == "buy" && (
             <div className="flex flex-row items-center">
               {option == "market" && (

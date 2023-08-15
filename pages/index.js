@@ -90,7 +90,7 @@ export default function Home() {
                   </Button>
                 </a>
               </Link>
-              <Badge
+              {/* <Badge
                 disableOutline
                 enableShadow
                 color="primary"
@@ -121,7 +121,7 @@ export default function Home() {
                     BORROW
                   </Box>
                 </Button>
-              </Badge>
+              </Badge> */}
             </div>
             <div className={styles.indexDescribeSubtitle}>
               <li>Trade your assets</li>

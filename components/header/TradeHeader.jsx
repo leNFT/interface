@@ -211,7 +211,7 @@ export default function TradeHeader() {
               }
             />
           </Link>
-          <Link href="/borrow">
+          {/* <Link href="/borrow">
             <Badge
               className="z-0"
               disableOutline
@@ -250,7 +250,7 @@ export default function TradeHeader() {
                 }
               />
             </Badge>
-          </Link>
+          </Link> */}
         </div>
         <div className="flex flex-col m-2">
           <Link href="/tradingPools">

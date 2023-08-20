@@ -56,6 +56,7 @@ export default function BuyAndSell(props) {
   const [openOrders, setOpenOrders] = useState([]);
   const [nftAddress, setNFTAddress] = useState("");
   const [poolAddress, setPoolAddress] = useState("");
+  const [approvedLP, setApprovedLP] = useState(false);
 
   var addresses = contractAddresses[1];
 
@@ -120,6 +121,15 @@ export default function BuyAndSell(props) {
       type: "success",
       message: "Your order was successfully withdrawn.",
       title: "Withdraw Successful!",
+      position: "bottomL",
+    });
+  };
+
+  const handleLPApprovalSuccess = async function () {
+    dispatch({
+      type: "success",
+      message: "Your LP was successfully approved.",
+      title: "Approval Successful!",
       position: "bottomL",
     });
   };
@@ -195,6 +205,21 @@ export default function BuyAndSell(props) {
         );
         console.log("updatedOpenOrders", updatedOpenOrders);
         setOpenOrders(updatedOpenOrders);
+
+        // Get approved status
+        const pool = new ethers.Contract(
+          props.pool,
+          tradingPoolContract.abi,
+          provider
+        );
+
+        // GEt allowance for LP token
+        const approvedResponse = await pool.isApprovedForAll(
+          address,
+          addresses.WETHGateway
+        );
+        console.log("approvedResponse", approvedResponse);
+        setApprovedLP(approvedResponse);
         setLoadingOpenOrders(false);
       };
       fetchProModeInfo();
@@ -623,30 +648,59 @@ export default function BuyAndSell(props) {
                           : order.nfts.join(", ")}
                       </td>
                       <td>
-                        <ButtonNextUI
-                          className="m-2"
-                          size="xs"
-                          auto
-                          color="secondary"
-                          onPress={async function () {
-                            try {
-                              var tx;
+                        {approvedLP ? (
+                          <ButtonNextUI
+                            className="m-2"
+                            size="xs"
+                            auto
+                            color="secondary"
+                            onPress={async function () {
+                              try {
+                                var tx;
 
-                              console.log("Removing LP");
-                              tx = await wethGatewaySigner.withdrawTradingPool(
-                                pool,
-                                order.lpId
-                              );
+                                console.log("Removing LP");
+                                tx =
+                                  await wethGatewaySigner.withdrawTradingPool(
+                                    pool,
+                                    order.lpId
+                                  );
 
-                              await tx.wait(1);
-                              handleWithdrawSuccess();
-                            } catch (error) {
-                              console.log(error);
-                            }
-                          }}
-                        >
-                          Withdraw
-                        </ButtonNextUI>
+                                await tx.wait(1);
+                                handleWithdrawSuccess();
+                              } catch (error) {
+                                console.log(error);
+                              }
+                            }}
+                          >
+                            Withdraw
+                          </ButtonNextUI>
+                        ) : (
+                          <ButtonNextUI
+                            className="m-2"
+                            size="xs"
+                            auto
+                            color="secondary"
+                            onPress={async function () {
+                              try {
+                                const pool = new ethers.Contract(
+                                  props.pool,
+                                  tradingPoolContract.abi,
+                                  signer
+                                );
+                                const tx = await pool.setApprovalForAll(
+                                  addresses.WETHGateway,
+                                  true
+                                );
+                                await tx.wait(1);
+                                handleLPApprovalSuccess();
+                              } catch (error) {
+                                console.log(error);
+                              }
+                            }}
+                          >
+                            Approve
+                          </ButtonNextUI>
+                        )}
                       </td>
                     </tr>
                   ))}

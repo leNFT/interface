@@ -463,7 +463,7 @@ export default function BuyAndSell(props) {
                   </thead>
                   <tbody>
                     {orderbook.sell
-                      .slice()
+                      .slice(0, 5)
                       .reverse()
                       .map((sellOrder, i) => (
                         <tr key={i} align="center">
@@ -507,7 +507,7 @@ export default function BuyAndSell(props) {
                         </Box>
                       </td>
                     </tr>
-                    {orderbook.buy.map((buyOrder, i) => (
+                    {orderbook.buy.slice(0, 5).map((buyOrder, i) => (
                       <tr key={i} align="center">
                         <td className="text-green-600">
                           <Box

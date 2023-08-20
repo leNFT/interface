@@ -31,19 +31,23 @@ import {
 } from "wagmi";
 import { formatUnits } from "@ethersproject/units";
 import * as timeago from "timeago.js";
+import wethGatewayContract from "../../contracts/WETHGateway.json";
 
 export default function BuyAndSell(props) {
   const SELECTED_COLOR = "#d2c6d2";
   const UNSELECTED_COLOR = "#eae5ea";
   const { isConnected, address } = useAccount();
   const provider = useProvider();
+  const { data: signer } = useSigner();
   const { chain } = useNetwork();
   const [option, setOption] = useState("market");
   const [backgroundImage, setBackgroundImage] = useState("");
   const [proMode, setProMode] = useState(false);
   const [pool, setPool] = useState("");
   const [orderbook, setOrderbook] = useState();
-  const [loadingProMode, setLoadingProMode] = useState(false);
+  const [loadingOrderbook, setLoadingOrderbook] = useState(false);
+  const [loadingOpenOrders, setLoadingOpenOrders] = useState(false);
+  const [loadingTradingHistory, setLoadingTradingHistory] = useState(false);
   const [poolHistory, setPoolHistory] = useState([]);
   const [nftName, setNFTName] = useState("");
   const [tradingCollections, setTradingCollections] = useState([]);
@@ -52,6 +56,12 @@ export default function BuyAndSell(props) {
   const [poolAddress, setPoolAddress] = useState("");
 
   var addresses = contractAddresses[1];
+
+  const wethGatewaySigner = useContract({
+    contractInterface: wethGatewayContract.abi,
+    addressOrName: addresses.WETHGateway,
+    signerOrProvider: signer,
+  });
 
   const factoryProvider = useContract({
     contractInterface: tradingPoolFactoryContract.abi,
@@ -150,20 +160,23 @@ export default function BuyAndSell(props) {
   useEffect(() => {
     if (pool && proMode) {
       const fetchProModeInfo = async () => {
-        setLoadingProMode(true);
+        setLoadingOrderbook(true);
+        setLoadingTradingHistory(true);
+        setLoadingOpenOrders(true);
         const newOrderbook = await getTradingPoolOrderbook(
           chain ? chain.id : 1,
           pool
         );
         console.log("orderbook:", newOrderbook);
         setOrderbook(newOrderbook);
-        setLoadingProMode(false);
+        setLoadingOrderbook(false);
         const newPoolHistory = await getTradingPoolHistory(
           chain ? chain.id : 1,
           pool
         );
         console.log("poolHistory:", newPoolHistory);
         setPoolHistory(newPoolHistory);
+        setLoadingTradingHistory(false);
         const updatedOpenOrders = await getOpenOrders(
           chain ? chain.id : 1,
           pool,
@@ -171,6 +184,7 @@ export default function BuyAndSell(props) {
         );
         console.log("updatedOpenOrders", updatedOpenOrders);
         setOpenOrders(updatedOpenOrders);
+        setLoadingOpenOrders(false);
       };
       fetchProModeInfo();
       console.log("pool:", pool);
@@ -397,7 +411,7 @@ export default function BuyAndSell(props) {
               Orderbook
             </Box>
             {pool ? (
-              loadingProMode ? (
+              loadingOrderbook ? (
                 <div className="m-32">
                   <Loading size={18} spinnerColor="#000000" />
                 </div>
@@ -536,7 +550,7 @@ export default function BuyAndSell(props) {
             Open Orders
           </Box>
           {pool ? (
-            loadingProMode ? (
+            loadingOpenOrders ? (
               <div className="m-16">
                 <Loading size={18} spinnerColor="#000000" />
               </div>
@@ -575,7 +589,7 @@ export default function BuyAndSell(props) {
                           size="xs"
                           auto
                           color="secondary"
-                          onClick={() => {
+                          onPress={() => {
                             console.log(
                               `Removing order with lpId: ${order.lpId}`
                             );
@@ -630,7 +644,7 @@ export default function BuyAndSell(props) {
             Trade History
           </Box>
           {pool ? (
-            loadingProMode ? (
+            loadingTradingHistory ? (
               <div className="m-32">
                 <Loading size={18} spinnerColor="#000000" />
               </div>

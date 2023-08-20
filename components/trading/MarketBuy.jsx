@@ -187,7 +187,7 @@ export default function MarketBuy(props) {
     } else {
       setAmount(event.target.value);
       try {
-        if (event.target.value && nftAddress) {
+        if (event.target.value && props.nftAddress) {
           getPriceQuote(event.target.value);
         } else {
           setPriceQuote();

@@ -32,6 +32,7 @@ import {
 import { formatUnits } from "@ethersproject/units";
 import * as timeago from "timeago.js";
 import wethGatewayContract from "../../contracts/WETHGateway.json";
+import { BigNumber } from "ethers";
 
 export default function BuyAndSell(props) {
   const SELECTED_COLOR = "#d2c6d2";
@@ -48,6 +49,7 @@ export default function BuyAndSell(props) {
   const [loadingOrderbook, setLoadingOrderbook] = useState(false);
   const [loadingOpenOrders, setLoadingOpenOrders] = useState(false);
   const [loadingTradingHistory, setLoadingTradingHistory] = useState(false);
+  const [withdrawLoading, setWithdrawLoading] = useState(false);
   const [poolHistory, setPoolHistory] = useState([]);
   const [nftName, setNFTName] = useState("");
   const [tradingCollections, setTradingCollections] = useState([]);
@@ -112,6 +114,15 @@ export default function BuyAndSell(props) {
       setNFTName("");
     }
   }
+
+  const handleWithdrawSuccess = async function () {
+    dispatch({
+      type: "success",
+      message: "Your order was successfully withdrawn.",
+      title: "Withdraw Successful!",
+      position: "bottomL",
+    });
+  };
 
   const handleNFTAddressChange = (_event, value) => {
     console.log("handleNFTAddressChange", value);
@@ -558,11 +569,16 @@ export default function BuyAndSell(props) {
               <table>
                 <thead>
                   <tr>
-                    <th className="px-4 md:px-12 py-2 text-sm">Type</th>
-                    <th className="px-4 md:px-12 py-2 text-sm">Price</th>
-                    <th className="px-4 md:px-12 py-2 text-sm">Token</th>
-                    <th className="px-4 md:px-12 py-2 text-sm">NFTs</th>
-                    <th className="px-4 md:px-12 py-2 text-sm"></th>
+                    <th className="px-8 md:px-12 py-2 text-sm">Type</th>
+                    <th className="px-8 md:px-12 py-2 text-sm">Filled</th>
+                    <th className="px-8 md:px-12 py-2 text-sm">Price</th>
+                    <th className="px-8 md:px-12 py-2 text-sm hidden md:table-cell">
+                      Token
+                    </th>
+                    <th className="px-8 md:px-12 py-2 text-sm  hidden md:table-cell">
+                      NFTs
+                    </th>
+                    <th className="px-8 md:px-12 py-2 text-sm"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -576,9 +592,32 @@ export default function BuyAndSell(props) {
                         {order.type.charAt(0).toUpperCase() +
                           order.type.slice(1)}
                       </td>
-                      <td>{formatUnits(order.price, 18) + " ETH"}</td>
-                      <td>{formatUnits(order.token, 18) + " ETH"}</td>
                       <td>
+                        {order.type == "buy"
+                          ? (order.nfts.length /
+                              (order.nfts.length +
+                                BigNumber.from(order.token)
+                                  .div(order.price)
+                                  .toNumber())) *
+                              100 +
+                            "%"
+                          : BigNumber.from(order.token)
+                              .div(
+                                BigNumber.from(order.token).add(
+                                  BigNumber.from(order.nfts.length).mul(
+                                    order.price
+                                  )
+                                )
+                              )
+                              .toNumber() *
+                              100 +
+                            "%"}
+                      </td>
+                      <td>{formatUnits(order.price, 18) + " ETH"}</td>
+                      <td className="hidden md:table-cell">
+                        {formatUnits(order.token, 18) + " ETH"}
+                      </td>
+                      <td className="hidden md:table-cell">
                         {order.nfts.length == 0
                           ? "None"
                           : order.nfts.join(", ")}
@@ -589,13 +628,24 @@ export default function BuyAndSell(props) {
                           size="xs"
                           auto
                           color="secondary"
-                          onPress={() => {
-                            console.log(
-                              `Removing order with lpId: ${order.lpId}`
-                            );
+                          onPress={async function () {
+                            try {
+                              var tx;
+
+                              console.log("Removing LP");
+                              tx = await wethGatewaySigner.withdrawTradingPool(
+                                pool,
+                                order.lpId
+                              );
+
+                              await tx.wait(1);
+                              handleWithdrawSuccess();
+                            } catch (error) {
+                              console.log(error);
+                            }
                           }}
                         >
-                          Remove
+                          Withdraw
                         </ButtonNextUI>
                       </td>
                     </tr>

@@ -208,14 +208,14 @@ export default function BuyAndSell(props) {
         setOpenOrders(updatedOpenOrders);
 
         // Get approved status
-        const pool = new ethers.Contract(
-          props.pool,
+        const poolContract = new ethers.Contract(
+          pool,
           tradingPoolContract.abi,
           provider
         );
 
         // GEt allowance for LP token
-        const approvedResponse = await pool.isApprovedForAll(
+        const approvedResponse = await poolContract.isApprovedForAll(
           address,
           addresses.WETHGateway
         );
@@ -683,12 +683,12 @@ export default function BuyAndSell(props) {
                             color="secondary"
                             onPress={async function () {
                               try {
-                                const pool = new ethers.Contract(
-                                  props.pool,
+                                const poolContract = new ethers.Contract(
+                                  pool,
                                   tradingPoolContract.abi,
                                   signer
                                 );
-                                const tx = await pool.setApprovalForAll(
+                                const tx = await poolContract.setApprovalForAll(
                                   addresses.WETHGateway,
                                   true
                                 );

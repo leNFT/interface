@@ -94,7 +94,7 @@ export default function TradingPool() {
         const lp = await pool.getLP(addressNFTs[i].tokenId);
         newLpPositions[newLpPositions.length - 1].image = await getNFTImage(
           poolInfo.nft.address,
-          lp.nftIds[0],
+          lp.nftIds.length > 0 ? lp.nftIds[0] : 0,
           chain ? chain.id : 1
         );
         newTotalNFTs += lp.nftIds.length;

@@ -9,7 +9,6 @@ import { ethers } from "ethers";
 import Card from "@mui/material/Card";
 import Image from "next/image";
 import { CardActionArea } from "@mui/material";
-import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { parseUnits } from "ethers/lib/utils";
 import {
@@ -28,20 +27,16 @@ import wethGateway from "../../contracts/WETHGateway.json";
 
 export default function LimitSell(props) {
   const provider = useProvider();
-  const [tradingCollections, setTradingCollections] = useState([]);
   const { chain } = useNetwork();
   const { data: signer } = useSigner();
   const { address, isConnected } = useAccount();
   const [approvedNFT, setApprovedNFT] = useState(false);
-  const [nftAddress, setNFTAddress] = useState("");
-  const [poolAddress, setPoolAddress] = useState("");
   const [amount, setAmount] = useState(0);
   const [selectingNFTs, setSelectingNFTs] = useState(false);
   const [selectedNFTs, setSelectedNFTs] = useState([]);
   const [userNFTs, setUserNFTs] = useState([]);
   const [sellLoading, setSellLoading] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
-  const [nftName, setNFTName] = useState("");
   const [price, setPrice] = useState(0);
 
   const dispatch = useNotification();
@@ -66,50 +61,6 @@ export default function LimitSell(props) {
       setUserNFTs(addressNFTs);
     }
   }
-  async function getTradingCollections(chain) {
-    // Get user NFT assets
-    const tradingCollections = await getTradingNFTCollections(chain);
-    setTradingCollections(tradingCollections);
-    console.log("tradingCollections", tradingCollections);
-  }
-  async function getTradingPoolAddress(collection) {
-    // Get trading pool for collection
-    const updatedPool = (
-      await factoryProvider.getTradingPool(collection, addresses.ETH.address)
-    ).toString();
-
-    console.log("updatedpool", updatedPool);
-    getNFTAllowance(collection);
-    getNFTName(collection);
-    setPoolAddress(updatedPool);
-    props.setPool(updatedPool);
-  }
-
-  async function getCollectionThumbnailURL(collection) {
-    const updatedURL = await getNFTImage(
-      collection,
-      1,
-      isConnected ? chain.id : 1
-    );
-    console.log("updatedURL", updatedURL);
-    props.setBackgroundImage(updatedURL);
-  }
-
-  // Runs once
-  useEffect(() => {
-    const chain = chain ? chain.id : 1;
-
-    addresses = contractAddresses[chain];
-    getTradingCollections(chain);
-
-    console.log("useEffect called");
-  }, [isConnected, chain]);
-
-  useEffect(() => {
-    if (nftAddress) {
-      handleNFTAddressChange(null, nftAddress);
-    }
-  }, [isConnected]);
 
   const handleAmountInputChange = (event) => {
     console.log("handleAmountInputChange", event.target.value);
@@ -172,150 +123,14 @@ export default function LimitSell(props) {
     }
   }
 
-  async function getNFTName(collection) {
-    console.log("nftAddress", nftAddress);
-    const nftContract = new ethers.Contract(collection, erc721, provider);
-    const name = await nftContract.name();
-
-    console.log("Got nft name:", name);
-
-    if (name) {
-      setNFTName(name);
-    } else {
-      setNFTName("");
-    }
-  }
-
-  const handleNFTAddressChange = (_event, value) => {
-    console.log("handleNFTAddressChange", value);
-    setAmount(0);
-    setSelectedNFTs([]);
-    if (ethers.utils.isAddress(value)) {
-      setNFTAddress(value);
-      getCollectionThumbnailURL(value);
-      getUserNFTs(value);
-      getTradingPoolAddress(value);
-    } else if (
-      tradingCollections.map((collection) => collection.name).includes(value)
-    ) {
-      const nftAddress = tradingCollections.find(
-        (collection) => collection.name == value
-      ).address;
-      setNFTAddress(nftAddress);
-      getUserNFTs(nftAddress);
-      getCollectionThumbnailURL(nftAddress);
-      getTradingPoolAddress(nftAddress);
-    } else {
-      console.log("Invalid NFT Address");
-      if (value == "") {
-        setNFTAddress("");
-      } else {
-        setNFTAddress("0x");
-      }
-      props.setPool("");
-      props.setBackgroundImage("");
-      setPoolAddress("");
-      setNFTName("");
-    }
-  };
-
   const handlePriceInputChange = (event) => {
     console.log("handlePriceInputChange", event.target.value);
     setPrice(event.target.value);
   };
 
   return (
-    <div className="flex flex-col items-center text-center w-full md:w-fit justify-center m-4 rounded-3xl">
-      <div className="flex flex-col m-4">
-        <div className="flex flex-row items-center space-x-2 mx-2">
-          <Autocomplete
-            autoComplete
-            freeSolo
-            disablePortal
-            ListboxProps={{
-              style: {
-                backgroundColor: "rgb(253, 241, 244)",
-                fontFamily: "Monospace",
-              },
-            }}
-            options={tradingCollections.map((option) => option.name)}
-            sx={{ minWidth: { xs: 260, sm: 320, md: 380 } }}
-            onInputChange={handleNFTAddressChange}
-            renderOption={(props, option) => (
-              <div className="flex flex-row m-4" {...props}>
-                <div className="flex w-3/12 h-[50px]">
-                  {tradingCollections.find(
-                    (collection) => collection.name == option
-                  ).image && (
-                    <Image
-                      loader={() =>
-                        tradingCollections.find(
-                          (collection) => collection.name == option
-                        ).image
-                      }
-                      src={
-                        tradingCollections.find(
-                          (collection) => collection.name == option
-                        ).image
-                      }
-                      height="50"
-                      width="50"
-                      className="rounded-xl"
-                    />
-                  )}
-                </div>
-                <div className="flex mx-2">{option}</div>
-              </div>
-            )}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="NFT Name or Address"
-                sx={{
-                  "& label": {
-                    paddingLeft: (theme) => theme.spacing(2),
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                    backdropFilter: "blur(10px)",
-                  },
-                  "& input": {
-                    paddingLeft: (theme) => theme.spacing(3.5),
-                    fontFamily: "Monospace",
-                    backdropFilter: "blur(10px)",
-                  },
-                  "& fieldset": {
-                    paddingLeft: (theme) => theme.spacing(2.5),
-                    borderRadius: "20px",
-                    fontFamily: "Monospace",
-                  },
-                }}
-              />
-            )}
-          />
-        </div>
-        {nftAddress && (
-          <div className="flex flex-row mt-1 justify-center">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "caption.fontSize",
-                fontWeight: "bold",
-                letterSpacing: 2,
-              }}
-            >
-              {poolAddress
-                ? "Pool: " +
-                  poolAddress.slice(0, 5) +
-                  ".." +
-                  poolAddress.slice(-2)
-                : isConnected
-                ? "No pool found"
-                : "Connect Wallet"}
-            </Box>
-          </div>
-        )}
-      </div>
-      <div className="flex flex-col justify-center m-4">
+    <div className="flex flex-col items-center text-center w-full md:w-fit justify-center rounded-3xl">
+      <div className="flex flex-col justify-center">
         <div className="flex flex-col md:flex-row justify-center items-center">
           <div className="flex flex-col justify-center items-center">
             <div className="flex flex-col w-[200px] justify-center m-2 backdrop-blur-md">
@@ -365,7 +180,7 @@ export default function LimitSell(props) {
                     setSelectedNFTs([]);
                     setSelectingNFTs(!selectingNFTs);
                   }}
-                  disabled={!nftAddress}
+                  disabled={!props.nftAddress}
                   label={
                     <div className="flex">
                       <Box

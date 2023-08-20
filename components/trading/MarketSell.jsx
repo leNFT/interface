@@ -12,8 +12,6 @@ import Card from "@mui/material/Card";
 import { Popover } from "@nextui-org/react";
 import Image from "next/image";
 import { CardActionArea } from "@mui/material";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
 import {
   useAccount,
   useNetwork,
@@ -28,19 +26,15 @@ import { useState, useEffect } from "react";
 import { Divider } from "@mui/material";
 import Box from "@mui/material/Box";
 import erc721 from "../../contracts/erc721.json";
-import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json";
 import wethGateway from "../../contracts/WETHGateway.json";
 
 export default function MarketSell(props) {
   const router = useRouter();
   const provider = useProvider();
-  const [tradingCollections, setTradingCollections] = useState([]);
   const { chain } = useNetwork();
   const { data: signer } = useSigner();
   const { address, isConnected } = useAccount();
   const [approvedNFT, setApprovedNFT] = useState(false);
-  const [nftAddress, setNFTAddress] = useState("");
-  const [poolAddress, setPoolAddress] = useState("");
   const [amount, setAmount] = useState(0);
   const [loadingPriceQuote, setLoadingPriceQuote] = useState(false);
   const [selectingNFTs, setSelectingNFTs] = useState(false);
@@ -49,17 +43,11 @@ export default function MarketSell(props) {
   const [priceQuote, setPriceQuote] = useState();
   const [sellLoading, setSellLoading] = useState(false);
   const [approvalLoading, setApprovalLoading] = useState(false);
-  const [nftName, setNFTName] = useState("");
   const [nftImages, setNFTImages] = useState([]);
 
   const dispatch = useNotification();
 
   var addresses = contractAddresses[1];
-  const factoryProvider = useContract({
-    contractInterface: tradingPoolFactoryContract.abi,
-    addressOrName: addresses.TradingPoolFactory,
-    signerOrProvider: provider,
-  });
 
   const wethGatewaySigner = useContract({
     contractInterface: wethGateway.abi,
@@ -74,34 +62,6 @@ export default function MarketSell(props) {
       setUserNFTs(addressNFTs);
     }
   }
-  async function getTradingCollections(chain) {
-    // Get user NFT assets
-    const tradingCollections = await getTradingNFTCollections(chain);
-    setTradingCollections(tradingCollections);
-    console.log("tradingCollections", tradingCollections);
-  }
-  async function getTradingPoolAddress(collection) {
-    // Get trading pool for collection
-    const updatedPool = (
-      await factoryProvider.getTradingPool(collection, addresses.ETH.address)
-    ).toString();
-
-    console.log("updatedpool", updatedPool);
-    getNFTAllowance(collection);
-    getNFTName(collection);
-    setPoolAddress(updatedPool);
-    props.setPool(updatedPool);
-  }
-
-  async function getCollectionThumbnailURL(collection) {
-    const updatedURL = await getNFTImage(
-      collection,
-      1,
-      isConnected ? chain.id : 1
-    );
-    console.log("updatedURL", updatedURL);
-    props.setBackgroundImage(updatedURL);
-  }
 
   async function getPriceQuote(quotedAmount) {
     if (quotedAmount > 0) {
@@ -110,7 +70,7 @@ export default function MarketSell(props) {
       const newSellQuote = await getSellQuote(
         isConnected ? chain.id : 1,
         quotedAmount,
-        poolAddress
+        props.pool
       );
       setPriceQuote(newSellQuote);
       setLoadingPriceQuote(false);
@@ -149,47 +109,12 @@ export default function MarketSell(props) {
       // Get the NFT images
       const images = await Promise.all(
         newSelectedNFTs.map(async (nft) => {
-          return await getNFTImage(nftAddress, nft, chain.id);
+          return await getNFTImage(props.nftAddress, nft, chain.id);
         })
       );
       setNFTImages(images);
     }
   }
-
-  // Runs once
-  useEffect(() => {
-    const chain = chain ? chain.id : 1;
-
-    addresses = contractAddresses[chain];
-    getTradingCollections(chain);
-
-    // Get address from the URL
-    const addressFromUrl = router.query.address;
-
-    if (addressFromUrl) {
-      // Here you can call your handle function with the address
-      handleNFTAddressChange(null, addressFromUrl);
-      console.log("addressFromUrl", addressFromUrl);
-    }
-
-    console.log("useEffect called");
-  }, [isConnected, chain]);
-
-  useEffect(() => {
-    if (nftAddress && poolAddress && selectedNFTs.length > 0) {
-      setAmount(selectedNFTs.length);
-      getPriceQuote(selectedNFTs.length);
-    } else {
-      setAmount(0);
-      setPriceQuote();
-    }
-  }, [selectedNFTs]);
-
-  useEffect(() => {
-    if (nftAddress) {
-      handleNFTAddressChange(null, nftAddress);
-    }
-  }, [isConnected]);
 
   const handleAmountInputChange = (event) => {
     console.log("handleAmountInputChange", event.target.value);
@@ -198,14 +123,14 @@ export default function MarketSell(props) {
       setAmount(userNFTs.length);
       dispatch({
         type: "warning",
-        message: "You only own " + userNFTs.length + " " + nftName,
+        message: "You only own " + userNFTs.length + " " + props.nftName,
         title: "Amount too high!",
         position: "bottomL",
       });
     } else {
       setAmount(event.target.value);
       try {
-        if (event.target.value && nftAddress) {
+        if (event.target.value && props.nftAddress) {
           getPriceQuote(event.target.value);
         } else {
           setPriceQuote();
@@ -253,148 +178,16 @@ export default function MarketSell(props) {
     }
   }
 
-  async function getNFTName(collection) {
-    console.log("nftAddress", nftAddress);
-    const nftContract = new ethers.Contract(collection, erc721, provider);
-    const name = await nftContract.name();
-
-    console.log("Got nft name:", name);
-
-    if (name) {
-      setNFTName(name);
-    } else {
-      setNFTName("");
+  useEffect(() => {
+    if (props.nftAddress && props.pool) {
+      getUserNFTs(props.nftAddress);
+      getNFTAllowance(props.nftAddress);
     }
-  }
-
-  const handleNFTAddressChange = (_event, value) => {
-    console.log("handleNFTAddressChange", value);
-    setAmount(0);
-    setSelectedNFTs([]);
-    setPriceQuote();
-    if (ethers.utils.isAddress(value)) {
-      setNFTAddress(value);
-      getCollectionThumbnailURL(value);
-      getUserNFTs(value);
-      getTradingPoolAddress(value);
-    } else if (
-      tradingCollections.map((collection) => collection.name).includes(value)
-    ) {
-      const nftAddress = tradingCollections.find(
-        (collection) => collection.name == value
-      ).address;
-      setNFTAddress(nftAddress);
-      getUserNFTs(nftAddress);
-      getCollectionThumbnailURL(nftAddress);
-      getTradingPoolAddress(nftAddress);
-    } else {
-      console.log("Invalid NFT Address");
-      if (value == "") {
-        setNFTAddress("");
-      } else {
-        setNFTAddress("0x");
-      }
-      setPriceQuote();
-      props.setPool("");
-      props.setBackgroundImage("");
-      setPoolAddress("");
-      setNFTName("");
-    }
-  };
+  }, [props.nftAddress, props.pool]);
 
   return (
-    <div className="flex flex-col items-center text-center w-full md:w-fit justify-center my-4 rounded-3xl">
-      <div className="flex flex-col m-4">
-        <div className="flex flex-row items-center space-x-2 mx-2">
-          <Autocomplete
-            value={nftName}
-            autoComplete
-            freeSolo
-            disablePortal
-            ListboxProps={{
-              style: {
-                backgroundColor: "rgb(253, 241, 244)",
-                fontFamily: "Monospace",
-              },
-            }}
-            options={tradingCollections.map((option) => option.name)}
-            sx={{ minWidth: { xs: 260, sm: 320, md: 380 } }}
-            onInputChange={handleNFTAddressChange}
-            renderOption={(props, option, state) => (
-              <div className="flex flex-row m-4" {...props}>
-                <div className="flex w-3/12 h-[50px]">
-                  {tradingCollections.find(
-                    (collection) => collection.name == option
-                  ).image && (
-                    <Image
-                      loader={() =>
-                        tradingCollections.find(
-                          (collection) => collection.name == option
-                        ).image
-                      }
-                      src={
-                        tradingCollections.find(
-                          (collection) => collection.name == option
-                        ).image
-                      }
-                      height="50"
-                      width="50"
-                      className="rounded-xl"
-                    />
-                  )}
-                </div>
-                <div className="flex mx-2">{option}</div>
-              </div>
-            )}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="NFT Name or Address"
-                sx={{
-                  "& label": {
-                    paddingLeft: (theme) => theme.spacing(2),
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle1.fontSize",
-                    backdropFilter: "blur(10px)",
-                  },
-                  "& input": {
-                    paddingLeft: (theme) => theme.spacing(3.5),
-                    fontFamily: "Monospace",
-                    backdropFilter: "blur(10px)",
-                  },
-                  "& fieldset": {
-                    paddingLeft: (theme) => theme.spacing(2.5),
-                    borderRadius: "20px",
-                    fontFamily: "Monospace",
-                  },
-                }}
-              />
-            )}
-          />
-        </div>
-        {nftAddress && (
-          <div className="flex flex-row mt-1 justify-center">
-            <Box
-              sx={{
-                fontFamily: "Monospace",
-                fontSize: "caption.fontSize",
-                fontWeight: "bold",
-                letterSpacing: 2,
-              }}
-            >
-              {poolAddress
-                ? "Pool: " +
-                  poolAddress.slice(0, 5) +
-                  ".." +
-                  poolAddress.slice(-2)
-                : isConnected
-                ? "No pool found"
-                : "Connect Wallet"}
-            </Box>
-          </div>
-        )}
-      </div>
-      <div className="flex flex-col justify-center my-4">
+    <div className="flex flex-col items-center text-center w-full md:w-fit justify-center rounded-3xl">
+      <div className="flex flex-col justify-center">
         <div className="flex flex-col md:flex-row justify-center items-center">
           <div className="flex flex-col w-[200px] justify-center m-2 backdrop-blur-md">
             <Input
@@ -443,7 +236,7 @@ export default function MarketSell(props) {
                   setSelectedNFTs([]);
                   setSelectingNFTs(!selectingNFTs);
                 }}
-                disabled={!nftAddress}
+                disabled={!props.nftAddress}
                 label={
                   <div className="flex">
                     <Box
@@ -589,7 +382,7 @@ export default function MarketSell(props) {
               }}
               className="flex mt-4 justify-center items-center text-center"
             >
-              {"Couldn't find any " + nftName + "'s in your wallet"}
+              {"Couldn't find any " + props.nftName + "'s in your wallet"}
             </Box>
           ))}
       </div>
@@ -609,7 +402,7 @@ export default function MarketSell(props) {
             </Box>
             <div className="flex flex-row w-full justify-center items-center m-2">
               <Divider style={{ width: "100%" }}>
-                {nftName && (
+                {props.nftName && (
                   <Chip
                     label={
                       <Box
@@ -619,7 +412,7 @@ export default function MarketSell(props) {
                           fontWeight: "bold",
                         }}
                       >
-                        {nftName ? amount + " " + nftName : "?"}
+                        {props.nftName ? amount + " " + props.nftName : "?"}
                       </Box>
                     }
                     variant="outlined"
@@ -629,9 +422,11 @@ export default function MarketSell(props) {
                     href={
                       isConnected
                         ? chain.id == 1
-                          ? "https://etherscan.io/address/" + nftAddress
-                          : "https://sepolia.etherscan.io/address/" + nftAddress
-                        : "https://sepolia.etherscan.io/address/" + nftAddress
+                          ? "https://etherscan.io/address/" + props.nftAddress
+                          : "https://sepolia.etherscan.io/address/" +
+                            props.nftAddress
+                        : "https://sepolia.etherscan.io/address/" +
+                          props.nftAddress
                     }
                   />
                 )}
@@ -681,12 +476,12 @@ export default function MarketSell(props) {
             primary
             fill="horizontal"
             size="large"
-            disabled={approvalLoading || !nftAddress || !isConnected}
+            disabled={approvalLoading || !props.nftAddress || !isConnected}
             color="#063970"
             onClick={async function () {
               setApprovalLoading(true);
               const nftContract = new ethers.Contract(
-                nftAddress,
+                props.nftAddress,
                 erc721,
                 signer
               );
@@ -714,7 +509,7 @@ export default function MarketSell(props) {
                   }}
                 >
                   {isConnected
-                    ? "Approve " + (nftName ? nftName : "NFT")
+                    ? "Approve " + (props.nftName ? props.nftName : "NFT")
                     : "Connect Wallet"}
                 </Box>
               </div>
@@ -769,7 +564,10 @@ export default function MarketSell(props) {
                     }}
                   >
                     {isConnected
-                      ? "SELL " + amount + " " + (nftName ? nftName : "NFTs")
+                      ? "SELL " +
+                        amount +
+                        " " +
+                        (props.nftName ? props.nftName : "NFTs")
                       : "Connect Wallet"}
                   </Box>
                 )}

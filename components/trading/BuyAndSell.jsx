@@ -523,7 +523,7 @@ export default function BuyAndSell(props) {
         )}
       </div>
       {proMode && (
-        <div className="flex flex-col items-center rounded-3xl bg-black/5 w-11/12 m-4 shadow-lg p-4">
+        <div className="flex flex-col items-center rounded-3xl bg-black/5 min-w-[50%] m-4 shadow-lg py-4">
           <Box
             className="mb-2"
             sx={{
@@ -535,43 +535,71 @@ export default function BuyAndSell(props) {
           >
             Open Orders
           </Box>
-          {loadingProMode ? (
-            <div className="m-16">
-              <Loading size={18} spinnerColor="#000000" />
-            </div>
-          ) : openOrders.length > 0 ? (
-            <table>
-              <thead>
-                <tr>
-                  <th className="px-8 py-2 text-sm">Type</th>
-                  <th className="px-8 py-2 text-sm">Token</th>
-                  <th className="px-8 py-2 text-sm">NFTs</th>
-                  <th className="px-8 py-2 text-sm">Price</th>
-                  <th className="px-8 py-2 text-sm">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {openOrders.map((order, index) => (
-                  <tr key={index}>
-                    <td>{order.type}</td>
-                    <td>{order.token}</td>
-                    <td>{order.nfts.join(", ")}</td>
-                    <td>{order.price}</td>
-                    <td>
-                      <button
-                        onClick={() => {
-                          console.log(
-                            `Removing order with lpId: ${order.lpId}`
-                          );
-                        }}
-                      >
-                        Remove
-                      </button>
-                    </td>
+          {pool ? (
+            loadingProMode ? (
+              <div className="m-16">
+                <Loading size={18} spinnerColor="#000000" />
+              </div>
+            ) : openOrders.length > 0 ? (
+              <table>
+                <thead>
+                  <tr>
+                    <th className="px-4 md:px-12 py-2 text-sm">Type</th>
+                    <th className="px-4 md:px-12 py-2 text-sm">Price</th>
+                    <th className="px-4 md:px-12 py-2 text-sm">Token</th>
+                    <th className="px-4 md:px-12 py-2 text-sm">NFTs</th>
+                    <th className="px-4 md:px-12 py-2 text-sm"></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {openOrders.map((order, index) => (
+                    <tr
+                      key={index}
+                      align="center"
+                      className="text-sm border-t-2 border-black/10"
+                    >
+                      <td>
+                        {order.type.charAt(0).toUpperCase() +
+                          order.type.slice(1)}
+                      </td>
+                      <td>{formatUnits(order.price, 18) + " ETH"}</td>
+                      <td>{formatUnits(order.token, 18) + " ETH"}</td>
+                      <td>
+                        {order.nfts.length == 0
+                          ? "None"
+                          : order.nfts.join(", ")}
+                      </td>
+                      <td>
+                        <ButtonNextUI
+                          className="m-2"
+                          size="xs"
+                          auto
+                          color="secondary"
+                          onClick={() => {
+                            console.log(
+                              `Removing order with lpId: ${order.lpId}`
+                            );
+                          }}
+                        >
+                          Remove
+                        </ButtonNextUI>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div className="flex flex-col m-8 items-center justify-center">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle2.fontSize",
+                  }}
+                >
+                  No open orders
+                </Box>
+              </div>
+            )
           ) : (
             <div className="flex flex-col m-8 items-center justify-center">
               <Box
@@ -580,7 +608,9 @@ export default function BuyAndSell(props) {
                   fontSize: "subtitle2.fontSize",
                 }}
               >
-                No open orders
+                {isConnected
+                  ? "Select a collection to view open orders"
+                  : "Connect Wallet to view open orders"}
               </Box>
             </div>
           )}

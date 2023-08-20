@@ -3,30 +3,20 @@ import contractAddresses from "../../contractAddresses.json";
 import {
   useAccount,
   useBalance,
-  useNetwork,
   useContract,
   useSigner,
   useProvider,
 } from "wagmi";
 import { parseUnits } from "ethers/lib/utils";
-import { ethers } from "ethers";
-import Image from "next/image";
-import erc20 from "../../contracts/erc20.json";
-import erc721 from "../../contracts/erc721.json";
-import TextField from "@mui/material/TextField";
 import { Input } from "@nextui-org/react";
-import { getTradingNFTCollections } from "../../helpers/getTradingNFTCollections.js";
-import { getNFTImage } from "../../helpers/getNFTImage.js";
 import { BigNumber } from "@ethersproject/bignumber";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Box from "@mui/material/Box";
 import { Button, Spinner } from "grommet";
-import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json";
 import wethGateway from "../../contracts/WETHGateway.json";
 
 export default function LimitBuy(props) {
   const { address, isConnected } = useAccount();
-  const provider = useProvider();
   const { data: ethBalance } = useBalance({
     addressOrName: address,
   });

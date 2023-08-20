@@ -179,20 +179,13 @@ export default function WithdrawTradingPool(props) {
                 setWithdrawLoading(true);
                 console.log("signer.", signer);
                 var tx;
-                if (props.assetSymbol == "ETH") {
-                  console.log("Depositing ETH");
-                  tx = await wethGatewaySigner.depositETH(props.reserve, {
-                    value: amount,
-                  });
-                } else {
-                  const tradingPool = new ethers.Contract(
-                    props.pool,
-                    tradingPoolContract.abi,
-                    signer
-                  );
-                  console.log("Removing LP");
-                  tx = await tradingPool.removeLiquidity(props.lp);
-                }
+
+                console.log("Removing LP");
+                tx = await wethGatewaySigner.withdrawTradingPool(
+                  props.pool,
+                  props.lp
+                );
+
                 await tx.wait(1);
                 handleWithdrawSuccess();
               } catch (error) {

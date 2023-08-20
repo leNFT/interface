@@ -437,10 +437,10 @@ export default function BuyAndSell(props) {
         {proMode && (
           <div className="flex flex-col items-center rounded-3xl bg-black/5 w-fit shadow-lg p-4">
             <Box
-              className="mb-2"
+              className="mb-3"
               sx={{
                 fontFamily: "Monospace",
-                fontSize: "subtitle2.fontSize",
+                fontSize: "subtitle1.fontSize",
                 fontWeight: "bold",
                 letterSpacing: 2,
               }}
@@ -576,10 +576,10 @@ export default function BuyAndSell(props) {
       {proMode && (
         <div className="flex flex-col items-center rounded-3xl bg-black/5 min-w-[50%] m-4 shadow-lg py-4">
           <Box
-            className="mb-2"
+            className="mb-3"
             sx={{
               fontFamily: "Monospace",
-              fontSize: "subtitle2.fontSize",
+              fontSize: "subtitle1.fontSize",
               fontWeight: "bold",
               letterSpacing: 2,
             }}
@@ -594,7 +594,7 @@ export default function BuyAndSell(props) {
             ) : openOrders.length > 0 ? (
               <table>
                 <thead>
-                  <tr>
+                  <tr className="border-b-2 border-black/10">
                     <th className="px-8 md:px-12 py-2 text-sm">Type</th>
                     <th className="px-8 md:px-12 py-2 text-sm">Filled</th>
                     <th className="px-8 md:px-12 py-2 text-sm">Price</th>
@@ -609,11 +609,7 @@ export default function BuyAndSell(props) {
                 </thead>
                 <tbody>
                   {openOrders.map((order, index) => (
-                    <tr
-                      key={index}
-                      align="center"
-                      className="text-sm border-t-2 border-black/10"
-                    >
+                    <tr key={index} align="center" className="text-sm">
                       <td>
                         {order.type.charAt(0).toUpperCase() +
                           order.type.slice(1)}
@@ -736,17 +732,17 @@ export default function BuyAndSell(props) {
         </div>
       )}
       {proMode && (
-        <div className="flex flex-col items-center min-w-[50%] justify-center py-4 rounded-3xl my-8 md:m-8 lg:mx-16 !mt-8 bg-black/5 shadow-lg">
+        <div className="flex flex-col items-center min-w-[50%] justify-center rounded-3xl py-4 m-4 bg-black/5 shadow-lg">
           <Box
-            className="mb-2"
+            className="mb-3"
             sx={{
               fontFamily: "Monospace",
-              fontSize: "subtitle2.fontSize",
+              fontSize: "subtitle1.fontSize",
               fontWeight: "bold",
               letterSpacing: 2,
             }}
           >
-            Trade History
+            History
           </Box>
           {pool ? (
             loadingTradingHistory ? (
@@ -754,190 +750,104 @@ export default function BuyAndSell(props) {
                 <Loading size={18} spinnerColor="#000000" />
               </div>
             ) : poolHistory.length ? (
-              <div>
-                <Table
-                  shadow={false}
-                  bordered={false}
-                  className="hidden md:table"
-                  aria-label="Trading Pool Activity"
-                  css={{
-                    height: "auto",
-                    width: "50vw",
-                    fontFamily: "Monospace",
-                    zIndex: 0,
-                  }}
-                >
-                  <Table.Header>
-                    <Table.Column>Transaction</Table.Column>
-                    <Table.Column>Type</Table.Column>
-                    <Table.Column>Date</Table.Column>
-                    <Table.Column>Address</Table.Column>
-                    <Table.Column>NFTs</Table.Column>
-                    <Table.Column>Price</Table.Column>
-                  </Table.Header>
-                  <Table.Body>
-                    {poolHistory.map((data, i) => (
-                      <Table.Row key={i}>
-                        <Table.Cell>
-                          <LinkTo
-                            type="external"
-                            iconLayout="none"
-                            text={
-                              <Box
-                                sx={{
-                                  fontFamily: "Monospace",
-                                  fontSize: {
-                                    xs: "caption.fontSize",
-                                    sm: "subtitle2.fontSize",
-                                  },
-                                }}
-                              >
-                                {data.transaction.slice(0, 4) +
-                                  ".." +
-                                  data.transaction.slice(-3)}
-                              </Box>
-                            }
-                            address={
-                              isConnected
-                                ? chain.id == 1
-                                  ? "https://etherscan.io/tx/" +
-                                    data.transaction
-                                  : "https://sepolia.etherscan.io/tx/" +
-                                    data.transaction
+              <table>
+                <thead>
+                  <tr className="border-b-2 border-black/10">
+                    <th className="hidden md:table-cell px-8 md:px-12 py-2 text-sm">
+                      Transaction
+                    </th>
+                    <th className="px-8 md:px-12 py-2 text-sm">Type</th>
+                    <th className="px-8 md:px-12 py-2 text-sm">Date</th>
+                    <th className="hidden md:table-cell px-8 md:px-12 py-2 text-sm">
+                      Address
+                    </th>
+                    <th className="hidden md:table-cell px-8 md:px-12 py-2 text-sm">
+                      NFTs
+                    </th>
+                    <th className="px-8 md:px-12 py-2 text-sm">Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {poolHistory.map((data, i) => (
+                    <tr key={i} align="center" className="text-sm">
+                      <td className="hidden md:table-cell">
+                        <LinkTo
+                          type="external"
+                          iconLayout="none"
+                          text={
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: {
+                                  xs: "caption.fontSize",
+                                  sm: "subtitle2.fontSize",
+                                },
+                              }}
+                            >
+                              {data.transaction.slice(0, 4) +
+                                ".." +
+                                data.transaction.slice(-3)}
+                            </Box>
+                          }
+                          address={
+                            isConnected
+                              ? chain.id == 1
+                                ? "https://etherscan.io/tx/" + data.transaction
                                 : "https://sepolia.etherscan.io/tx/" +
                                   data.transaction
-                            }
-                          ></LinkTo>
-                        </Table.Cell>
-                        <Table.Cell>
-                          {data.type.charAt(0).toUpperCase() +
-                            data.type.slice(1)}
-                        </Table.Cell>
-                        <Table.Cell>
-                          {timeago.format(data.timestamp * 1000)}
-                        </Table.Cell>
-                        <Table.Cell>
-                          <LinkTo
-                            type="external"
-                            iconLayout="none"
-                            text={
-                              <Box
-                                sx={{
-                                  fontFamily: "Monospace",
-                                  fontSize: {
-                                    xs: "caption.fontSize",
-                                    sm: "subtitle2.fontSize",
-                                  },
-                                }}
-                              >
-                                {data.address.slice(0, 6) +
-                                  ".." +
-                                  data.address.slice(-4)}
-                              </Box>
-                            }
-                            address={
-                              isConnected
-                                ? chain.id == 1
-                                  ? "https://etherscan.io/address/" +
-                                    data.address
-                                  : "https://sepolia.etherscan.io/address/" +
-                                    data.address
+                              : "https://sepolia.etherscan.io/tx/" +
+                                data.transaction
+                          }
+                        ></LinkTo>
+                      </td>
+                      <td className="table-cell">
+                        {data.type.charAt(0).toUpperCase() + data.type.slice(1)}
+                      </td>
+                      <td className="table-cell">
+                        {timeago.format(data.timestamp * 1000)}
+                      </td>
+                      <td className="hidden md:table-cell">
+                        <LinkTo
+                          type="external"
+                          iconLayout="none"
+                          text={
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                margin: 1,
+                                fontSize: {
+                                  xs: "caption.fontSize",
+                                  sm: "subtitle2.fontSize",
+                                },
+                              }}
+                            >
+                              {data.address.slice(0, 6) +
+                                ".." +
+                                data.address.slice(-4)}
+                            </Box>
+                          }
+                          address={
+                            isConnected
+                              ? chain.id == 1
+                                ? "https://etherscan.io/address/" + data.address
                                 : "https://sepolia.etherscan.io/address/" +
                                   data.address
-                            }
-                          ></LinkTo>
-                        </Table.Cell>
-                        <Table.Cell>{data.nftIds.join(",")}</Table.Cell>
-                        <Table.Cell>
-                          {Number(formatUnits(data.price, 18)).toPrecision(6) +
-                            " ETH"}
-                        </Table.Cell>
-                      </Table.Row>
-                    ))}
-                  </Table.Body>
-                  <Table.Pagination
-                    noMargin
-                    color={"secondary"}
-                    align="center"
-                    rowsPerPage={7}
-                    onPageChange={(page) => console.log({ page })}
-                  />
-                </Table>
-                <Table
-                  shadow={false}
-                  bordered={false}
-                  className="md:hidden"
-                  aria-label="Trading Pool Activity"
-                  css={{
-                    height: "auto",
-                    width: "75vw",
-                    fontFamily: "Monospace",
-                    zIndex: 0,
-                  }}
-                >
-                  <Table.Header>
-                    <Table.Column>Tx</Table.Column>
-                    <Table.Column>Type</Table.Column>
-                    <Table.Column>Date</Table.Column>
-                    <Table.Column>Price</Table.Column>
-                  </Table.Header>
-                  <Table.Body>
-                    {poolHistory.map((data, i) => (
-                      <Table.Row key={i}>
-                        <Table.Cell>
-                          <LinkTo
-                            type="external"
-                            iconLayout="none"
-                            text={
-                              <Box
-                                sx={{
-                                  fontFamily: "Monospace",
-                                  fontSize: {
-                                    xs: "caption.fontSize",
-                                    sm: "subtitle2.fontSize",
-                                  },
-                                }}
-                              >
-                                {data.transaction.slice(0, 3) +
-                                  "." +
-                                  data.transaction.slice(-2)}
-                              </Box>
-                            }
-                            address={
-                              isConnected
-                                ? chain.id == 1
-                                  ? "https://etherscan.io/tx/" +
-                                    data.transaction
-                                  : "https://sepolia.etherscan.io/tx/" +
-                                    data.transaction
-                                : "https://sepolia.etherscan.io/tx/" +
-                                  data.transaction
-                            }
-                          ></LinkTo>
-                        </Table.Cell>
-                        <Table.Cell>
-                          {data.type.charAt(0).toUpperCase() +
-                            data.type.slice(1)}
-                        </Table.Cell>
-                        <Table.Cell>
-                          {timeago.format(data.timestamp * 1000)}
-                        </Table.Cell>
-                        <Table.Cell>
-                          {Number(formatUnits(data.price, 18)).toPrecision(3) +
-                            " ETH"}
-                        </Table.Cell>
-                      </Table.Row>
-                    ))}
-                  </Table.Body>
-                  <Table.Pagination
-                    noMargin
-                    color={"secondary"}
-                    align="center"
-                    rowsPerPage={7}
-                    onPageChange={(page) => console.log({ page })}
-                  />
-                </Table>
-              </div>
+                              : "https://sepolia.etherscan.io/address/" +
+                                data.address
+                          }
+                        ></LinkTo>
+                      </td>
+                      <td className="hidden md:table-cell">
+                        {data.nftIds.join(",")}
+                      </td>
+                      <td className="table-cell">
+                        {Number(formatUnits(data.price, 18)).toPrecision(3) +
+                          " ETH"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             ) : (
               <div className="flex flex-col m-8 items-center justify-center">
                 <Box

@@ -21,6 +21,7 @@ import { Table } from "@nextui-org/react";
 import { getTradingPoolOrderbook } from "../../helpers/getTradingPoolOrderbook";
 import { getOpenOrders } from "../../helpers/getOpenOrders";
 import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json";
+import tradingPoolContract from "../../contracts/TradingPool.json";
 import { getTradingPoolHistory } from "../../helpers/getTradingPoolHistory";
 import {
   useAccount,

@@ -312,7 +312,7 @@ export default function LimitSell(props) {
             </Box>
           ))}
       </div>
-      <div className="flex flex-row mt-6 w-8/12 md:w-6/12">
+      <div className="flex flex-row mt-6 mb-2 w-full md:w-6/12">
         {!approvedNFT ? (
           <Button
             primary

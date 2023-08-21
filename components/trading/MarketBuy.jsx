@@ -28,7 +28,6 @@ import Image from "next/image";
 import wethGateway from "../../contracts/WETHGateway.json";
 
 export default function MarketBuy(props) {
-  const router = useRouter();
   const { chain } = useNetwork();
   const { address, isConnected } = useAccount();
   const { data: ethBalance } = useBalance({
@@ -128,15 +127,6 @@ export default function MarketBuy(props) {
     const chain = chain ? chain.id : 1;
     addresses = contractAddresses[chain];
 
-    // Get address from the URL
-    const addressFromUrl = router.query.address;
-
-    if (addressFromUrl) {
-      // Here you can call your handle function with the address
-      handleNFTAddressChange(null, addressFromUrl);
-      console.log("addressFromUrl", addressFromUrl);
-    }
-
     console.log("useEffect called");
   }, [isConnected, chain]);
 
@@ -202,7 +192,7 @@ export default function MarketBuy(props) {
   return (
     <div className="flex flex-col items-center text-center w-full md:w-fit justify-center rounded-3xl">
       <div className="flex flex-col justify-center">
-        <div className="flex flex-col md:flex-row justify-center items-center">
+        <div className="flex flex-col sm:flex-row justify-center items-center">
           <div className="flex flex-col w-[200px] justify-center m-2 backdrop-blur-md">
             <Input
               labelLeft={

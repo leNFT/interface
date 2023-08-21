@@ -131,7 +131,7 @@ export default function LimitSell(props) {
   return (
     <div className="flex flex-col items-center text-center w-full md:w-fit justify-center rounded-3xl">
       <div className="flex flex-col justify-center">
-        <div className="flex flex-col md:flex-row justify-center items-center">
+        <div className="flex flex-col sm:flex-row justify-center items-center">
           <div className="flex flex-col justify-center items-center">
             <div className="flex flex-col w-[200px] justify-center m-2 backdrop-blur-md">
               <Input
@@ -318,12 +318,12 @@ export default function LimitSell(props) {
             primary
             fill="horizontal"
             size="large"
-            disabled={approvalLoading || !nftAddress || !isConnected}
+            disabled={approvalLoading || !props.nftAddress || !isConnected}
             color="#063970"
             onClick={async function () {
               setApprovalLoading(true);
               const nftContract = new ethers.Contract(
-                nftAddress,
+                props.nftAddress,
                 erc721,
                 signer
               );
@@ -351,7 +351,7 @@ export default function LimitSell(props) {
                   }}
                 >
                   {isConnected
-                    ? "Approve " + (nftName ? nftName : "NFT")
+                    ? "Approve " + (props.nftName ? props.nftName : "NFT")
                     : "Connect Wallet"}
                 </Box>
               </div>

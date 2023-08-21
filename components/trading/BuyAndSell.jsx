@@ -34,10 +34,12 @@ import { formatUnits } from "@ethersproject/units";
 import * as timeago from "timeago.js";
 import wethGatewayContract from "../../contracts/WETHGateway.json";
 import { BigNumber } from "ethers";
+import { useRouter } from "next/router";
 
 export default function BuyAndSell(props) {
   const SELECTED_COLOR = "#d2c6d2";
   const UNSELECTED_COLOR = "#eae5ea";
+  const router = useRouter();
   const { isConnected, address } = useAccount();
   const provider = useProvider();
   const { data: signer } = useSigner();
@@ -52,6 +54,7 @@ export default function BuyAndSell(props) {
   const [loadingTradingHistory, setLoadingTradingHistory] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
   const [poolHistory, setPoolHistory] = useState([]);
+
   const [nftName, setNFTName] = useState("");
   const [tradingCollections, setTradingCollections] = useState([]);
   const [openOrders, setOpenOrders] = useState([]);
@@ -170,6 +173,15 @@ export default function BuyAndSell(props) {
 
     getTradingCollections(chain);
 
+    // Get address from the URL
+    const addressFromUrl = router.query.address;
+
+    if (addressFromUrl) {
+      // Here you can call your handle function with the address
+      handleNFTAddressChange(null, addressFromUrl);
+      console.log("addressFromUrl", addressFromUrl);
+    }
+
     console.log("useEffect called");
   }, [isConnected, chain]);
 
@@ -230,10 +242,10 @@ export default function BuyAndSell(props) {
   }, [pool, chain, proMode]);
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="flex flex-col items-center justify-center md:flex-row p-4 space-y-8 md:space-y-0 md:space-x-8">
+    <div className="flex flex-col items-center w-full">
+      <div className="flex flex-col items-center justify-center md:flex-row w-full p-4 space-y-8 md:space-y-0 md:space-x-8">
         <div
-          className="flex flex-col items-center text-center w-full p-4 pt-0 md:w-fit md:p-8 md:pt-0 justify-center rounded-3xl bg-black/5 shadow-lg"
+          className="flex flex-col items-center text-center w-full p-4 pt-0 sm:w-fit md:p-8 md:pt-0 justify-center rounded-3xl bg-black/5 shadow-lg"
           style={{
             ...(backgroundImage && {
               backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('${backgroundImage}')`,

@@ -85,11 +85,10 @@ export default function Trade() {
           />
         </div>
       </div>
-      <div>
-        {option == "swap" && <Swap />}
-        {option == "buy" && <BuyAndSell option="buy" />}
-        {option == "sell" && <BuyAndSell option="sell" />}
-      </div>
+
+      {option == "swap" && <Swap />}
+      {option == "buy" && <BuyAndSell option="buy" />}
+      {option == "sell" && <BuyAndSell option="sell" />}
     </div>
   );
 }

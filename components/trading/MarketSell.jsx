@@ -188,7 +188,7 @@ export default function MarketSell(props) {
   return (
     <div className="flex flex-col items-center text-center w-full md:w-fit justify-center rounded-3xl">
       <div className="flex flex-col justify-center">
-        <div className="flex flex-col md:flex-row justify-center items-center">
+        <div className="flex flex-col sm:flex-row justify-center items-center">
           <div className="flex flex-col w-[200px] justify-center m-2 backdrop-blur-md">
             <Input
               labelLeft={

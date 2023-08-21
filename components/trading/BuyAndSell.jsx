@@ -588,7 +588,7 @@ export default function BuyAndSell(props) {
       {proMode && (
         <div className="flex flex-col items-center rounded-3xl bg-black/5 min-w-[50%] m-4 shadow-lg py-4">
           <Box
-            className="mb-3"
+            className="mb-3 px-8 text-center"
             sx={{
               fontFamily: "Monospace",
               fontSize: "subtitle1.fontSize",
@@ -596,7 +596,7 @@ export default function BuyAndSell(props) {
               letterSpacing: 2,
             }}
           >
-            Open Orders
+            My Open Orders
           </Box>
           {pool ? (
             loadingOpenOrders ? (
@@ -607,9 +607,9 @@ export default function BuyAndSell(props) {
               <table>
                 <thead>
                   <tr className="border-b-2 border-black/10">
-                    <th className="px-8 md:px-12 py-2 text-sm">Type</th>
-                    <th className="px-8 md:px-12 py-2 text-sm">Filled</th>
-                    <th className="px-8 md:px-12 py-2 text-sm">Price</th>
+                    <th className="px-6 md:px-12 py-2 text-sm">Type</th>
+                    <th className="px-6 md:px-12 py-2 text-sm">Filled</th>
+                    <th className="px-6 md:px-12 py-2 text-sm">Price</th>
                     <th className="px-8 md:px-12 py-2 text-sm hidden md:table-cell">
                       Token
                     </th>
@@ -852,7 +852,7 @@ export default function BuyAndSell(props) {
                       <td className="hidden md:table-cell">
                         {data.nftIds.join(",")}
                       </td>
-                      <td className="table-cell">
+                      <td className="table-cell pt-2">
                         {Number(formatUnits(data.price, 18)).toPrecision(3) +
                           " ETH"}
                       </td>

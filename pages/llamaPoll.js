@@ -118,8 +118,8 @@ export default function LlamaPoll() {
           </Box>
 
           {isConnected && (
-            <div className="flex flex-col items-center m-12">
-              <Grid container spacing={2} className="w-8/12  items-center">
+            <div className="flex flex-col items-center m-12 justify-center">
+              <Grid container spacing={2} className="md:w-8/12">
                 {userCollections.map((collection) => (
                   <CollectionButton
                     key={collection.id}

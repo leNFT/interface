@@ -9,6 +9,14 @@ export async function getAddressNFTCollections(address, chainId) {
     },
   };
 
+  console.log(
+    serverAddress +
+      "/nfts/addressCollections?address=" +
+      address +
+      "&chainId=" +
+      chainId
+  );
+
   const nftCollectionsResponse = await fetch(
     serverAddress +
       "/nfts/addressCollections?address=" +

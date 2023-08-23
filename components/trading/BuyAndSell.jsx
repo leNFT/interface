@@ -19,6 +19,7 @@ import Divider from "@mui/material/Divider";
 import { Loading, LinkTo } from "@web3uikit/core";
 import { Table } from "@nextui-org/react";
 import { getTradingPoolOrderbook } from "../../helpers/getTradingPoolOrderbook";
+import { getTradingPools } from "../../helpers/getTradingPools";
 import { getOpenOrders } from "../../helpers/getOpenOrders";
 import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json";
 import tradingPoolContract from "../../contracts/TradingPool.json";
@@ -54,12 +55,11 @@ export default function BuyAndSell(props) {
   const [loadingTradingHistory, setLoadingTradingHistory] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
   const [poolHistory, setPoolHistory] = useState([]);
-
+  const [lowLiquidity, setLowLiquidity] = useState(false);
   const [nftName, setNFTName] = useState("");
   const [tradingCollections, setTradingCollections] = useState([]);
   const [openOrders, setOpenOrders] = useState([]);
   const [nftAddress, setNFTAddress] = useState("");
-  const [poolAddress, setPoolAddress] = useState("");
   const [approvedLP, setApprovedLP] = useState(false);
 
   var addresses = contractAddresses[1];
@@ -101,22 +101,14 @@ export default function BuyAndSell(props) {
     ).toString();
 
     console.log("updatedpool", updatedPool);
-    getNFTName(collection);
-    setPoolAddress(updatedPool);
+    const pool = await getTradingPools(chain ? chain.id : 1, updatedPool);
+    console.log("pool", pool);
+    setNFTName(pool.nft.name);
     setPool(updatedPool);
-  }
-
-  async function getNFTName(collection) {
-    console.log("nftAddress", nftAddress);
-    const nftContract = new ethers.Contract(collection, erc721, provider);
-    const name = await nftContract.name();
-
-    console.log("Got nft name:", name);
-
-    if (name) {
-      setNFTName(name);
+    if (pool.nft.amount < 2 || BigNumber.from(pool.token.amount).eq(0)) {
+      setLowLiquidity(true);
     } else {
-      setNFTName("");
+      setLowLiquidity(false);
     }
   }
 
@@ -162,7 +154,6 @@ export default function BuyAndSell(props) {
       }
       setPool("");
       setBackgroundImage("");
-      setPoolAddress("");
       setNFTName("");
     }
   };
@@ -344,14 +335,24 @@ export default function BuyAndSell(props) {
                     letterSpacing: 2,
                   }}
                 >
-                  {poolAddress
-                    ? "Pool: " +
-                      poolAddress.slice(0, 5) +
-                      ".." +
-                      poolAddress.slice(-2)
-                    : isConnected
-                    ? "No pool found"
-                    : "Connect Wallet"}
+                  {pool ? (
+                    <div className="flex flex-col">
+                      {"Pool: " +
+                        pool.slice(0, 5) +
+                        ".." +
+                        pool.slice(-2) +
+                        " "}
+                      {lowLiquidity && (
+                        <span className="text-red-600">
+                          (Low Liquidity Pool)
+                        </span>
+                      )}
+                    </div>
+                  ) : isConnected ? (
+                    "No pool found"
+                  ) : (
+                    "Connect Wallet"
+                  )}
                 </Box>
               </div>
             )}

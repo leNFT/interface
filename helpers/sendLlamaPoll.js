@@ -7,13 +7,13 @@ export async function sendLlamaPoll(pollAnswer) {
     headers: {
       Accept: "application/json",
     },
-    body: pollAnswer,
+    body: JSON.stringify({ pollAnswer }),
   };
 
-  console.log(serverAddress + "/llamaPool");
+  console.log(serverAddress + "/llamas/poll");
 
   const llamaResponse = await fetch(
-    serverAddress + "/llamaPoll",
+    serverAddress + "/llamas/poll",
     options
   ).catch((err) => console.error(err));
 

@@ -470,7 +470,7 @@ export default function MarketSell(props) {
           </div>
         </div>
       )}
-      <div className="flex flex-row mt-6 mb-2 w-full md:w-6/12">
+      <div className="flex flex-row mt-6 mb-2 w-full md:w-8/12">
         {!approvedNFT ? (
           <Button
             primary

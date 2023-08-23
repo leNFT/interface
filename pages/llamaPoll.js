@@ -58,9 +58,9 @@ export default function LlamaPoll() {
     console.log("Sending email", inputValue);
     const finalMessage = `Message: ${inputValue}`;
 
-    setAnswered(true);
-
     await sendLlamaPoll(finalMessage);
+
+    setAnswered(true);
   };
 
   useEffect(() => {

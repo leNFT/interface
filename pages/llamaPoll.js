@@ -17,6 +17,7 @@ export default function LlamaPoll() {
   const [userCollections, setUserCollections] = useState([]);
   const { address, isConnected } = useAccount();
   const [answered, setAnswered] = useState(false);
+  const [answering, setAnswering] = useState(false);
   const { chain } = useNetwork();
 
   const dispatch = useNotification();
@@ -31,7 +32,11 @@ export default function LlamaPoll() {
         address,
         chain.id
       );
-      setUserCollections(updatedCollections);
+      const filteredCollections = updatedCollections.filter(
+        (collection) => collection.name !== undefined
+      );
+      console.log("Updated collections", filteredCollections);
+      setUserCollections(filteredCollections);
     }
   }
 
@@ -55,12 +60,13 @@ export default function LlamaPoll() {
   };
 
   const sendEmail = async () => {
+    setAnswering(true);
     console.log("Sending email", inputValue);
-    const finalMessage = `Message: ${inputValue}`;
 
-    await sendLlamaPoll(finalMessage);
+    await sendLlamaPoll(inputValue);
 
     setAnswered(true);
+    setAnswering(false);
   };
 
   useEffect(() => {
@@ -71,7 +77,11 @@ export default function LlamaPoll() {
 
   return (
     <>
-      {answered ? (
+      {answering ? (
+        <div className=" flex items-center justify-center m-32">
+          <Loading size={36} spinnerColor="#000000" />
+        </div>
+      ) : answered ? (
         <div className="flex flex-col">
           <Box
             className="my-8 text-center"

@@ -1,11 +1,13 @@
 import fetch from "node-fetch";
 
 export async function sendLlamaPoll(pollAnswer) {
-  const serverAddress = "https://api-h6nqa.ondigitalocean.app";
+  console.log("Sending llama poll to server", pollAnswer);
+  const serverAddress = "http://localhost:8080";
   const options = {
     method: "POST",
     headers: {
       Accept: "application/json",
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ pollAnswer }),
   };

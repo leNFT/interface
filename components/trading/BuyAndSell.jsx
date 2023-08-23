@@ -343,7 +343,7 @@ export default function BuyAndSell(props) {
                         pool.slice(-2) +
                         " "}
                       {lowLiquidity && (
-                        <span className="text-red-600">
+                        <span className="text-red-600 mt-1">
                           (Low Liquidity Pool)
                         </span>
                       )}

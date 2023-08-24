@@ -590,7 +590,7 @@ export default function Swap() {
               />
             </div>
             {sellNFTAddress && (
-              <div className="flex flex-row mt-1 justify-center">
+              <div className="flex flex-row justify-center">
                 <Box
                   sx={{
                     fontFamily: "Monospace",
@@ -912,7 +912,7 @@ export default function Swap() {
               />
             </div>
             {buyPoolAddress && (
-              <div className="flex flex-row mt-1 justify-center">
+              <div className="flex flex-row justify-center">
                 <Box
                   sx={{
                     fontFamily: "Monospace",

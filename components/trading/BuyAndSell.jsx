@@ -21,6 +21,7 @@ import { Table } from "@nextui-org/react";
 import { getTradingPoolOrderbook } from "../../helpers/getTradingPoolOrderbook";
 import { getTradingPools } from "../../helpers/getTradingPools";
 import { getOpenOrders } from "../../helpers/getOpenOrders";
+import { getTradingPoolPrice } from "../../helpers/getTradingPoolPrice.js";
 import tradingPoolFactoryContract from "../../contracts/TradingPoolFactory.json";
 import tradingPoolContract from "../../contracts/TradingPool.json";
 import { getTradingPoolHistory } from "../../helpers/getTradingPoolHistory";
@@ -61,6 +62,7 @@ export default function BuyAndSell(props) {
   const [openOrders, setOpenOrders] = useState([]);
   const [nftAddress, setNFTAddress] = useState("");
   const [approvedLP, setApprovedLP] = useState(false);
+  const [price, setPrice] = useState();
 
   var addresses = contractAddresses[1];
 
@@ -110,6 +112,13 @@ export default function BuyAndSell(props) {
     } else {
       setLowLiquidity(false);
     }
+
+    const updatedPrice = await getTradingPoolPrice(
+      chain ? chain.id : 1,
+      updatedPool
+    );
+    setPrice(updatedPrice);
+    console.log("updatedPrice", updatedPrice);
   }
 
   const handleWithdrawSuccess = async function () {
@@ -153,6 +162,7 @@ export default function BuyAndSell(props) {
         setNFTAddress("0x");
       }
       setPool("");
+      setPrice();
       setBackgroundImage("");
       setNFTName("");
     }
@@ -257,7 +267,7 @@ export default function BuyAndSell(props) {
               {proMode ? "Simple Mode" : "Pro Mode"}
             </ButtonNextUI>
           </div>
-          <div className="flex flex-col mt-4 mb-8">
+          <div className="flex flex-col mt-4 mb-8 items-center">
             <div className="flex flex-row justify-center items-center m-2">
               <Autocomplete
                 value={nftName}
@@ -326,7 +336,7 @@ export default function BuyAndSell(props) {
               />
             </div>
             {nftAddress && (
-              <div className="flex flex-row mt-1 justify-center">
+              <div className="flex flex-row justify-center">
                 <Box
                   sx={{
                     fontFamily: "Monospace",
@@ -354,6 +364,54 @@ export default function BuyAndSell(props) {
                     "Connect Wallet"
                   )}
                 </Box>
+              </div>
+            )}
+            {price && (
+              <div className="flex flex-col sm:flex-row justify-around border-black/20 backdrop-blur-md mt-6 border-2 rounded-xl w-fit p-2">
+                <div className="flex flex-col items-center justify-center p-3 px-4 border-b-2 sm:border-b-0 sm:border-r-2 border-black/20">
+                  <Box
+                    className="mb-1"
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "caption.fontSize",
+                      letterSpacing: 1,
+                    }}
+                  >
+                    Buy Price
+                  </Box>
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {Number(formatUnits(price.buyPrice, 18)).toPrecision(3) +
+                      " ETH"}
+                  </Box>
+                </div>
+                <div className="flex flex-col items-center justify-center p-3 px-4">
+                  <Box
+                    className="mb-1"
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "caption.fontSize",
+                      letterSpacing: 1,
+                    }}
+                  >
+                    Sell Price
+                  </Box>
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {Number(formatUnits(price.sellPrice, 18)).toPrecision(3) +
+                      " ETH"}
+                  </Box>
+                </div>
               </div>
             )}
           </div>

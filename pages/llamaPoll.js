@@ -130,7 +130,6 @@ export default function LlamaPoll() {
               </Grid>
             </div>
           )}
-
           <div className="flex flex-col items-center mt-4">
             <div className="flex flex-col w-6/12">
               <TextField

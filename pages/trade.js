@@ -8,6 +8,7 @@ export default function Trade() {
   const SELECTED_COLOR = "#d2c6d2";
   const UNSELECTED_COLOR = "#eae5ea";
   const [option, setOption] = useState("buy");
+  const [nftAddress, setNFTAddress] = useState("");
 
   return (
     <div className="flex flex-col items-center">
@@ -87,8 +88,20 @@ export default function Trade() {
       </div>
 
       {option == "swap" && <Swap />}
-      {option == "buy" && <BuyAndSell option="buy" />}
-      {option == "sell" && <BuyAndSell option="sell" />}
+      {option == "buy" && (
+        <BuyAndSell
+          nftAddress={nftAddress}
+          setNFTAddress={setNFTAddress}
+          option="buy"
+        />
+      )}
+      {option == "sell" && (
+        <BuyAndSell
+          nftAddress={nftAddress}
+          setNFTAddress={setNFTAddress}
+          option="sell"
+        />
+      )}
     </div>
   );
 }

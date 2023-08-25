@@ -41,7 +41,7 @@ import { useRouter } from "next/router";
 export default function BuyAndSell(props) {
   const SELECTED_COLOR = "#d2c6d2";
   const UNSELECTED_COLOR = "#eae5ea";
-  const router = useRouter();
+  const { query, asPath } = useRouter();
   const { isConnected, address } = useAccount();
   const provider = useProvider();
   const { data: signer } = useSigner();
@@ -60,7 +60,6 @@ export default function BuyAndSell(props) {
   const [nftName, setNFTName] = useState("");
   const [tradingCollections, setTradingCollections] = useState([]);
   const [openOrders, setOpenOrders] = useState([]);
-  const [nftAddress, setNFTAddress] = useState("");
   const [approvedLP, setApprovedLP] = useState(false);
   const [price, setPrice] = useState();
 
@@ -142,7 +141,7 @@ export default function BuyAndSell(props) {
   const handleNFTAddressChange = (_event, value) => {
     console.log("handleNFTAddressChange", value);
     if (ethers.utils.isAddress(value)) {
-      setNFTAddress(value);
+      props.setNFTAddress(value);
       getBackgroundImage(value);
       getTradingPoolAddress(value);
     } else if (
@@ -151,15 +150,15 @@ export default function BuyAndSell(props) {
       const nftAddress = tradingCollections.find(
         (collection) => collection.name == value
       ).address;
-      setNFTAddress(nftAddress);
+      props.setNFTAddress(nftAddress);
       getBackgroundImage(nftAddress);
       getTradingPoolAddress(nftAddress);
     } else {
       console.log("Invalid NFT Address");
       if (value == "") {
-        setNFTAddress("");
+        props.setNFTAddress("");
       } else {
-        setNFTAddress("0x");
+        props.setNFTAddress("0x");
       }
       setPool("");
       setPrice();
@@ -174,8 +173,11 @@ export default function BuyAndSell(props) {
 
     getTradingCollections(chain);
 
-    // Get address from the URL
-    const addressFromUrl = router.query.address;
+    // Parsing address from URL using new URL() and asPath
+    const url = new URL(asPath, window.location.origin);
+    const addressFromUrl = url.searchParams.get("address");
+
+    console.log("addressFromUrl", addressFromUrl);
 
     if (addressFromUrl) {
       // Here you can call your handle function with the address
@@ -184,11 +186,11 @@ export default function BuyAndSell(props) {
     }
 
     console.log("useEffect called");
-  }, [isConnected, chain]);
+  }, [isConnected, chain, asPath]);
 
   useEffect(() => {
-    if (nftAddress) {
-      handleNFTAddressChange(null, nftAddress);
+    if (props.nftAddress) {
+      handleNFTAddressChange(null, props.nftAddress);
     }
   }, [isConnected]);
 
@@ -335,7 +337,7 @@ export default function BuyAndSell(props) {
                 )}
               />
             </div>
-            {nftAddress && (
+            {props.nftAddress && (
               <div className="flex flex-row justify-center">
                 <Box
                   sx={{
@@ -471,14 +473,14 @@ export default function BuyAndSell(props) {
             <div className="flex flex-row items-center">
               {option == "market" && (
                 <MarketBuy
-                  nftAddress={nftAddress}
+                  nftAddress={props.nftAddress}
                   nftName={nftName}
                   pool={pool}
                 />
               )}
               {option == "limit" && (
                 <LimitBuy
-                  nftAddress={nftAddress}
+                  nftAddress={props.nftAddress}
                   nftName={nftName}
                   pool={pool}
                 />
@@ -489,14 +491,14 @@ export default function BuyAndSell(props) {
             <div className="flex flex-row items-center">
               {option == "market" && (
                 <MarketSell
-                  nftAddress={nftAddress}
+                  nftAddress={props.nftAddress}
                   nftName={nftName}
                   pool={pool}
                 />
               )}
               {option == "limit" && (
                 <LimitSell
-                  nftAddress={nftAddress}
+                  nftAddress={props.nftAddress}
                   nftName={nftName}
                   pool={pool}
                 />

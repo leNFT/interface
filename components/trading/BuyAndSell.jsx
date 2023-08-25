@@ -388,8 +388,11 @@ export default function BuyAndSell(props) {
                       fontWeight: "bold",
                     }}
                   >
-                    {Number(formatUnits(price.buyPrice, 18)).toPrecision(3) +
-                      " ETH"}
+                    {(BigNumber.from(price.buyPrice).eq(0)
+                      ? "―.―"
+                      : Number(formatUnits(price.buyPrice, 18)).toPrecision(
+                          3
+                        )) + " ETH"}
                   </Box>
                 </div>
                 <div className="flex flex-col items-center justify-center p-3 px-4">
@@ -410,8 +413,11 @@ export default function BuyAndSell(props) {
                       fontWeight: "bold",
                     }}
                   >
-                    {Number(formatUnits(price.sellPrice, 18)).toPrecision(3) +
-                      " ETH"}
+                    {(BigNumber.from(price.sellPrice).eq(0)
+                      ? "―.―"
+                      : Number(formatUnits(price.sellPrice, 18)).toPrecision(
+                          3
+                        )) + " ETH"}
                   </Box>
                 </div>
               </div>

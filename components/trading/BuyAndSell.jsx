@@ -62,6 +62,7 @@ export default function BuyAndSell(props) {
   const [openOrders, setOpenOrders] = useState([]);
   const [approvedLP, setApprovedLP] = useState(false);
   const [price, setPrice] = useState();
+  const [myHistory, setMyHistory] = useState(true);
 
   var addresses = contractAddresses[1];
 
@@ -196,6 +197,23 @@ export default function BuyAndSell(props) {
 
   useEffect(() => {
     if (pool && proMode) {
+      const updatePoolHistory = async () => {
+        setLoadingTradingHistory(true);
+        const newPoolHistory = await getTradingPoolHistory(
+          chain ? chain.id : 1,
+          pool,
+          myHistory ? address : null
+        );
+        console.log("poolHistory:", newPoolHistory);
+        setPoolHistory(newPoolHistory);
+        setLoadingTradingHistory(false);
+      };
+      updatePoolHistory();
+    }
+  }, [myHistory]);
+
+  useEffect(() => {
+    if (pool && proMode) {
       const fetchProModeInfo = async () => {
         setLoadingOrderbook(true);
         setLoadingTradingHistory(true);
@@ -209,7 +227,8 @@ export default function BuyAndSell(props) {
         setLoadingOrderbook(false);
         const newPoolHistory = await getTradingPoolHistory(
           chain ? chain.id : 1,
-          pool
+          pool,
+          myHistory ? address : null
         );
         console.log("poolHistory:", newPoolHistory);
         setPoolHistory(newPoolHistory);
@@ -516,7 +535,7 @@ export default function BuyAndSell(props) {
         {proMode && (
           <div className="flex flex-col items-center rounded-3xl bg-black/5 w-fit shadow-lg p-4">
             <Box
-              className="mb-3"
+              className="mb-4"
               sx={{
                 fontFamily: "Monospace",
                 fontSize: "subtitle1.fontSize",
@@ -655,7 +674,7 @@ export default function BuyAndSell(props) {
       {proMode && (
         <div className="flex flex-col items-center rounded-3xl bg-black/5 min-w-[50%] m-4 shadow-lg py-4">
           <Box
-            className="mb-3 px-8 text-center"
+            className="mb-4 px-8 text-center"
             sx={{
               fontFamily: "Monospace",
               fontSize: "subtitle1.fontSize",
@@ -812,17 +831,38 @@ export default function BuyAndSell(props) {
       )}
       {proMode && (
         <div className="flex flex-col items-center min-w-[50%] justify-center rounded-3xl py-4 m-4 bg-black/5 shadow-lg">
-          <Box
-            className="mb-3"
-            sx={{
-              fontFamily: "Monospace",
-              fontSize: "subtitle1.fontSize",
-              fontWeight: "bold",
-              letterSpacing: 2,
-            }}
-          >
-            History
-          </Box>
+          <div className="flex flex-row items-center justify-center mb-4 space-x-4">
+            <Box
+              className="cursor-pointer hover:bg-black/10 p-2 rounded"
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+                fontWeight: "bold",
+                letterSpacing: 2,
+                backgroundColor: myHistory && SELECTED_COLOR,
+              }}
+              onClick={() => {
+                setMyHistory(true);
+              }}
+            >
+              My History
+            </Box>
+            <Box
+              className="cursor-pointer hover:bg-black/10 p-2 rounded"
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle1.fontSize",
+                fontWeight: "bold",
+                letterSpacing: 2,
+                backgroundColor: !myHistory && SELECTED_COLOR,
+              }}
+              onClick={() => {
+                setMyHistory(false);
+              }}
+            >
+              History
+            </Box>
+          </div>
           {pool ? (
             loadingTradingHistory ? (
               <div className="m-32">

@@ -288,7 +288,7 @@ export default function BuyAndSell(props) {
               {proMode ? "Simple Mode" : "Pro Mode"}
             </ButtonNextUI>
           </div>
-          <div className="flex flex-col mt-4 mb-8 items-center">
+          <div className="flex flex-col mt-4 mb-4 items-center">
             <div className="flex flex-row justify-center items-center m-2">
               <Autocomplete
                 value={nftName}

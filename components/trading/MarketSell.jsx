@@ -184,6 +184,7 @@ export default function MarketSell(props) {
       getNFTAllowance(props.nftAddress);
       setAmount(0);
       setPriceQuote();
+      setSelectingNFTs(false);
       setSelectedNFTs([]);
     }
   }, [props.nftAddress, props.pool]);

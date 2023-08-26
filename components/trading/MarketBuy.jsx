@@ -276,7 +276,7 @@ export default function MarketBuy(props) {
                   }
                 </Box>
               </div>
-              <div className="my-4 grid grid-cols-2 md:grid-cols-3 overflow-auto max-h-[24rem]">
+              <div className="my-4 grid grid-cols-3 overflow-auto w-full max-h-[24rem]">
                 {availableNFTs.map((nft, _) => (
                   <div
                     key={BigNumber.from(nft.tokenId).toNumber()}
@@ -336,9 +336,18 @@ export default function MarketBuy(props) {
                                     <Box
                                       sx={{
                                         fontFamily: "Monospace",
-                                        fontSize: "11px",
-                                        fontWeight: "bold",
-                                        padding: "0.3rem",
+                                        fontSize: {
+                                          xs: "9px",
+                                          sm: "caption.fontSize",
+                                        },
+                                        fontWeight: {
+                                          xs: "normal",
+                                          sm: "bold",
+                                        },
+                                        padding: {
+                                          xs: "0.2rem",
+                                          sm: "0.3rem",
+                                        },
                                       }}
                                     >
                                       Traits
@@ -381,7 +390,10 @@ export default function MarketBuy(props) {
                             className="mr-4 w-full text-end"
                             sx={{
                               fontFamily: "Monospace",
-                              fontSize: "subtitle2.fontSize",
+                              fontSize: {
+                                xs: "10px",
+                                sm: "subitle2.fontSize",
+                              },
                               fontWeight: "bold",
                             }}
                           >

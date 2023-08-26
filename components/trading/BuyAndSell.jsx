@@ -388,8 +388,8 @@ export default function BuyAndSell(props) {
               </div>
             )}
             {price && (
-              <div className="flex flex-col sm:flex-row justify-around border-black/20 backdrop-blur-md mt-6 border-2 rounded-xl w-fit p-2">
-                <div className="flex flex-col items-center justify-center p-3 px-4 border-b-2 sm:border-b-0 sm:border-r-2 border-black/20">
+              <div className="flex flex-row justify-around border-black/20 backdrop-blur-md mt-6 border-2 rounded-xl w-fit p-2">
+                <div className="flex flex-col items-center justify-center p-3 px-4 border-r-2 border-black/20">
                   <Box
                     className="mb-1"
                     sx={{

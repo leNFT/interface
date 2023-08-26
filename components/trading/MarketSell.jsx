@@ -316,9 +316,18 @@ export default function MarketSell(props) {
                                   <Box
                                     sx={{
                                       fontFamily: "Monospace",
-                                      fontSize: "11px",
-                                      fontWeight: "bold",
-                                      padding: "0.3rem",
+                                      fontSize: {
+                                        xs: "9px",
+                                        sm: "caption.fontSize",
+                                      },
+                                      fontWeight: {
+                                        xs: "normal",
+                                        sm: "bold",
+                                      },
+                                      padding: {
+                                        xs: "0.2rem",
+                                        sm: "0.3rem",
+                                      },
                                     }}
                                   >
                                     Traits
@@ -361,7 +370,10 @@ export default function MarketSell(props) {
                           className="mr-4 w-full text-end"
                           sx={{
                             fontFamily: "Monospace",
-                            fontSize: "subtitle2.fontSize",
+                            fontSize: {
+                              xs: "10px",
+                              sm: "subitle2.fontSize",
+                            },
                             fontWeight: "bold",
                           }}
                         >

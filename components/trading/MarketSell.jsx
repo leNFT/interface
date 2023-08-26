@@ -257,7 +257,7 @@ export default function MarketSell(props) {
         </div>
         {selectingNFTs &&
           (userNFTs.length > 0 ? (
-            <div className="flex flex-row m-4 grid grid-cols-2 md:grid-cols-3 overflow-auto mx-8 max-h-[24rem]">
+            <div className="flex flex-row m-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 overflow-auto mx-8 max-h-[24rem]">
               {userNFTs.map((nft, _) => (
                 <div
                   key={BigNumber.from(nft.tokenId).toNumber()}

@@ -276,7 +276,7 @@ export default function MarketBuy(props) {
                   }
                 </Box>
               </div>
-              <div className="my-4 grid grid-cols-3 overflow-auto w-full max-h-[24rem]">
+              <div className="my-4 grid grid-cols-3 lg:grid-cols-4 overflow-auto w-full max-h-[24rem]">
                 {availableNFTs.map((nft, _) => (
                   <div
                     key={BigNumber.from(nft.tokenId).toNumber()}

@@ -549,7 +549,7 @@ export default function MarketSell(props) {
                 console.log("selectedNFTs", selectedNFTs);
                 console.log("priceQuote.lps", priceQuote.lps);
                 let tx = await wethGatewaySigner.sell(
-                  poolAddress,
+                  props.pool,
                   selectedNFTs,
                   priceQuote.lps,
                   priceQuote.price

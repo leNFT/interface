@@ -382,7 +382,7 @@ export default function LimitSell(props) {
               console.log("Selling: " + selectedNFTs);
               try {
                 const tx = await wethGatewaySigner.depositTradingPool(
-                  poolAddress,
+                  props.pool,
                   4,
                   selectedNFTs,
                   parseUnits(price, 18),

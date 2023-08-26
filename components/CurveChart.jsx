@@ -15,7 +15,14 @@ const CustomXAxisLabel = ({ viewBox }) => {
   const { x, y, width, height } = viewBox;
   return (
     <g transform={`translate(${x},${y + height - 4})`}>
-      <text x={width / 2 + 1} y={0} dy={0} textAnchor="middle" fill="#666">
+      <text
+        x={width / 2 + 1}
+        y={0}
+        dy={0}
+        textAnchor="middle"
+        fill="#666"
+        fontFamily="monospace"
+      >
         ◄ Sell | Buy ►
       </text>
     </g>

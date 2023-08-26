@@ -314,26 +314,55 @@ export default function DepositTradingPool(props) {
         <div className="flex flex-col m-4">
           <div className="flex flex-col items-center justify-center mt-8">
             <Input
-              label="Initial Price"
+              label={
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "caption.fontSize",
+                    letterSpacing: 1,
+                  }}
+                >
+                  Initial Price
+                </Box>
+              }
               type="number"
               placeholder="0.01 ETH"
               value={initialPrice ? Number(formatUnits(initialPrice, 18)) : ""}
               step="any"
-              description="The initial spot price of the LP"
+              description={
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "caption.fontSize",
+                  }}
+                >
+                  The initial spot price of the LP
+                </Box>
+              }
               validation={{
                 numberMin: formatUnits("1", 18),
               }}
               onChange={handleInitialPriceChange}
             />
-            <div className="flex flex-row items-center justify-center space-x-8 mt-8">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "subtitle2.fontSize",
-                }}
-              >
-                {"Buy: " +
-                  (initialPrice && fee
+            <div className="flex flex-col sm:flex-row justify-around border-black/10 mt-8 border-2 rounded-xl w-fit">
+              <div className="flex flex-col items-center justify-center p-2 border-b-2 sm:border-b-0 sm:border-r-2 border-black/20">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "caption.fontSize",
+                    letterSpacing: 1,
+                  }}
+                >
+                  Buy Price
+                </Box>
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle2.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {(initialPrice && fee
                     ? Number(
                         formatUnits(
                           BigNumber.from(initialPrice)
@@ -342,16 +371,27 @@ export default function DepositTradingPool(props) {
                           18
                         )
                       ).toPrecision(3)
-                    : "—")}
-              </Box>
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "subtitle2.fontSize",
-                }}
-              >
-                {"Sell: " +
-                  (initialPrice && fee
+                    : "—") + " ETH"}
+                </Box>
+              </div>
+              <div className="flex flex-col items-center justify-center p-2">
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "caption.fontSize",
+                    letterSpacing: 1,
+                  }}
+                >
+                  Sell Price
+                </Box>
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle2.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {(initialPrice && fee
                     ? Number(
                         formatUnits(
                           BigNumber.from(initialPrice)
@@ -360,8 +400,9 @@ export default function DepositTradingPool(props) {
                           18
                         )
                       ).toPrecision(3)
-                    : "—")}
-              </Box>
+                    : "—") + " ETH"}
+                </Box>
+              </div>
             </div>
           </div>
 
@@ -369,7 +410,17 @@ export default function DepositTradingPool(props) {
             <div>
               <div className="flex flex-row items-center my-8 justify-center">
                 <Input
-                  label="Fee %"
+                  label={
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "caption.fontSize",
+                        letterSpacing: 1,
+                      }}
+                    >
+                      Fee %
+                    </Box>
+                  }
                   type="number"
                   placeholder="20 %"
                   value={fee}
@@ -377,7 +428,16 @@ export default function DepositTradingPool(props) {
                   validation={{
                     numberMin: 0,
                   }}
-                  description="Fee charged by your LP"
+                  description={
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "caption.fontSize",
+                      }}
+                    >
+                      Fee charged by your LP
+                    </Box>
+                  }
                   onChange={handleFeeChange}
                 />
               </div>
@@ -396,11 +456,19 @@ export default function DepositTradingPool(props) {
                 </Box>
                 <Input
                   label={
-                    curve == "exponential"
-                      ? "Delta %"
-                      : curve == "linear"
-                      ? "Delta (Amount)"
-                      : "Delta"
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "caption.fontSize",
+                        letterSpacing: 1,
+                      }}
+                    >
+                      {curve == "exponential"
+                        ? "Delta %"
+                        : curve == "linear"
+                        ? "Delta (Amount)"
+                        : "Delta"}
+                    </Box>
                   }
                   value={delta}
                   type="number"
@@ -412,7 +480,16 @@ export default function DepositTradingPool(props) {
                       ? "0.01 ETH"
                       : "0"
                   }
-                  description="The price change after each buy or sell"
+                  description={
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "caption.fontSize",
+                      }}
+                    >
+                      The price change after each buy or sell
+                    </Box>
+                  }
                   validation={{
                     numberMin: 0,
                     numberMax: maxDelta,
@@ -424,7 +501,17 @@ export default function DepositTradingPool(props) {
           )}
           <div className="flex flex-row items-center justify-center mt-8 mb-4">
             <Input
-              label="ETH Amount"
+              label={
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "caption.fontSize",
+                    letterSpacing: 1,
+                  }}
+                >
+                  ETH Amount
+                </Box>
+              }
               type="number"
               placeholder="2.5 ETH"
               value={tokenAmount ? Number(formatUnits(tokenAmount, 18)) : ""}
@@ -432,7 +519,16 @@ export default function DepositTradingPool(props) {
               validation={{
                 numberMin: 0,
               }}
-              description="Amount of ETH to deposit."
+              description={
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "caption.fontSize",
+                  }}
+                >
+                  Amount of ETH to deposit.
+                </Box>
+              }
               onChange={handleTokenAmountChange}
             />
           </div>

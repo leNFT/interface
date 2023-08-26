@@ -54,6 +54,23 @@ export default function TradingPool() {
       provider
     );
 
+    // Get the best price the pool LPs can offer
+    try {
+      const priceResponse = await getTradingPoolPrice(
+        chain ? chain.id : 1,
+        router.query.address
+      );
+      console.log("priceResponse", priceResponse);
+      setPrice(priceResponse);
+    } catch (e) {
+      console.log("Error getting price", e);
+      setPrice({
+        price: "0",
+        buyPrice: "0",
+        sellPrice: "0",
+      });
+    }
+
     // Set pool details
     console.log("pool", router.query.address);
     const poolInfo = await getTradingPools(
@@ -116,23 +133,6 @@ export default function TradingPool() {
     );
     console.log("updatePoolHistory", updatePoolHistory);
     setPoolHistory(updatePoolHistory);
-
-    // Get the best price the pool LPs can offer
-    try {
-      const priceResponse = await getTradingPoolPrice(
-        chain ? chain.id : 1,
-        router.query.address
-      );
-      console.log("priceResponse", priceResponse);
-      setPrice(priceResponse);
-    } catch (e) {
-      console.log("Error getting price", e);
-      setPrice({
-        price: "0",
-        buyPrice: "0",
-        sellPrice: "0",
-      });
-    }
 
     setLoadingTradingPool(false);
   }

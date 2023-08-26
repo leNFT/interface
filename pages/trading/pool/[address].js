@@ -394,7 +394,18 @@ export default function TradingPool() {
                 fontSize: 18,
                 textColor: "white",
               }}
-              text="Trade"
+              text={
+                <Box
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                    fontWeight: "bold",
+                    letterSpacing: 1,
+                  }}
+                >
+                  Trade
+                </Box>
+              }
               theme="custom"
               size="large"
               radius="14"
@@ -413,7 +424,18 @@ export default function TradingPool() {
                     fontSize: 18,
                     textColor: "white",
                   }}
-                  text="Gauge"
+                  text={
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle1.fontSize",
+                        fontWeight: "bold",
+                        letterSpacing: 1,
+                      }}
+                    >
+                      Gauge
+                    </Box>
+                  }
                   theme="custom"
                   size="large"
                   radius="14"
@@ -504,7 +526,18 @@ export default function TradingPool() {
                   fontSize: 20,
                   textColor: "white",
                 }}
-                text="Create LP"
+                text={
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle1.fontSize",
+                      fontWeight: "bold",
+                      letterSpacing: 1,
+                    }}
+                  >
+                    Deposit Liquidity
+                  </Box>
+                }
                 theme="custom"
                 size="large"
                 radius="12"

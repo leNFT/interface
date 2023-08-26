@@ -975,7 +975,7 @@ export default function BuyAndSell(props) {
                     fontSize: "subtitle2.fontSize",
                   }}
                 >
-                  No trades yet
+                  {myHistory ? "You haven't made any trades" : "No trades yet"}
                 </Box>
               </div>
             )

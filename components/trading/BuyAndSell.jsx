@@ -551,7 +551,7 @@ export default function BuyAndSell(props) {
                   <Loading size={18} spinnerColor="#000000" />
                 </div>
               ) : orderbook &&
-                (orderbook.buy.length || orderbook.buy.length) ? (
+                (orderbook.sell.length || orderbook.buy.length) ? (
                 <table>
                   <thead>
                     <tr>
@@ -560,23 +560,26 @@ export default function BuyAndSell(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    {orderbook.sell.reverse().map((sellOrder, i) => (
-                      <tr key={i} align="center">
-                        <td className="text-red-600">
-                          <Box
-                            sx={{
-                              fontFamily: "Monospace",
-                              fontSize: "subtitle2.fontSize",
-                            }}
-                          >
-                            {Number(
-                              formatUnits(sellOrder.price, 18)
-                            ).toPrecision(4)}
-                          </Box>
-                        </td>
-                        <td>{sellOrder.amount}</td>
-                      </tr>
-                    ))}
+                    {orderbook.sell
+                      .slice()
+                      .reverse()
+                      .map((sellOrder, i) => (
+                        <tr key={i} align="center">
+                          <td className="text-red-600">
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "subtitle2.fontSize",
+                              }}
+                            >
+                              {Number(
+                                formatUnits(sellOrder.price, 18)
+                              ).toPrecision(4)}
+                            </Box>
+                          </td>
+                          <td>{sellOrder.amount}</td>
+                        </tr>
+                      ))}
                     <tr>
                       <td colSpan="2">
                         <Box

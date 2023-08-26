@@ -392,7 +392,7 @@ export default function MarketBuy(props) {
                               fontFamily: "Monospace",
                               fontSize: {
                                 xs: "10px",
-                                sm: "subitle2.fontSize",
+                                sm: "subtitle2.fontSize",
                               },
                               fontWeight: "bold",
                             }}

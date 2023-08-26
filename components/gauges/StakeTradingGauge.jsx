@@ -138,7 +138,7 @@ export default function StakeTradingGauge(props) {
             {userLPs.map((lp, index) => (
               <Card
                 sx={{
-                  width: "180px",
+                  width: "130px",
                   borderRadius: 4,
                   background: BigNumber.from(lpsValue[index]).eq(0)
                     ? "#A2A2A2"

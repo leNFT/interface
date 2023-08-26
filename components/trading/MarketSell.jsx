@@ -372,7 +372,7 @@ export default function MarketSell(props) {
                             fontFamily: "Monospace",
                             fontSize: {
                               xs: "10px",
-                              sm: "subitle2.fontSize",
+                              sm: "subtitle2.fontSize",
                             },
                             fontWeight: "bold",
                           }}

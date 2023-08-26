@@ -560,26 +560,23 @@ export default function BuyAndSell(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    {orderbook.sell
-                      .slice(0, 5)
-                      .reverse()
-                      .map((sellOrder, i) => (
-                        <tr key={i} align="center">
-                          <td className="text-red-600">
-                            <Box
-                              sx={{
-                                fontFamily: "Monospace",
-                                fontSize: "subtitle2.fontSize",
-                              }}
-                            >
-                              {Number(
-                                formatUnits(sellOrder.price, 18)
-                              ).toPrecision(4)}
-                            </Box>
-                          </td>
-                          <td>{sellOrder.amount}</td>
-                        </tr>
-                      ))}
+                    {orderbook.sell.reverse().map((sellOrder, i) => (
+                      <tr key={i} align="center">
+                        <td className="text-red-600">
+                          <Box
+                            sx={{
+                              fontFamily: "Monospace",
+                              fontSize: "subtitle2.fontSize",
+                            }}
+                          >
+                            {Number(
+                              formatUnits(sellOrder.price, 18)
+                            ).toPrecision(4)}
+                          </Box>
+                        </td>
+                        <td>{sellOrder.amount}</td>
+                      </tr>
+                    ))}
                     <tr>
                       <td colSpan="2">
                         <Box
@@ -605,7 +602,7 @@ export default function BuyAndSell(props) {
                         </Box>
                       </td>
                     </tr>
-                    {orderbook.buy.slice(0, 5).map((buyOrder, i) => (
+                    {orderbook.buy.map((buyOrder, i) => (
                       <tr key={i} align="center">
                         <td className="text-green-600">
                           <Box

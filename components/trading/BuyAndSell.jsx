@@ -774,7 +774,7 @@ export default function BuyAndSell(props) {
                               }
                             }}
                           >
-                            Approve
+                            Approve Removal
                           </ButtonNextUI>
                         )}
                       </td>

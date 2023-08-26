@@ -25,7 +25,6 @@ import erc721 from "../../contracts/erc721.json";
 export default function StakeTradingGauge(props) {
   const [userLPs, setUserLPs] = useState([]);
   const [selectedLP, setSelectedLP] = useState();
-  const [selectingLP, setSelectingLP] = useState(false);
   const [approvedLP, setApprovedLP] = useState(false);
   const [approvalLPLoading, setApprovalLPLoading] = useState(false);
   const [stakeLoading, setStakeLoading] = useState(false);
@@ -120,92 +119,22 @@ export default function StakeTradingGauge(props) {
 
   return (
     <div className={styles.container}>
-      <div className="flex flex-col items-center justify-center m-8">
-        {approvedLP ? (
-          <Button
-            text={
-              userLPs.length == 0
-                ? "No LPs to stake"
-                : selectedLP !== undefined
-                ? "Selected LP #" + selectedLP
-                : "Please select an LP to stake"
-            }
-            theme="secondary"
-            isFullWidth
-            loadingProps={{
-              spinnerColor: "#000000",
-              spinnerType: "loader",
-              direction: "right",
-              size: "24",
-            }}
-            loadingText=""
-            onClick={async function () {
-              setSelectingLP(!selectingLP);
-            }}
-          />
-        ) : (
-          <Button
-            text="Approve LP"
-            theme="secondary"
-            isFullWidth
-            loadingProps={{
-              spinnerColor: "#000000",
-              spinnerType: "loader",
-              direction: "right",
-              size: "24",
-            }}
-            loadingText=""
-            isLoading={approvalLPLoading}
-            onClick={async function () {
-              const lpTokenSigner = new ethers.Contract(
-                props.lpToken,
-                erc721,
-                signer
-              );
-              try {
-                setApprovalLPLoading(true);
-                console.log("signer.", signer);
-
-                const tx = await lpTokenSigner.setApprovalForAll(
-                  props.gauge,
-                  true
-                );
-                await tx.wait(1);
-                handleLPApprovalSuccess();
-              } catch (error) {
-                console.log(error);
-              } finally {
-                setApprovalLPLoading(false);
-              }
-            }}
-          ></Button>
-        )}
+      <div className="flex flex-row justify-center mb-8">
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: "h6.fontSize",
+            fontWeight: "bold",
+          }}
+        >
+          {userLPs.length > 0
+            ? "Choose an LP to stake"
+            : "No LPs available to stake"}
+        </Box>
       </div>
-      {selectingLP && userLPs.length > 0 && (
-        <div>
-          <Box
-            sx={{
-              fontFamily: "Monospace",
-              fontSize: "caption.fontSize",
-              fontWeight: "bold",
-              color: "#be4d25",
-            }}
-            className="m-2 text-center"
-          >
-            {"Only LPs with a value higher than 0 ETH can be staked. "}
-
-            <a
-              href={
-                "https://lenft.gitbook.io/lenft-docs/trading/deposit-in-a-trading-pool"
-              }
-              target="_blank"
-              rel="noreferrer"
-              className="text-blue-700 underline text-xs"
-            >
-              What is LP value?
-            </a>
-          </Box>
-          <div className="grid gap-4 md:grid-cols-2">
+      {userLPs.length > 0 && (
+        <div className="flex flex-col space-y-4 items-center">
+          <div className="grid gap-8 md:grid-cols-2">
             {userLPs.map((lp, index) => (
               <Card
                 sx={{
@@ -252,41 +181,101 @@ export default function StakeTradingGauge(props) {
               </Card>
             ))}
           </div>
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "caption.fontSize",
+              fontWeight: "bold",
+              color: "#be4d25",
+            }}
+            className=" m-2 text-center max-w-xs items-center justify-center"
+          >
+            {"Only LPs with a value higher than 0 ETH can be staked. "}
+
+            <a
+              href={
+                "https://lenft.gitbook.io/lenft-docs/trading/deposit-in-a-trading-pool"
+              }
+              target="_blank"
+              rel="noreferrer"
+              className="text-blue-700 underline text-xs"
+            >
+              What is LP value?
+            </a>
+          </Box>
         </div>
       )}
       <div className="flex flex-row items-center justify-center m-8">
-        <Button
-          text={"Stake LP"}
-          theme="secondary"
-          isFullWidth
-          loadingProps={{
-            spinnerColor: "#000000",
-            spinnerType: "loader",
-            direction: "right",
-            size: "24",
-          }}
-          disabled={!approvedLP}
-          loadingText=""
-          isLoading={stakeLoading}
-          onClick={async function () {
-            const gauge = new ethers.Contract(
-              props.gauge,
-              tradingGaugeContract.abi,
-              signer
-            );
-            try {
-              setStakeLoading(true);
-              console.log("signer.", signer);
-              const tx = await gauge.deposit(selectedLP);
-              await tx.wait(1);
-              handleStakeSuccess();
-            } catch (error) {
-              console.log(error);
-            } finally {
-              setStakeLoading(false);
-            }
-          }}
-        ></Button>
+        {!approvedLP ? (
+          <Button
+            text="Approve LP"
+            theme="secondary"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
+            }}
+            loadingText=""
+            isLoading={approvalLPLoading}
+            onClick={async function () {
+              const lpTokenSigner = new ethers.Contract(
+                props.lpToken,
+                erc721,
+                signer
+              );
+              try {
+                setApprovalLPLoading(true);
+                console.log("signer.", signer);
+
+                const tx = await lpTokenSigner.setApprovalForAll(
+                  props.gauge,
+                  true
+                );
+                await tx.wait(1);
+                handleLPApprovalSuccess();
+              } catch (error) {
+                console.log(error);
+              } finally {
+                setApprovalLPLoading(false);
+              }
+            }}
+          ></Button>
+        ) : (
+          <Button
+            text={"Stake LP"}
+            theme="secondary"
+            isFullWidth
+            loadingProps={{
+              spinnerColor: "#000000",
+              spinnerType: "loader",
+              direction: "right",
+              size: "24",
+            }}
+            disabled={!approvedLP}
+            loadingText=""
+            isLoading={stakeLoading}
+            onClick={async function () {
+              const gauge = new ethers.Contract(
+                props.gauge,
+                tradingGaugeContract.abi,
+                signer
+              );
+              try {
+                setStakeLoading(true);
+                console.log("signer.", signer);
+                const tx = await gauge.deposit(selectedLP);
+                await tx.wait(1);
+                handleStakeSuccess();
+              } catch (error) {
+                console.log(error);
+              } finally {
+                setStakeLoading(false);
+              }
+            }}
+          ></Button>
+        )}
       </div>
     </div>
   );

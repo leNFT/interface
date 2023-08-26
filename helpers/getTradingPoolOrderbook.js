@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 
 export async function getTradingPoolOrderbook(chainId, pool) {
-  const serverAddress = "https://api-h6nqa.ondigitalocean.app";
+  const serverAddress = "https://trade-router-absrz.ondigitalocean.app";
   const options = {
     method: "GET",
     headers: {
@@ -9,18 +9,10 @@ export async function getTradingPoolOrderbook(chainId, pool) {
     },
   };
   console.log(
-    serverAddress +
-      "/trading/poolOrderbook?pool=" +
-      pool +
-      "&chainId=" +
-      chainId
+    serverAddress + "/orderbook?pool=" + pool + "&chainId=" + chainId
   );
   const orderbookResponse = await fetch(
-    serverAddress +
-      "/trading/poolOrderbook?pool=" +
-      pool +
-      "&chainId=" +
-      chainId,
+    serverAddress + "/orderbook?pool=" + pool + "&chainId=" + chainId,
     options
   ).catch((err) => console.error(err));
   const orderbook = await orderbookResponse.json();

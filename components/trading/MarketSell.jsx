@@ -182,13 +182,19 @@ export default function MarketSell(props) {
     if (props.nftAddress && props.pool) {
       getUserNFTs(props.nftAddress);
       getNFTAllowance(props.nftAddress);
+      setAmount(0);
+      setPriceQuote();
+      setSelectedNFTs([]);
     }
   }, [props.nftAddress, props.pool]);
 
   useEffect(() => {
-    if (props.nftAddress && props.pool) {
-      getPriceQuote(selectedNFTs.length);
+    if (props.nftAddress && props.pool && selectedNFTs.length > 0) {
       setAmount(selectedNFTs.length);
+      getPriceQuote(selectedNFTs.length);
+    } else {
+      setAmount(0);
+      setPriceQuote();
     }
   }, [selectedNFTs]);
 

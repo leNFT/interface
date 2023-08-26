@@ -185,6 +185,13 @@ export default function MarketSell(props) {
     }
   }, [props.nftAddress, props.pool]);
 
+  useEffect(() => {
+    if (props.nftAddress && props.pool) {
+      getPriceQuote(selectedNFTs.length);
+      setAmount(selectedNFTs.length);
+    }
+  }, [selectedNFTs]);
+
   return (
     <div className="flex flex-col items-center text-center w-full md:w-fit justify-center rounded-3xl">
       <div className="flex flex-col justify-center">

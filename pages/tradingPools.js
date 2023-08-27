@@ -11,6 +11,9 @@ import {
 } from "@mui/material";
 import { Badge } from "@nextui-org/react";
 import { Box } from "@mui/system";
+import Input from "@mui/material/Input";
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchIcon from "@mui/icons-material/Search";
 import { Button } from "grommet";
 import { Skeleton } from "@mui/material";
 import { ethers } from "ethers";
@@ -30,6 +33,7 @@ export default function TradingPools() {
   const [tableData, setTableData] = useState([]);
   const [visibleCreateTradingPoolModal, setVisibleCreateTradingPoolModal] =
     useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   async function updateTableData() {
     const tradingPools = await getTradingPools(chain ? chain.id : 1);
@@ -86,12 +90,18 @@ export default function TradingPools() {
 
     newTableData = [...combinedPoolsArray, ...soonPoolsArray];
 
+    if (searchTerm) {
+      newTableData = newTableData.filter((pool) =>
+        pool.nft.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
     setTableData(newTableData);
   }
 
   useEffect(() => {
     updateTableData();
-  }, [isConnected]);
+  }, [isConnected, searchTerm]);
 
   const handleRowClick = (row) => {
     if (row.clickable) {
@@ -117,7 +127,38 @@ export default function TradingPools() {
         <CreateTradingPool setVisibility={setVisibleCreateTradingPoolModal} />
       </StyledModal>
       <div className="mx-1 md:mx-8">
-        <div className="flex flex-row w-full justify-center items-center mb-2">
+        <div className="flex flex-row w-full justify-between items-center mb-2">
+          <Input
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            startAdornment={
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            }
+            placeholder="Collections"
+            style={{
+              flexGrow: 0.5, // This makes the input take the available space in the middle
+              border: "1px solid #ddd",
+              height: "40px", // Align the text vertically center
+              borderRadius: "12px", // Rounded border
+              background: "rgba(255, 255, 255, 0.6)", // White with 70% opacity (translucency)
+              paddingLeft: "10px", // Space for the search icon
+              paddingRight: "10px", // Spacing on the right side
+              marginRight: "10px", // Space before the button
+              underline: { display: "none" }, // To hide the underline
+            }}
+            inputProps={{
+              style: {
+                fontFamily: "Monospace",
+                "::placeholder": {
+                  fontFamily: "Monospace",
+                },
+              },
+            }}
+            disableUnderline // This removes the default underline of the MUI Input
+          />
+
           <Button
             primary
             size="small"
@@ -139,6 +180,7 @@ export default function TradingPools() {
             }
           />
         </div>
+
         <TableContainer
           sx={{
             borderRadius: "18px",

@@ -63,6 +63,8 @@ export default function BuyAndSell(props) {
   const [approvedLP, setApprovedLP] = useState(false);
   const [price, setPrice] = useState();
   const [myHistory, setMyHistory] = useState(true);
+  const [myOrders, setMyOrders] = useState(true);
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
 
   var addresses = contractAddresses[1];
 
@@ -196,6 +198,26 @@ export default function BuyAndSell(props) {
   }, [isConnected]);
 
   useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        console.log("Small screen detected");
+        setIsSmallScreen(true);
+      } else {
+        setIsSmallScreen(false); // Reset to false if the screen is larger
+      }
+    };
+
+    // Initial check (in case you want to check right away when the component mounts)
+    handleResize();
+
+    // Set up the event listener
+    window.addEventListener("resize", handleResize);
+
+    // Clean up the event listener when the component unmounts
+    return () => window.removeEventListener("resize", handleResize);
+  }, []); // Empty dependency array ensures this useEffect runs only on mount and unmount
+
+  useEffect(() => {
     if (pool && proMode) {
       const updatePoolHistory = async () => {
         setLoadingTradingHistory(true);
@@ -262,6 +284,131 @@ export default function BuyAndSell(props) {
     }
     console.log("pool:", pool);
   }, [pool, chain, proMode]);
+
+  const OrderbookComponent = () => {
+    if (!pool) {
+      return (
+        <div className="flex flex-col m-8 items-center justify-center">
+          <Box
+            sx={{
+              fontFamily: "Monospace",
+              fontSize: "subtitle2.fontSize",
+            }}
+          >
+            {isConnected
+              ? "Select a collection to view the orderbook"
+              : "Connect Wallet to view the orderbook"}
+          </Box>
+        </div>
+      );
+    }
+
+    if (loadingOrderbook) {
+      return (
+        <div className="m-32">
+          <Loading size={18} spinnerColor="#000000" />
+        </div>
+      );
+    }
+
+    if (orderbook && (orderbook.sell.length || orderbook.buy.length)) {
+      return (
+        <table>
+          <thead>
+            <tr>
+              <th className="px-8 py-2 text-sm">Price (ETH)</th>
+              <th className="px-8 py-2 text-sm">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orderbook.sell
+              .slice()
+              .reverse()
+              .map((sellOrder, i) => (
+                <tr key={i} align="center">
+                  <td className="text-red-600">
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "subtitle2.fontSize",
+                      }}
+                    >
+                      {Number(formatUnits(sellOrder.price, 18)).toPrecision(4)}
+                    </Box>
+                  </td>
+                  <td>{sellOrder.amount}</td>
+                </tr>
+              ))}
+            <tr>
+              <td colSpan="2">
+                <Box
+                  className="text-red-600 text-center"
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Ask
+                </Box>
+                <Divider className="my-1" variant="middle" />
+                <Box
+                  className="text-green-600 text-center"
+                  sx={{
+                    fontFamily: "Monospace",
+                    fontSize: "subtitle1.fontSize",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Bid
+                </Box>
+              </td>
+            </tr>
+            {orderbook.buy.map((buyOrder, i) => (
+              <tr key={i} align="center">
+                <td className="text-green-600">
+                  <Box
+                    sx={{
+                      fontFamily: "Monospace",
+                      fontSize: "subtitle2.fontSize",
+                    }}
+                  >
+                    {Number(formatUnits(buyOrder.price, 18)).toPrecision(4)}
+                  </Box>
+                </td>
+                <td>{buyOrder.amount}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      );
+    }
+
+    return (
+      <div className="flex flex-col m-8 space-y-2 items-center justify-center">
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: "subtitle2.fontSize",
+          }}
+        >
+          Empty Orderbook.
+        </Box>
+        <Box
+          sx={{
+            fontFamily: "Monospace",
+            fontSize: "subtitle2.fontSize",
+          }}
+        >
+          Be the first to{" "}
+          <Link href={"/trading/pool/" + pool}>
+            <a style={{ textDecoration: "underline" }}>add liquidity</a>
+          </Link>
+          .
+        </Box>
+      </div>
+    );
+  };
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -533,7 +680,7 @@ export default function BuyAndSell(props) {
         </div>
 
         {proMode && (
-          <div className="flex flex-col items-center rounded-3xl bg-black/5 w-fit shadow-lg p-4">
+          <div className="hidden md:flex flex-col items-center rounded-3xl bg-black/5 w-fit shadow-lg p-4">
             <Box
               className="mb-4"
               sx={{
@@ -545,117 +692,180 @@ export default function BuyAndSell(props) {
             >
               Orderbook
             </Box>
-            {pool ? (
-              loadingOrderbook ? (
-                <div className="m-32">
+            <OrderbookComponent />
+          </div>
+        )}
+      </div>
+      {proMode && (
+        <div className="flex flex-col items-center rounded-3xl bg-black/5 w-full md:w-fit min-w-[50%] m-4 shadow-lg py-4">
+          <div className="flex flex-row items-center justify-center mb-4 space-x-4">
+            <Box
+              className="cursor-pointer md:cursor-auto hover:bg-black/10 md:hover:bg-transparent p-2 rounded"
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+                fontWeight: "bold",
+                letterSpacing: 2,
+                backgroundColor: {
+                  xs: myOrders && SELECTED_COLOR,
+                  md: "transparent",
+                },
+              }}
+              onClick={() => {
+                setMyOrders(true);
+              }}
+            >
+              My Open Orders
+            </Box>
+            <Box
+              className="cursor-pointer hover:bg-black/10 p-2 rounded md:hidden"
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle2.fontSize",
+                fontWeight: "bold",
+                letterSpacing: 2,
+                backgroundColor: !myOrders && SELECTED_COLOR,
+              }}
+              onClick={() => {
+                setMyOrders(false);
+              }}
+            >
+              Orderbook
+            </Box>
+          </div>
+          {(myOrders || !isSmallScreen) &&
+            (pool ? (
+              loadingOpenOrders ? (
+                <div className="m-16">
                   <Loading size={18} spinnerColor="#000000" />
                 </div>
-              ) : orderbook &&
-                (orderbook.sell.length || orderbook.buy.length) ? (
+              ) : openOrders.length > 0 ? (
                 <table>
                   <thead>
-                    <tr>
-                      <th className="px-8 py-2 text-sm">Price (ETH)</th>
-                      <th className="px-8 py-2 text-sm">Amount</th>
+                    <tr className="border-b-2 border-black/10">
+                      <th className="px-6 md:px-12 py-2 text-sm">Type</th>
+                      <th className="px-6 md:px-12 py-2 text-sm">Filled</th>
+                      <th className="px-6 md:px-12 py-2 text-sm">Price</th>
+                      <th className="px-8 md:px-12 py-2 text-sm hidden md:table-cell">
+                        Token
+                      </th>
+                      <th className="px-8 md:px-12 py-2 text-sm hidden md:table-cell">
+                        NFTs
+                      </th>
+                      <th className="px-8 md:px-12 py-2 text-sm"></th>
                     </tr>
                   </thead>
                   <tbody>
-                    {orderbook.sell
-                      .slice()
-                      .reverse()
-                      .map((sellOrder, i) => (
-                        <tr key={i} align="center">
-                          <td className="text-red-600">
-                            <Box
-                              sx={{
-                                fontFamily: "Monospace",
-                                fontSize: "subtitle2.fontSize",
+                    {openOrders.map((order, index) => (
+                      <tr key={index} align="center" className="text-sm">
+                        <td>
+                          {order.type.charAt(0).toUpperCase() +
+                            order.type.slice(1)}
+                        </td>
+                        <td>
+                          {order.type == "buy"
+                            ? (order.nfts.length /
+                                (order.nfts.length +
+                                  BigNumber.from(order.token)
+                                    .div(order.price)
+                                    .toNumber())) *
+                                100 +
+                              "%"
+                            : BigNumber.from(order.token)
+                                .div(
+                                  BigNumber.from(order.token).add(
+                                    BigNumber.from(order.nfts.length).mul(
+                                      order.price
+                                    )
+                                  )
+                                )
+                                .toNumber() *
+                                100 +
+                              "%"}
+                        </td>
+                        <td>{formatUnits(order.price, 18) + " ETH"}</td>
+                        <td className="hidden md:table-cell">
+                          {formatUnits(order.token, 18) + " ETH"}
+                        </td>
+                        <td className="hidden md:table-cell">
+                          {order.nfts.length == 0
+                            ? "None"
+                            : order.nfts.join(", ")}
+                        </td>
+                        <td>
+                          {approvedLP ? (
+                            <ButtonNextUI
+                              className="m-2"
+                              size="xs"
+                              auto
+                              color="secondary"
+                              onPress={async function () {
+                                try {
+                                  var tx;
+
+                                  console.log("Removing LP");
+                                  tx =
+                                    await wethGatewaySigner.withdrawTradingPool(
+                                      pool,
+                                      order.lpId
+                                    );
+
+                                  await tx.wait(1);
+                                  handleWithdrawSuccess();
+                                } catch (error) {
+                                  console.log(error);
+                                }
                               }}
                             >
-                              {Number(
-                                formatUnits(sellOrder.price, 18)
-                              ).toPrecision(4)}
-                            </Box>
-                          </td>
-                          <td>{sellOrder.amount}</td>
-                        </tr>
-                      ))}
-                    <tr>
-                      <td colSpan="2">
-                        <Box
-                          className="text-red-600 text-center"
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "subtitle1.fontSize",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Ask
-                        </Box>
-                        <Divider className="my-1" variant="middle" />
-                        <Box
-                          className="text-green-600 text-center"
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "subtitle1.fontSize",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Bid
-                        </Box>
-                      </td>
-                    </tr>
-                    {orderbook.buy.map((buyOrder, i) => (
-                      <tr key={i} align="center">
-                        <td className="text-green-600">
-                          <Box
-                            sx={{
-                              fontFamily: "Monospace",
-                              fontSize: "subtitle2.fontSize",
-                            }}
-                          >
-                            {Number(
-                              formatUnits(buyOrder.price, 18)
-                            ).toPrecision(4)}
-                          </Box>
+                              Withdraw
+                            </ButtonNextUI>
+                          ) : (
+                            <ButtonNextUI
+                              className="m-2"
+                              size="xs"
+                              auto
+                              color="secondary"
+                              onPress={async function () {
+                                try {
+                                  const poolContract = new ethers.Contract(
+                                    pool,
+                                    tradingPoolContract.abi,
+                                    signer
+                                  );
+                                  const tx =
+                                    await poolContract.setApprovalForAll(
+                                      addresses.WETHGateway,
+                                      true
+                                    );
+                                  await tx.wait(1);
+                                  handleLPApprovalSuccess();
+                                } catch (error) {
+                                  console.log(error);
+                                }
+                              }}
+                            >
+                              Approve Removal
+                            </ButtonNextUI>
+                          )}
                         </td>
-                        <td>{buyOrder.amount}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               ) : (
-                <div className="flex flex-col m-8 space-y-2 items-center justify-center">
+                <div className="flex flex-col m-8 items-center justify-center">
                   <Box
                     sx={{
                       fontFamily: "Monospace",
                       fontSize: "subtitle2.fontSize",
                     }}
                   >
-                    Empty Orderbook.
-                  </Box>
-                  <Box
-                    sx={{
-                      fontFamily: "Monospace",
-                      fontSize: "subtitle2.fontSize",
-                    }}
-                  >
-                    Be the first to{" "}
-                    <Link href={"/trading/pool/" + pool}>
-                      <a
-                        style={{
-                          textDecoration: "underline",
-                        }}
-                      >
-                        add liquidity
-                      </a>
-                    </Link>
-                    .
+                    No open orders
                   </Box>
                 </div>
               )
             ) : (
-              <div className="flex flex-col m-8 items-center justify-center">
+              <div className="flex flex-col m-8 items-center justify-center text-center">
                 <Box
                   sx={{
                     fontFamily: "Monospace",
@@ -663,174 +873,20 @@ export default function BuyAndSell(props) {
                   }}
                 >
                   {isConnected
-                    ? "Select a collection to view the orderbook"
-                    : "Connect Wallet to view the orderbook"}
+                    ? "Select a collection to view open orders"
+                    : "Connect Wallet to view open orders"}
                 </Box>
               </div>
-            )}
-          </div>
-        )}
-      </div>
-      {proMode && (
-        <div className="flex flex-col items-center rounded-3xl bg-black/5 min-w-[50%] m-4 shadow-lg py-4">
-          <Box
-            className="mb-4 px-8 text-center"
-            sx={{
-              fontFamily: "Monospace",
-              fontSize: "subtitle1.fontSize",
-              fontWeight: "bold",
-              letterSpacing: 2,
-            }}
-          >
-            My Open Orders
-          </Box>
-          {pool ? (
-            loadingOpenOrders ? (
-              <div className="m-16">
-                <Loading size={18} spinnerColor="#000000" />
-              </div>
-            ) : openOrders.length > 0 ? (
-              <table>
-                <thead>
-                  <tr className="border-b-2 border-black/10">
-                    <th className="px-6 md:px-12 py-2 text-sm">Type</th>
-                    <th className="px-6 md:px-12 py-2 text-sm">Filled</th>
-                    <th className="px-6 md:px-12 py-2 text-sm">Price</th>
-                    <th className="px-8 md:px-12 py-2 text-sm hidden md:table-cell">
-                      Token
-                    </th>
-                    <th className="px-8 md:px-12 py-2 text-sm  hidden md:table-cell">
-                      NFTs
-                    </th>
-                    <th className="px-8 md:px-12 py-2 text-sm"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {openOrders.map((order, index) => (
-                    <tr key={index} align="center" className="text-sm">
-                      <td>
-                        {order.type.charAt(0).toUpperCase() +
-                          order.type.slice(1)}
-                      </td>
-                      <td>
-                        {order.type == "buy"
-                          ? (order.nfts.length /
-                              (order.nfts.length +
-                                BigNumber.from(order.token)
-                                  .div(order.price)
-                                  .toNumber())) *
-                              100 +
-                            "%"
-                          : BigNumber.from(order.token)
-                              .div(
-                                BigNumber.from(order.token).add(
-                                  BigNumber.from(order.nfts.length).mul(
-                                    order.price
-                                  )
-                                )
-                              )
-                              .toNumber() *
-                              100 +
-                            "%"}
-                      </td>
-                      <td>{formatUnits(order.price, 18) + " ETH"}</td>
-                      <td className="hidden md:table-cell">
-                        {formatUnits(order.token, 18) + " ETH"}
-                      </td>
-                      <td className="hidden md:table-cell">
-                        {order.nfts.length == 0
-                          ? "None"
-                          : order.nfts.join(", ")}
-                      </td>
-                      <td>
-                        {approvedLP ? (
-                          <ButtonNextUI
-                            className="m-2"
-                            size="xs"
-                            auto
-                            color="secondary"
-                            onPress={async function () {
-                              try {
-                                var tx;
-
-                                console.log("Removing LP");
-                                tx =
-                                  await wethGatewaySigner.withdrawTradingPool(
-                                    pool,
-                                    order.lpId
-                                  );
-
-                                await tx.wait(1);
-                                handleWithdrawSuccess();
-                              } catch (error) {
-                                console.log(error);
-                              }
-                            }}
-                          >
-                            Withdraw
-                          </ButtonNextUI>
-                        ) : (
-                          <ButtonNextUI
-                            className="m-2"
-                            size="xs"
-                            auto
-                            color="secondary"
-                            onPress={async function () {
-                              try {
-                                const poolContract = new ethers.Contract(
-                                  pool,
-                                  tradingPoolContract.abi,
-                                  signer
-                                );
-                                const tx = await poolContract.setApprovalForAll(
-                                  addresses.WETHGateway,
-                                  true
-                                );
-                                await tx.wait(1);
-                                handleLPApprovalSuccess();
-                              } catch (error) {
-                                console.log(error);
-                              }
-                            }}
-                          >
-                            Approve Removal
-                          </ButtonNextUI>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <div className="flex flex-col m-8 items-center justify-center">
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "subtitle2.fontSize",
-                  }}
-                >
-                  No open orders
-                </Box>
-              </div>
-            )
-          ) : (
-            <div className="flex flex-col m-8 items-center justify-center">
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontSize: "subtitle2.fontSize",
-                }}
-              >
-                {isConnected
-                  ? "Select a collection to view open orders"
-                  : "Connect Wallet to view open orders"}
-              </Box>
+            ))}
+          {!myOrders && isSmallScreen && (
+            <div className="flex flex-col items-center justify-center text-center m-2 p-2 border-black/20 rounded border-4">
+              <OrderbookComponent />
             </div>
           )}
         </div>
       )}
       {proMode && (
-        <div className="flex flex-col items-center min-w-[50%] justify-center rounded-3xl py-4 m-4 bg-black/5 shadow-lg">
+        <div className="flex flex-col items-center w-full md:w-fit min-w-[50%] justify-center rounded-3xl py-4 m-4 bg-black/5 shadow-lg">
           <div className="flex flex-row items-center justify-center mb-4 space-x-4">
             <Box
               className="cursor-pointer hover:bg-black/10 p-2 rounded"

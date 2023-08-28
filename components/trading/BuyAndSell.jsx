@@ -64,7 +64,7 @@ export default function BuyAndSell(props) {
   const [price, setPrice] = useState();
   const [myHistory, setMyHistory] = useState(true);
   const [myOrders, setMyOrders] = useState(true);
-  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   var addresses = contractAddresses[1];
 

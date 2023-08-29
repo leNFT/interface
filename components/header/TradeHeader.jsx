@@ -13,13 +13,14 @@ import {
 } from "@web3uikit/icons";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import Box from "@mui/material/Box";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Router from "next/router";
+import { useRouter } from "next/router";
 
 export default function TradeHeader() {
   const SELECTED_COLOR = "#d2c6d2";
   const UNSELECTED_COLOR = "#eae5ea";
-  const [option, setOption] = useState("trade");
+  const { router, asPath } = useRouter();
 
   return (
     <div className="flex flex-row items-center m-2">
@@ -186,10 +187,9 @@ export default function TradeHeader() {
             <Button
               primary
               size="medium"
-              color={option == "trade" ? SELECTED_COLOR : UNSELECTED_COLOR}
-              onClick={() => {
-                setOption("trade");
-              }}
+              color={
+                asPath.startsWith("/trade") ? SELECTED_COLOR : UNSELECTED_COLOR
+              }
               label={
                 <div className="flex sm:hidden md:flex">
                   <Box
@@ -257,10 +257,11 @@ export default function TradeHeader() {
             <Button
               primary
               size="medium"
-              color={option == "pools" ? SELECTED_COLOR : UNSELECTED_COLOR}
-              onClick={() => {
-                setOption("pools");
-              }}
+              color={
+                asPath.startsWith("/tradingPools")
+                  ? SELECTED_COLOR
+                  : UNSELECTED_COLOR
+              }
               label={
                 <div className="hidden lg:flex">
                   <Box
@@ -288,10 +289,9 @@ export default function TradeHeader() {
             <Button
               primary
               size="medium"
-              color={option == "lock" ? SELECTED_COLOR : UNSELECTED_COLOR}
-              onClick={() => {
-                setOption("lock");
-              }}
+              color={
+                asPath.startsWith("/lock") ? SELECTED_COLOR : UNSELECTED_COLOR
+              }
               label={
                 <div className="hidden lg:flex">
                   <Box
@@ -319,10 +319,11 @@ export default function TradeHeader() {
             <Button
               primary
               size="medium"
-              color={option == "genesis" ? SELECTED_COLOR : UNSELECTED_COLOR}
-              onClick={() => {
-                setOption("genesis");
-              }}
+              color={
+                asPath.startsWith("/genesis")
+                  ? SELECTED_COLOR
+                  : UNSELECTED_COLOR
+              }
               label={
                 <div className="hidden lg:flex z-0">
                   <Badge

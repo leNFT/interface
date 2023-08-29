@@ -90,6 +90,31 @@ export default function Home() {
                   </Button>
                 </a>
               </Link>
+              <Link href="/tradingPools">
+                <a>
+                  <Button
+                    color="gradient"
+                    size="xl"
+                    rounded
+                    shadow
+                    ghost
+                    bordered
+                    className="m-4"
+                    icon={<AccountBalanceIcon fontSize="25px" />}
+                  >
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "h6.fontSize",
+                        fontWeight: "bold",
+                        letterSpacing: 6,
+                      }}
+                    >
+                      EARN
+                    </Box>
+                  </Button>
+                </a>
+              </Link>
               {/* <Badge
                 disableOutline
                 enableShadow
@@ -124,10 +149,9 @@ export default function Home() {
               </Badge> */}
             </div>
             <div className={styles.indexDescribeSubtitle}>
-              <li>Trade your assets</li>
+              <li>Trade your NFTs</li>
               <li>Earn yield</li>
               <li>Increase your project&apos;s liquidity</li>
-              <li>Borrow ETH using your NFTs as collateral (soon)</li>
             </div>
             <div className={styles.indexDescribeSubtitle}>
               <Link href="https://discord.gg/cDywBRGcmT">

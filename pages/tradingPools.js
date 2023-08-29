@@ -8,6 +8,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  TablePagination,
 } from "@mui/material";
 import { Badge } from "@nextui-org/react";
 import { Box } from "@mui/system";
@@ -34,6 +35,19 @@ export default function TradingPools() {
   const [visibleCreateTradingPoolModal, setVisibleCreateTradingPoolModal] =
     useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5); // e.g., 5 rows per page
+
+  // Handle change page
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  // Handle change rows per page
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   async function updateTableData() {
     const tradingPools = await getTradingPools(chain ? chain.id : 1);
@@ -164,8 +178,6 @@ export default function TradingPools() {
           sx={{
             borderRadius: "18px",
             backgroundColor: "rgba(255, 255, 255, 0.2)",
-            maxHeight: "700px",
-            overflow: "auto",
           }}
         >
           <Table aria-label="Trading Pools">
@@ -217,26 +229,53 @@ export default function TradingPools() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {tableData.map((row) => (
-                <TableRow
-                  key={row.key}
-                  hover
-                  onClick={() => row.clickable && handleRowClick(row)}
-                  sx={{
-                    cursor: "pointer",
-                    "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.04)" },
-                  }}
-                >
-                  <TableCell component="th" scope="row">
-                    {row.image ? (
-                      row.isSoonPool ? (
-                        <Badge
-                          disableOutline
-                          color="warning"
-                          content="SOON"
-                          size="sm"
-                          shape="rectangle"
-                        >
+              {tableData
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row) => (
+                  <TableRow
+                    key={row.key}
+                    hover
+                    onClick={() => row.clickable && handleRowClick(row)}
+                    sx={{
+                      cursor: "pointer",
+                      "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.04)" },
+                    }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {row.image ? (
+                        row.isSoonPool ? (
+                          <Badge
+                            disableOutline
+                            color="warning"
+                            content="SOON"
+                            size="sm"
+                            shape="rectangle"
+                          >
+                            <Image
+                              src={row.image}
+                              height={80}
+                              width={80}
+                              alt="NFT Image"
+                              loader={({ src }) => src}
+                            />
+                          </Badge>
+                        ) : row.isNewPool ? (
+                          <Badge
+                            disableOutline
+                            color="success"
+                            content="NEW"
+                            size="sm"
+                            shape="rectangle"
+                          >
+                            <Image
+                              src={row.image}
+                              height={80}
+                              width={80}
+                              alt="NFT Image"
+                              loader={({ src }) => src}
+                            />
+                          </Badge>
+                        ) : (
                           <Image
                             src={row.image}
                             height={80}
@@ -244,147 +283,110 @@ export default function TradingPools() {
                             alt="NFT Image"
                             loader={({ src }) => src}
                           />
-                        </Badge>
-                      ) : row.isNewPool ? (
-                        <Badge
-                          disableOutline
-                          color="success"
-                          content="NEW"
-                          size="sm"
-                          shape="rectangle"
-                        >
-                          <Image
-                            src={row.image}
-                            height={80}
-                            width={80}
-                            alt="NFT Image"
-                            loader={({ src }) => src}
-                          />
-                        </Badge>
+                        )
                       ) : (
-                        <Image
-                          src={row.image}
-                          height={80}
-                          width={80}
-                          alt="NFT Image"
-                          loader={({ src }) => src}
-                        />
-                      )
-                    ) : (
-                      <Box sx={{ width: 80, height: 80 }}>
-                        <Skeleton
-                          variant="rectangular"
-                          width={80}
-                          height={80}
-                        />
-                      </Box>
-                    )}
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      fontFamily: "monospace",
-                      fontSize: {
-                        xs: "0.875rem",
-                        sm: "1rem",
-                        md: "16px",
-                      },
-                    }}
-                  >
-                    {row.nft}
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      fontFamily: "monospace",
-                      fontSize: {
-                        xs: "0.875rem",
-                        sm: "1rem",
-                        md: "16px",
-                      },
-                      display: {
-                        xs: "none",
-                        md: "table-cell",
-                      },
-                    }}
-                  >
-                    {row.token}
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      fontFamily: "monospace",
-                      fontSize: {
-                        xs: "0.875rem",
-                        sm: "1rem",
-                        md: "16px",
-                      },
-                    }}
-                  >
-                    {row.volume}
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{
-                      display: {
-                        xs: "none",
-                        md: "table-cell",
-                      },
-                    }}
-                  >
-                    <Button
-                      primary
-                      size="small"
-                      color={row.gauge === "Yes" ? "#063970" : "white"}
-                      onClick={async (event) => {
-                        event.stopPropagation();
-                        if (row.gauge === "Yes") {
-                          Router.push(`/trading/gauge/${row.gaugeAddress}`);
-                        } else {
-                          window.open(
-                            "https://discord.com/invite/QNpBmMCWmb",
-                            "_blank"
-                          );
-                        }
-                      }}
-                      label={
-                        <Box
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "caption.fontSize",
-                            fontWeight: "bold",
-                            letterSpacing: 2,
-                          }}
-                        >
-                          {row.gauge === "Yes" ? "Gauge" : "Request Gauge"}
+                        <Box sx={{ width: 80, height: 80 }}>
+                          <Skeleton
+                            variant="rectangular"
+                            width={80}
+                            height={80}
+                          />
                         </Box>
-                      }
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
+                      )}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        fontFamily: "monospace",
+                        fontSize: {
+                          xs: "0.875rem",
+                          sm: "1rem",
+                          md: "16px",
+                        },
+                      }}
+                    >
+                      {row.nft}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        fontFamily: "monospace",
+                        fontSize: {
+                          xs: "0.875rem",
+                          sm: "1rem",
+                          md: "16px",
+                        },
+                        display: {
+                          xs: "none",
+                          md: "table-cell",
+                        },
+                      }}
+                    >
+                      {row.token}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        fontFamily: "monospace",
+                        fontSize: {
+                          xs: "0.875rem",
+                          sm: "1rem",
+                          md: "16px",
+                        },
+                      }}
+                    >
+                      {row.volume}
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      sx={{
+                        display: {
+                          xs: "none",
+                          md: "table-cell",
+                        },
+                      }}
+                    >
+                      <Button
+                        primary
+                        size="small"
+                        color={row.gauge === "Yes" ? "#063970" : "white"}
+                        onClick={async (event) => {
+                          event.stopPropagation();
+                          if (row.gauge === "Yes") {
+                            Router.push(`/trading/gauge/${row.gaugeAddress}`);
+                          } else {
+                            window.open(
+                              "https://discord.com/invite/QNpBmMCWmb",
+                              "_blank"
+                            );
+                          }
+                        }}
+                        label={
+                          <Box
+                            sx={{
+                              fontFamily: "Monospace",
+                              fontSize: "caption.fontSize",
+                              fontWeight: "bold",
+                              letterSpacing: 2,
+                            }}
+                          >
+                            {row.gauge === "Yes" ? "Gauge" : "Request Gauge"}
+                          </Box>
+                        }
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
+
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              count={tableData.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              labelRowsPerPage="Pools per page:"
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
           </Table>
         </TableContainer>
-        <div className="flex flex-row justify-center items-center mt-4">
-          <Button
-            primary
-            size="small"
-            color={"#063970"}
-            onClick={() => {
-              console.log("New Pool");
-              setVisibleCreateTradingPoolModal(true);
-            }}
-            label={
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontWeight: "bold",
-                  letterSpacing: 1,
-                }}
-              >
-                Create New Pool
-              </Box>
-            }
-          />
-        </div>
       </div>
     </div>
   );

@@ -415,7 +415,7 @@ export default function Wallet() {
                   </TableBody>
                 </Table>
               </TableContainer>
-              <div className="flex flex-row w-full space-x-2 justify-start mt-2">
+              <div className="flex flex-row w-full space-x-2 justify-start mt-4">
                 <Button
                   primary
                   disabled={selectedRows.length === 0}

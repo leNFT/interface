@@ -24,6 +24,9 @@ import { useAccountModal, useChainModal } from "@rainbow-me/rainbowkit";
 import erc721 from "../contracts/erc721.json";
 import tradingPoolContract from "../contracts/TradingPool.json";
 import contractAddresses from "../contractAddresses.json";
+import StyledModal from "../components/StyledModal.jsx";
+import DepositTradingPool from "../components/trading/DepositTradingPool";
+import { BigNumber } from "ethers";
 
 export default function Wallet() {
   const { openAccountModal } = useAccountModal();
@@ -37,6 +40,7 @@ export default function Wallet() {
   const [selectedRows, setSelectedRows] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [sellMessage, setSellMessage] = useState("");
+  const [selectedPool, setSelectedPool] = useState("");
 
   var addresses = contractAddresses[1];
 
@@ -212,6 +216,37 @@ export default function Wallet() {
 
   return (
     <div>
+      <StyledModal
+        hasFooter={false}
+        title={"Deposit LP"}
+        isVisible={visibleDepositModal}
+        onCloseButtonPressed={function () {
+          setVisibleDepositModal(false);
+        }}
+      >
+        {" "}
+        <StyledModal
+          hasFooter={false}
+          title={"Deposit LP"}
+          isVisible={visibleDepositModal}
+          onCloseButtonPressed={function () {
+            setVisibleDepositModal(false);
+          }}
+        >
+          <DepositTradingPool
+            setVisibility={setVisibleDepositModal}
+            pool={selectedPool}
+            token={tradingPools[selectedPool]?.token.address}
+            gauge={tradingPools[selectedPool]?.gauge}
+            nft={tradingPools[selectedPool]?.nft.address}
+            nftName={tradingPools[selectedPool]?.nft.name}
+            selectedNFTs={tableData
+              .filter((row) => selectedRows.includes(row.key))
+              .map((row) => BigNumber.from(row.tokenId).toNumber())}
+            updateUI={updateTableData}
+          />
+        </StyledModal>
+      </StyledModal>
       {!isConnected ? (
         <Box
           sx={{
@@ -444,31 +479,22 @@ export default function Wallet() {
                   primary
                   disabled={
                     selectedRows.length === 0 ||
-                    getUniqueCollectionsOfSelectedRows().length > 1
+                    getUniqueCollectionsOfSelectedRows().length != 1
                   }
                   className="w-6/12 md:w-4/12 lg:w-3/12 h-14"
                   size="medium"
                   color="#063970"
                   onClick={() => {
-                    console.log(
-                      "traing poools",
+                    console.log("DEposit liquidity");
 
-                      Object.keys(tradingPools).find(
-                        (key) =>
-                          tradingPools[key].nft.name ===
-                          getUniqueCollectionsOfSelectedRows()[0]
-                      )
+                    const pool = Object.keys(tradingPools).find(
+                      (key) =>
+                        tradingPools[key].nft.name ===
+                        getUniqueCollectionsOfSelectedRows()[0]
                     );
-                    Router.push({
-                      pathname: "/trading/pool/[address]",
-                      query: {
-                        address: Object.keys(tradingPools).find(
-                          (key) =>
-                            tradingPools[key].nft.name ===
-                            getUniqueCollectionsOfSelectedRows()[0]
-                        ),
-                      },
-                    });
+                    console.log("pool", pool);
+                    setSelectedPool(pool);
+                    setVisibleDepositModal(true);
                   }}
                   label={
                     <Box

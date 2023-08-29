@@ -238,11 +238,11 @@ export default function DepositTradingPool(props) {
   }
 
   useEffect(() => {
-    if (props.preSelectedNFTs) {
-      setSelectedNFTs(props.preSelectedNFTs);
-      setNFTAmount(props.preSelectedNFTs.length);
+    if (props.selectedNFTs) {
+      setSelectedNFTs(props.selectedNFTs);
+      setNFTAmount(props.selectedNFTs.length);
     }
-  }, [props.preSelectedNFTs]);
+  }, [props.selectedNFTs]);
 
   function handleCurveChange(e) {
     setCurve(e);

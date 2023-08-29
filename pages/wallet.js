@@ -249,6 +249,8 @@ export default function Wallet() {
           <TableContainer
             sx={{
               borderRadius: "18px",
+              maxHeight: "400px",
+              overflow: "auto",
             }}
           >
             <Table aria-label="User NFTs">

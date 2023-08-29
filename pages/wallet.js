@@ -246,233 +246,250 @@ export default function Wallet() {
               }
             />
           </div>
-          <TableContainer
-            sx={{
-              borderRadius: "18px",
-              maxHeight: "400px",
-              overflow: "auto",
-            }}
-          >
-            <Table aria-label="User NFTs">
-              <TableHead>
-                <TableRow>
-                  <TableCell
-                    sx={{
-                      padding: "2px",
-                      width: {
-                        xs: "50px",
-                        md: "60px",
-                      },
-                    }}
-                  >
-                    <Checkbox
-                      onChange={selectAllRows}
-                      indeterminate={
-                        selectedRows.length > 0 &&
-                        selectedRows.length < tableData.length
-                      }
-                      checked={
-                        selectedRows.length === tableData.length &&
-                        tableData.length !== 0
-                      }
-                    />
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      padding: "2px",
-                      width: {
-                        xs: "90px",
-                        md: "100px",
-                      },
-                    }}
-                  ></TableCell>
-                  <TableCell
-                    sx={{
-                      padding: "2px",
-                      width: {
-                        xs: "190px",
-                        md: "280px",
-                      },
-                    }}
-                  >
-                    Name
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      padding: "4px",
-                      width: "250px",
-                    }}
-                  >
-                    Sell Price
-                  </TableCell>
-                  <TableCell
-                    className="hidden md:table-cell"
-                    sx={{ padding: "4px" }}
-                  >
-                    Buy Price
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {tableData.map((row) => (
-                  <TableRow
-                    key={row.key}
-                    sx={{
-                      height: "50px",
-                      backgroundColor: row.isSelected
-                        ? "rgba(0, 0, 0, 0.05)"
-                        : "inherit",
-                    }}
-                  >
-                    <TableCell sx={{ padding: "2px" }}>
-                      <Checkbox
-                        checked={selectedRows.includes(row.key)}
-                        onChange={() => toggleRowSelection(row.key)}
-                      />
-                    </TableCell>
-                    <TableCell sx={{ padding: "2px" }}>
-                      <Image
-                        src={row.image}
-                        loader={() => row.image}
-                        alt={row.nftName}
-                        width={55}
-                        height={55}
-                      />
-                    </TableCell>
-                    <TableCell sx={{ padding: "2px" }}>
-                      <div className="flex flex-col">
-                        <Box
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "subtitle2.fontSize",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          {row.nftName}
-                        </Box>
-                        <Box
-                          sx={{
-                            fontFamily: "Monospace",
-                            fontSize: "12px",
-                          }}
-                        >
-                          {row.collection}
-                        </Box>
-                      </div>
-                    </TableCell>
-                    <TableCell sx={{ padding: "4px" }}>
-                      <Box
-                        sx={{
-                          fontFamily: "Monospace",
-                          fontSize: "subtitle2.fontSize",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {(tradingPools[row.pool].price === "0"
-                          ? "━"
-                          : formatUnits(
-                              tradingPools[row.pool].price.sellPrice,
-                              18
-                            )) + " ETH"}
-                      </Box>
-                    </TableCell>
-                    <TableCell
-                      className="hidden md:table-cell"
-                      sx={{ padding: "4px" }}
-                    >
-                      <Box
-                        sx={{
-                          fontFamily: "Monospace",
-                          fontSize: "subtitle2.fontSize",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {(tradingPools[row.pool].price === "0"
-                          ? "━"
-                          : formatUnits(
-                              tradingPools[row.pool].price.buyPrice,
-                              18
-                            )) + " ETH"}
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <div className="flex flex-row w-full space-x-2 justify-start mt-2">
-            <Button
-              primary
-              disabled={selectedRows.length === 0}
-              className="w-6/12 md:w-5/12"
-              size="medium"
-              color="#063970"
-              onClick={sellNFTs}
-              label={
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "caption.fontSize",
-                    fontWeight: "bold",
-                    letterSpacing: 1,
-                  }}
-                >
-                  {selectedRows.length === 0
-                    ? "Sell"
-                    : sellMessage
-                    ? sellMessage
-                    : "Sell " + selectedRows.length + " NFTs"}
-                </Box>
-              }
-            />
-            <Button
-              primary
-              disabled={
-                selectedRows.length === 0 ||
-                getUniqueCollectionsOfSelectedRows().length > 1
-              }
-              className="w-6/12 md:w-5/12 h-14"
-              size="medium"
-              color="#063970"
-              onClick={() => {
-                console.log(
-                  "traing poools",
-
-                  Object.keys(tradingPools).find(
-                    (key) =>
-                      tradingPools[key].nft.name ===
-                      getUniqueCollectionsOfSelectedRows()[0]
-                  )
-                );
-                Router.push({
-                  pathname: "/trading/pool/[address]",
-                  query: {
-                    address: Object.keys(tradingPools).find(
-                      (key) =>
-                        tradingPools[key].nft.name ===
-                        getUniqueCollectionsOfSelectedRows()[0]
-                    ),
-                  },
-                });
+          {tableData.length === 0 ? (
+            <Box
+              sx={{
+                fontFamily: "Monospace",
+                fontSize: "subtitle1.fontSize",
+                fontWeight: "bold",
+                letterSpacing: 1,
+                textAlign: "center",
+                marginTop: "20vh",
               }}
-              label={
-                <Box
-                  sx={{
-                    fontFamily: "Monospace",
-                    fontSize: "caption.fontSize",
-                    fontWeight: "bold",
-                    letterSpacing: 1,
+            >
+              No supported NFTs found in your wallet
+            </Box>
+          ) : (
+            <div>
+              <TableContainer
+                sx={{
+                  borderRadius: "18px",
+                  maxHeight: "400px",
+                  overflow: "auto",
+                }}
+              >
+                <Table aria-label="User NFTs">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell
+                        sx={{
+                          padding: "2px",
+                          width: {
+                            xs: "50px",
+                            md: "60px",
+                          },
+                        }}
+                      >
+                        <Checkbox
+                          onChange={selectAllRows}
+                          indeterminate={
+                            selectedRows.length > 0 &&
+                            selectedRows.length < tableData.length
+                          }
+                          checked={
+                            selectedRows.length === tableData.length &&
+                            tableData.length !== 0
+                          }
+                        />
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          padding: "2px",
+                          width: {
+                            xs: "90px",
+                            md: "100px",
+                          },
+                        }}
+                      ></TableCell>
+                      <TableCell
+                        sx={{
+                          padding: "2px",
+                          width: {
+                            xs: "190px",
+                            md: "280px",
+                          },
+                        }}
+                      >
+                        Name
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          padding: "4px",
+                          width: "250px",
+                        }}
+                      >
+                        Sell Price
+                      </TableCell>
+                      <TableCell
+                        className="hidden md:table-cell"
+                        sx={{ padding: "4px" }}
+                      >
+                        Buy Price
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {tableData.map((row) => (
+                      <TableRow
+                        key={row.key}
+                        sx={{
+                          height: "50px",
+                          backgroundColor: row.isSelected
+                            ? "rgba(0, 0, 0, 0.05)"
+                            : "inherit",
+                        }}
+                      >
+                        <TableCell sx={{ padding: "2px" }}>
+                          <Checkbox
+                            checked={selectedRows.includes(row.key)}
+                            onChange={() => toggleRowSelection(row.key)}
+                          />
+                        </TableCell>
+                        <TableCell sx={{ padding: "2px" }}>
+                          <Image
+                            src={row.image}
+                            loader={() => row.image}
+                            alt={row.nftName}
+                            width={55}
+                            height={55}
+                          />
+                        </TableCell>
+                        <TableCell sx={{ padding: "2px" }}>
+                          <div className="flex flex-col">
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "subtitle2.fontSize",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {row.nftName}
+                            </Box>
+                            <Box
+                              sx={{
+                                fontFamily: "Monospace",
+                                fontSize: "12px",
+                              }}
+                            >
+                              {row.collection}
+                            </Box>
+                          </div>
+                        </TableCell>
+                        <TableCell sx={{ padding: "4px" }}>
+                          <Box
+                            sx={{
+                              fontFamily: "Monospace",
+                              fontSize: "subtitle2.fontSize",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {(tradingPools[row.pool].price === "0"
+                              ? "━"
+                              : formatUnits(
+                                  tradingPools[row.pool].price.sellPrice,
+                                  18
+                                )) + " ETH"}
+                          </Box>
+                        </TableCell>
+                        <TableCell
+                          className="hidden md:table-cell"
+                          sx={{ padding: "4px" }}
+                        >
+                          <Box
+                            sx={{
+                              fontFamily: "Monospace",
+                              fontSize: "subtitle2.fontSize",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {(tradingPools[row.pool].price === "0"
+                              ? "━"
+                              : formatUnits(
+                                  tradingPools[row.pool].price.buyPrice,
+                                  18
+                                )) + " ETH"}
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <div className="flex flex-row w-full space-x-2 justify-start mt-2">
+                <Button
+                  primary
+                  disabled={selectedRows.length === 0}
+                  className="w-6/12 md:w-5/12"
+                  size="medium"
+                  color="#063970"
+                  onClick={sellNFTs}
+                  label={
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "caption.fontSize",
+                        fontWeight: "bold",
+                        letterSpacing: 1,
+                      }}
+                    >
+                      {selectedRows.length === 0
+                        ? "Sell"
+                        : sellMessage
+                        ? sellMessage
+                        : "Sell " + selectedRows.length + " NFTs"}
+                    </Box>
+                  }
+                />
+                <Button
+                  primary
+                  disabled={
+                    selectedRows.length === 0 ||
+                    getUniqueCollectionsOfSelectedRows().length > 1
+                  }
+                  className="w-6/12 md:w-5/12 h-14"
+                  size="medium"
+                  color="#063970"
+                  onClick={() => {
+                    console.log(
+                      "traing poools",
+
+                      Object.keys(tradingPools).find(
+                        (key) =>
+                          tradingPools[key].nft.name ===
+                          getUniqueCollectionsOfSelectedRows()[0]
+                      )
+                    );
+                    Router.push({
+                      pathname: "/trading/pool/[address]",
+                      query: {
+                        address: Object.keys(tradingPools).find(
+                          (key) =>
+                            tradingPools[key].nft.name ===
+                            getUniqueCollectionsOfSelectedRows()[0]
+                        ),
+                      },
+                    });
                   }}
-                >
-                  {selectedRows.length === 0
-                    ? "Deposit in Pool"
-                    : getUniqueCollectionsOfSelectedRows().length === 1
-                    ? "Deposit " + getUniqueCollectionsOfSelectedRows()
-                    : "Different Collections"}
-                </Box>
-              }
-            />
-          </div>
+                  label={
+                    <Box
+                      sx={{
+                        fontFamily: "Monospace",
+                        fontSize: "caption.fontSize",
+                        fontWeight: "bold",
+                        letterSpacing: 1,
+                      }}
+                    >
+                      {selectedRows.length === 0
+                        ? "Deposit in Pool"
+                        : getUniqueCollectionsOfSelectedRows().length === 1
+                        ? "Deposit " + getUniqueCollectionsOfSelectedRows()
+                        : "Different Collections"}
+                    </Box>
+                  }
+                />
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <div className="flex justify-center items-center mt-16">

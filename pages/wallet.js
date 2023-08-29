@@ -308,6 +308,7 @@ export default function Wallet() {
                             xs: "190px",
                             md: "280px",
                           },
+                          fontWeight: "bold",
                         }}
                       >
                         Name
@@ -316,13 +317,14 @@ export default function Wallet() {
                         sx={{
                           padding: "4px",
                           width: "250px",
+                          fontWeight: "bold",
                         }}
                       >
                         Sell Price
                       </TableCell>
                       <TableCell
                         className="hidden md:table-cell"
-                        sx={{ padding: "4px" }}
+                        sx={{ padding: "4px", fontWeight: "bold" }}
                       >
                         Buy Price
                       </TableCell>
@@ -380,7 +382,6 @@ export default function Wallet() {
                             sx={{
                               fontFamily: "Monospace",
                               fontSize: "subtitle2.fontSize",
-                              fontWeight: "bold",
                             }}
                           >
                             {(tradingPools[row.pool].price === "0"
@@ -399,7 +400,6 @@ export default function Wallet() {
                             sx={{
                               fontFamily: "Monospace",
                               fontSize: "subtitle2.fontSize",
-                              fontWeight: "bold",
                             }}
                           >
                             {(tradingPools[row.pool].price === "0"

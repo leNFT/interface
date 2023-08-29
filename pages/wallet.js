@@ -224,7 +224,6 @@ export default function Wallet() {
           setVisibleDepositModal(false);
         }}
       >
-        {" "}
         <StyledModal
           hasFooter={false}
           title={"Deposit LP"}
@@ -358,8 +357,14 @@ export default function Wallet() {
                         Sell Price
                       </TableCell>
                       <TableCell
-                        className="hidden md:table-cell"
-                        sx={{ padding: "4px", fontWeight: "bold" }}
+                        sx={{
+                          padding: "4px",
+                          fontWeight: "bold",
+                          display: {
+                            xs: "none",
+                            md: "table-cell",
+                          },
+                        }}
                       >
                         Buy Price
                       </TableCell>
@@ -428,8 +433,13 @@ export default function Wallet() {
                           </Box>
                         </TableCell>
                         <TableCell
-                          className="hidden md:table-cell"
-                          sx={{ padding: "4px" }}
+                          sx={{
+                            padding: "4px",
+                            display: {
+                              xs: "none",
+                              md: "table-cell",
+                            },
+                          }}
                         >
                           <Box
                             sx={{

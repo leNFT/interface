@@ -316,7 +316,7 @@ export default function Wallet() {
                       <TableCell
                         sx={{
                           padding: "4px",
-                          width: "250px",
+                          width: "200px",
                           fontWeight: "bold",
                         }}
                       >

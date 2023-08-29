@@ -127,7 +127,7 @@ export default function TradingPools() {
         <CreateTradingPool setVisibility={setVisibleCreateTradingPoolModal} />
       </StyledModal>
       <div className="mx-1 md:mx-8">
-        <div className="flex flex-row w-full justify-between items-center mb-2">
+        <div className="flex flex-row w-full justify-center items-center mb-2">
           <Input
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -158,33 +158,14 @@ export default function TradingPools() {
             }}
             disableUnderline // This removes the default underline of the MUI Input
           />
-
-          <Button
-            primary
-            size="small"
-            color={"#063970"}
-            onClick={() => {
-              console.log("New Pool");
-              setVisibleCreateTradingPoolModal(true);
-            }}
-            label={
-              <Box
-                sx={{
-                  fontFamily: "Monospace",
-                  fontWeight: "bold",
-                  letterSpacing: 1,
-                }}
-              >
-                Create New Pool
-              </Box>
-            }
-          />
         </div>
 
         <TableContainer
           sx={{
             borderRadius: "18px",
             backgroundColor: "rgba(255, 255, 255, 0.2)",
+            maxHeight: "700px",
+            overflow: "auto",
           }}
         >
           <Table aria-label="Trading Pools">
@@ -382,6 +363,28 @@ export default function TradingPools() {
             </TableBody>
           </Table>
         </TableContainer>
+        <div className="flex flex-row justify-center items-center mt-4">
+          <Button
+            primary
+            size="small"
+            color={"#063970"}
+            onClick={() => {
+              console.log("New Pool");
+              setVisibleCreateTradingPoolModal(true);
+            }}
+            label={
+              <Box
+                sx={{
+                  fontFamily: "Monospace",
+                  fontWeight: "bold",
+                  letterSpacing: 1,
+                }}
+              >
+                Create New Pool
+              </Box>
+            }
+          />
+        </div>
       </div>
     </div>
   );

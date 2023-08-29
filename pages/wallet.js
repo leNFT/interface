@@ -264,7 +264,7 @@ export default function Wallet() {
               <TableContainer
                 sx={{
                   borderRadius: "18px",
-                  maxHeight: "400px",
+                  maxHeight: "500px",
                   overflow: "auto",
                 }}
               >

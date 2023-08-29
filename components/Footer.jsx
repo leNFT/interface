@@ -56,7 +56,7 @@ export default function Footer() {
                 setVisibleCreateTradingPoolModal(true);
               }}
             >
-              Trading
+              Trading Pool
             </Box>
             {/* <Box
               sx={{

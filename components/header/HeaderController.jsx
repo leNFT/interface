@@ -3,7 +3,6 @@ import TradeHeader from "./TradeHeader";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useNetwork } from "wagmi";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
-import { useSwitchNetwork } from "wagmi";
 import {
   useConnectModal,
   useAccountModal,
@@ -22,6 +21,7 @@ export default function HeaderController() {
   const SELECTED_COLOR = "#d2c6d2";
   const UNSELECTED_COLOR = "#eae5ea";
   const { address } = useAccount();
+  const { chain } = useNetwork();
   const { router, asPath } = useRouter();
   const { data: ethBalance } = useBalance({
     addressOrName: address,
@@ -44,7 +44,7 @@ export default function HeaderController() {
 
   useEffect(() => {
     console.log("balance", ethBalance);
-  }, [ethBalance, address]);
+  }, [ethBalance, address, chain]);
 
   return (
     <div className="border-b-2 flex flex-row justify-between items-center">

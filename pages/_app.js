@@ -13,6 +13,7 @@ import {
 } from "@rainbow-me/rainbowkit";
 import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
+import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 
 function MyApp({ Component, pageProps }) {
@@ -20,10 +21,14 @@ function MyApp({ Component, pageProps }) {
   const isIndex = router.pathname == "/";
   const LayoutComponent = isIndex ? SplashLayout : Layout;
   const { chains, provider } = configureChains(
-    [chain.sepolia, chain.mainnet],
+    [chain.mainnet, chain.sepolia],
     [
       alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY }),
-      publicProvider(),
+      jsonRpcProvider({
+        rpc: (chain) => ({
+          http: "https://eth-sepolia.public.blastapi.io",
+        }),
+      }),
     ]
   );
 

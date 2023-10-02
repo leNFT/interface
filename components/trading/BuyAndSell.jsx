@@ -168,21 +168,25 @@ export default function BuyAndSell(props) {
 
   // Runs once
   useEffect(() => {
-    const chain = chain ? chain.id : 1;
-    console.log("chain", chain);
+    if (chain) {
+      console.log("chain", chain);
 
-    getTradingCollections(chain);
+      const chainId = chain ? chain.id : 1;
+      console.log("chainId", chainId);
 
-    // Parsing address from URL using new URL() and asPath
-    const url = new URL(asPath, window.location.origin);
-    const addressFromUrl = url.searchParams.get("address");
+      getTradingCollections(chainId);
 
-    console.log("addressFromUrl", addressFromUrl);
+      // Parsing address from URL using new URL() and asPath
+      const url = new URL(asPath, window.location.origin);
+      const addressFromUrl = url.searchParams.get("address");
 
-    if (addressFromUrl) {
-      // Here you can call your handle function with the address
-      handleNFTAddressChange(null, addressFromUrl);
       console.log("addressFromUrl", addressFromUrl);
+
+      if (addressFromUrl) {
+        // Here you can call your handle function with the address
+        handleNFTAddressChange(null, addressFromUrl);
+        console.log("addressFromUrl", addressFromUrl);
+      }
     }
 
     console.log("useEffect called");

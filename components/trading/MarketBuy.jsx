@@ -124,8 +124,7 @@ export default function MarketBuy(props) {
 
   // Runs once
   useEffect(() => {
-    const chain = chain ? chain.id : 1;
-    addresses = contractAddresses[chain];
+    addresses = contractAddresses[chain ? chain.id : 1];
 
     console.log("useEffect called");
   }, [isConnected, chain]);

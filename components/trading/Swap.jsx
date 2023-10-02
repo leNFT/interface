@@ -311,10 +311,10 @@ export default function Swap() {
   }
 
   useEffect(() => {
-    const chain = chain ? chain.id : 1;
+    const chainId = chain ? chain.id : 1;
 
-    addresses = contractAddresses[chain];
-    getTradingCollections(chain);
+    addresses = contractAddresses[chainId];
+    getTradingCollections(chainId);
 
     console.log("useEffect called");
   }, [isConnected, chain]);

@@ -37,7 +37,7 @@ export default function Genesis() {
   const { chain } = useNetwork();
   const provider = useProvider();
   const dispatch = useNotification();
-  var addresses = contractAddresses[1];
+  var addresses = contractAddresses[chain ? chain.id : 1];
 
   async function updateGenesisInfo() {
     setPrice(parseUnits("0.25", 18));

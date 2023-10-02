@@ -45,7 +45,7 @@ export default function MarketBuy(props) {
 
   const dispatch = useNotification();
 
-  var addresses = contractAddresses[1];
+  var addresses = contractAddresses[chain ? chain.id : 1];
 
   const wethGatewaySigner = useContract({
     contractInterface: wethGateway.abi,

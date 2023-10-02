@@ -80,7 +80,7 @@ export default function Lock() {
   const [allGaugeWeights, setAllGaugeVoteWeights] = useState({});
   const [nativeTokenPrice, setNativeTokenPrice] = useState("0");
 
-  var addresses = contractAddresses[1];
+  var addresses = contractAddresses[chain ? chain.id : 1];
   const votingEscrowProvider = useContract({
     contractInterface: votingEscrowContract.abi,
     addressOrName: addresses.VotingEscrow,

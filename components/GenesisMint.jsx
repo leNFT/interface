@@ -36,7 +36,7 @@ export default function GenesisMint(props) {
   const [mintIds, setMintIds] = useState([]);
   const [mintPrice, setMintPrice] = useState("0");
 
-  var addresses = contractAddresses[1];
+  var addresses = contractAddresses[chain ? chain.id : 1];
 
   const dispatch = useNotification();
 

@@ -27,7 +27,7 @@ export default function StakeLendingGauge(props) {
   const { chain } = useNetwork();
   const provider = useProvider();
   const { data: signer } = useSigner();
-  var addresses = contractAddresses[1];
+  var addresses = contractAddresses[chain ? chain.id : 1];
   async function getUserBalance() {
     const lpToken = new ethers.Contract(props.lpToken, erc20, provider);
     // Get lp positions

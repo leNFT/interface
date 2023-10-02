@@ -21,7 +21,7 @@ export default function LlamaPoll() {
   const { chain } = useNetwork();
 
   const dispatch = useNotification();
-  var addresses = contractAddresses[1];
+  var addresses = contractAddresses[chain ? chain.id : 1];
   // Add the new states
   const [inputValue, setInputValue] = useState("");
 

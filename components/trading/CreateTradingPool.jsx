@@ -30,7 +30,7 @@ export default function CreateTradingPool(props) {
 
   const dispatch = useNotification();
 
-  var addresses = contractAddresses[1];
+  var addresses = contractAddresses[chain ? chain.id : 1];
   const [asset, setAsset] = useState(addresses.ETH.address);
 
   const factorySigner = useContract({

@@ -27,7 +27,7 @@ export default function LimitBuy(props) {
   const [price, setPrice] = useState(0);
   const dispatch = useNotification();
 
-  var addresses = contractAddresses[1];
+  var addresses = contractAddresses[chain ? chain.id : 1];
 
   const wethGatewaySigner = useContract({
     contractInterface: wethGateway.abi,

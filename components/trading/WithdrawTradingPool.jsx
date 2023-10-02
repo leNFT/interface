@@ -26,7 +26,7 @@ export default function WithdrawTradingPool(props) {
   const { chain } = useNetwork();
   const provider = useProvider();
   const { data: signer } = useSigner();
-  var addresses = contractAddresses[1];
+  var addresses = contractAddresses[chain ? chain.id : 1];
   const wethGatewaySigner = useContract({
     contractInterface: wethGatewayContract.abi,
     addressOrName: addresses.WETHGateway,

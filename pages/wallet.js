@@ -42,7 +42,7 @@ export default function Wallet() {
   const [sellMessage, setSellMessage] = useState("");
   const [selectedPool, setSelectedPool] = useState("");
 
-  var addresses = contractAddresses[1];
+  var addresses = contractAddresses[chain ? chain.id : 1];
 
   const selectAllRows = () => {
     if (!tableData) return;

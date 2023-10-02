@@ -28,7 +28,7 @@ export default function DepositLendingPool(props) {
   const { chain } = useNetwork();
   const { data: signer } = useSigner();
   const provider = useProvider();
-  var addresses = contractAddresses[1];
+  var addresses = contractAddresses[chain ? chain.id : 1];
   async function updateTokenBalance() {
     const tokenProvider = new ethers.Contract(props.asset, erc20, provider);
     var updatedBalance;

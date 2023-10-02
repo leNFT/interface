@@ -9,7 +9,7 @@ import Script from "next/script";
 export default function Layout({ children }) {
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
-  const supportedChains = [1, 5, 11155111];
+  const supportedChains = [1, 11155111];
 
   return (
     <>

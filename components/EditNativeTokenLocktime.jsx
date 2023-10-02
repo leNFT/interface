@@ -35,7 +35,7 @@ export default function EditNativeTokenLock(props) {
   const [amount, setAmount] = useState("0");
 
   const dispatch = useNotification();
-  var addresses = contractAddresses[1];
+  var addresses = contractAddresses[chain ? chain.id : 1];
   const votingEscrowProvider = useContract({
     contractInterface: votingEscrowContract.abi,
     addressOrName: addresses.VotingEscrow,

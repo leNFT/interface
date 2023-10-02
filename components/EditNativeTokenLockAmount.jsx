@@ -31,7 +31,7 @@ export default function EditNativeTokenLock(props) {
   const [newLockWeight, setNewLockWeight] = useState("0");
 
   const dispatch = useNotification();
-  var addresses = contractAddresses[1];
+  var addresses = contractAddresses[chain ? chain.id : 1];
   const nativeTokenProvider = useContract({
     contractInterface: nativeTokenContract.abi,
     addressOrName: addresses.NativeToken,

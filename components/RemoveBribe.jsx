@@ -31,7 +31,7 @@ export default function RemoveBribe(props) {
   const [amount, setAmount] = useState("0");
 
   const dispatch = useNotification();
-  var addresses = contractAddresses[1];
+  var addresses = contractAddresses[chain ? chain.id : 1];
   const bribesSigner = useContract({
     contractInterface: bribesContract.abi,
     addressOrName: addresses.Bribes,

@@ -21,7 +21,7 @@ export default function WithdrawNativeToken(props) {
   const { data: signer } = useSigner();
   const [unlockLoading, setUnlockLoading] = useState(false);
 
-  var addresses = contractAddresses[1];
+  var addresses = contractAddresses[chain ? chain.id : 1];
   const dispatch = useNotification();
 
   const votingEscrowProvider = useContract({

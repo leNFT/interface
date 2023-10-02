@@ -66,7 +66,7 @@ export default function BuyAndSell(props) {
   const [myOrders, setMyOrders] = useState(true);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
-  var addresses = contractAddresses[1];
+  var addresses = contractAddresses[chain ? chain.id : 1];
 
   const wethGatewaySigner = useContract({
     contractInterface: wethGatewayContract.abi,
@@ -88,11 +88,7 @@ export default function BuyAndSell(props) {
   }
 
   async function getBackgroundImage(collection) {
-    const updatedURL = await getNFTImage(
-      collection,
-      1,
-      isConnected ? chain.id : 1
-    );
+    const updatedURL = await getNFTImage(collection, 1, chain ? chain.id : 1);
     console.log("updatedURL", updatedURL);
     setBackgroundImage(updatedURL);
   }
@@ -173,6 +169,7 @@ export default function BuyAndSell(props) {
   // Runs once
   useEffect(() => {
     const chain = chain ? chain.id : 1;
+    console.log("chain", chain);
 
     getTradingCollections(chain);
 
